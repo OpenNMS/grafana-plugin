@@ -1,0 +1,5 @@
+{
+  "type": "panel",
+  "name": "Alarm Table",
+  "id": "opennms-helm-alarm-table-panel"
+}

@@ -1,0 +1,22 @@
+<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form-inline">
+    <div class="gf-form gf-form--grow" ng-if="ctrl.target.rawQuery">
+      <textarea class="gf-form-input" rows="5" ng-model="ctrl.target.target" spellcheck="false" ng-blur="ctrl.onChangeInternal()" />
+    </div>
+  </div>
+
+  <div class="gf-form-inline">
+    <div class="gf-form" ng-if="!ctrl.target.rawQuery">
+      <h1>hello</h1>
+    </div>
+    <div class="gf-form gf-form--grow">
+      <div class="gf-form-label gf-form-label--grow"></div>
+    </div>
+    <div class="gf-form">
+      <div class="gf-form-label query-keyword">Format</div>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input" ng-model="ctrl.target.type" ng-options="f as f for f in ['table', 'timeserie']"></select>
+      </div>
+    </div>
+  </div>
+</query-editor-row>
