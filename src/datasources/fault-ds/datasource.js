@@ -10,9 +10,64 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
-    return this.q.when({
-      data: []
+    var self = this;
+    return this.backendSrv.datasourceRequest({
+      url: '/public/plugins/opennms-helm-app/datasources/fault-ds/alarms.json',
+      method: 'GET'
+    }).then(response => {
+      if (response.status === 200) {
+        return {data: self.toTable(response.data)};
+      }
     });
+  }
+
+  toTable(data) {
+    var columns = [
+      {
+        "text": "ID",
+      },
+      {
+        "text": "Description",
+      },
+      {
+        "text": "UEI",
+      },
+      {
+        "text": "Node ID",
+      },
+      {
+        "text": "Acked By",
+      }
+    ];
+
+    var rows = [];
+    for (var i = 0; i < data.alarm.length; i++) {
+      var alarm = data.alarm[i];
+      var row = [
+        alarm.id,
+        alarm.description,
+        alarm.uei,
+        alarm.nodeId,
+        alarm.ackUser
+      ];
+      row.meta = {
+        // Store the alarm for easy access by the panels - may not be necessary
+        'alarm': alarm
+      };
+      rows.push(row);
+    }
+
+    return [
+      {
+        "columns": columns,
+        "rows": rows,
+        "type": "table",
+        // Store the name of the data-source as part of the data so that
+        // the panel can grab an instance of the DS to perform actions
+        // on the alarms
+        "source": this.name
+      }
+    ];
   }
 
   testDatasource() {
