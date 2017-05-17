@@ -1,19 +1,18 @@
-import _ from "lodash";
-
 export class OpenNMSFMDatasource {
 
-  constructor(instanceSettings, $q, backendSrv, templateSrv, timeSrv) {
+  constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.timeSrv = timeSrv;
   }
 
   query(options) {
-    return this.q.when({});
+    return this.q.when({
+      data: []
+    });
   }
 
   testDatasource() {

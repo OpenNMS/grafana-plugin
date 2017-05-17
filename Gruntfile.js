@@ -34,10 +34,12 @@ module.exports = function(grunt) {
     babel: {
       options: {
         sourceMap: true,
-        presets:  ["es2015"],
-        plugins: ['transform-es2015-modules-systemjs', "transform-es2015-for-of"],
+        presets:  ["es2015"]
       },
       dist: {
+        options: {
+          plugins: ['transform-es2015-modules-systemjs', 'transform-es2015-for-of']
+        },
         files: [{
           cwd: 'src',
           expand: true,
@@ -46,9 +48,40 @@ module.exports = function(grunt) {
           ext:'.js'
         }]
       },
+      distTestNoSystemJs: {
+        files: [{
+          cwd: 'src',
+          expand: true,
+          src: ['**/*.js'],
+          dest: 'dist/test',
+          ext:'.js'
+        }]
+      },
+      distTestsSpecsNoSystemJs: {
+        files: [{
+          expand: true,
+          cwd: 'src/spec',
+          src: ['**/*.js'],
+          dest: 'dist/test/spec',
+          ext:'.js'
+        }]
+      }
     },
 
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['dist/test/spec/test-main.js', 'dist/test/spec/*_spec.js']
+      }
+    }
   });
 
-  grunt.registerTask('default', ['clean', 'copy', 'babel']);
+  grunt.registerTask('default', [
+    'clean',
+    'copy',
+    'babel',
+    'mochaTest'
+  ]);
 };
