@@ -2,10 +2,12 @@ import _ from 'lodash';
 import $ from 'jquery';
 import * as FileExport from 'app/core/utils/file_export';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
+import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
 import {TableModel} from './table_model';
+import '../css/styles.css!'
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
@@ -15,9 +17,9 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.annotationsSrv = annotationsSrv;
     this.$sanitize = $sanitize;
 
-    var panelDefaults = {
+    let panelDefaults = {
       targets: [{}],
-      transform: 'timeseries_to_columns',
+      transform: 'table',
       pageSize: null,
       showHeader: true,
       styles: [
@@ -59,17 +61,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-    this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
   }
 
 
   onInitEditMode() {
     this.addEditorTab('Options', tablePanelEditor, 2);
     this.addEditorTab('Column Styles', columnOptionsTab, 3);
-  }
-
-  onInitPanelActions(actions) {
-    actions.push({text: 'Export CSV', click: 'ctrl.exportCsv()'});
   }
 
   issueQueries(datasource) {
@@ -84,6 +81,10 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     return super.issueQueries(datasource);
+  }
+
+  testClass() {
+    return true;
   }
 
   onDataError(err) {
@@ -113,24 +114,8 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  transformDataToTable(data, panel) {
-    let model = new TableModel();
-
-    if (!data || data.length === 0) {
-      return model;
-    }
-
-    if (data[0].type !== 'table') {
-      throw {message: 'Query result is not in table format, try using another transform.'};
-    }
-
-    model.columns = data[0].columns;
-    model.rows = data[0].rows;
-    return model;
-  }
-
   render() {
-    this.table = this.transformDataToTable(this.dataRaw, this.panel);
+    this.table = transformDataToTable(this.dataRaw, this.panel);
     this.table.sort(this.panel.sort);
 
     this.renderer = new TableRenderer(this.panel, this.table, this.dashboard.isTimezoneUtc(), this.$sanitize);
@@ -157,18 +142,14 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  exportCsv() {
-    FileExport.exportTableDataToCsv(this.renderer.render_values());
-  }
-
   link(scope, elem, attrs, ctrl) {
-    var data;
-    var panel = ctrl.panel;
-    var pageCount = 0;
-    var formaters = [];
+    let data;
+    let panel = ctrl.panel;
+    let pageCount = 0;
+    let formaters = [];
 
     function getTableHeight() {
-      var panelHeight = ctrl.height;
+      let panelHeight = ctrl.height;
 
       if (pageCount > 1) {
         panelHeight -= 26;
@@ -184,7 +165,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     function switchPage(e) {
-      var el = $(e.currentTarget);
+      let el = $(e.currentTarget);
       ctrl.pageIndex = (parseInt(el.text(), 10) - 1);
       renderPanel();
     }
@@ -192,20 +173,20 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     function appendPaginationControls(footerElem) {
       footerElem.empty();
 
-      var pageSize = panel.pageSize || 100;
+      let pageSize = panel.pageSize || 100;
       pageCount = Math.ceil(data.rows.length / pageSize);
       if (pageCount === 1) {
         return;
       }
 
-      var startPage = Math.max(ctrl.pageIndex - 3, 0);
-      var endPage = Math.min(pageCount, startPage + 9);
+      let startPage = Math.max(ctrl.pageIndex - 3, 0);
+      let endPage = Math.min(pageCount, startPage + 9);
 
-      var paginationList = $('<ul></ul>');
+      let paginationList = $('<ul></ul>');
 
-      for (var i = startPage; i < endPage; i++) {
-        var activeClass = i === ctrl.pageIndex ? 'active' : '';
-        var pageLinkElem = $('<li><a class="table-panel-page-link pointer ' + activeClass + '">' + (i + 1) + '</a></li>');
+      for (let i = startPage; i < endPage; i++) {
+        let activeClass = i === ctrl.pageIndex ? 'active' : '';
+        let pageLinkElem = $('<li><a class="table-panel-page-link pointer ' + activeClass + '">' + (i + 1) + '</a></li>');
         paginationList.append(pageLinkElem);
       }
 
@@ -213,10 +194,10 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     function renderPanel() {
-      var panelElem = elem.parents('.panel');
-      var rootElem = elem.find('.table-panel-scroll');
-      var tbodyElem = elem.find('tbody');
-      var footerElem = elem.find('.table-panel-footer');
+      let panelElem = elem.parents('.panel');
+      let rootElem = elem.find('.table-panel-scroll');
+      let tbodyElem = elem.find('tbody');
+      let footerElem = elem.find('.table-panel-footer');
 
       elem.css({'font-size': panel.fontSize});
       panelElem.addClass('table-panel-wrapper');
@@ -229,7 +210,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     elem.on('click', '.table-panel-page-link', switchPage);
 
-    var unbindDestroy = scope.$on('$destroy', function () {
+    let unbindDestroy = scope.$on('$destroy', function () {
       elem.off('click', '.table-panel-page-link');
       unbindDestroy();
     });

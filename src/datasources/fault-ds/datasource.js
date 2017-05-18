@@ -10,6 +10,10 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
+    if (!options.targets || options.targets.length < 1) {
+      return this.q.when({data: []});
+    }
+
     var self = this;
     return this.backendSrv.datasourceRequest({
       url: '/public/plugins/opennms-helm-app/datasources/fault-ds/alarms.json',
@@ -24,7 +28,10 @@ export class OpenNMSFMDatasource {
   toTable(data) {
     var columns = [
       {
-        "text": "ID",
+        "text": "Node Label",
+      },
+      {
+        "text": "Log Message",
       },
       {
         "text": "Description",
@@ -37,6 +44,21 @@ export class OpenNMSFMDatasource {
       },
       {
         "text": "Acked By",
+      },
+      {
+        "text": "Severity",
+      },
+      {
+        "text": "First Event Time",
+      },
+      {
+        "text": "Last Event Time",
+      },
+      {
+        "text": "Event Source",
+      },
+      {
+        "text": "Count",
       }
     ];
 
@@ -44,11 +66,17 @@ export class OpenNMSFMDatasource {
     for (var i = 0; i < data.alarm.length; i++) {
       var alarm = data.alarm[i];
       var row = [
-        alarm.id,
+        alarm.nodeLabel,
+        alarm.logMessage,
         alarm.description,
         alarm.uei,
         alarm.nodeId,
-        alarm.ackUser
+        alarm.ackUser,
+        alarm.severity,
+        alarm.firstEventTime,
+        alarm.lastEventTime,
+        alarm.lastEvent.source,
+        alarm.count
       ];
       row.meta = {
         // Store the alarm for easy access by the panels - may not be necessary

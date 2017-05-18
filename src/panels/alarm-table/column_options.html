@@ -88,6 +88,19 @@
             </div>
         </div>
 
+        <div class="section gf-form-group">
+            <h5 class="section-heading">Display</h5>
+            <div class="gf-form-inline">
+                <div class="gf-form">
+                    <label class="gf-form-label width-8">Width</label>
+                    <input type="text" placeholder="CSS Width" class="gf-form-input width-8" ng-model="style.width" bs-tooltip="'Specify a custom width'" ng-blur="editor.render()" data-min-length=0 data-items=100 ng-model-onblur data-placement="right">
+                </div>
+            </div>
+            <div class="gf-form-inline">
+                <gf-form-switch class="gf-form" label-class="width-8" switch-class="max-width-8" label="Clip" checked="style.clip" on-change="editor.render()"></gf-form-switch>
+            </div>
+        </div>
+
         <div class="clearfix"></div>
 
         <button class="btn btn-danger btn-small" ng-click="editor.removeColumnStyle(style)">
@@ -97,3 +110,4 @@
         <br />
 
     </div>
+</div>

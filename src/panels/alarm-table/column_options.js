@@ -29,6 +29,7 @@ export class ColumnOptionsCtrl {
     ];
     this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
     this.dateFormats = [
+      {text: 'DD MMM HH:mm:ss', value: 'DD MMM HH:mm:ss'},
       {text: 'YYYY-MM-DD HH:mm:ss', value: 'YYYY-MM-DD HH:mm:ss'},
       {text: 'MM/DD/YY h:mm:ss a', value: 'MM/DD/YY h:mm:ss a'},
       {text: 'MMMM D, YYYY LT', value: 'MMMM D, YYYY LT'},
@@ -54,7 +55,7 @@ export class ColumnOptionsCtrl {
   }
 
   addColumnStyle() {
-    var newStyleRule = {
+    let newStyleRule = {
       unit: 'short',
       type: 'number',
       alias: '',
@@ -64,15 +65,17 @@ export class ColumnOptionsCtrl {
       pattern: '',
       dateFormat: 'YYYY-MM-DD HH:mm:ss',
       thresholds: [],
+      width: "",
+      clip: false
     };
 
-    var styles = this.panel.styles;
-    var stylesCount = styles.length;
-    var indexToInsert = stylesCount;
+    let styles = this.panel.styles;
+    let stylesCount = styles.length;
+    let indexToInsert = stylesCount;
 
     // check if last is a catch all rule, then add it before that one
     if (stylesCount > 0) {
-      var last = styles[stylesCount - 1];
+      let last = styles[stylesCount - 1];
       if (last.pattern === '/.*/') {
         indexToInsert = stylesCount - 1;
       }
@@ -87,8 +90,8 @@ export class ColumnOptionsCtrl {
   }
 
   invertColorOrder(index) {
-    var ref = this.panel.styles[index].colors;
-    var copy = ref[0];
+    let ref = this.panel.styles[index].colors;
+    let copy = ref[0];
     ref[0] = ref[2];
     ref[2] = copy;
     this.panelCtrl.render();

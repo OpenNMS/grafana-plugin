@@ -30,7 +30,7 @@ export class TableRenderer {
       for (let i = 0; i < this.panel.styles.length; i++) {
         let style = this.panel.styles[i];
 
-        var regex = kbn.stringToJsRegex(style.pattern);
+        let regex = kbn.stringToJsRegex(style.pattern);
         if (column.text.match(regex)) {
           column.style = style;
 
@@ -46,12 +46,12 @@ export class TableRenderer {
     }
   }
 
-  getColorForValue(value, style) {
+  static getColorForValue(value, style) {
     if (!style.thresholds) {
       return null;
     }
 
-    for (var i = style.thresholds.length; i > 0; i--) {
+    for (let i = style.thresholds.length; i > 0; i--) {
       if (value >= style.thresholds[i - 1]) {
         return style.colors[i];
       }
@@ -95,7 +95,7 @@ export class TableRenderer {
         if (_.isArray(v)) {
           v = v[0];
         }
-        var date = moment(v);
+        let date = moment(v);
         if (this.isUtc) {
           date = date.utc();
         }
@@ -116,7 +116,7 @@ export class TableRenderer {
         }
 
         if (column.style.colorMode) {
-          this.colorState[column.style.colorMode] = this.getColorForValue(v, column.style);
+          this.colorState[column.style.colorMode] = TableRenderer.getColorForValue(v, column.style);
         }
 
         return valueFormatter(v, column.style.decimals, null);
@@ -134,44 +134,71 @@ export class TableRenderer {
 
   renderCell(columnIndex, value, addWidthHack = false) {
     value = this.formatColumnValue(columnIndex, value);
-    var style = '';
+    let column = this.table.columns[columnIndex];
+    let styles = {};
+    let classes = [];
+
     if (this.colorState.cell) {
-      style = ' style="background-color:' + this.colorState.cell + ';color: white"';
+      styles['background-color'] = this.colorState.cell;
+      styles['color'] = 'white';
       this.colorState.cell = null;
     } else if (this.colorState.value) {
-      style = ' style="color:' + this.colorState.value + '"';
+      styles['color'] = this.colorState.value;
       this.colorState.value = null;
     }
 
     // because of the fixed table headers css only solution
     // there is an issue if header cell is wider the cell
     // this hack adds header content to cell (not visible)
-    var widthHack = '';
+    let widthHack = '';
     if (addWidthHack) {
-      widthHack = '<div class="table-panel-width-hack">' + this.table.columns[columnIndex].title + '</div>';
+      widthHack = '<div class="table-panel-width-hack">' + column.title + '</div>';
     }
 
     if (value === undefined) {
-      style = ' style="display:none;"';
-      this.table.columns[columnIndex].hidden = true;
+      styles['display'] = 'none';
+      column.hidden = true;
     } else {
-      this.table.columns[columnIndex].hidden = false;
+      column.hidden = false;
     }
 
-    return '<td' + style + '>' + value + widthHack + '</td>';
+    if (column.style.width) {
+      styles['width'] = column.style.width;
+      if (column.style.clip) {
+        styles['max-width'] = column.style.width;
+        styles['white-space'] = 'nowrap';
+      }
+    }
+
+    if (column.style.clip) {
+      styles['overflow'] = 'hidden';
+      styles['text-overflow'] = 'ellipsis';
+    }
+
+    let stylesAsString = 'style="' + _.reduce(_.map(styles, function(val, key){ return key + ':' + val; }),
+      (memo, style) => {
+        if (memo.length > 0) {
+          return memo + '; ' + style;
+        } else {
+          return style;
+        }
+      }, '') + '"';
+
+    return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
   }
 
   render(page) {
     let pageSize = this.panel.pageSize || 100;
     let startPos = page * pageSize;
     let endPos = Math.min(startPos + pageSize, this.table.rows.length);
-    var html = "";
+    let html = "";
 
-    for (var y = startPos; y < endPos; y++) {
+    for (let y = startPos; y < endPos; y++) {
       let row = this.table.rows[y];
       let cellHtml = '';
       let rowStyle = '';
-      for (var i = 0; i < this.table.columns.length; i++) {
+      let rowClass = '';
+      for (let i = 0; i < this.table.columns.length; i++) {
         cellHtml += this.renderCell(i, row[i], y === startPos);
       }
 
@@ -180,7 +207,15 @@ export class TableRenderer {
         this.colorState.row = null;
       }
 
-      html += '<tr ' + rowStyle + '>' + cellHtml + '</tr>';
+      if (this.panel.severity) {
+        // What is the value of the severity in the row?
+        let idx = _.findIndex(this.table.columns, (col) => col.text === "Severity");
+        if (idx >= 0) {
+          rowClass = ' class="' + row[idx].trim().toLowerCase() + '"';
+        }
+      }
+
+      html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
     }
 
     return html;
@@ -189,10 +224,10 @@ export class TableRenderer {
   render_values() {
     let rows = [];
 
-    for (var y = 0; y < this.table.rows.length; y++) {
+    for (let y = 0; y < this.table.rows.length; y++) {
       let row = this.table.rows[y];
       let new_row = [];
-      for (var i = 0; i < this.table.columns.length; i++) {
+      for (let i = 0; i < this.table.columns.length; i++) {
         new_row.push(this.formatColumnValue(i, row[i]));
       }
       rows.push(new_row);

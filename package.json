@@ -12,7 +12,7 @@
     "url": "git+https://github.com/OpenNMS/grafana-opennms-helm-app.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/OpenNMS/grafana-opennms-helm-app/issues"
   },
