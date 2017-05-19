@@ -10,10 +10,6 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
-    if (!options.targets || options.targets.length < 1) {
-      return this.q.when({data: []});
-    }
-
     var self = this;
     return this.backendSrv.datasourceRequest({
       url: '/public/plugins/opennms-helm-app/datasources/fault-ds/alarms.json',
