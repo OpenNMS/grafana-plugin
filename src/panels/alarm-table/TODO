@@ -1,3 +1,4 @@
+* Add support for multiple datasources
 * Update the dashboard after an action that changes an alarm is performed (other panels may be affected too)
 * Properly escape quotes in renderer.js
 * Add icons for the severities

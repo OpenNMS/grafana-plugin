@@ -1,0 +1,13 @@
+{
+  "name": "OpenNMS Mock FM Datasource",
+  "id": "opennms-helm-mock-fm-ds",
+  "type": "datasource",
+
+  "partials": {
+    "config": "datasources/mock-fault-ds/partials/config.html"
+  },
+
+  "metrics": true,
+  "annotations": false
+
+}

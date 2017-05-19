@@ -1,8 +1,8 @@
-import {Datasource} from "../datasources/fault-ds/module";
+import {Datasource} from "../datasources/mock-fault-ds/module";
 import Q from "q";
 
 describe('OpenNMSFMDatasource', function() {
-  var ctx = {};
+  let ctx = {};
 
   beforeEach(function() {
     ctx.$q = Q;

@@ -99,14 +99,7 @@ export class OpenNMSFMDatasource {
   }
 
   testDatasource() {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/info',
-      method: 'GET'
-    }).then(response => {
-      if (response.status === 200) {
-        return {status: "success", message: "Data source is working", title: "Success"};
-      }
-    });
+    return this.q.when({status: "success", message: "Data source is working", title: "Success"});
   }
 
   annotationQuery(options) {
