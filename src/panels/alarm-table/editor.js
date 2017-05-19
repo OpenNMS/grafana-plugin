@@ -22,7 +22,6 @@ export class TablePanelEditorCtrl {
 
   getColumnOptions() {
     if (!this.panelCtrl.dataRaw) {
-
       return this.$q.when([]);
     }
     let columns = this.transformers[this.panel.transform].getColumns(this.panelCtrl.dataRaw);

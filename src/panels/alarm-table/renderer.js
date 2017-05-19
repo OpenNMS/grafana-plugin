@@ -187,6 +187,32 @@ export class TableRenderer {
     return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
   }
 
+  static getIconForSeverity(severity) {
+    let icon = null; // none
+    switch(severity) {
+      case 'indeterminate':
+        icon = 'ion-help';
+        break;
+      case 'warning':
+        icon = 'ion-alert-circled';
+        break;
+      case 'minor':
+        icon = 'ion-flash';
+        break;
+      case 'major':
+        icon = 'ion-flame';
+        break;
+      case 'critical':
+        icon = 'ion-nuclear';
+        break;
+      case 'normal':
+        // no icon
+        break;
+    }
+    return icon;
+  }
+
+
   render(page) {
     let pageSize = this.panel.pageSize || 100;
     let startPos = page * pageSize;
@@ -198,13 +224,23 @@ export class TableRenderer {
       let cellHtml = '';
       let rowStyle = '';
       let rowClass = '';
-      for (let i = 0; i < this.table.columns.length; i++) {
-        cellHtml += this.renderCell(i, row[i], y === startPos);
-      }
 
       // FIXME: Sources with ' in the name will be problematic
       let source = row.meta.source;
       let alarm = row.meta.alarm;
+      let severity = alarm.severity.trim().toLowerCase();
+
+      if (this.panel.severityIcons) {
+        let icon = TableRenderer.getIconForSeverity(severity);
+        if (icon) {
+          cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
+        }
+      }
+
+      for (let i = 0; i < this.table.columns.length; i++) {
+        cellHtml += this.renderCell(i, row[i], y === startPos);
+      }
+
       if (this.panel.actions) {
         cellHtml += `<td>
                     <div class="gf-form">

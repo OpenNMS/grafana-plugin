@@ -1,3 +1,8 @@
+.severity-icon {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
 .severity .normal {
     background-color: #86B15B;
     color: white;

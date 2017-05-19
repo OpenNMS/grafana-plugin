@@ -8,6 +8,7 @@ import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
 import {TableModel} from './table_model';
 import '../css/styles.css!'
+import '../css/ionicons.css!'
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
