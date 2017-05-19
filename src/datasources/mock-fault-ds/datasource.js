@@ -12,7 +12,7 @@ export class OpenNMSFMDatasource {
   query(options) {
     var self = this;
     return this.backendSrv.datasourceRequest({
-      url: '/public/plugins/opennms-helm-app/datasources/fault-ds/alarms.json',
+      url: '/public/plugins/opennms-helm-app/datasources/mock-fault-ds/alarms.json',
       method: 'GET'
     }).then(response => {
       if (response.status === 200) {
