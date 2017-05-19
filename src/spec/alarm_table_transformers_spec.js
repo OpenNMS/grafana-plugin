@@ -23,21 +23,28 @@ describe('Table transformer', function() {
     it('should return all columns if none are specified in the panel definition', function() {
       let table = new TableModel();
       table.columns.push("A");
-      table.rows.push([1]);
+
+      let row = [1];
+      table.rows.push(row);
 
       let panel = {};
       let model = new TableModel();
 
       transformer.transform([table], panel, model);
-      expect(model.columns).to.have.length(1);
-      expect(model.rows).to.have.length(1);
-      expect(model.rows[0]).to.have.length(1);
+      expect(model.columns).to.eql(table.columns);
+      expect(model.rows).to.eql(table.rows);
     });
 
     it('should filter the columns if one or more are specified in the panel definition', function() {
       let table = new TableModel();
       table.columns.push('A', 'B', 'C');
-      table.rows.push([1,2,3]);
+
+      let actualRow = [1,2,3];
+      let metadata = {
+        'alarm': 'abc'
+      };
+      actualRow.meta = metadata;
+      table.rows.push(actualRow);
 
       let panel = {columns: [{
         'text': 'B'
@@ -46,8 +53,13 @@ describe('Table transformer', function() {
 
       transformer.transform([table], panel, model);
 
+      // The meta-data that was on the original row should also be present on the
+      // transformed row
+      let expectedRow = [2];
+      expectedRow.meta = metadata;
+
       expect(model.columns).to.eql(panel.columns);
-      expect(model.rows).to.eql([[2]]);
+      expect(model.rows).to.eql([expectedRow]);
     });
 
     it('should re-order the columns according the order specified in the panel definition', function() {

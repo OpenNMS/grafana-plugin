@@ -79,8 +79,12 @@ export class OpenNMSFMDatasource {
         alarm.count
       ];
       row.meta = {
-        // Store the alarm for easy access by the panels - may not be necessary
-        'alarm': alarm
+        // Store the alarm for easy access by the panels
+        'alarm': alarm,
+        // Store the name of the data-source as part of the data so that
+        // the panel can grab an instance of the DS to perform actions
+        // on the alarms
+        'source': this.name
       };
       rows.push(row);
     }
@@ -89,11 +93,7 @@ export class OpenNMSFMDatasource {
       {
         "columns": columns,
         "rows": rows,
-        "type": "table",
-        // Store the name of the data-source as part of the data so that
-        // the panel can grab an instance of the DS to perform actions
-        // on the alarms
-        "source": this.name
+        "type": "table"
       }
     ];
   }
@@ -116,4 +116,33 @@ export class OpenNMSFMDatasource {
   metricFindQuery(query) {
     return this.q.when({});
   }
+
+  acknowledgeAlarm(alarmId) {
+    console.log("Ack", alarmId);
+  }
+
+  unacknowledgeAlarm(alarmId) {
+    console.log("Unack", alarmId);
+  }
+
+  clearAlarm(alarmId) {
+    console.log("Clear", alarmId);
+  }
+
+  escalateAlarm(alarmId) {
+    console.log("Escalate", alarmId);
+  }
+
+  createTicketForAlarm(alarmId) {
+    console.log("Create ticket", alarmId);
+  }
+
+  updateTicketForAlarm(alarmId) {
+    console.log("Update ticket", alarmId);
+  }
+
+  closeTicketForAlarm(alarmId) {
+    console.log("Close ticket", alarmId);
+  }
+
 }

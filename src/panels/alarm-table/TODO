@@ -1,0 +1,7 @@
+* Update the dashboard after an action that changes an alarm is performed (other panels may be affected too)
+* Properly escape quotes in renderer.js
+* Add icons for the severities
+* Reduce the size of the actions dropdown - the row height diminishes significantly when these are toggled
+
+Nice to haves:
+* Drag and drop the column names for easy reordering

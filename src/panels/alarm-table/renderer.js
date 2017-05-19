@@ -202,17 +202,51 @@ export class TableRenderer {
         cellHtml += this.renderCell(i, row[i], y === startPos);
       }
 
+      // FIXME: Sources with ' in the name will be problematic
+      let source = row.meta.source;
+      let alarm = row.meta.alarm;
+      if (this.panel.actions) {
+        cellHtml += `<td>
+                    <div class="gf-form">
+                        <label class="gf-form-label dropdown">
+                            <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.acknowledgeAlarm('${source}', ${alarm.id})">Acknowledge</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.unacknowledgeAlarm('${source}', ${alarm.id})">Unacknowledge</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.clearAlarm('${source}', ${alarm.id})">Clear</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.escalateAlarm('${source}', ${alarm.id})">Escalate</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.createTicketForAlarm('${source}', ${alarm.id})">Create Ticket</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.updateTicketForAlarm('${source}', ${alarm.id})">Update Ticket</a>
+                                </li>
+                                <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.closeTicketForAlarm('${source}', ${alarm.id})">Close Ticket</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </div>
+                </td>`;
+      }
+
       if (this.colorState.row) {
         rowStyle = ' style="background-color:' + this.colorState.row + ';color: white"';
         this.colorState.row = null;
       }
 
       if (this.panel.severity) {
-        // What is the value of the severity in the row?
-        let idx = _.findIndex(this.table.columns, (col) => col.text === "Severity");
-        if (idx >= 0) {
-          rowClass = ' class="' + row[idx].trim().toLowerCase() + '"';
-        }
+        rowClass = ' class="' + alarm.severity.trim().toLowerCase() + '"';
       }
 
       html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';

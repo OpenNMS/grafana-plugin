@@ -59,6 +59,10 @@ transformers['table'] = {
         for (let l = 0; l < panel.columns.length; l++) {
           row.push(cellsByPanelColumnIndex[l][k]);
         }
+        // Preserve the meta-data, if any
+        if (data[0].rows[k].meta !== undefined) {
+          row.meta = data[0].rows[k].meta;
+        }
         model.rows.push(row);
       }
     } else {
