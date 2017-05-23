@@ -1,22 +1,50 @@
-<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
-  <div class="gf-form-inline">
-    <div class="gf-form gf-form--grow" ng-if="ctrl.target.rawQuery">
-      <textarea class="gf-form-input" rows="5" ng-model="ctrl.target.target" spellcheck="false" ng-blur="ctrl.onChangeInternal()" />
-    </div>
-  </div>
+<query-editor-row query-ctrl="ctrl" can-collapse="true">
 
-  <div class="gf-form-inline">
-    <div class="gf-form" ng-if="!ctrl.target.rawQuery">
-      <h1>hello</h1>
-    </div>
-    <div class="gf-form gf-form--grow">
-      <div class="gf-form-label gf-form-label--grow"></div>
+  <!--<div class="gf-form-inline">-->
+    <!--<div class="gf-form">-->
+      <!--<label class="gf-form-label query-keyword width-7">Query</label>-->
+      <!--<input type="text" class="gf-form-input" ng-model="ctrl.target.query" spellcheck='false' placeholder="Lucene query" ng-blur="ctrl.refresh()" />-->
+    <!--</div>-->
+    <!--<div class="gf-form max-width-15">-->
+      <!--<label class="gf-form-label query-keyword">Alias</label>-->
+      <!--<input type="text" class="gf-form-input" ng-model="ctrl.target.alias" spellcheck='false' placeholder="alias patterns" ng-blur="ctrl.refresh()" />-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <div ng-repeat="restriction in ctrl.target.restrictions" class="gf-form">
+    <div class="gf-form">
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input" ng-options="selected.label for selected in ctrl.fields" ng-model="restriction.field" ng-change="ctrl.updateComparators(restriction)">
+          <option value="" disabled selected>select field</option>
+        </select>
+      </div>
     </div>
     <div class="gf-form">
-      <div class="gf-form-label query-keyword">Format</div>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input" ng-model="ctrl.target.type" ng-options="f as f for f in ['table', 'timeserie']"></select>
+        <select class="gf-form-input" ng-model="restriction.comparator" ng-show="restriction.field.name != 'select field'">
+          <option value="" disabled selected>select comparator</option>
+          <option ng-repeat="option in ctrl.comparators[restriction.field.type]" value="{{option}}">{{option}}</option>
+        </select>
       </div>
+      <div ng-show="restriction.field.name == 'select field'">BLA SELECT FIELD FIRST BLA</div>
+    </div>
+    <div class="gf-form">
+      <input type="text" class="gf-form-input" ng-model="restriction.value"/>
+
+      <label class="gf-form-label" ng-show="ctrl.isShowSelectionWindow(restriction)">
+        <a class="pointer" ng-click="ctrl.showSelectionWindow(restriction)"><i class="fa fa-bars"></i></a>
+      </label>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label">
+        <a class="pointer" ng-click="ctrl.addRestriction()"><i class="fa fa-plus"></i></a>
+      </label>
+      <label class="gf-form-label" ng-if="!ctrl.isSingleRestriction()">
+        <a class="pointer" ng-click="ctrl.removeRestriction(restriction)"><i class="fa fa-minus"></i></a>
+      </label>
+    </div>
+    <div class="gf-form">
+      <span class="gf-form-label">Expression: </span> {{restriction.field.name}} {{restriction.comparator}} {{restriction.value}}
     </div>
   </div>
 </query-editor-row>

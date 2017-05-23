@@ -1,6 +1,7 @@
 import {OpenNMSFMDatasource} from './datasource';
 import {OpenNMSFMDatasourceQueryCtrl} from './query_ctrl';
 
+
 class OpenNMSFMDatasourceConfigCtrl {}
 OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/fault-ds/partials/config.html';
 
