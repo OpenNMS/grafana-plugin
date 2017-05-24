@@ -11,40 +11,53 @@
     <!--</div>-->
   <!--</div>-->
 
-  <div ng-repeat="restriction in ctrl.target.restrictions" class="gf-form">
-    <div class="gf-form">
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input" ng-options="selected.label for selected in ctrl.fields" ng-model="restriction.field" ng-change="ctrl.updateComparators(restriction)">
-          <option value="" disabled selected>select field</option>
-        </select>
-      </div>
-    </div>
-    <div class="gf-form">
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input" ng-model="restriction.comparator" ng-show="restriction.field.name != 'select field'">
-          <option value="" disabled selected>select comparator</option>
-          <option ng-repeat="option in ctrl.comparators[restriction.field.type]" value="{{option}}">{{option}}</option>
-        </select>
-      </div>
-      <div ng-show="restriction.field.name == 'select field'">BLA SELECT FIELD FIRST BLA</div>
-    </div>
-    <div class="gf-form">
-      <input type="text" class="gf-form-input" ng-model="restriction.value"/>
 
-      <label class="gf-form-label" ng-show="ctrl.isShowSelectionWindow(restriction)">
-        <a class="pointer" ng-click="ctrl.showSelectionWindow(restriction)"><i class="fa fa-bars"></i></a>
-      </label>
-    </div>
-    <div class="gf-form">
-      <label class="gf-form-label">
-        <a class="pointer" ng-click="ctrl.addRestriction()"><i class="fa fa-plus"></i></a>
-      </label>
-      <label class="gf-form-label" ng-if="!ctrl.isSingleRestriction()">
-        <a class="pointer" ng-click="ctrl.removeRestriction(restriction)"><i class="fa fa-minus"></i></a>
-      </label>
-    </div>
-    <div class="gf-form">
-      <span class="gf-form-label">Expression: </span> {{restriction.field.name}} {{restriction.comparator}} {{restriction.value}}
-    </div>
+  <div ng-repeat="segment in ctrl.restrictionSegments" class="gf-form">
+      <metric-segment segment="segment" get-options="ctrl.getSuggestions(segment, $index)" on-change="ctrl.segmentUpdated(segment, $index)"></metric-segment>
+
+      <!--<metric-segment segment="segment"></metric-segment>-->
+
+      <!--this.plus = this.newPlusButton();-->
+      <!--this.selectTag = this.newSelectTagValue();-->
+      <!--this.selectMetric = this.newSelectMetric();-->
+      <!--this.segment = this.newSegment();-->
+
+    <!--</div>-->
+
+
+    <!--<div class="gf-form">-->
+      <!--<div class="gf-form-select-wrapper">-->
+        <!--<select class="gf-form-input" ng-options="selected.label for selected in ctrl.fields" ng-model="restriction.field" ng-change="ctrl.updateComparators(restriction)">-->
+          <!--<option value="" disabled selected>select field</option>-->
+        <!--</select>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<div class="gf-form">-->
+      <!--<div class="gf-form-select-wrapper">-->
+        <!--<select class="gf-form-input" ng-model="restriction.comparator" ng-show="restriction.field.name != 'select field'">-->
+          <!--<option value="" disabled selected>select comparator</option>-->
+          <!--<option ng-repeat="option in ctrl.comparators[restriction.field.type]" value="{{option}}">{{option}}</option>-->
+        <!--</select>-->
+      <!--</div>-->
+      <!--<div ng-show="restriction.field.name == 'select field'">BLA SELECT FIELD FIRST BLA</div>-->
+    <!--</div>-->
+    <!--<div class="gf-form">-->
+      <!--<input type="text" class="gf-form-input" ng-model="restriction.value"/>-->
+
+      <!--<label class="gf-form-label" ng-show="ctrl.isShowSelectionWindow(restriction)">-->
+        <!--<a class="pointer" ng-click="ctrl.showSelectionWindow(restriction)"><i class="fa fa-bars"></i></a>-->
+      <!--</label>-->
+    <!--</div>-->
+    <!--<div class="gf-form">-->
+      <!--<label class="gf-form-label">-->
+        <!--<a class="pointer" ng-click="ctrl.addRestriction()"><i class="fa fa-plus"></i></a>-->
+      <!--</label>-->
+      <!--<label class="gf-form-label" ng-if="!ctrl.isSingleRestriction()">-->
+        <!--<a class="pointer" ng-click="ctrl.removeRestriction(restriction)"><i class="fa fa-minus"></i></a>-->
+      <!--</label>-->
+    <!--</div>-->
+    <!--<div class="gf-form">-->
+      <!--<span class="gf-form-label">Expression: </span> {{restriction.field.name}} {{restriction.comparator}} {{restriction.value}}-->
+    <!--</div>-->
   </div>
 </query-editor-row>
