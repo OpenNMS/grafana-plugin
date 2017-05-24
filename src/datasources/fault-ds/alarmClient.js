@@ -9,6 +9,19 @@ export class AlarmClientMock {
         this.$q = $q;
     }
 
+    findAlarms(query) {
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/rest/alarms',
+            method: 'GET',
+            params : {} // TODO MVR convert query to valid query
+        }).then(response => {
+            if (response.status === 200) {
+                return response.data;
+            }
+        })
+    }
+
     findNodes(query) {
         var self = this;
         return this.backendSrv.datasourceRequest({
@@ -18,8 +31,8 @@ export class AlarmClientMock {
                     limit: query.limit || self.searchLimit,
                     match: 'any',
                     comparator: 'ilike',
-                    orderBy: 'id',
-                    order: 'asc',
+                    orderBy: query.orderBy || 'id',
+                    order: query.order || 'asc',
                     label: '%' + query.query + '%',
                     sysName: '%' + query.query + '%',
                     'ipInterface.ipAddress': '%' + query.query + '%',
@@ -36,19 +49,66 @@ export class AlarmClientMock {
     }
 
     findUsers(query) {
-        return this.$q.when([]);
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/rest/users',
+            method: 'GET',
+            params: {
+                limit: query.limit || self.searchLimit, // TODO MVR this is not implemented on the user rest service
+            }
+        }).then(function (results) {
+            return {
+                'count': results.data.count,
+                'totalCount': results.data.totalCount,
+                'rows': results.data.user
+            };
+        });
     }
 
     findLocations(query) {
-        return this.$q.when([]);
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/api/v2/monitoringLocations',
+            method: 'GET',
+            params: {
+                limit: query.limit || self.searchLimit,
+            }
+        }).then(function (results) {
+            return {
+                'count': results.data.count,
+                'totalCount': results.data.totalCount,
+                'rows': results.data.location
+            };
+        });
     }
 
     findCategories(query) {
-        return this.$q.when([]);
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/rest/categories',
+            method: 'GET',
+            params: {
+                limit: query.limit || self.searchLimit, // TODO MVR this is not implemented on the rest service
+            }
+        }).then(function (results) {
+            return {
+                'count': results.data.count,
+                'totalCount': results.data.totalCount,
+                'rows': results.data.category
+            };
+        });
     }
 
     findSeverities(query) {
-        return this.$q.when([]);
+        return this.$q.when([
+            {id: 1, label: 'Indeterminate'},
+            {id: 2, label: 'Cleared'},
+            {id: 3, label: 'Normal'},
+            {id: 4, label: 'Warning'},
+            {id: 5, label: 'Minor'},
+            {id: 6, label: 'Major'},
+            {id: 7, label: 'Critical'},
+        ]);
     }
 
     getAttributes() {
@@ -77,6 +137,7 @@ export class AlarmClientMock {
             { name: "alarmAcktime", label: "Acknowledged At", type: "date"},
             { name: "alarmAckUser", label: "Acknowledged User", type: "user"},
             { name: "clearKey", label: "Clear Key", type: "string"},
+            { name: "category", label: "Category", type: "category"}
             // TODO MVR add more ...
             // TODO MVR add category
         ];

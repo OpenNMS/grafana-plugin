@@ -4,18 +4,18 @@ import _ from 'lodash';
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
-  constructor($rootScope, $scope, $injector, $q, $modal, uiSegmentSrv)  {
+  constructor($scope, $injector, $q,uiSegmentSrv)  {
     super($scope, $injector);
     this.$q = $q;
-    this.$modal = $modal;
     this.$scope = $scope;
-    this.$rootScope  = $rootScope;
     this.uiSegmentSrv = uiSegmentSrv;
 
     // define model
     this.target.restrictions = this.target.restrictions || [];
-    this.restrictionSegments = [];
+    this.restrictionGroupSegments = [];
+
     for (let restriction of this.target.restrictions) {
+        let restrictionSegments = [];
       // if (!restriction.comparator) {
       //     if (/^\/.*\/$/.test(restriction.value)) {
       //         restriction.operator = "=~"; // TODO MVR this is not supported by our datasource
@@ -28,9 +28,11 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
       //     this.tagSegments.push(uiSegmentSrv.newCondition(restriction.condition));
       // }
 
-      this.restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
-      this.restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
-      this.restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
+      restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
+      restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
+      restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
+
+      this.restrictionGroupSegments.push(restrictionSegments);
     }
 
     this.addPlusButtonIfRequired();
@@ -47,15 +49,22 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
   }
 
   addPlusButtonIfRequired() {
-    let count = this.restrictionSegments.length;
-    let lastSegment = this.restrictionSegments[Math.max(count-1, 0)];
-
+      var groupCount = this.restrictionGroupSegments.length;
+    if (groupCount == 0) {
+        this.restrictionGroupSegments.push([]);
+    }
+    let groupIndex = Math.max(groupCount-1, 0);
+    let group = this.restrictionGroupSegments[groupIndex];
+    let segmentIndex = Math.max(group.length - 1, 0);
+    let lastSegment = group[segmentIndex];
     if (!lastSegment || lastSegment.type !== 'plus-button') {
-      this.restrictionSegments.push(this.uiSegmentSrv.newPlusButton());
+        group.push(this.uiSegmentSrv.newPlusButton());
     }
   }
 
-  getSuggestions(segment, index) {
+  getSuggestions(group, segment, index) {
+      var restrictionSegments = group;
+
       let that = this;
       // attribute input
       if (segment.type == 'key' || segment.type == 'plus-button') {
@@ -71,7 +80,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
       // comparator input
       if (segment.type == 'operator') {
-          let attributeSegment = this.restrictionSegments[index-1];
+          let attributeSegment = restrictionSegments[index-1];
           return this.datasource.metricFindQuery({'find': 'comparators', 'attribute': attributeSegment.value})
             .then(function(comparators) {
                 return _.map(comparators, function(comparator) {
@@ -83,7 +92,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
       // value input
       if (segment.type == 'value') {
-          let attributeSegment = this.restrictionSegments[index-2];
+          let attributeSegment = restrictionSegments[index-2];
           let theQuery = {
               'find': 'values',
               'attribute': attributeSegment.value,
@@ -101,15 +110,28 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
       return this.$q.when([]);
   }
 
-  segmentUpdated(segment, index) {
+  segmentUpdated(group, segment, index) {
+      var restrictionSegments = group;
+
       if (segment.type === 'plus-button') {
           // make the plus button an actual attribute input
           segment.type = 'key';
           segment.cssClass = 'query-segment-key';
 
-          // Add comparator and value
-          this.restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
-          this.restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
+          // remove plus button from current group
+          group.splice(group.indexOf(segment), 1);
+
+          // create new group
+          this.restrictionGroupSegments.push([]);
+          restrictionSegments = this.restrictionGroupSegments[this.restrictionGroupSegments.length - 1];
+
+          // Add key, comparator and value
+          restrictionSegments.push(segment);
+          restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
+          restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
+
+          // reset index
+          index = 0;
       }
       if (segment.type == 'value') {
           segment.fake = false;
@@ -118,89 +140,51 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
       this.updateTargetRestrictions();
 
       // Ensure that we always have a plus button
-      if ((index + 1) === this.restrictionSegments.length) {
-          this.restrictionSegments.push(this.uiSegmentSrv.newPlusButton());
+      if ((index + 1) === restrictionSegments.length) {
+          restrictionSegments.push(this.uiSegmentSrv.newPlusButton());
       }
   }
 
   updateTargetRestrictions() {
-      var restrictionSegments = _.filter(this.restrictionSegments, function(segment) {
-          return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false)
-      });
       var restrictions = [];
-      if (restrictionSegments.length > 0 && restrictionSegments.length % 3 == 0) {
-          _.each(restrictionSegments, (segment, index) => {
-              var restrictionIndex = Math.floor(index / 3);
-              if (segment.type === 'key') {
-                  restrictions.push({});
-                  restrictions[restrictionIndex].attribute = segment.value;
-              } else if (segment.type === 'value') {
-                  restrictions[restrictionIndex].value = segment.value;
-              } else if (segment.type === 'operator') {
-                  restrictions[restrictionIndex].comparator = segment.value;
-              }
+      var restrictionGroupSegments = this.restrictionGroupSegments;
+      _.each(restrictionGroupSegments, function(eachGroup, groupIndex) {
+          var restrictionSegments = _.filter(eachGroup, function(segment) {
+              return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false)
           });
-      }
+          if (restrictionSegments.length > 0 && restrictionSegments.length % 3 == 0) {
+              _.each(restrictionSegments, (segment, segmentIndex) => {
+                  if (segment.type === 'key') {
+                      restrictions.push({});
+                      restrictions[groupIndex].attribute = segment.value;
+                  } else if (segment.type === 'value') {
+                      restrictions[groupIndex].value = segment.value;
+                  } else if (segment.type === 'operator') {
+                      restrictions[groupIndex].comparator = segment.value;
+                  }
+              });
+          }
+      });
+
       this.target.restrictions = restrictions;
       this.panelCtrl.refresh()
 
   }
 
-  getCollapsedText() {
-    if (this.target.restrictions.length == 0) {
-      return "query all alarms"
+    getCollapsedText() {
+        let query = "select all alarms";
+        if (this.target.restrictions.length == 0) {
+            return query;
+        }
+        let restrictionText = this.target.restrictions.map(this.convert).join(" AND ");
+
+        return query + " WHERE " + restrictionText;
     }
-
-    if (this.target.restrictions.length == 1) {
-      return this.convert(this.target.restrictions[0]);
-    }
-
-    let that = this;
-    let collapsedText = this.target.restrictions.map(function(restriction) {
-      return "(" + that.convert(restriction) + ")"
-    }).join(" AND ");
-
-    return collapsedText;
-  }
 
   convert(restriction) {
     // var attribute = this.alarmClient.findAttribute(restriction.attribute);
     // let theValue = attribute.type === 'number' ? restriction.value : "'" + restriction.value + "'";
     return restriction.attribute + " " + restriction.comparator + " " + restriction.value;
-  }
-
-  isSingleRestriction() {
-    return this.target.restrictions.length == 1;
-  }
-
-  isLast(restriction) {
-      let index = this.target.restrictions.indexOf(restriction);
-      if (index >= 0) {
-        return index == this.target.restrictions.length - 1;
-      }
-      return false;
-  }
-
-  addRestriction() {
-    let index = this.target.restrictions.length;
-    let newRestriction = {
-        field: {
-            name: 'select field',
-            description: 'Please select a field',
-            type: 'undefined',
-        },
-        comparator: 'select comparator',
-        value: ''
-
-    };
-    this.target.restrictions.splice(index, 0, newRestriction);
-  }
-
-  removeRestriction(restriction) {
-    let index = this.target.restrictions.indexOf(restriction);
-    if (index >= 0) {
-      this.target.restrictions.splice(index, 1);
-    }
   }
 
   handleQueryError(err) {

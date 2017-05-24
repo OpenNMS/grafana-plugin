@@ -16,13 +16,9 @@ export class OpenNMSFMDatasource {
 
   query(options) {
     var self = this;
-    return this.backendSrv.datasourceRequest({
-      url: '/public/plugins/opennms-helm-app/datasources/fault-ds/alarms.json',
-      method: 'GET'
-    }).then(response => {
-      if (response.status === 200) {
-        return {data: self.toTable(response.data)};
-      }
+    return this.alarmClient.findAlarms(options).then(function(data) {
+        console.log(data);
+        return {data: self.toTable(data)};
     });
   }
 
@@ -58,11 +54,20 @@ export class OpenNMSFMDatasource {
     return this.q.when([]);
   }
 
+  // TODO MVR revisit this and figure out if value/text can be set on the segment to have an id and a label set?!
   searchForValues(query) {
       let attribute = this.alarmClient.findAttribute(query.attribute) || {};
       switch (attribute.type) {
           case 'user':
-              return this.alarmClient.findUsers({query: query.query});
+              return this.alarmClient.findUsers({query: query.query})
+                  .then(function(data) {
+                      return _.map(data.rows, function(user) {
+                          return {
+                              id: user['user-id'],
+                              label: user['full-name']
+                          };
+                      });
+                  });
           case 'node':
               return this.alarmClient.findNodes({query: query.query})
                   .then(function(data) {
@@ -74,11 +79,35 @@ export class OpenNMSFMDatasource {
                       });
                   });
           case 'category':
-              return this.alarmClient.findCategories({query: query.query});
+              return this.alarmClient.findCategories({query: query.query})
+                  .then(function(data) {
+                      return _.map(data.rows, function(category) {
+                          return {
+                              id: category.id,
+                              label: category.name
+                          };
+                      })
+                  });
           case 'location':
-              return this.alarmClient.findLocations({query: query.query});
+              return this.alarmClient.findLocations({query: query.query})
+                  .then(function(data) {
+                      return _.map(data.rows, function(location) {
+                          return {
+                              id: location['location-name'],
+                              label: location['location-name']
+                          };
+                      })
+                  });
           case 'severity':
-              return this.alarmClient.findSeverities({query: query.query});
+              return this.alarmClient.findSeverities({query: query.query})
+                  .then(function(data) {
+                      return _.map(data, function(severity) {
+                          return {
+                              id: severity.id,
+                              label: severity.label
+                          }
+                      })
+                  });
       }
       return this.q.when([]);
   }
