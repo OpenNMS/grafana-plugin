@@ -1,6 +1,7 @@
 import {QueryCtrl} from 'app/plugins/sdk';
 import './css/query-editor.css!'
 import _ from 'lodash';
+import {AlarmQuery} from './alarm_query';
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
@@ -11,32 +12,19 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
 
     // define model
-    this.target.restrictions = this.target.restrictions || [];
+    this.target.restrictions = [];
     this.restrictionGroupSegments = [];
 
     for (let restriction of this.target.restrictions) {
-        let restrictionSegments = [];
-      // if (!restriction.comparator) {
-      //     if (/^\/.*\/$/.test(restriction.value)) {
-      //         restriction.operator = "=~"; // TODO MVR this is not supported by our datasource
-      //     } else {
-      //         restriction.operator = '=';
-      //     }
-      // }
-
-      // if (restriction.condition) {
-      //     this.tagSegments.push(uiSegmentSrv.newCondition(restriction.condition));
-      // }
-
-      restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
-      restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
-      restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
-
-      this.restrictionGroupSegments.push(restrictionSegments);
+        // let restrictionSegments = [];
+        // restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
+        // restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
+        // restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
+        //
+        // this.restrictionGroupSegments.push(restrictionSegments);
     }
 
     this.addPlusButtonIfRequired();
-
       // TODO MVR reloading an persisted state probably won't work
   }
 
@@ -49,7 +37,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
   }
 
   addPlusButtonIfRequired() {
-      var groupCount = this.restrictionGroupSegments.length;
+    var groupCount = this.restrictionGroupSegments.length;
     if (groupCount == 0) {
         this.restrictionGroupSegments.push([]);
     }
@@ -71,7 +59,8 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           return this.datasource.metricFindQuery({find: "attributes"}) // TODO MVR make it attributes
                 .then(function(attributes) {
                     let segments = _.map(attributes, function(attribute) {
-                       return that.uiSegmentSrv.newKey(attribute.name);
+                       var segment = that.uiSegmentSrv.newKey(attribute.name);
+                       return segment;
                     });
                     return segments;
                 })
@@ -102,7 +91,8 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           return this.datasource.metricFindQuery(theQuery)
                 .then(function(values) {
                     return _.map(values, function(searchResult) {
-                        return that.uiSegmentSrv.newKeyValue(searchResult.label);
+                        var segment = that.uiSegmentSrv.newKeyValue(searchResult.label);
+                        return segment;
                     })
                 })
                 .catch(this.handleQueryError.bind(this));
@@ -118,15 +108,19 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           segment.type = 'key';
           segment.cssClass = 'query-segment-key';
 
-          // remove plus button from current group
-          group.splice(group.indexOf(segment), 1);
+          if (index > 0) {
+              // remove plus button from current group
+              group.splice(group.indexOf(segment), 1);
 
-          // create new group
-          this.restrictionGroupSegments.push([]);
-          restrictionSegments = this.restrictionGroupSegments[this.restrictionGroupSegments.length - 1];
+              // create new group
+              this.restrictionGroupSegments.push([]);
+              restrictionSegments = this.restrictionGroupSegments[this.restrictionGroupSegments.length - 1];
 
-          // Add key, comparator and value
-          restrictionSegments.push(segment);
+              // add key (was plus button)
+              restrictionSegments.push(segment);
+          }
+
+          // Add comparator and value
           restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
           restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
 
@@ -157,10 +151,10 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
                   if (segment.type === 'key') {
                       restrictions.push({});
                       restrictions[groupIndex].attribute = segment.value;
-                  } else if (segment.type === 'value') {
-                      restrictions[groupIndex].value = segment.value;
                   } else if (segment.type === 'operator') {
                       restrictions[groupIndex].comparator = segment.value;
+                  } else if (segment.type === 'value') {
+                      restrictions[groupIndex].value = segment.value;
                   }
               });
           }
@@ -176,16 +170,12 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
         if (this.target.restrictions.length == 0) {
             return query;
         }
-        let restrictionText = this.target.restrictions.map(this.convert).join(" AND ");
-
-        return query + " WHERE " + restrictionText;
+        let restrictionText = new AlarmQuery(this.target.restrictions, this.datasource.metricFindQuery({find: 'attributes'})).render();
+        if (restrictionText.length > 0) {
+            return query + " WHERE " + restrictionText;
+        }
+        return query;
     }
-
-  convert(restriction) {
-    // var attribute = this.alarmClient.findAttribute(restriction.attribute);
-    // let theValue = attribute.type === 'number' ? restriction.value : "'" + restriction.value + "'";
-    return restriction.attribute + " " + restriction.comparator + " " + restriction.value;
-  }
 
   handleQueryError(err) {
       this.error = err.message || 'Failed to issue metric query';

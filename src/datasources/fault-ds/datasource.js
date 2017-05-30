@@ -1,4 +1,5 @@
-import {AlarmClientMock} from './alarmClient';
+import {AlarmClientMock} from './alarm_client';
+import {AlarmQuery} from './alarm_query';
 import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
@@ -15,10 +16,15 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
-    var self = this;
-    return this.alarmClient.findAlarms(options).then(function(data) {
-        console.log(data);
-        return {data: self.toTable(data)};
+      var query = {
+          query: new AlarmQuery(options.targets[0].restrictions, this.alarmClient.getAttributes()).render(),
+          limit: 100000 // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not sent
+      };
+      var self = this;
+    return this.alarmClient.findAlarms(query).then(function(data) {
+        return {
+            data: self.toTable(data)
+        };
     });
   }
 
@@ -112,47 +118,37 @@ export class OpenNMSFMDatasource {
       return this.q.when([]);
   }
 
+    // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(data) {
-        // let columns = _.map(attributes, function(attribute) {
-        //     return {
-        //         'text' : attribute.label,
-        //         'type' : attribute.type,
-        //     }
-        // });
-        var columns = [
-            {
-                "text": "ID",
-            },
-            {
-                "text": "Description",
-            },
-            {
-                "text": "UEI",
-            },
-            {
-                "text": "Node ID",
-            },
-            {
-                "text": "Acked By",
-            }
-        ];
+        var mapping = {
+            'alarmid' : 'id'
+        };
 
-        let rows = [];
-        for (var i = 0; i < data.alarm.length; i++) {
-            var alarm = data.alarm[i];
-            var row = [
-                alarm.id,
-                alarm.description,
-                alarm.uei,
-                alarm.nodeId,
-                alarm.ackUser
-            ];
+        // Transform the attributes to columns
+        var attributes = this.alarmClient.getAttributes();
+        var columns = _.map(attributes, function(attribute) {
+            return {
+                'text' : attribute.label,
+                'type' : attribute.type,
+                'id'   : attribute.name
+            }
+        });
+
+        // Transform the data to rows
+        let rows = _.map(data.alarm, function(alarm) {
+            var row = _.map(columns, function(column) {
+                var remap = mapping[column.id];
+                if (remap) {
+                    return alarm[remap];
+                }
+                return alarm[column.id];
+            });
             row.meta = {
                 // Store the alarm for easy access by the panels - may not be necessary
                 'alarm': alarm
             };
-            rows.push(row);
-        }
+            return row;
+        });
 
         return [
             {
