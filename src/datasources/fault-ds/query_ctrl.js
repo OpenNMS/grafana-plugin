@@ -121,7 +121,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           }
 
           // Add comparator and value
-          restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
+          restrictionSegments.push(this.uiSegmentSrv.newOperator('ilike'));
           restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
 
           // reset index

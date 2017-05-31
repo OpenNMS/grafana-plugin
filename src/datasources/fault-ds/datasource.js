@@ -133,9 +133,10 @@ export class OpenNMSFMDatasource {
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(data) {
         var columnNames = [
-            "ID", "Description", "UEI",
-            "Node ID", "Node Label",
-            "Severity", "IP Address", "Service"];
+            "Node Label", "Log Message", "Description",
+            "UEI", "Node ID", "Node Label",
+            "IP Address", "Service", "Acked By", "Severity",
+            "First Event Time", "Last Event Time", "Event Source", "Count"];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
@@ -143,18 +144,28 @@ export class OpenNMSFMDatasource {
 
         var rows = _.map(data.alarm, alarm => {
             var row = [
-                alarm.id,
+                alarm.nodeLabel,
+                alarm.logMessage,
                 alarm.description,
                 alarm.uei,
                 alarm.nodeId,
                 alarm.nodeLabel,
-                alarm.severity,
                 alarm.ipAddress,
-                alarm.serviceType ? alarm.serviceType.name : undefined
+                alarm.serviceType ? alarm.serviceType.name : undefined,
+                alarm.ackUser,
+                alarm.severity,
+                alarm.firstEventTime,
+                alarm.lastEventTime,
+                alarm.lastEvent.source,
+                alarm.count
             ];
             row.meta = {
                 // Store the alarm for easy access by the panels - may not be necessary
-                'alarm': alarm
+                'alarm': alarm,
+                // Store the name of the data-source as part of the data so that
+                // the panel can grab an instance of the DS to perform actions
+                // on the alarms
+                "source": this.name
             };
             return row;
         });
@@ -164,11 +175,36 @@ export class OpenNMSFMDatasource {
                 "columns": columns,
                 "rows": rows,
                 "type": "table",
-                // Store the name of the data-source as part of the data so that
-                // the panel can grab an instance of the DS to perform actions
-                // on the alarms
-                "source": this.name
             }
         ];
+    }
+
+
+    acknowledgeAlarm(alarmId) {
+        console.log("Ack", alarmId);
+    }
+
+    unacknowledgeAlarm(alarmId) {
+        console.log("Unack", alarmId);
+    }
+
+    clearAlarm(alarmId) {
+        console.log("Clear", alarmId);
+    }
+
+    escalateAlarm(alarmId) {
+        console.log("Escalate", alarmId);
+    }
+
+    createTicketForAlarm(alarmId) {
+        console.log("Create ticket", alarmId);
+    }
+
+    updateTicketForAlarm(alarmId) {
+        console.log("Update ticket", alarmId);
+    }
+
+    closeTicketForAlarm(alarmId) {
+        console.log("Close ticket", alarmId);
     }
 }
