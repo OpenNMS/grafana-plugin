@@ -1,0 +1,31 @@
+<query-editor-row query-ctrl="ctrl" can-collapse="true">
+
+  <!--<div class="gf-form-inline">-->
+    <!--<div class="gf-form">-->
+      <!--<label class="gf-form-label query-keyword width-7">Query</label>-->
+      <!--<input type="text" class="gf-form-input" ng-model="ctrl.target.query" spellcheck='false' placeholder="Lucene query" ng-blur="ctrl.refresh()" />-->
+    <!--</div>-->
+    <!--<div class="gf-form max-width-15">-->
+      <!--<label class="gf-form-label query-keyword">Alias</label>-->
+      <!--<input type="text" class="gf-form-input" ng-model="ctrl.target.alias" spellcheck='false' placeholder="alias patterns" ng-blur="ctrl.refresh()" />-->
+    <!--</div>-->
+  <!--</div>-->
+
+    <div class="gf-form-inline">
+        <div class="gf-form">
+            <label class="gf-form-label query-keyword width-7">SELECT</label>
+            <label class="gf-form-label width-7">all alarms</label>
+        </div>
+    </div>
+    <div class="gf-form-inline" ng-repeat="groupSegment in ctrl.restrictionGroupSegments">
+        <div class="gf-form">
+            <label class="gf-form-label query-keyword width-7">
+                <span ng-if="$index == 0">WHERE</span>
+                <span ng-if="$index > 0">AND</span>
+            </label>
+        </div>
+        <div ng-repeat="segment in groupSegment" class="gf-form">
+            <metric-segment segment="segment" get-options="ctrl.getSuggestions(groupSegment, segment, $index)" on-change="ctrl.segmentUpdated(groupSegment, segment, $index)"></metric-segment>
+        </div>
+    </div>
+</query-editor-row>
