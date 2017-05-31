@@ -1,3 +1,5 @@
+import {OnmsSeverity} from './severities'
+
 export class AlarmClientMock {
 
     constructor(settings, backendSrv, $q) {
@@ -11,17 +13,13 @@ export class AlarmClientMock {
 
     findAlarms(options) {
         var self = this;
-        var theQuery = options.query;
-        if (theQuery.length == 0) {
-            theQuery = undefined;
-        }
+        var params = options || {
+            limit: this.searchLimit
+        };
         return this.backendSrv.datasourceRequest({
             url: self.url + '/rest/alarms',
             method: 'GET',
-            params : {
-                query: theQuery,
-                limit: options.limit
-            }
+            params : params
         }).then(response => {
             if (response.status === 200) {
                 return response.data;
@@ -107,37 +105,36 @@ export class AlarmClientMock {
     }
 
     findSeverities(options) {
-        return this.$q.when([
-            {id: 1, label: 'Indeterminate'},
-            {id: 2, label: 'Cleared'},
-            {id: 3, label: 'Normal'},
-            {id: 4, label: 'Warning'},
-            {id: 5, label: 'Minor'},
-            {id: 6, label: 'Major'},
-            {id: 7, label: 'Critical'},
-        ]);
+        return this.$q.when(new OnmsSeverity().getSeverities());
+    }
+
+    findServices(options) {
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/rest/foreignSourcesConfig/services/default',
+            method: 'GET',
+            params : {
+                limit: options.limit || self.searchLimit
+            }
+        }).then(function (results) {
+            return {
+                'count': results.data.count,
+                'totalCount': results.data.totalCount,
+                'rows': results.data.element
+            };
+        });
     }
 
     getAttributes() {
         let attributes = [
-            { name: "alarmid", label: "ID", type: "number" },
-            { name: "uei", label: "UEI", type: "string" },
-            { name: "location", label: "Location", type: "location"},
-            { name: "nodeId", label: "Node ID", type: "node"},
-            { name: "ipAddress", label: "Ip Address", type: "ipaddress" },
-            { name: "serviceType", label: "Service", type: "service"},
-            { name: "reductionKey", label: "Reduction Key", type: "string" },
-            { name: "ifIndex", label: "ifIndex", type: "number"},
-            { name: "count", label: "Counter", type: "number"},
-            { name: "severity", label: "Severity", type: "severity" },
-            { name: "firstEventTime", label: "First Event Time", type: "date"},
-            { name: "lastEventTime", label: "Last Event Time", type: "date"},
-            { name: "description", label: "Description", type: "string"},
-            { name: "logMessage", label: "Log Message", type: "string"},
-            { name: "suppressedUntil", label: "Suppressed Until", type: "date"},
-            { name: "category", label: "Category", type: "category"}
+            { name: "uei", type: "string" },
+            { name: "location", type: "location"},
+            { name: "ipAddress", type: "ipaddress" },
+            { name: "serviceType", type: "service"},
+            { name: "severity", type: "severity" },
+            { name: "alarmAckTime", type: "date"}
+
             // TODO MVR add more ...
-            // TODO MVR add category
         ];
         return attributes;
     }
@@ -149,26 +146,19 @@ export class AlarmClientMock {
     }
 
     getAttributeComparators(attributeName) {
-        let field = this.findAttribute(attributeName);
-        if (!field || !field.type) {
+        var comparatorMapping = {
+            'uei': ['like'],
+            'location': ['='],
+            'severity': ['=', '>=', '<=', '>', '<', '!='],
+            'serviceType': ['like', '='],
+            'ipAddress': ['iplike'],
+            'alarmAckTime': ['is', 'is not']
+        };
+        var comparators = comparatorMapping[attributeName];
+        if (!comparators) {
             console.log("No comparators for attribute with name '" + attributeName + "' found.");
-            return [];
+            return ['='];
         }
-        let type = field.type;
-        let theType = type || '';
-        let numberComparators = ["=", "!=" , ">=", ">", "<=", "<"];
-        let generalComparators = ["like", "not like", "in", "not in"];
-        let ipComparator = ["iplike"];
-
-        if (theType == "number" || theType == "severity" || theType == "node") {
-            return [].concat(numberComparators).concat(generalComparators);
-        }
-        if (theType == "ipaddress") {
-            return [].concat(ipComparator).concat(generalComparators);
-        }
-        if (theType == "string") {
-            return [].concat(generalComparators).concat(["=", "!="]);
-        }
-        return generalComparators;
+        return comparators;
     }
 }

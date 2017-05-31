@@ -166,14 +166,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
   }
 
     getCollapsedText() {
-        let query = "select all alarms";
-        if (this.target.restrictions.length == 0) {
-            return query;
-        }
-        let restrictionText = new AlarmQuery(this.target.restrictions, this.datasource.metricFindQuery({find: 'attributes'})).render();
-        if (restrictionText.length > 0) {
-            return query + " WHERE " + restrictionText;
-        }
+        var query = new AlarmQuery(this.target.restrictions).render();
         return query;
     }
 

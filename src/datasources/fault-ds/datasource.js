@@ -16,10 +16,12 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
-      var query = {
-          query: new AlarmQuery(options.targets[0].restrictions, this.alarmClient.getAttributes()).render(),
-          limit: 100000 // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not sent
-      };
+      var query = new AlarmQuery(options.targets[0].restrictions).getRestrictionsAsQuery();
+      // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not sent
+      query.limit = 100000;
+      query.match = 'any';
+      query.comparator = 'ilike';
+
       var self = this;
     return this.alarmClient.findAlarms(query).then(function(data) {
         return {
@@ -114,35 +116,42 @@ export class OpenNMSFMDatasource {
                           }
                       })
                   });
+          case 'service':
+              return this.alarmClient.findServices({query: query.query})
+                  .then(function(data) {
+                      return _.map(data.rows, function(service) {
+                          return {
+                              id: service,
+                              label: service
+                          }
+                      })
+                  })
       }
       return this.q.when([]);
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(data) {
-        var mapping = {
-            'alarmid' : 'id'
-        };
+        var columnNames = [
+            "ID", "Description", "UEI",
+            "Node ID", "Node Label",
+            "Severity", "IP Address", "Service"];
 
-        // Transform the attributes to columns
-        var attributes = this.alarmClient.getAttributes();
-        var columns = _.map(attributes, function(attribute) {
-            return {
-                'text' : attribute.label,
-                'type' : attribute.type,
-                'id'   : attribute.name
-            }
+        var columns = _.map(columnNames, column => {
+            return { "text" : column }
         });
 
-        // Transform the data to rows
-        let rows = _.map(data.alarm, function(alarm) {
-            var row = _.map(columns, function(column) {
-                var remap = mapping[column.id];
-                if (remap) {
-                    return alarm[remap];
-                }
-                return alarm[column.id];
-            });
+        var rows = _.map(data.alarm, alarm => {
+            var row = [
+                alarm.id,
+                alarm.description,
+                alarm.uei,
+                alarm.nodeId,
+                alarm.nodeLabel,
+                alarm.severity,
+                alarm.ipAddress,
+                alarm.serviceType ? alarm.serviceType.name : undefined
+            ];
             row.meta = {
                 // Store the alarm for easy access by the panels - may not be necessary
                 'alarm': alarm
