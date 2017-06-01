@@ -22,7 +22,7 @@ describe('OpenNMSFMDatasource', function() {
       });
     };
 
-    ctx.ds.query().then(function (result) {
+    ctx.ds.query({targets:['foo']}).then(function (result) {
       expect(result.data).to.have.length(1);
       expect(result.data[0].columns).to.have.length.above(1);
       expect(result.data[0].rows).to.have.length(1);
@@ -40,7 +40,7 @@ describe('OpenNMSFMDatasource', function() {
       });
     };
 
-    ctx.ds.query().then(function (result) {
+    ctx.ds.query({targets:['foo']}).then(function (result) {
       expect(result.data).to.have.length(1);
       expect(result.data[0].rows).to.have.length(1);
       _.each(result.data[0].rows, row => {

@@ -40,11 +40,11 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                 const counts = _.countBy(this.query(data, 'AckedBy'), _.isNil);
                 this.series = [
                     {
-                        name: "Pending",
+                        name: 'Pending',
                         count: _.defaultTo(counts[true], 0),
                     },
                     {
-                        name: "Acknowledged",
+                        name: 'Acknowledged',
                         count: _.defaultTo(counts[false], 0),
                     },
                 ];
@@ -53,22 +53,47 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
 
             case 'severity': {
                 const counts = _.countBy(this.query(data, 'Severity'));
-                this.series = _.map(counts, function (count, group) {
-                    return {
-                        name: group,
-                        count: count,
-                    }
-                });
+                this.series = [
+                    {
+                        name: 'Cleared',
+                        count: _.defaultTo(counts['CLEARED'], 0),
+                    },
+                    {
+                        name: 'Normal',
+                        count: _.defaultTo(counts['NORMAL'], 0),
+                    },
+                    {
+                        name: 'Indeterm.',
+                        count: _.defaultTo(counts['INDETERMINATE'], 0),
+                    },
+                    {
+                        name: 'Warning',
+                        count: _.defaultTo(counts['WARNING'], 0),
+                    },
+                    {
+                        name: 'Minor',
+                        count: _.defaultTo(counts['MINOR'], 0),
+                    },
+                    {
+                        name: 'Major',
+                        count: _.defaultTo(counts['MAJOR'], 0),
+                    },
+                    {
+                        name: 'Critical',
+                        count: _.defaultTo(counts['CRITICAL'], 0),
+                    },
+
+                ];
                 break;
             }
         }
 
-        this.render(this.series);
+        this.render();
     }
 
     onDataError() {
         this.series = [];
-        this.render(this.series);
+        this.render();
     }
 
     onRender() {
