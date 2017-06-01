@@ -1,0 +1,24 @@
+<div class="graph-wrapper" ng-class="{'graph-legend-rightside': ctrl.panel.legend.rightSide}">
+    <div class="graph-canvas-wrapper">
+        <div ng-if="datapointsWarning"
+             class="datapoints-warning">
+            <span ng-show="!datapointsCount"
+                  class="small">
+                No datapoints <tip>No datapoints returned from metric query</tip>
+            </span>
+            <span ng-show="datapointsOutside"
+                  class="small">
+                Datapoints outside time range
+            </span>
+        </div>
+
+        <div grafana-histogram
+             ng-dblclick="ctrl.zoomOut()"
+             class="histogram-chart">
+        </div>
+    </div>
+    <div graph-legend
+         class="graph-legend-wrapper"></div>
+</div>
+
+<div class="clearfix"></div>
