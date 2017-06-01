@@ -16,6 +16,12 @@ module.exports = function(grunt) {
         src: ['**/*', '!**/*.js', '!**/*.scss'],
         dest: 'dist'
       },
+      vendor_to_dist: {
+          cwd: 'vendor',
+          expand: true,
+          src: ['**/*'],
+          dest: 'dist'
+      },
       pluginDef: {
         expand: true,
         src: ['README.md'],
@@ -25,7 +31,7 @@ module.exports = function(grunt) {
 
     watch: {
       rebuild_all: {
-        files: ['src/**/*', 'README.md'],
+        files: ['src/**/*', 'vendor/**/*', 'README.md'],
         tasks: ['default'],
         options: {spawn: false}
       },

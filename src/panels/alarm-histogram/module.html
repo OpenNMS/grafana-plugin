@@ -1,4 +1,4 @@
-<div class="graph-wrapper" ng-class="{'graph-legend-rightside': ctrl.panel.legend.rightSide}">
+<div class="graph-wrapper">
     <div class="graph-canvas-wrapper">
         <div ng-if="datapointsWarning"
              class="datapoints-warning">
@@ -12,13 +12,9 @@
             </span>
         </div>
 
-        <div grafana-histogram
-             ng-dblclick="ctrl.zoomOut()"
-             class="histogram-chart">
+        <div class="histogram-chart">
         </div>
     </div>
-    <div graph-legend
-         class="graph-legend-wrapper"></div>
 </div>
 
 <div class="clearfix"></div>
