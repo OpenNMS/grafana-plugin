@@ -42,10 +42,12 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                     {
                         name: 'Pending',
                         count: _.defaultTo(counts[true], 0),
+                        color: this.scope.$root.colors[0],
                     },
                     {
                         name: 'Acknowledged',
                         count: _.defaultTo(counts[false], 0),
+                        color: this.scope.$root.colors[4],
                     },
                 ];
                 break;
@@ -56,31 +58,38 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                 this.series = [
                     {
                         name: 'Cleared',
-                        count: _.defaultTo(counts['CLEARED'], 0),
+                        count: _.defaultTo(counts['CLEARED'], 10),
+                        color: this.scope.$root.colors[23],
                     },
                     {
                         name: 'Normal',
-                        count: _.defaultTo(counts['NORMAL'], 0),
+                        count: _.defaultTo(counts['NORMAL'], 10),
+                        color: this.scope.$root.colors[0],
                     },
                     {
                         name: 'Indeterm.',
-                        count: _.defaultTo(counts['INDETERMINATE'], 0),
+                        count: _.defaultTo(counts['INDETERMINATE'], 10),
+                        color: this.scope.$root.colors[55],
                     },
                     {
                         name: 'Warning',
-                        count: _.defaultTo(counts['WARNING'], 0),
+                        count: _.defaultTo(counts['WARNING'], 10),
+                        color: this.scope.$root.colors[1],
                     },
                     {
                         name: 'Minor',
-                        count: _.defaultTo(counts['MINOR'], 0),
+                        count: _.defaultTo(counts['MINOR'], 10),
+                        color: this.scope.$root.colors[3],
                     },
                     {
                         name: 'Major',
-                        count: _.defaultTo(counts['MAJOR'], 0),
+                        count: _.defaultTo(counts['MAJOR'], 10),
+                        color: this.scope.$root.colors[4],
                     },
                     {
                         name: 'Critical',
-                        count: _.defaultTo(counts['CRITICAL'], 0),
+                        count: _.defaultTo(counts['CRITICAL'], 10),
+                        color: this.scope.$root.colors[28],
                     },
 
                 ];
@@ -115,9 +124,12 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
         switch (this.panel.direction) {
             case 'horizontal':
                 $.plot(this.elem,
-                    [_.map(this.series, function (serie) {
-                        return [serie.count, serie.name];
-                    })],
+                    _.map(this.series, function (serie) {
+                        return {
+                            data: [[serie.count, serie.name]],
+                            color: serie.color,
+                        };
+                    }),
                     {
                         series: {
                             bars: {
@@ -137,15 +149,17 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                         grid: {
                             borderWidth: 0,
                         },
-                        colors: this.scope.$root.colors,
                     });
                 break;
 
             case 'vertical':
                 $.plot(this.elem,
-                    [_.map(this.series, function (serie) {
-                        return [serie.name, serie.count];
-                    })],
+                    _.map(this.series, function (serie) {
+                        return {
+                            data: [[serie.name, serie.count]],
+                            color: serie.color,
+                        };
+                    }),
                     {
                         series: {
                             bars: {
@@ -165,7 +179,6 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                         grid: {
                             borderWidth: 0,
                         },
-                        colors: this.scope.$root.colors,
                     });
                 break;
         }
