@@ -134,10 +134,10 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                         series: {
                             bars: {
                                 show: true,
-                                barWidth: 0.5,
+                                barWidth: 0.6,
                                 align: "center",
-                                fill: true,
-                                lineWidth: 0,
+                                fill: 0.8,
+                                lineWidth: 1.0,
                                 horizontal: true,
                             }
                         },
