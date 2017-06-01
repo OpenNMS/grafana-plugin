@@ -37,7 +37,7 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
     onDataReceived(data) {
         switch (this.panel.groupProperty) {
             case 'acknowledged': {
-                const counts = _.countBy(this.query(data, 'AckedBy'), _.isNil);
+                const counts = _.countBy(this.query(data, 'Acked By'), _.isNil);
                 this.series = [
                     {
                         name: 'Pending',
