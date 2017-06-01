@@ -166,8 +166,8 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                                 show: true,
                                 barWidth: 0.5,
                                 align: "center",
-                                fill: true,
-                                lineWidth: 0,
+                                fill: 0.8,
+                                lineWidth: 1.0,
                                 horizontal: false,
                             }
                         },
