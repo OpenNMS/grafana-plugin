@@ -1,12 +1,9 @@
-import {MetricsPanelCtrl} from  'app/plugins/sdk';
-
-import _ from 'lodash';
-
-import 'jquery.flot';
-import 'jquery.flot.selection';
-import 'jquery.flot.crosshair';
-
-import '../../jquery.flot.categories';
+import {MetricsPanelCtrl} from "app/plugins/sdk";
+import _ from "lodash";
+import "jquery.flot";
+import "jquery.flot.selection";
+import "jquery.flot.crosshair";
+import "../../jquery.flot.categories";
 
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
@@ -16,8 +13,9 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
 
         this.scope = $scope;
 
-        _.defaults(this.panel,  {
+        _.defaults(this.panel, {
             groupProperty: 'acknowledged',
+            direction: 'horizontal',
         });
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
@@ -88,30 +86,64 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
 
         this.elem.css('height', height + 'px');
 
-        // Convert data to series
-        const data = _.map(this.series, function(serie) { return [serie.name, serie.count]; });
-
         // Draw graph
-        $.plot(this.elem, [data], {
-            series: {
-                bars: {
-                    show: true,
-                    barWidth: 0.5,
-                    align: "center",
-                    fill: true,
-                    lineWidth: 0,
-                }
-            },
-            xaxis: {
-                mode: "categories",
-                tickLength: 0,
-                autoscaleMargin: .02,
-            },
-            grid: {
-                borderWidth: 0,
-            },
-            colors: this.scope.$root.colors,
-        });
+        switch (this.panel.direction) {
+            case 'horizontal':
+                $.plot(this.elem,
+                    [_.map(this.series, function (serie) {
+                        return [serie.count, serie.name];
+                    })],
+                    {
+                        series: {
+                            bars: {
+                                show: true,
+                                barWidth: 0.5,
+                                align: "center",
+                                fill: true,
+                                lineWidth: 0,
+                                horizontal: true,
+                            }
+                        },
+                        yaxis: {
+                            mode: "categories",
+                            tickLength: 0,
+                            autoscaleMargin: .02,
+                        },
+                        grid: {
+                            borderWidth: 0,
+                        },
+                        colors: this.scope.$root.colors,
+                    });
+                break;
+
+            case 'vertical':
+                $.plot(this.elem,
+                    [_.map(this.series, function (serie) {
+                        return [serie.name, serie.count];
+                    })],
+                    {
+                        series: {
+                            bars: {
+                                show: true,
+                                barWidth: 0.5,
+                                align: "center",
+                                fill: true,
+                                lineWidth: 0,
+                                horizontal: false,
+                            }
+                        },
+                        xaxis: {
+                            mode: "categories",
+                            tickLength: 0,
+                            autoscaleMargin: .02,
+                        },
+                        grid: {
+                            borderWidth: 0,
+                        },
+                        colors: this.scope.$root.colors,
+                    });
+                break;
+        }
     }
 
     query(data, column) {
