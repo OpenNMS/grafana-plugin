@@ -188,7 +188,7 @@ export class TableRenderer {
   }
 
   static getIconForSeverity(severity) {
-    let icon = null; // none
+    let icon = 'ion-help';
     switch(severity) {
       case 'indeterminate':
         icon = 'ion-help';
@@ -206,7 +206,7 @@ export class TableRenderer {
         icon = 'ion-nuclear';
         break;
       case 'normal':
-        // no icon
+        icon = 'ion-checkmark-circled';
         break;
     }
     return icon;
@@ -232,9 +232,7 @@ export class TableRenderer {
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
-        if (icon) {
-          cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
-        }
+        cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
       }
 
       for (let i = 0; i < this.table.columns.length; i++) {
