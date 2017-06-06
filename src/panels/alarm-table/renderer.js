@@ -206,6 +206,9 @@ export class TableRenderer {
         icon = 'ion-nuclear';
         break;
       case 'normal':
+        icon = 'ion-leaf';
+        break;
+      case 'cleared':
         icon = 'ion-checkmark-circled';
         break;
     }
