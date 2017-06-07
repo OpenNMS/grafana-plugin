@@ -16,12 +16,12 @@ export class OpenNMSFMDatasource {
       method: 'GET'
     }).then(response => {
       if (response.status === 200) {
-        return {data: self.toTable(response.data)};
+        return {data: self.toTable(options, response.data)};
       }
     });
   }
 
-  toTable(data) {
+  toTable(options, data) {
     var columns = [
       {
         "text": "Node Label",
@@ -85,13 +85,11 @@ export class OpenNMSFMDatasource {
       rows.push(row);
     }
 
-    return [
-      {
+    return Array(options.targets.length).fill({
         "columns": columns,
         "rows": rows,
         "type": "table"
-      }
-    ];
+    });
   }
 
   testDatasource() {
