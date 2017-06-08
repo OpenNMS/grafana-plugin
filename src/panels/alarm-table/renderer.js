@@ -244,12 +244,12 @@ export class TableRenderer {
 
       if (this.panel.actions) {
         cellHtml += `<td>
-                    <div class="gf-form">
-                        <label class="gf-form-label dropdown">
+                    <div class="gf-form gf-form-no-margin">
+                        <label class="gf-form-label gf-smaller-form-label dropdown">
                             <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">
                                 <i class="fa fa-bars"></i>
                             </a>
-                            <ul class="dropdown-menu pull-right" role="menu">
+                            <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">
                                 <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.acknowledgeAlarm('${source}', ${alarm.id})">Acknowledge</a>
                                 </li>
