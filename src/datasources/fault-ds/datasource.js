@@ -8,6 +8,8 @@ export class OpenNMSFMDatasource {
     // We should think about making this a "general, common or shared" project, which we can re-use here
 
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
+    this.type = instanceSettings.type;
+    this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
     this.backendSrv = backendSrv;
@@ -183,19 +185,19 @@ export class OpenNMSFMDatasource {
 
 
     acknowledgeAlarm(alarmId) {
-        console.log("Ack", alarmId);
+        this.alarmClient.doUpdate(alarmId, {ack: true});
     }
 
     unacknowledgeAlarm(alarmId) {
-        console.log("Unack", alarmId);
+        this.alarmClient.doUpdate(alarmId, {ack: false});
     }
 
     clearAlarm(alarmId) {
-        console.log("Clear", alarmId);
+        this.alarmClient.doUpdate(alarmId, {clear: true});
     }
 
     escalateAlarm(alarmId) {
-        console.log("Escalate", alarmId);
+        this.alarmClient.doUpdate(alarmId, {escalate: true});
     }
 
     createTicketForAlarm(alarmId) {
