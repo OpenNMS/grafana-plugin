@@ -17,50 +17,88 @@ export class AlarmQuery {
     }
 
     renderRestrictions() {
+        var getComparator = function(restriction) {
+          if (restriction.value === 'null') {
+              if (restriction.comparator === '=') {
+                  return "is";
+              }
+              if (restriction.comparator === '!=') {
+                  return "is not";
+              }
+          }
+          return restriction.comparator;
+        };
+
+        var getValue = function(restriction) {
+            if (restriction.value === 'null') {
+                return 'null';
+            }
+            return "'" + restriction.value + "'";
+        };
+
         var query = _.map(this.restrictions, function(restriction) {
-            var string = restriction.attribute + " " + restriction.comparator + " " + "'" + restriction.value + "'";
+            var string = restriction.attribute + " " + getComparator(restriction) + " " + getValue(restriction);
             return string;
         }).join(" AND ");
         return query;
     }
 
-    getRestrictionsAsQuery() {
+    getAttributeName(attribute) {
         var mapping = {
             'location': 'node.location.locationName',
-            'serviceType': 'serviceType.name',
+            'service': 'service',
+            'ipAddress': 'ipAddr',
         };
 
-        var getAttributeName = function(attribute) {
-            var mappedAttribute = mapping[attribute];
-            if (mappedAttribute) {
-                return mappedAttribute;
+        var mappedAttribute = mapping[attribute];
+        if (mappedAttribute) {
+            return mappedAttribute;
+        }
+        return attribute;
+    };
+
+    getRestrictionsAsFIQL() {
+        var map = {
+            '=': '==',
+            '<=': '=le=',
+            '>=': '=ge=',
+            '>': '=gt=',
+            '<': '=lt='
+        };
+
+        var getComparator = function(comparator) {
+            if (map[comparator]) {
+                return map[comparator];
             }
-            return attribute;
+            return comparator;
         };
 
-        var getAttributeValue = function(restriction) {
-            if (restriction.attribute === 'severity') {
-                return new OnmsSeverity().getSeverityByLabel(restriction.value).id;
+        var escapeSearchValue = function(value) {
+            return encodeURIComponent(value);
+        };
+
+        var getValue = function(attribute, value) {
+            if (attribute === 'alarmAckTime') {
+                if (value === 'null') {
+                    value = new Date(0);
+                }
+
+                // yyyy-MM-ddTHH:mm:ss.sssZ
+                // 2017-06-08T10:17:17.173+0200
+                value = value.toJSON().replace("Z", "+0000"); // make it parsable by java
             }
-            return '%' + restriction.value + '%';
+            if ("null" === value) {
+                value = '\u0000';
+            }
+            return escapeSearchValue(value)
         };
 
-        // var restrictionAsQuery = _.map(this.restrictions, restriction => {
-        //     var attribute = getAttributeName(restriction.attribute);
-        //     var value = getAttributeValue(restriction);
-        //     var string = [attribute, restriction.comparator, value].join(" ");
-        //     return string;
-        // }).join(" AND ");
-
-        var keys = _.map(this.restrictions, restriction => {
-            return getAttributeName(restriction.attribute);
-        });
-        var values = _.map(this.restrictions, restriction => {
-           return getAttributeValue(restriction);
-        });
-
-        var parameters = _.zipObject(keys, values);
-        console.log(parameters);
-        return parameters;
+        var fiql = _.map(this.restrictions, restriction => {
+            var attribute = this.getAttributeName(restriction.attribute);
+            var comparator = getComparator(restriction.comparator);
+            var value = getValue(restriction.attribute, restriction.value);
+            return [attribute, comparator, value].join("");
+        }).join(";");
+        return fiql;
     }
 }

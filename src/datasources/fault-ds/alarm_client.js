@@ -13,17 +13,19 @@ export class AlarmClientMock {
 
     findAlarms(options) {
         var self = this;
-        var params = options || {
-            limit: this.searchLimit
+        var params = {
+            limit: options.limit || this.searchLimit,
+            _s: options.search || void 0
         };
         return this.backendSrv.datasourceRequest({
-            url: self.url + '/rest/alarms',
+            url: self.url + '/api/v2/alarms',
             method: 'GET',
             params : params
         }).then(response => {
             if (response.status === 200) {
                 return response.data;
             }
+            return [];
         })
     }
 
@@ -129,11 +131,10 @@ export class AlarmClientMock {
         let attributes = [
             { name: "uei", type: "string" },
             { name: "location", type: "location"},
-            // { name: "ipAddress", type: "ipaddress" },
-            // { name: "serviceType", type: "service"},
-            // { name: "severity", type: "severity" },
-            // { name: "alarmAckTime", type: "date"}
-
+            { name: "ipAddress", type: "ipaddress" },
+            { name: "service", type: "service"},
+            { name: "severity", type: "severity" },
+            { name: "alarmAckTime", type: "date"}
             // TODO MVR add more ...
         ];
         return attributes;
@@ -146,20 +147,19 @@ export class AlarmClientMock {
     }
 
     getAttributeComparators(attributeName) {
-        // var comparatorMapping = {
-        //     'uei': ['like'],
-        //     'location': ['='],
-        //     'severity': ['=', '>=', '<=', '>', '<', '!='],
-        //     'serviceType': ['like', '='],
-        //     'ipAddress': ['iplike'],
-        //     'alarmAckTime': ['is', 'is not']
-        // };
-        // var comparators = comparatorMapping[attributeName];
-        // if (!comparators) {
-        //     console.log("No comparators for attribute with name '" + attributeName + "' found.");
-        //     return ['='];
-        // }
-        // return comparators;
-        return ['ilike'];
+        var comparatorMapping = {
+            'uei': ['=', '!='],
+            'location': ['=', '!='],
+            'severity': ['=', '>=', '<=', '>', '<', '!='],
+            'service': ['!=', '='],
+            'ipAddress': ['=', '!='],
+            'alarmAckTime': ['=', '!=']
+        };
+        var comparators = comparatorMapping[attributeName];
+        if (!comparators) {
+            console.log("No comparators for attribute with name '" + attributeName + "' found.");
+            return ['='];
+        }
+        return comparators;
     }
 }

@@ -121,7 +121,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           }
 
           // Add comparator and value
-          restrictionSegments.push(this.uiSegmentSrv.newOperator('ilike'));
+          restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
           restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
 
           // reset index
@@ -138,6 +138,17 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           restrictionSegments.push(this.uiSegmentSrv.newPlusButton());
       }
   }
+
+    removeRestriction(group) {
+      console.log(group);
+        var index = this.restrictionGroupSegments.indexOf(group);
+        console.log("try to remove" + index);
+        if (index > -1) {
+            this.restrictionGroupSegments.splice(index, 1);
+            this.addPlusButtonIfRequired();
+            this.updateTargetRestrictions();
+        }
+    }
 
   updateTargetRestrictions() {
       var restrictions = [];

@@ -16,11 +16,14 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
-      var query = new AlarmQuery(options.targets[0].restrictions).getRestrictionsAsQuery();
-      // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not sent
-      query.limit = 100000;
-      query.match = 'any';
-      query.comparator = 'ilike';
+      var fiql = new AlarmQuery(options.targets[0].restrictions).getRestrictionsAsFIQL();
+      console.log(fiql);
+
+      // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not set/sent
+      var query = {
+          limit: 10000,
+          search: fiql
+      };
 
       var self = this;
     return this.alarmClient.findAlarms(query).then(function(data) {
@@ -133,7 +136,7 @@ export class OpenNMSFMDatasource {
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(data) {
         var columnNames = [
-            "Node Label", "Log Message", "Description",
+            "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
             "IP Address", "Service", "Acked By", "Severity",
             "First Event Time", "Last Event Time", "Event Source", "Count"];
@@ -144,7 +147,6 @@ export class OpenNMSFMDatasource {
 
         var rows = _.map(data.alarm, alarm => {
             var row = [
-                alarm.nodeLabel,
                 alarm.logMessage,
                 alarm.description,
                 alarm.uei,
