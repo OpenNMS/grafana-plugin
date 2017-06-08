@@ -12,20 +12,19 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
 
     // define model
-    this.target.restrictions = [];
+    this.target.restrictions = this.target.restrictions || [];
     this.restrictionGroupSegments = [];
 
     for (let restriction of this.target.restrictions) {
-        // let restrictionSegments = [];
-        // restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
-        // restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
-        // restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
-        //
-        // this.restrictionGroupSegments.push(restrictionSegments);
+        let restrictionSegments = [];
+        restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
+        restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
+        restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
+
+        this.restrictionGroupSegments.push(restrictionSegments);
     }
 
     this.addPlusButtonIfRequired();
-      // TODO MVR reloading an persisted state probably won't work
   }
 
   toggleEditorMode() {
