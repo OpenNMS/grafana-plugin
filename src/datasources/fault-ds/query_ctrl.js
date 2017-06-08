@@ -139,15 +139,37 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
       }
   }
 
+  removeGroup(groupSegment) {
+      var index = this.restrictionGroupSegments.indexOf(groupSegment);
+      if (index >= 0) {
+        this.restrictionGroupSegments.splice(index, 1);
+        this.addPlusButtonIfRequired();
+        this.updateTargetRestrictions();
+    }
+  }
+
     removeRestriction(group) {
-      console.log(group);
         var index = this.restrictionGroupSegments.indexOf(group);
-        console.log("try to remove" + index);
         if (index > -1) {
             this.restrictionGroupSegments.splice(index, 1);
             this.addPlusButtonIfRequired();
             this.updateTargetRestrictions();
         }
+    }
+
+    showClearRestrictions() {
+      if (this.restrictionGroupSegments.length == 1) {
+          return this.restrictionGroupSegments[0].length == 4;
+      } else if (this.restrictionGroupSegments.length > 1) {
+          return true;
+      }
+      return false;
+    }
+
+    clearRestrictions() {
+      this.restrictionGroupSegments = [];
+      this.addPlusButtonIfRequired();
+      this.updateTargetRestrictions();
     }
 
   updateTargetRestrictions() {
