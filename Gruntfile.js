@@ -88,6 +88,6 @@ module.exports = function(grunt) {
     'clean',
     'copy',
     'babel',
-    // 'mochaTest'
+    'mochaTest'
   ]);
 };
