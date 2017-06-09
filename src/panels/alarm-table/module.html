@@ -5,7 +5,6 @@
             <thead>
             <tr>
                 <th ng-if="ctrl.panel.severityIcons"></th>
-                <th ng-if="ctrl.panel.severity"></th>
                 <th ng-repeat="col in ctrl.table.columns" ng-hide="col.hidden">
                     <div class="table-panel-table-header-inner pointer" ng-click="ctrl.toggleColumnSort(col, $index)">
                         {{col.title}}

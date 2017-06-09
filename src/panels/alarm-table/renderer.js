@@ -188,7 +188,7 @@ export class TableRenderer {
   }
 
   static getIconForSeverity(severity) {
-    let icon = null; // none
+    let icon = 'ion-help';
     switch(severity) {
       case 'indeterminate':
         icon = 'ion-help';
@@ -206,7 +206,10 @@ export class TableRenderer {
         icon = 'ion-nuclear';
         break;
       case 'normal':
-        // no icon
+        icon = 'ion-leaf';
+        break;
+      case 'cleared':
+        icon = 'ion-checkmark-circled';
         break;
     }
     return icon;
@@ -232,9 +235,7 @@ export class TableRenderer {
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
-        if (icon) {
-          cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
-        }
+        cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
       }
 
       for (let i = 0; i < this.table.columns.length; i++) {
@@ -243,12 +244,12 @@ export class TableRenderer {
 
       if (this.panel.actions) {
         cellHtml += `<td>
-                    <div class="gf-form">
-                        <label class="gf-form-label dropdown">
+                    <div class="gf-form gf-form-no-margin">
+                        <label class="gf-form-label gf-smaller-form-label dropdown">
                             <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">
                                 <i class="fa fa-bars"></i>
                             </a>
-                            <ul class="dropdown-menu pull-right" role="menu">
+                            <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">
                                 <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.acknowledgeAlarm('${source}', ${alarm.id})">Acknowledge</a>
                                 </li>

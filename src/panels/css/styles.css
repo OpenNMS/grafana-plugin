@@ -28,3 +28,15 @@
     color: white;
 }
 
+.gf-form-no-margin {
+    margin-bottom: .0rem !important;
+}
+
+.gf-smaller-form-label {
+    padding: .5rem .5rem !important;
+    font-size: .5rem !important;
+}
+
+.dropdown-menu-with-smaller-form-label {
+    font-size: .875rem !important;
+}

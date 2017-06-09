@@ -1,0 +1,74 @@
+version: '2'
+volumes:
+  data-postgres:
+    driver: "local"
+  data-opennms:
+    driver: "local"
+  data-opennms-helm:
+    driver: "local"
+networks:
+  onms-net:
+    driver: bridge
+services:
+  database:
+    image: postgres:9.6.1
+    container_name: opennms-postgresql
+    environment:
+      - TZ=Europe/Berlin
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    networks:
+      - onms-net
+  opennms:
+    image: opennms/horizon-core-web:19.1.0-1
+    container_name: opennms-horizon-core-web
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - TZ=Europe/Berlin
+      - OPENNMS_DBNAME=opennms
+      - OPENNMS_DBUSER=opennms
+      - OPENNMS_DBPASS=opennms
+      - OPENNMS_HOME=/opt/opennms
+      - OPENNMS_DB_CONFIG=/opt/opennms/etc/opennms-datasources.xml
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - database
+    volumes:
+      - data-opennms:/opennms-data
+    networks:
+      - onms-net
+    command: ["-s"]
+    ports:
+      - "8980:8980"
+      - "18980:18980"
+      - "1099:1099"
+      - "8101:8101"
+      - "61616:61616"
+      - "5817:5817"
+      - "162:162/udp"
+  opennms-helm:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        OPENNMS_HELM_GIT_URL: https://github.com/OpenNMS/grafana-opennms-helm-app.git
+        OPENNMS_HELM_GIT_BRANCH_REF: master
+    image: opennms-helm:master
+    volumes:
+      - data-opennms-helm:/var/lib/grafana
+      - data-opennms-helm:/var/log/grafana
+      - data-opennms-helm:/etc/grafana
+    networks:
+      - onms-net
+    ports:
+      - "3000:3000"
