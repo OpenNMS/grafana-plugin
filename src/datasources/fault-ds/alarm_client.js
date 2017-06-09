@@ -42,6 +42,18 @@ export class AlarmClientMock {
         });
     }
 
+    doTicketAction(alarmId, action) {
+        var supportedActions = ["create", "update", "close"];
+        if (supportedActions.indexOf(action) < 0) {
+            throw {message: "Action '" + action + "' not supported."};
+        }
+        var self = this;
+        return this.backendSrv.datasourceRequest({
+            url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
+            method: 'POST',
+        });
+    }
+
     findNodes(options) {
         var self = this;
         return this.backendSrv.datasourceRequest({

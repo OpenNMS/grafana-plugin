@@ -141,7 +141,8 @@ export class OpenNMSFMDatasource {
             "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
             "IP Address", "Service", "Acked By", "Severity",
-            "First Event Time", "Last Event Time", "Event Source", "Count"];
+            "First Event Time", "Last Event Time", "Event Source",
+            "Trouble Ticket", "Trouble Ticket State", "Count"];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
@@ -161,6 +162,8 @@ export class OpenNMSFMDatasource {
                 alarm.firstEventTime,
                 alarm.lastEventTime,
                 alarm.lastEvent.source,
+                alarm.troubleTicket,
+                alarm.troubleTicketState,
                 alarm.count
             ];
             row.meta = {
@@ -201,14 +204,14 @@ export class OpenNMSFMDatasource {
     }
 
     createTicketForAlarm(alarmId) {
-        console.log("Create ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "create");
     }
 
     updateTicketForAlarm(alarmId) {
-        console.log("Update ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "update");
     }
 
     closeTicketForAlarm(alarmId) {
-        console.log("Close ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "close");
     }
 }
