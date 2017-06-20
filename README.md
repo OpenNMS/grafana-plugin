@@ -52,7 +52,7 @@ docker run -p 3000:3000 -t myopennmshelmimage
 
 Login on http://your-ip:3000 with login admin:admin and go to Plugins and enable the Helm app.
 
-IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can be changed.
+IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can't be changed.
 
 ### Advanced Docker build
 
@@ -64,7 +64,7 @@ docker build -t mycustomforkbranch \
             --build-arg OPENNMS_HELM_GIT_BRANCH_REF=myBranch
 ```
 
-This will create a the plugin from the given GitHub URL and branch.
+This will create the plugin from the given GitHub URL and branch.
 
 ### Use Docker compose to build a service stack
 
