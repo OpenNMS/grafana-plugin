@@ -1,4 +1,5 @@
-import {AlarmClientDelegate} from './alarm_client';
+import {ClientDelegate} from './client_delegate';
+import {API} from '../../opennms';
 import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
@@ -13,17 +14,17 @@ export class OpenNMSFMDatasource {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.alarmClient = new AlarmClientDelegate(instanceSettings, backendSrv, $q);
+    this.alarmClient = new ClientDelegate(instanceSettings, backendSrv, $q);
   }
 
   query(options) {
-    var filter = options.targets[0].filter;
-    var self = this;
-    return this.alarmClient.findAlarms(filter).then(function(data) {
-        return {
-            data: self.toTable(data)
-        };
-    });
+      var filter = options.targets[0].filter || new API.Filter();
+      var self = this;
+      return this.alarmClient.findAlarms(filter).then(function(alarms) {
+          return {
+              data: self.toTable(alarms)
+          };
+      });
   }
 
   testDatasource() {
@@ -127,7 +128,7 @@ export class OpenNMSFMDatasource {
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
-    toTable(data) {
+    toTable(alarms) {
         var columnNames = [
             "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
@@ -139,7 +140,7 @@ export class OpenNMSFMDatasource {
             return { "text" : column }
         });
 
-        var rows = _.map(data.alarm, alarm => {
+        var rows = _.map(alarms, alarm => {
             var row = [
                 alarm.logMessage,
                 alarm.description,
@@ -149,7 +150,7 @@ export class OpenNMSFMDatasource {
                 alarm.ipAddress,
                 alarm.serviceType ? alarm.serviceType.name : undefined,
                 alarm.ackUser,
-                alarm.severity,
+                alarm.severity.label,
                 alarm.firstEventTime,
                 alarm.lastEventTime,
                 alarm.lastEvent.source,

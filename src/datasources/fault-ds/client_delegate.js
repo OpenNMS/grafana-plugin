@@ -1,7 +1,7 @@
-import {OnmsSeverity} from './severities'
 import {API, Client, Rest, DAO, Model} from '../../opennms'
+import _ from 'lodash';
 
-export class AlarmClientDelegate {
+export class ClientDelegate {
 
     constructor(settings, backendSrv, $q) {
         this.type = settings.type;
@@ -10,29 +10,61 @@ export class AlarmClientDelegate {
         this.backendSrv = backendSrv;
         this.searchLimit = 1000;
         this.$q = $q;
+
+        let server = new API.OnmsServer(this.name, this.url);
+        let http = new Rest.GrafanaHTTP(this.backendSrv, server);
+        this.client = new Client(http);
+        this.client.server = server;
+        this.clientWithMetadata = undefined;
+     }
+
+    getClientWithMetadata() {
+        if (!this.clientWithMetadata) {
+              let self = this;
+              this.clientWithMetadata = Client.getMetadata(this.client.server, this.client.http)
+                .then(function(metadata) {
+                    self.client.server.metadata = metadata;
+                    return self.client;
+                });
+        }
+        return this.clientWithMetadata;
+      }
+
+    getAlarmDao() {
+        return this.getClientWithMetadata().then(function(client) {
+            return client.alarms();
+        });
     }
 
     findAlarms(filter) {
-        var parameters = new DAO.V2FilterProcessor().getParameters(filter);
-        var fiql = parameters._s;
-
-        console.log("FIQL: " + fiql);
-
         var self = this;
-        var params = {
-            limit: filter.limit || this.searchLimit,
-            _s: fiql || void 0
-        };
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/api/v2/alarms',
-            method: 'GET',
-            params : params
-        }).then(response => {
-            if (response.status === 200) {
-                return response.data;
-            }
-            return [];
-        })
+        return this.getAlarmDao()
+            .then(function(alarmDao) {
+                var theFilter = self.reinitialize(filter);
+                return alarmDao.find(theFilter);
+            });
+    }
+
+    /**
+     * The filter may be reloaded from a persisted state.
+     * The internal opennms.js API requires a concrete implementation of Comparators or Operators in order to work.
+     * As the object was persisted, the references DO NOT MATCH. In order to make them match, we just rebuild the filter.
+     */
+    reinitialize(filter) {
+        const newFilter = new API.Filter();
+        newFilter.limit = filter.limit;
+
+        _.each(filter.clauses, function(clause) {
+            const newOperator = _.find(API.Operators, function(operator) {
+                return operator.label === clause.operator.label;
+            });
+            const newComparator = _.find(API.Comparators, function(comparator) {
+                return comparator.label === clause.restriction.comparator.label;
+            });
+            const newRestriction = new API.Restriction(clause.restriction.attribute, newComparator, clause.restriction.value);
+            newFilter.withClause(new API.Clause(newRestriction, newOperator));
+        });
+        return newFilter;
     }
 
     doUpdate(alarmId, options) {

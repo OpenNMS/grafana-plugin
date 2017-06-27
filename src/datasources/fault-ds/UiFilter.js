@@ -5,7 +5,7 @@ export class UiFilter {
 
     constructor(uiSegmentSrv) {
         this.uiSegmentSrv = uiSegmentSrv;
-        this.clear();
+        this.table = new Table(this.uiSegmentSrv);
     }
 
     addPlusButtonIfRequired() {
@@ -49,35 +49,24 @@ export class UiFilter {
         return filter;
     }
 
+    addRowFromClause(clause) {
+        const attribute = new AttributeMapping().getInternalAttribute(clause.restriction.attribute);
+        const comparator = new ComparatorMapping().getInternalComparator(clause.restriction.comparator);
+        const value = new ValueMapping().getInternalValue(attribute, clause.restriction.value);
+        const operator = new OperatorMapping().getInternalValue(clause.operator);
+
+        const row = this.addRow();
+        row.setAttribute(attribute);
+        row.setComparator(comparator);
+        row.setValue(value);
+        row.setOperator(operator);
+    }
+
     toRestriction(data) {
-        const attributeMapping = {
-            'location': 'node.location.locationName',
-            'service': 'service',
-            'ipAddress': 'ipAddr',
-            'severity': 'alarm.severity'
-        };
-        const attribute = attributeMapping[data.attribute] || data.attribute;
-        const comparator = _.find(API.Comparators, function(comparator) {
-            return comparator.matches(data.comparator);
-        });
-
-        const getValue = function(attribute, value) {
-            if (attribute === 'alarmAckTime') {
-                if (value === 'null') {
-                    value = new Date(0);
-                }
-
-                // yyyy-MM-ddTHH:mm:ss.sssZ
-                // 2017-06-08T10:17:17.173+0200
-                value = value.toJSON().replace("Z", "+0000"); // make it parsable by java
-            }
-            if ("null" === value) {
-                value = '\u0000';
-            }
-            return encodeURIComponent(value);
-        };
-
-        return new API.Restriction(attribute, comparator, getValue(data.attribute, data.value));
+        const attribute = new AttributeMapping().getExternalAttribute(data.attribute);
+        const comparator = new ComparatorMapping().getExternalComparator(data.comparator);
+        const value = new ValueMapping().getExternalValue(data.attribute, data.value);
+        return new API.Restriction(attribute, comparator, value);
     }
 
     toString() {
@@ -285,5 +274,89 @@ class Row {
             return data;
         }
         return null;
+    }
+}
+
+class AttributeMapping {
+    constructor() {
+        this.attributeMapping = {
+            'location': 'node.location.locationName',
+            'service': 'service',
+            'ipAddress': 'ipAddr',
+            'severity': 'alarm.severity'
+        };
+    }
+
+    getInternalAttribute(externalAttribute) {
+        const internalAttribute = _.findKey(this.attributeMapping, function(value) {
+            return value === externalAttribute;
+        });
+        return internalAttribute || externalAttribute;
+    }
+
+    getExternalAttribute(internalAttribute) {
+        return this.attributeMapping[internalAttribute] || internalAttribute;
+    }
+}
+
+class ComparatorMapping {
+    getInternalComparator(externalComparator) {
+        const theComparator = API.Comparators[externalComparator.label];
+        if (theComparator.aliases && theComparator.aliases.length > 0) {
+            return theComparator.aliases[0];
+        }
+        throw {message: "No alias for comparator " + externalComparator.label + " defined", comparator: externalComparator}
+    }
+
+    getExternalComparator(internalComparator) {
+        const externalComparator = _.find(API.Comparators, function(comparator) {
+            return comparator.matches(internalComparator);
+        });
+        if (!externalComparator) {
+            throw { message: "No comparator found for alias " + internalComparator + " mapping found", comparators: API.Comparators };
+        }
+        return externalComparator;
+    }
+}
+
+class ValueMapping {
+    getExternalValue(internalAttribute, value) {
+        if (internalAttribute === 'alarmAckTime') {
+            if (value === 'null') {
+                value = new Date(0);
+            }
+
+            // yyyy-MM-ddTHH:mm:ss.sssZ
+            // 2017-06-08T10:17:17.173+0200
+            value = value.toJSON().replace("Z", "+0000"); // make it parsable by java
+        }
+        if ("null" === value) {
+            value = '\u0000';
+        }
+        return encodeURIComponent(value);
+    }
+
+    getInternalValue(internalAttribute, value) {
+        if (internalAttribute === 'alarmAckTime') {
+            if (value === new Date(0)) {
+                return 'null';
+            }
+            var stringified = JSON.parse(value.replace("+0000", "Z"));
+            return new Date(stringified);
+        }
+        if (value === "\u0000") {
+            return "null";
+        }
+        return decodeURIComponent(value);
+    }
+}
+
+class OperatorMapping {
+    getInternalValue(operator) {
+        const theOperator = API.Operators[operator.label];
+        if (theOperator && theOperator.label) {
+            return theOperator.label;
+        }
+        throw { message: "No operator found with label " + operator.label, operators: API.Operators};
     }
 }

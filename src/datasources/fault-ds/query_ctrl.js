@@ -2,7 +2,7 @@ import {QueryCtrl} from 'app/plugins/sdk';
 import './css/query-editor.css!'
 import _ from 'lodash';
 import {API} from '../../opennms';
-import {UiFilter, Row} from './Uifilter';
+import {UiFilter} from './Uifilter';
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
@@ -13,13 +13,9 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
 
     // define and set up model
-    this.target.filter = this.target.filter || new API.Filter();
     this.uiFilter = new UiFilter(uiSegmentSrv);
-    this.initializeUiFilter();
-    this.uiFilter.addPlusButtonIfRequired();
-  }
+    this.target.filter = this.target.filter || new API.Filter();
 
-  initializeUiFilter() {
     // Only consider values which are set up correctly
     var clauses = _.filter(this.target.filter.clauses, function(clause) {
       return clause.restriction
@@ -29,12 +25,9 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           && clause.operator
     });
     for (let clause of clauses) {
-      let row = this.uiFilter.addRow();
-      row.setAttribute(clause.restriction.attribute);
-      row.setComparator(clause.restriction.comparator.label); // TODO MVR this will not work properly
-      row.setValue(clause.restriction.value);
-      row.setOperator(clause.operator.label); // TODO MVR use operator instead
+      this.uiFilter.addRowFromClause(clause);
     }
+    this.uiFilter.addPlusButtonIfRequired();
   }
 
   toggleEditorMode() {
@@ -121,7 +114,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
   updateTargetFilter() {
       this.target.filter = this.uiFilter.toFilter();
-      this.panelCtrl.refresh()
+      this.panelCtrl.refresh();
   }
 
     getCollapsedText() {
