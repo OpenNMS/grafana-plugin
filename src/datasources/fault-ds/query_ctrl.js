@@ -1,7 +1,8 @@
 import {QueryCtrl} from 'app/plugins/sdk';
 import './css/query-editor.css!'
 import _ from 'lodash';
-import {AlarmQuery} from './alarm_query';
+import {API} from '../../opennms';
+import {UiFilter, Row} from './Uifilter';
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
@@ -11,20 +12,29 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.$scope = $scope;
     this.uiSegmentSrv = uiSegmentSrv;
 
-    // define model
-    this.target.restrictions = this.target.restrictions || [];
-    this.restrictionGroupSegments = [];
+    // define and set up model
+    this.target.filter = this.target.filter || new API.Filter();
+    this.uiFilter = new UiFilter(uiSegmentSrv);
+    this.initializeUiFilter();
+    this.uiFilter.addPlusButtonIfRequired();
+  }
 
-    for (let restriction of this.target.restrictions) {
-        let restrictionSegments = [];
-        restrictionSegments.push(uiSegmentSrv.newKey(restriction.attribute));
-        restrictionSegments.push(uiSegmentSrv.newOperator(restriction.comparator));
-        restrictionSegments.push(uiSegmentSrv.newKeyValue(restriction.value));
-
-        this.restrictionGroupSegments.push(restrictionSegments);
+  initializeUiFilter() {
+    // Only consider values which are set up correctly
+    var clauses = _.filter(this.target.filter.clauses, function(clause) {
+      return clause.restriction
+          && clause.restriction.attribute
+          && clause.restriction.comparator
+          && clause.restriction.value
+          && clause.operator
+    });
+    for (let clause of clauses) {
+      let row = this.uiFilter.addRow();
+      row.setAttribute(clause.restriction.attribute);
+      row.setComparator(clause.restriction.comparator.label); // TODO MVR this will not work properly
+      row.setValue(clause.restriction.value);
+      row.setOperator(clause.operator.label); // TODO MVR use operator instead
     }
-
-    this.addPlusButtonIfRequired();
   }
 
   toggleEditorMode() {
@@ -35,30 +45,15 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.panelCtrl.refresh(); // Asks the panel to refresh data.
   }
 
-  addPlusButtonIfRequired() {
-    var groupCount = this.restrictionGroupSegments.length;
-    if (groupCount == 0) {
-        this.restrictionGroupSegments.push([]);
-    }
-    let groupIndex = Math.max(groupCount-1, 0);
-    let group = this.restrictionGroupSegments[groupIndex];
-    let segmentIndex = Math.max(group.length - 1, 0);
-    let lastSegment = group[segmentIndex];
-    if (!lastSegment || lastSegment.type !== 'plus-button') {
-        group.push(this.uiSegmentSrv.newPlusButton());
-    }
-  }
-
-  getSuggestions(group, segment, index) {
-      var restrictionSegments = group;
-
-      let that = this;
+  getSuggestions(row, segment, index) {
+      var columns = row.columns;[index];
+      let self = this;
       // attribute input
       if (segment.type == 'key' || segment.type == 'plus-button') {
           return this.datasource.metricFindQuery({find: "attributes"}) // TODO MVR make it attributes
                 .then(function(attributes) {
                     let segments = _.map(attributes, function(attribute) {
-                       var segment = that.uiSegmentSrv.newKey(attribute.name);
+                       var segment = self.uiSegmentSrv.newKey(attribute.name);
                        return segment;
                     });
                     return segments;
@@ -68,11 +63,11 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
       // comparator input
       if (segment.type == 'operator') {
-          let attributeSegment = restrictionSegments[index-1];
+          let attributeSegment = columns[index-1];
           return this.datasource.metricFindQuery({'find': 'comparators', 'attribute': attributeSegment.value})
             .then(function(comparators) {
                 return _.map(comparators, function(comparator) {
-                    return that.uiSegmentSrv.newOperator(comparator);
+                    return self.uiSegmentSrv.newOperator(comparator);
                 });
             })
             .catch(this.handleQueryError.bind(this));
@@ -80,7 +75,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
       // value input
       if (segment.type == 'value') {
-          let attributeSegment = restrictionSegments[index-2];
+          let attributeSegment = columns[index-2];
           let theQuery = {
               'find': 'values',
               'attribute': attributeSegment.value,
@@ -90,7 +85,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
           return this.datasource.metricFindQuery(theQuery)
                 .then(function(values) {
                     return _.map(values, function(searchResult) {
-                        var segment = that.uiSegmentSrv.newKeyValue(searchResult.label);
+                        var segment = self.uiSegmentSrv.newKeyValue(searchResult.label);
                         return segment;
                     })
                 })
@@ -99,107 +94,39 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
       return this.$q.when([]);
   }
 
-  segmentUpdated(group, segment, index) {
-      var restrictionSegments = group;
-
-      if (segment.type === 'plus-button') {
-          // make the plus button an actual attribute input
-          segment.type = 'key';
-          segment.cssClass = 'query-segment-key';
-
-          if (index > 0) {
-              // remove plus button from current group
-              group.splice(group.indexOf(segment), 1);
-
-              // create new group
-              this.restrictionGroupSegments.push([]);
-              restrictionSegments = this.restrictionGroupSegments[this.restrictionGroupSegments.length - 1];
-
-              // add key (was plus button)
-              restrictionSegments.push(segment);
-          }
-
-          // Add comparator and value
-          restrictionSegments.push(this.uiSegmentSrv.newOperator('='));
-          restrictionSegments.push(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
-
-          // reset index
-          index = 0;
-      }
-      if (segment.type == 'value') {
-          segment.fake = false;
-      }
-
-      this.updateTargetRestrictions();
-
-      // Ensure that we always have a plus button
-      if ((index + 1) === restrictionSegments.length) {
-          restrictionSegments.push(this.uiSegmentSrv.newPlusButton());
-      }
+  segmentUpdated(row, segment, segmentIndex) {
+     this.uiFilter.segmentUpdated(row, segment, segmentIndex);
+     this.updateTargetFilter();
   }
 
-  removeGroup(groupSegment) {
-      var index = this.restrictionGroupSegments.indexOf(groupSegment);
-      if (index >= 0) {
-        this.restrictionGroupSegments.splice(index, 1);
-        this.addPlusButtonIfRequired();
-        this.updateTargetRestrictions();
-    }
+  removeRow(row) {
+      if (this.uiFilter.removeRow(row)) {
+          this.updateTargetFilter();
+      }
   }
-
-    removeRestriction(group) {
-        var index = this.restrictionGroupSegments.indexOf(group);
-        if (index > -1) {
-            this.restrictionGroupSegments.splice(index, 1);
-            this.addPlusButtonIfRequired();
-            this.updateTargetRestrictions();
-        }
-    }
 
     showClearRestrictions() {
-      if (this.restrictionGroupSegments.length == 1) {
-          return this.restrictionGroupSegments[0].length == 4;
-      } else if (this.restrictionGroupSegments.length > 1) {
+      if (this.uiFilter.getSize() == 1) {
+          return this.uiFilter.table.getLastRow().getColumnCount() == 4;
+      } else if (this.uiFilter.getSize() > 1) {
           return true;
       }
       return false;
     }
 
     clearRestrictions() {
-      this.restrictionGroupSegments = [];
-      this.addPlusButtonIfRequired();
-      this.updateTargetRestrictions();
+      this.uiFilter.clear();
+      this.updateTargetFilter();
     }
 
-  updateTargetRestrictions() {
-      var restrictions = [];
-      var restrictionGroupSegments = this.restrictionGroupSegments;
-      _.each(restrictionGroupSegments, function(eachGroup, groupIndex) {
-          var restrictionSegments = _.filter(eachGroup, function(segment) {
-              return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false)
-          });
-          if (restrictionSegments.length > 0 && restrictionSegments.length % 3 == 0) {
-              _.each(restrictionSegments, (segment, segmentIndex) => {
-                  if (segment.type === 'key') {
-                      restrictions.push({});
-                      restrictions[groupIndex].attribute = segment.value;
-                  } else if (segment.type === 'operator') {
-                      restrictions[groupIndex].comparator = segment.value;
-                  } else if (segment.type === 'value') {
-                      restrictions[groupIndex].value = segment.value;
-                  }
-              });
-          }
-      });
-
-      this.target.restrictions = restrictions;
+  updateTargetFilter() {
+      this.target.filter = this.uiFilter.toFilter();
       this.panelCtrl.refresh()
-
   }
 
     getCollapsedText() {
-        var query = new AlarmQuery(this.target.restrictions).render();
-        return query;
+      var collapsedText = this.uiFilter.toString();
+      return collapsedText;
     }
 
   handleQueryError(err) {

@@ -1,5 +1,4 @@
-import {AlarmClientMock} from './alarm_client';
-import {AlarmQuery} from './alarm_query';
+import {AlarmClientDelegate} from './alarm_client';
 import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
@@ -14,21 +13,13 @@ export class OpenNMSFMDatasource {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.alarmClient = new AlarmClientMock(instanceSettings, backendSrv, $q);
+    this.alarmClient = new AlarmClientDelegate(instanceSettings, backendSrv, $q);
   }
 
   query(options) {
-      var fiql = new AlarmQuery(options.targets[0].restrictions).getRestrictionsAsFIQL();
-      console.log(fiql);
-
-      // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not set/sent
-      var query = {
-          limit: 10000,
-          search: fiql
-      };
-
-      var self = this;
-    return this.alarmClient.findAlarms(query).then(function(data) {
+    var filter = options.targets[0].filter;
+    var self = this;
+    return this.alarmClient.findAlarms(filter).then(function(data) {
         return {
             data: self.toTable(data)
         };

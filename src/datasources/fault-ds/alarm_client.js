@@ -1,6 +1,7 @@
 import {OnmsSeverity} from './severities'
+import {API, Client, Rest, DAO, Model} from '../../opennms'
 
-export class AlarmClientMock {
+export class AlarmClientDelegate {
 
     constructor(settings, backendSrv, $q) {
         this.type = settings.type;
@@ -11,11 +12,16 @@ export class AlarmClientMock {
         this.$q = $q;
     }
 
-    findAlarms(options) {
+    findAlarms(filter) {
+        var parameters = new DAO.V2FilterProcessor().getParameters(filter);
+        var fiql = parameters._s;
+
+        console.log("FIQL: " + fiql);
+
         var self = this;
         var params = {
-            limit: options.limit || this.searchLimit,
-            _s: options.search || void 0
+            limit: filter.limit || this.searchLimit,
+            _s: fiql || void 0
         };
         return this.backendSrv.datasourceRequest({
             url: self.url + '/api/v2/alarms',
@@ -132,7 +138,13 @@ export class AlarmClientMock {
     }
 
     findSeverities(options) {
-        return this.$q.when(new OnmsSeverity().getSeverities());
+        var severities = _.map(Model.Severities, function(severity) {
+            return {
+                id: severity.id,
+                label: severity.label
+            };
+        });
+        return this.$q.when(severities);
     }
 
     findServices(options) {
@@ -171,6 +183,7 @@ export class AlarmClientMock {
         });
     }
 
+    // TODO MVR we should get rid of this as well
     getAttributeComparators(attributeName) {
         var comparatorMapping = {
             'uei': ['=', '!='],

@@ -6,18 +6,18 @@
             <label class="gf-form-label width-7">all alarms</label>
         </div>
     </div>
-    <div class="gf-form-inline" ng-repeat="groupSegment in ctrl.restrictionGroupSegments">
+    <div class="gf-form-inline" ng-repeat="row in ctrl.uiFilter.table.rows">
         <div class="gf-form">
             <label class="gf-form-label query-keyword width-7">
                 <span ng-if="$index == 0">WHERE</span>
-                <span ng-if="$index > 0">AND</span>
+                <span ng-if="$index > 0">{{row.operator}}</span>
             </label>
         </div>
-        <div ng-repeat="segment in groupSegment" class="gf-form">
-            <metric-segment segment="segment" get-options="ctrl.getSuggestions(groupSegment, segment, $index)" on-change="ctrl.segmentUpdated(groupSegment, segment, $index)"></metric-segment>
+        <div ng-repeat="segment in row.columns" class="gf-form">
+            <metric-segment segment="segment" get-options="ctrl.getSuggestions(row, segment, $index)" on-change="ctrl.segmentUpdated(row, segment, $index)"></metric-segment>
         </div>
-        <div class="gf-form" ng-if="groupSegment.length > 1">
-            <buddon class="btn btn-inverse gf-form-btn" ng-click="ctrl.removeGroup(groupSegment)">
+        <div class="gf-form" ng-if="row.columns.length > 1">
+            <buddon class="btn btn-inverse gf-form-btn" ng-click="ctrl.removeRow(row)">
                 <i class="fa fa-minus"></i>
             </buddon>
         </div>
