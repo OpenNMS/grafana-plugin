@@ -196,6 +196,16 @@ export class ClientDelegate {
         });
     }
 
+    findOperators() {
+        var operators = _.map(API.Operators, function(operator) {
+            return {
+                id: operator.id,
+                label: operator.label
+            }
+        });
+        return this.$q.when(operators);
+    }
+
     getAttributes() {
         let attributes = [
             { name: "uei", type: "string" },

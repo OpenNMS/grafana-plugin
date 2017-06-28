@@ -84,6 +84,15 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
                 })
                 .catch(this.handleQueryError.bind(this));
       }
+
+      // condition input
+      if (segment.type === 'condition') {
+          return this.datasource.metricFindQuery({find: 'operators'}).then(function(operators) {
+              return _.map(operators, function(operator) {
+                  return self.uiSegmentSrv.newCondition(operator.label);
+              });
+          }).catch(this.handleQueryError.bind(this));
+      }
       return this.$q.when([]);
   }
 

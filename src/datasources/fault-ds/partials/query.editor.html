@@ -10,7 +10,7 @@
         <div class="gf-form">
             <label class="gf-form-label query-keyword width-7">
                 <span ng-if="$index == 0">WHERE</span>
-                <span ng-if="$index > 0">{{row.operator}}</span>
+                <metric-segment ng-if="$index > 0" segment="row.operator" get-options="ctrl.getSuggestions(row, row.operator, $index)" on-change="ctrl.segmentUpdated(row, row.operator)"></metric-segment>
             </label>
         </div>
         <div ng-repeat="segment in row.columns" class="gf-form">

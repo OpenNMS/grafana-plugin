@@ -39,7 +39,7 @@ export class UiFilter {
             const data = eachRow.getData();
             if (data) {
                 const operator = _.find(API.Operators, function(operator) {
-                    return operator.matches(eachRow.operator);
+                    return operator.matches(eachRow.operator.value);
                 });
                 const restriction = self.toRestriction(data);
                 const clause = new API.Clause(restriction, operator);
@@ -109,7 +109,7 @@ export class UiFilter {
         var query = _.map(rows, function(row, index) {
             let string = '';
             if (index > 0) {
-                string = " " + row.operator + " ";
+                string = " " + row.operator.value + " ";
             }
             const restriction = row.getData();
             const restrictionString = restriction.attribute + " " + getComparator(restriction) + " " + getValue(restriction);
@@ -147,6 +147,10 @@ export class UiFilter {
 
         if (segment.type === 'value') {
             segment.fake = false;
+        }
+
+        if (segment.type === 'condition') {
+            row.setOperator(segment.value);
         }
 
         // Ensure that we always have a plus button
@@ -204,9 +208,9 @@ class Table {
 class Row {
 
     constructor(uiSegmentSrv) {
-        this.operator = 'AND'; // TODO MVR use Operators.AND // OR
-        this.columns = [];
         this.uiSegmentSrv = uiSegmentSrv;
+        this.columns = [];
+        this.operator = this.uiSegmentSrv.newCondition('AND');
     }
 
     addPlusButtonIfRequired() {
@@ -253,7 +257,7 @@ class Row {
     }
 
     setOperator(operator) {
-        this.operator = operator;
+        this.operator = this.uiSegmentSrv.newCondition(operator);
     }
 
     getData() {

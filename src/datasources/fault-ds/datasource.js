@@ -56,6 +56,9 @@ export class OpenNMSFMDatasource {
     if (query.find == 'values') {
         return this.searchForValues(query);
     }
+    if (query.find === 'operators') {
+        return this.alarmClient.findOperators();
+    }
     return this.q.when([]);
   }
 
