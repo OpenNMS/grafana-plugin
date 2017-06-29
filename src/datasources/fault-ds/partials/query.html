@@ -1,0 +1,16 @@
+<div class="gf-form-inline" ng-repeat="clause in query.clauses">
+    <div class="gf-form">
+        <label class="gf-form-label query-keyword width-7">
+            <span ng-if="$index == 0">WHERE</span>
+            <metric-segment ng-if="$index > 0" segment="clause.operator" get-options="getSuggestions(clause, clause.operator, $index)" on-change="segmentUpdated(clause, clause.operator)"></metric-segment>
+        </label>
+    </div>
+    <div ng-repeat="segment in clause.restriction.segments" class="gf-form">
+        <metric-segment segment="segment" get-options="getSuggestions(clause, segment, $index)" on-change="segmentUpdated(clause, segment, $index)"></metric-segment>
+    </div>
+    <div class="gf-form" ng-if="clause.restriction.segments.length > 1">
+        <buddon class="btn btn-inverse gf-form-btn" ng-click="removeClause(clause)">
+            <i class="fa fa-minus"></i>
+        </buddon>
+    </div>
+</div>

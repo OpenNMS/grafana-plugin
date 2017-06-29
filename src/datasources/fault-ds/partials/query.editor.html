@@ -6,22 +6,10 @@
             <label class="gf-form-label width-7">all alarms</label>
         </div>
     </div>
-    <div class="gf-form-inline" ng-repeat="row in ctrl.uiFilter.table.rows">
-        <div class="gf-form">
-            <label class="gf-form-label query-keyword width-7">
-                <span ng-if="$index == 0">WHERE</span>
-                <metric-segment ng-if="$index > 0" segment="row.operator" get-options="ctrl.getSuggestions(row, row.operator, $index)" on-change="ctrl.segmentUpdated(row, row.operator)"></metric-segment>
-            </label>
-        </div>
-        <div ng-repeat="segment in row.columns" class="gf-form">
-            <metric-segment segment="segment" get-options="ctrl.getSuggestions(row, segment, $index)" on-change="ctrl.segmentUpdated(row, segment, $index)"></metric-segment>
-        </div>
-        <div class="gf-form" ng-if="row.columns.length > 1">
-            <buddon class="btn btn-inverse gf-form-btn" ng-click="ctrl.removeRow(row)">
-                <i class="fa fa-minus"></i>
-            </buddon>
-        </div>
-    </div>
+
+    <onms-query query="ctrl.uiFilter.query" datasource="ctrl.datasource" query-ctrl="ctrl">
+
+    </onms-query>
 
     <div class="gf-form" style="padding-top: 10px">
         <button class="btn btn-inverse gf-form-btn" ng-click="ctrl.clearRestrictions()" ng-show="ctrl.showClearRestrictions()">

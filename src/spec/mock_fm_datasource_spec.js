@@ -2,7 +2,7 @@ import {Datasource} from "../datasources/mock-fault-ds/module";
 import Q from "q";
 import _ from 'lodash';
 
-describe('OpenNMSFMDatasource', function() {
+describe('OpenNMS_Mock_FaultManagement_Datasource', function() {
   let ctx = {};
 
   beforeEach(function() {

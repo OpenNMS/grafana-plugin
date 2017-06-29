@@ -22,6 +22,12 @@ module.exports = function(grunt) {
           src: ['**/*'],
           dest: 'dist'
       },
+      vendor_to_dist_tests: {
+          cwd: 'vendor',
+          expand: true,
+          src: ['**/*'],
+          dest: 'dist/test'
+      },
       pluginDef: {
         expand: true,
         src: ['README.md'],
@@ -71,7 +77,7 @@ module.exports = function(grunt) {
           dest: 'dist/test/spec',
           ext:'.js'
         }]
-      }
+      },
     },
 
     mochaTest: {
@@ -88,6 +94,6 @@ module.exports = function(grunt) {
     'clean',
     'copy',
     'babel',
-    // 'mochaTest'
+    'mochaTest'
   ]);
 };
