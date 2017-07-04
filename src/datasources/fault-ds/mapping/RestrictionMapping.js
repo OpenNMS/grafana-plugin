@@ -1,12 +1,11 @@
 import _ from 'lodash';
 
-import {UiRestriction, UiQuery, UiClause, Restriction} from '../ui';
-import {ComparatorMapping} from './comparator'
-import {ClauseMapping} from './clause'
-import {AttributeMapping} from './attribute';
-import {ValueMapping} from './value';
+import {ComparatorMapping} from './ComparatorMapping'
+import {ClauseMapping} from './ClauseMapping'
+import {AttributeMapping} from './AttributeMapping';
+import {ValueMapping} from './ValueMapping';
+import {UI} from '../UI'
 import {API} from '../../../opennms';
-import {UI} from '../ui'
 
 export class RestrictionMapping {
 

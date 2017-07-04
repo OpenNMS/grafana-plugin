@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {API} from '../../../opennms';
-import {Mapping} from '../mapping';
-import {UI} from '../ui';
+import {Mapping} from '../Mapping';
+import {UI} from '../UI';
 
 export class Filter {
     constructor(uiSegmentSrv) {

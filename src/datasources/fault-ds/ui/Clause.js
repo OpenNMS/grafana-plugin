@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {UI} from '../ui';
+import {UI} from '../UI';
 
 export class Clause {
 

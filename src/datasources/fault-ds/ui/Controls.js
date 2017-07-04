@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import {Restriction} from './restriction.js';
-import {Query} from './query.js';
+import {Restriction} from './Restriction';
+import {Query} from './Query';
 
 
 class Control {

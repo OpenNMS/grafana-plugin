@@ -2,8 +2,7 @@ import {QueryCtrl} from 'app/plugins/sdk';
 import './css/query-editor.css!'
 import _ from 'lodash';
 import {API} from '../../opennms';
-import {UI} from './ui';
-import {Mapping} from './mapping';
+import {Mapping} from './Mapping';
 import './query-directive'
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {

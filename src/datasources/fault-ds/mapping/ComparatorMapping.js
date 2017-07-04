@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {API} from '../../../opennms';
-import {UI} from '../ui';
 
 export class ComparatorMapping {
     // TODO MVR this is not really a good way

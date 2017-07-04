@@ -1,8 +1,8 @@
 import Q from "q";
 import _ from 'lodash';
-import {UI} from '../datasources/fault-ds/ui';
+import {UI} from '../datasources/fault-ds/UI';
 import {API} from '../opennms';
-import {Mapping} from '../datasources/fault-ds/mapping';
+import {Mapping} from '../datasources/fault-ds/Mapping';
 import {FilterInitializer} from '../datasources/fault-ds/client_delegate';
 
 describe("OpenNMS_FaultManagement_Datasource", function() {

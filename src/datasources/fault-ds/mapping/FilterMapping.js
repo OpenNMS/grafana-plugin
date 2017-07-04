@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {API} from '../../../opennms'
-import {UI} from '../ui';
-import {ClauseMapping} from './clause';
+import {UI} from '../UI';
+import {ClauseMapping} from './ClauseMapping';
 
 /**
  * Maps a UiFilter to API.filter and vice versa.

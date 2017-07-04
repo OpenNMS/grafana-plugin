@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import {OperatorMapping} from './operator';
-import {RestrictionMapping} from './restriction';
-import {UI} from '../ui';
+import {OperatorMapping} from './OperatorMapping';
+import {RestrictionMapping} from './RestrictionMapping';
+import {UI} from '../UI';
 import {API} from '../../../opennms'
 
 export class ClauseMapping {
