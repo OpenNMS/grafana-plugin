@@ -9,15 +9,16 @@ angular.module('grafana.directives')
             restrict: 'EA',
             controllerAs: 'ctrl',
             scope: {
-                query: "=", // The ui filter object
+                query: "=", // The ui query object
                 datasource: "=", // The datasource
-                queryCtrl: "=" // The QueryCtrl object
+                queryCtrl: "=", // The QueryCtrl object
             }
         };
     })
     .controller('QueryController', function ($scope, uiSegmentSrv, $q) {
         const datasource = $scope.datasource;
         const QueryCtrl = $scope.queryCtrl;
+        $scope.query.updateControls();
 
         $scope.getSuggestions = function(clause, segment, index) {
             var segments = clause.restriction.segments;
@@ -78,14 +79,14 @@ angular.module('grafana.directives')
 
         $scope.segmentUpdated = function(clause, segment, segmentIndex) {
             $scope.query.segmentUpdated(clause, segment, segmentIndex);
-            $scope.query.addPlusButtonIfRequired();
+            $scope.query.updateControls();
             QueryCtrl.updateTargetFilter();
         };
 
-        $scope.removeClause = function(clause) {
-            if ($scope.query.removeClause(clause)) {
-                $scope.query.addPlusButtonIfRequired();
-                QueryCtrl.updateTargetFilter();
+        $scope.performClick = function(clause, control) {
+            if (control.action) {
+                control.action($scope.query, clause);
+                $scope.query.updateControls();
             }
-        };
+        }
     });

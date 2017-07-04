@@ -1,8 +1,9 @@
 import Q from "q";
 import _ from 'lodash';
 import {UI} from '../datasources/fault-ds/ui';
-import {API} from '../opennms'
-import {Mapping} from '../datasources/fault-ds/Mapping'
+import {API} from '../opennms';
+import {Mapping} from '../datasources/fault-ds/mapping';
+import {FilterInitializer} from '../datasources/fault-ds/client_delegate';
 
 describe("OpenNMS_FaultManagement_Datasource", function() {
     let uiSegmentSrv = {
@@ -152,6 +153,218 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
     });
 
+    describe('FilterInitializer', function() {
+
+        let apiFilter = new API.Filter()
+            .withClause(new API.Clause(new API.Restriction('key', API.Comparators.EQ, 'value'), API.Operators.AND))
+            .withClause(new API.Clause(new API.Restriction('key2', API.Comparators.EQ, 'value2'), API.Operators.AND))
+            .withClause(new API.Clause(new API.NestedRestriction()
+                .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.NE, "value3"), API.Operators.OR)), API.Operators.AND));
+
+        it('should initialize already initialized', function(done) {
+            const otherFilter = new FilterInitializer().createFilter(apiFilter);
+            expect(apiFilter).to.eql(otherFilter);
+
+            done();
+        });
+
+        it('should initialize', function(done) {
+            const jsonString = JSON.stringify(apiFilter);
+            const object = JSON.parse(jsonString);
+            expect(object).not.to.be.an.instanceof(API.Filter);
+
+            const filterObject = new FilterInitializer().createFilter(object);
+            expect(filterObject).to.be.an.instanceof(API.Filter);
+            expect(apiFilter).to.eql(filterObject);
+
+            done();
+        });
+
+
+    });
+
+    describe("UI.Query", function() {
+        let query;
+
+        beforeEach(function () {
+            query = new UI.Filter(uiSegmentSrv).query;
+        });
+
+        it('should add new empty clause', function(done) {
+            expect(query.clauses.length).to.eql(0);
+            query.createNewEmptyClause();
+            expect(query.clauses.length).to.eql(1);
+
+            done();
+        });
+
+        it('should add new empty nested clause', function(done) {
+
+            expect(query.clauses.length).to.eql(0);
+            query.createNewEmptyNestedClause();
+            expect(query.clauses.length).to.eql(1);
+
+            expect(query.clauses[0].restriction.clauses.length).to.eql(1);
+
+            done();
+        });
+    });
+
+    describe("UI.Controls", function() {
+
+        let uiFilter;
+
+        beforeEach(function() {
+            uiFilter = new UI.Filter(uiSegmentSrv);
+        });
+
+        describe('AddControl', function() {
+            let control = new UI.Controls.AddControl();
+
+            describe("filter", function() {
+                it('always show, except for nested controls', function(done) {
+                    expect(control.filter(uiFilter.query, new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.Restriction(uiSegmentSrv)))).to.eql(true);
+
+                    expect(control.filter(uiFilter.query, new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.Query(uiSegmentSrv)))).to.eql(false);
+
+                    done();
+                })
+            });
+
+            describe("action", function() {
+
+              it ('should add new empty clause', function(done) {
+                  const newClause = uiFilter.query.createNewEmptyClause();
+                  expect(uiFilter.query.clauses.length).to.eql(1);
+
+                  control.action(uiFilter.query, newClause);
+                  expect(uiFilter.query.clauses.length).to.eql(2);
+
+                  done();
+              });
+            });
+
+        });
+
+        describe('RemoveControl', function() {
+
+            let control = new UI.Controls.RemoveControl();
+
+            describe("filter", function() {
+                it('do not show on first empty clause', function(done) {
+                    uiFilter.query.createNewEmptyClause();
+
+                    expect(control.filter(uiFilter.query, uiFilter.query.clauses[0])).to.eql(false);
+
+                    done();
+                });
+
+                it('show on nested and children of nested clause', function(done) {
+
+                    uiFilter.query.createNewEmptyNestedClause();
+
+                    expect(uiFilter.query.clauses.length).to.eql(1);
+                    expect(control.filter(uiFilter.query, uiFilter.query.clauses[0])).to.eql(false); // no control on nested clause
+                    expect(control.filter(uiFilter.query.clauses[0].restriction, uiFilter.query.clauses[0].restriction.clauses[0])).to.eql(true); // control on clause
+
+                    done();
+                });
+
+                it('show on other clauses', function(done) {
+                    uiFilter.query.createNewEmptyClause();
+                    uiFilter.query.createNewEmptyClause();
+
+                    _.each(uiFilter.query.clauses, clause => {
+                        expect(control.filter(uiFilter.query, clause)).to.eql(true);
+                    });
+
+                    done();
+                });
+            });
+
+
+            describe("action", function() {
+                it ('should remove clause', function(done) {
+                    // add dummy clause
+                    uiFilter.query.createNewEmptyClause();
+                    expect(uiFilter.query.clauses.length).to.eql(1);
+
+                    // perform action
+                    control.action(uiFilter.query, uiFilter.query.clauses[0]);
+
+                    // verify it was removed
+                    expect(uiFilter.query.clauses.length).to.eql(0);
+
+                    done();
+                });
+
+                it ('should remove query from parent clause if last clause was removed', function(done) {
+                    // dummy clause added yet
+                    uiFilter.query.createNewEmptyClause();
+                    expect(uiFilter.query.clauses.length).to.eql(1);
+
+                    // add nested clause
+                    const newQuery = uiFilter.query.createNewEmptyNestedClause();
+                    expect(uiFilter.query.clauses.length).to.eql(2);
+                    expect(newQuery.clauses.length).to.eql(1);
+
+                    // perform action ...
+                    control.action(newQuery, newQuery.clauses[0]);
+
+                    // ... and verify that it was removed
+                    expect(newQuery.clauses.length).to.eql(0);
+                    expect(uiFilter.query.clauses.length).to.eql(1);
+
+                    done();
+                });
+            });
+
+        });
+
+        describe('NestedControl', function() {
+            let control = new UI.Controls.AddNestedControl();
+
+            describe("filter", function() {
+                it('show on all 1st level clauses, except nested clause', function(done) {
+                    uiFilter.query.createNewEmptyClause();
+                    uiFilter.query.createNewEmptyClause();
+                    uiFilter.query.createNewEmptyClause();
+
+                    _.each(uiFilter.query.clauses, clause => {
+                        expect(control.filter(uiFilter.query, clause)).to.eql(true);
+                    });
+
+                    // Try nested
+                    uiFilter.query.createNewEmptyNestedClause();
+                    expect(control.filter(uiFilter.query, uiFilter.query.clauses[3])).to.eql(false);
+
+                    done();
+                });
+
+                it('do not show on 2nd level clauses ', function(done) {
+                    uiFilter.query.createNewEmptyNestedClause();
+                    uiFilter.query.createNewEmptyClause();
+
+                    const newQuery = uiFilter.query.clauses[0].restriction;
+                    newQuery.createNewEmptyClause();
+                    newQuery.createNewEmptyClause();
+                    newQuery.createNewEmptyClause();
+
+                    // verify 2nd level
+                    _.each(newQuery.clauses, clause => {
+                        expect(control.filter(newQuery, clause)).to.eql(false);
+                    });
+
+                    // verify 1st level
+                    expect(control.filter(uiFilter.query, uiFilter.query.clauses[0])).to.eql(false);
+                    expect(control.filter(uiFilter.query, uiFilter.query.clauses[1])).to.eql(true);
+
+
+                    done();
+                })
+            });
+        });
+    });
 
     describe('UI.Filter', function () {
         let uiFilter;
@@ -201,11 +414,12 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(uiFilter.query.clauses).to.have.lengthOf(0);
 
                 done();
-            })
+            });
         });
 
         describe('clear', function () {
             it('should reset query', function (done) {
+                uiFilter.query.root = false; // make it pass
                 expect(uiFilter.query).to.eql(new UI.Query(uiSegmentSrv));
 
                 uiFilter.addClause(new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.RestrictionDTO("key", "=", "value")));
@@ -234,7 +448,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             it('should not include not initialized clauses (restrictionDTO is not fully initialized)', function(done) {
                 const expected = "select all alarms where severity >= 'WARNING'";
 
-                uiFilter.addClause(new UI.Clause(uiSegmentSrv, UI.Operators.OR, new UI.RestrictionDTO("severity", UI.Comparators.GE, 'WARNING')))
+                uiFilter.addClause(new UI.Clause(uiSegmentSrv, UI.Operators.OR, new UI.RestrictionDTO("severity", UI.Comparators.GE, 'WARNING')));
                 expect(uiFilter.getQueryString()).to.eql(expected);
 
                 // It does not have any attribute, comparator or value data (valid state), but should not be considered when generating the string
@@ -311,7 +525,93 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
                 uiFilter.addClause(new API.Clause(nestedRestriction, API.Operators.OR));
 
-                expect(uiFilter.getQueryString()).to.eql("select all alarms where (severity >= 'WARNING' and severity <= 'MAJOR' or (location = 'Fulda'))")
+                expect(uiFilter.getQueryString()).to.eql("select all alarms where (severity >= 'WARNING' and severity <= 'MAJOR' or (location = 'Fulda'))");
+
+                done();
+            });
+
+            it('should render real nested clauses correctly', function(done) {
+                // Dummy clause should not influence the query
+                uiFilter.query.createNewEmptyNestedClause();
+                expect(uiFilter.getQueryString()).to.eql("select all alarms");
+
+                // update the values
+                const query = uiFilter.query.clauses[0].restriction;
+                query.clauses[0].restriction.setAttribute("key");
+                query.clauses[0].restriction.setComparator("=");
+                query.clauses[0].restriction.setValue("value");
+
+                // should now be influenced
+                expect(uiFilter.getQueryString()).to.eql("select all alarms where (key = 'value')");
+
+                done();
+            });
+        });
+
+        describe("updateControls", function() {
+
+            const verifyNoControls = function(query) {
+                _.each(query.clauses, clause => {
+                    expect(clause.controls.length).to.eql(0);
+                });
+            };
+
+            const verifyFullControls = function(clause) {
+                verifyControls(clause, [UI.Controls.RemoveControl, UI.Controls.AddControl, UI.Controls.AddNestedControl]);
+            };
+
+            const verifyControls = function(clause, controls = []) {
+                expect(clause.controls.length).to.eql(controls.length); // add, add nested and remove
+                if (controls.length > 0) {
+                    _.each(controls, (control, index) => {
+                       expect(clause.controls[index]).to.be.an.instanceof(control)
+                    });
+                }
+            };
+
+            it ('should create controls for add and add nested', function(done) {
+                verifyNoControls(uiFilter.query);
+                expect(uiFilter.query.clauses.length).to.eql(0);
+
+                // Update controls
+                uiFilter.updateControls();
+                expect(uiFilter.query.clauses.length).to.eql(1); // dummy row
+
+                // now the controls should be there
+                _.each(uiFilter.query.clauses, clause => {
+                    verifyControls(clause, [UI.Controls.AddControl, UI.Controls.AddNestedControl]);
+                });
+
+                done();
+            });
+
+            it ('should create controls for add, add nested and remove', function(done) {
+                verifyNoControls(uiFilter.query);
+
+                uiFilter.query.addClause(new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.Restriction(uiSegmentSrv, new UI.RestrictionDTO("key", "=", "value"))));
+                uiFilter.updateControls();
+
+                expect(uiFilter.query.clauses.length).to.eql(1);
+                _.each(uiFilter.query.clauses, clause => {
+                    verifyFullControls(clause);
+                });
+
+                done();
+
+            });
+
+            it ('should not add nested controls on level 2', function(done) {
+                verifyNoControls(uiFilter.query);
+
+                uiFilter.query.addClause(new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.Restriction(uiSegmentSrv, new UI.RestrictionDTO("key", "=", "value"))));
+                uiFilter.query.createNewEmptyNestedClause();
+                uiFilter.updateControls();
+
+                expect(uiFilter.query.clauses.length).to.eql(2);
+                expect(uiFilter.query.clauses[1].restriction.clauses.length).to.eql(1);
+                verifyFullControls(uiFilter.query.clauses[0]); // all controls on simple clause
+                verifyControls(uiFilter.query.clauses[1], [ ]); // no controls on nested clause
+                verifyControls(uiFilter.query.clauses[1].restriction.clauses[0], [ UI.Controls.RemoveControl, UI.Controls.AddControl ]); // limited controls on clause of nested clause
 
                 done();
             });

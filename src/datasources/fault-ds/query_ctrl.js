@@ -18,7 +18,6 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     // define and set up model
     this.target.filter = this.target.filter || new API.Filter();
     this.uiFilter = this.filterMapping.getUiFilter(this.target.filter);
-    this.uiFilter.addPlusButtonIfRequired();
   }
 
   toggleEditorMode() {
@@ -40,7 +39,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
     clearRestrictions() {
       this.uiFilter.clear();
-      this.uiFilter.addPlusButtonIfRequired();
+      this.uiFilter.query.updateControls();
       this.updateTargetFilter();
     }
 

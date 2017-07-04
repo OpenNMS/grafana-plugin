@@ -24,7 +24,7 @@ export class FilterMapping {
 
         _.each(uiFilter.query.clauses, function(eachClause) {
             const apiClause = new ClauseMapping(self.uiSegmentSrv).getApiClause(eachClause);
-            if (apiClause != null) {
+            if (apiClause !== null) {
                 filter.withClause(apiClause);
             }
         });

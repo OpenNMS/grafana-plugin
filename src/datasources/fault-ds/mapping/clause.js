@@ -24,7 +24,7 @@ export class ClauseMapping {
         }
         const apiOperator = new OperatorMapping().getApiOperator(uiClause.operator.value);
         const apiRestriction = new RestrictionMapping(this.uiSegmentSrv).getApiRestriction(uiClause.restriction);
-        if (apiRestriction != null) {
+        if (apiRestriction !== null) {
             return new API.Clause(apiRestriction, apiOperator);
         }
         return null;

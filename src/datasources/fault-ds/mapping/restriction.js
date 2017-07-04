@@ -48,7 +48,7 @@ export class RestrictionMapping {
             return this.getApiNestedRestriction(uiRestriction);
         } else {
             const restrictionDTO = uiRestriction.asRestrictionDTO();
-            if (restrictionDTO != null) {
+            if (restrictionDTO !== null) {
                 const attribute = new AttributeMapping().getApiAttribute(restrictionDTO.attribute);
                 const comparator = new ComparatorMapping().getApiComparator(restrictionDTO.comparator);
                 const value = new ValueMapping().getApiValue(restrictionDTO.attribute, restrictionDTO.value);
@@ -63,7 +63,7 @@ export class RestrictionMapping {
         const nestedRestriction = new API.NestedRestriction();
         _.each(uiQuery.clauses, uiClause => {
             const apiClause = new ClauseMapping(self.uiSegmentSrv).getApiClause(uiClause);
-            if (apiClause != null) {
+            if (apiClause !== null) {
                 nestedRestriction.withClause(apiClause);
             }
         });

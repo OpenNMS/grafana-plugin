@@ -19,14 +19,6 @@ export class Restriction {
         this.segments.pop();
     }
 
-    addPlusButtonIfRequired() {
-        const segmentIndex = Math.max(this.getSegmentCount() - 1, 0);
-        const lastSegment = this.segments[segmentIndex];
-        if (!lastSegment || lastSegment.type !== 'plus-button') {
-            this.segments.push(this.uiSegmentSrv.newPlusButton());
-        }
-    }
-
     addSegment(segment) {
         if (segment) {
             this.segments.push(segment);

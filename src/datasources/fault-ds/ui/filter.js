@@ -1,17 +1,18 @@
 import _ from 'lodash';
 import {API} from '../../../opennms';
-import {Mapping} from '../Mapping';
+import {Mapping} from '../mapping';
 import {UI} from '../ui';
 
 export class Filter {
     constructor(uiSegmentSrv) {
         this.limit = 1000; // TODO MVR make this configurable
-        this.query = new UI.Query(uiSegmentSrv);
         this.uiSegmentSrv = uiSegmentSrv;
+        this.query = new UI.Query(uiSegmentSrv);
+        this.query.root = true;
     }
 
-    addPlusButtonIfRequired() {
-        this.query.addPlusButtonIfRequired();
+    updateControls() {
+        this.query.updateControls();
     }
 
     getQueryString() {

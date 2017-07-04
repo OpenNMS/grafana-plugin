@@ -3,9 +3,11 @@ import {UI} from '../ui';
 
 export class Query {
 
-    constructor(uiSegmentSrv) {
+    constructor(uiSegmentSrv, parentQuery) {
         this.uiSegmentSrv = uiSegmentSrv;
         this.clauses = [];
+        this.root = false;
+        this.parentQuery = parentQuery;
     }
 
     clear() {
@@ -27,21 +29,26 @@ export class Query {
         return this.clauses[this.getSize() - 1];
     }
 
-    addPlusButtonIfRequired() {
-        // at least one row should be available even if it is an empty row
+    updateControls() {
+        // at least one row should be available even if it is a dummy row
         if (this.getSize() == 0) {
-            this.clauses.push(new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv)));
+            this.createNewEmptyClause();
         }
+        var self = this;
         _.each(this.clauses, clause => {
-            clause.addPlusButtonIfRequired();
+            clause.updateControls(self);
         });
     }
 
-    addClause(clause) {
+    addClause(clause, index) {
         if (clause) {
-            this.clauses.push(clause);
             if (!clause.uiSegmentSrv) {
                 clause.uiSegmentSrv = this.uiSegmentSrv;
+            }
+            if (index !== undefined) {
+                this.clauses.splice(index, 0, clause);
+            } else {
+                this.clauses.push(clause);
             }
         }
     }
@@ -85,31 +92,50 @@ export class Query {
         }).join("");
     }
 
+    createNewEmptyClause() {
+        const newClause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
+        newClause.restriction.addSegment(this.uiSegmentSrv.newKey('select attribute'));
+        newClause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
+        newClause.restriction.addSegment(this.uiSegmentSrv.newFake('select value', 'value', 'query-segment-value'));
+        this.addClause(newClause); // TODO MVR index?!
+        return newClause;
+    }
+
+    createNewEmptyNestedClause() {
+        const newQuery = new UI.Query(this.uiSegmentSrv, this);
+        newQuery.createNewEmptyClause();
+        const newClause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, newQuery);
+        this.addClause(newClause);
+        return newQuery;
+    }
+
     segmentUpdated(clause, segment) {
-        // If plus button was clicked, it is now an input field
-        if (segment.type === 'plus-button') {
-            // make the plus button an actual attribute input
-            segment.type = 'key';
-            segment.cssClass = 'query-segment-key';
-
-            // It is the last element in the row, so move it to it's own row
-            const segmentIndex = clause.restriction.segments.indexOf(segment);
-            if (segmentIndex > 0) {
-                // remove plus button
-                clause.restriction.removeLastSegment();
-
-                // Create new row
-                clause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
-                this.addClause(clause);
-
-                // add key (was plus button)
-                clause.restriction.addSegment(segment);
-            }
-
-            // Add comparator and value
-            clause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
-            clause.restriction.addSegment(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
-        }
+        // // If plus button was clicked, it is now an input field
+        // if (segment.type === 'plus-button') {
+        //     // make the plus button an actual attribute input
+        //     segment.type = 'key';
+        //     segment.cssClass = 'query-segment-key';
+        //
+        //     // If is the last element in the row, so move it to it's own row
+        //     const segmentIndex = clause.restriction.segments.indexOf(segment);
+        //     if (segmentIndex > 0) {
+        //         const clauseIndex = this.clauses.indexOf(clause) + 1;
+        //
+        //         // remove plus button
+        //         clause.restriction.removeLastSegment();
+        //
+        //         // Create new row
+        //         clause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
+        //         this.addClause(clause, clauseIndex);
+        //
+        //         // add key (was plus button)
+        //         clause.restriction.addSegment(segment);
+        //     }
+        //
+        //     // Add comparator and value
+        //     clause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
+        //     clause.restriction.addSegment(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
+        // }
 
         if (segment.type === 'value') {
             segment.fake = false;
@@ -120,6 +146,6 @@ export class Query {
         }
 
         // Ensure that we always have a plus button
-        this.addPlusButtonIfRequired();
+        this.updateControls();
     }
 }
