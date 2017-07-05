@@ -117,33 +117,6 @@ export class Query {
     };
 
     segmentUpdated(clause, segment) {
-        // // If plus button was clicked, it is now an input field
-        // if (segment.type === 'plus-button') {
-        //     // make the plus button an actual attribute input
-        //     segment.type = 'key';
-        //     segment.cssClass = 'query-segment-key';
-        //
-        //     // If is the last element in the row, so move it to it's own row
-        //     const segmentIndex = clause.restriction.segments.indexOf(segment);
-        //     if (segmentIndex > 0) {
-        //         const clauseIndex = this.clauses.indexOf(clause) + 1;
-        //
-        //         // remove plus button
-        //         clause.restriction.removeLastSegment();
-        //
-        //         // Create new row
-        //         clause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
-        //         this.addClause(clause, clauseIndex);
-        //
-        //         // add key (was plus button)
-        //         clause.restriction.addSegment(segment);
-        //     }
-        //
-        //     // Add comparator and value
-        //     clause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
-        //     clause.restriction.addSegment(this.uiSegmentSrv.newFake('select attribute value', 'value', 'query-segment-value'));
-        // }
-
         if (segment.type === 'value') {
             segment.fake = false;
         }

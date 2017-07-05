@@ -3,6 +3,9 @@ import {Restriction} from './Restriction';
 import {Query} from './Query';
 
 
+/**
+ * Parent class of all controls.
+ */
 class Control {
 
     constructor(title, icon) {
@@ -19,6 +22,9 @@ class Control {
     }
 }
 
+/**
+ * Control to remove the current clause from the current query.
+ */
 export class RemoveControl extends Control {
     constructor() {
         super("Remove clause", 'fa-minus');
@@ -45,6 +51,9 @@ export class RemoveControl extends Control {
     }
 }
 
+/**
+ * Control to add a new clause to the current query.
+ */
 export class AddControl extends Control {
 
     constructor() {
@@ -63,6 +72,9 @@ export class AddControl extends Control {
     }
 }
 
+/**
+ * Control to add a new nested clause to the current query.
+ */
 export class AddNestedControl extends Control {
     constructor() {
         super('Add nested clause', 'fa-file', );
