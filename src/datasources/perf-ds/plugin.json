@@ -1,6 +1,6 @@
 {
-  "name": "OpenNMS FM Datasource",
-  "id": "opennms-helm-fm-ds",
+  "name": "OpenNMS PM Datasource",
+  "id": "opennms-helm-pm-ds",
   "type": "datasource",
 
   "partials": {
