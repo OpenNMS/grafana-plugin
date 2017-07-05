@@ -1,0 +1,13 @@
+{
+  "name": "OpenNMS FM Datasource",
+  "id": "opennms-helm-fm-ds",
+  "type": "datasource",
+
+  "partials": {
+    "config": "datasources/perf-ds/partials/config.html"
+  },
+
+  "metrics": true,
+  "annotations": false
+
+}

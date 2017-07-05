@@ -74,6 +74,18 @@ module.exports = function(grunt) {
       }
     },
 
+    sass: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          "dist/datasources/perf-ds/css/opennms.dark.css": "src/datasources/perf-ds/sass/opennms.dark.scss",
+          "dist/datasources/perf-ds/css/opennms.light.css": "src/datasources/perf-ds/sass/opennms.light.scss"
+        }
+      }
+    },
+
     mochaTest: {
       test: {
         options: {
@@ -88,6 +100,7 @@ module.exports = function(grunt) {
     'clean',
     'copy',
     'babel',
+    'sass',
     'mochaTest'
   ]);
 };

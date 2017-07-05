@@ -21,8 +21,10 @@
     "updated": "2017-06-01"
   },
   "includes": [
-    {"type": "panel", "name": "OpenNMS Alarm Panel"},
-    {"type": "datasource", "name": "OpenNMS FM Datasource"}
+    {"type": "panel", "name": "Alarm Table"},
+    {"type": "panel", "name": "Alarm Histogram"},
+    {"type": "datasource", "name": "FM Datasource"},
+    {"type": "datasource", "name": "PM Datasource"}
   ],
   "dependencies": {
     "grafanaVersion": "4.x.x",
