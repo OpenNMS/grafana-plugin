@@ -61,7 +61,8 @@ export class AddControl extends Control {
     }
 
     action(query, clause) {
-        query.createNewEmptyClause();
+        const index = query.clauses.indexOf(clause) + 1;
+        query.createNewEmptyClause(index);
     }
 
     filter(query, clause) {
@@ -81,7 +82,8 @@ export class AddNestedControl extends Control {
     }
 
     action(query, clause) {
-        query.createNewEmptyNestedClause();
+        const index = query.clauses.indexOf(clause) + 1;
+        query.createNewEmptyNestedClause(index);
     }
 
     filter(query, clause) {

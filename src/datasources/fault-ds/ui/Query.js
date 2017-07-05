@@ -92,20 +92,20 @@ export class Query {
         }).join("");
     }
 
-    createNewEmptyClause() {
+    createNewEmptyClause(index) {
         const newClause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
         newClause.restriction.addSegment(this.uiSegmentSrv.newKey('select attribute'));
         newClause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
         newClause.restriction.addSegment(this.uiSegmentSrv.newFake('select value', 'value', 'query-segment-value'));
-        this.addClause(newClause); // TODO MVR index?!
+        this.addClause(newClause, index);
         return newClause;
     }
 
-    createNewEmptyNestedClause() {
+    createNewEmptyNestedClause(index) {
         const newQuery = new UI.Query(this.uiSegmentSrv, this);
         newQuery.createNewEmptyClause();
         const newClause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, newQuery);
-        this.addClause(newClause);
+        this.addClause(newClause, index);
         return newQuery;
     }
 
