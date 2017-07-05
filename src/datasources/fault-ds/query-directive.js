@@ -86,7 +86,7 @@ angular.module('grafana.directives')
         $scope.performClick = function(clause, control) {
             if (control.action) {
                 control.action($scope.query, clause);
-                $scope.query.updateControls();
+                $scope.query.findParent().updateControls();
             }
         }
     });

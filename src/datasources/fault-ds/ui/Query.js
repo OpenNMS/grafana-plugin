@@ -109,6 +109,13 @@ export class Query {
         return newQuery;
     }
 
+    findParent() {
+        if (this.parentQuery) {
+            return this.parentQuery.findParent();
+        }
+        return this;
+    };
+
     segmentUpdated(clause, segment) {
         // // If plus button was clicked, it is now an input field
         // if (segment.type === 'plus-button') {
