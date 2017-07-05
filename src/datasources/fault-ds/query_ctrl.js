@@ -3,6 +3,7 @@ import './css/query-editor.css!'
 import _ from 'lodash';
 import {API} from '../../opennms';
 import {Mapping} from './Mapping';
+import {UI} from './UI';
 import './query-directive'
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
@@ -27,18 +28,24 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.panelCtrl.refresh(); // Asks the panel to refresh data.
   }
 
-    showClearRestrictions() {
-      // if (this.uiFilter.getSize() == 1) {
-      //     return this.uiFilter.table.getLastRow().getColumnCount() == 4;
-      // } else if (this.uiFilter.getSize() > 1) {
-      //     return true;
-      // }
-      return false;
+    showClearRestrictions(query = this.uiFilter.query) {
+      const self = this;
+      const booleanList = _.map(query.clauses, clause => {
+        if (clause.restriction instanceof UI.Query) {
+          return self.showClearRestrictions(clause.restriction);
+        }
+        return new UI.Controls.RemoveControl().filter(query, clause);
+      });
+
+      return _.reduce(booleanList, (overall, current) => {
+        return overall || current;
+      }, false);
+
     }
 
     clearRestrictions() {
       this.uiFilter.clear();
-      this.uiFilter.query.updateControls();
+      this.uiFilter.updateControls();
       this.updateTargetFilter();
     }
 
