@@ -2,7 +2,7 @@
     <div class="gf-form-inline" ng-repeat="clause in query.clauses">
 
         <!-- WHERE or Operator -->
-        <div class="gf-form width-7" style="height: 100%; vertical-align: top">
+        <div class="gf-form" style="height: 100%; vertical-align: top;">
             <label ng-if="$index == 0" class="gf-form-label query-keyword width-7">WHERE</label>
             <metric-segment class="width-7" ng-if="$index > 0" segment="clause.operator" get-options="getSuggestions(clause, clause.operator, $index)" on-change="segmentUpdated(clause, clause.operator, $index)"></metric-segment>
         </div>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- add nested if exists -->
-        <onms-query style="padding-left: 50px; padding-top: 20px" query="clause.restriction" datasource="datasource" query-ctrl="queryCtrl" hide-where="true" ng-if="clause.restriction.clauses">
+        <onms-query style="padding-left: 50px; padding-top: 0px" query="clause.restriction" datasource="datasource" query-ctrl="queryCtrl" hide-where="true" ng-if="clause.restriction.clauses">
 
         </onms-query>
     </div>
