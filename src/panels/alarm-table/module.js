@@ -7,6 +7,8 @@ import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
 import {TableModel} from './table_model';
+import coreModule from 'app/core/core_module';
+import {alarmDetailsAsDirective} from './alarm_details';
 import '../css/styles.css!'
 import '../css/ionicons.css!'
 
@@ -227,6 +229,34 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   // Alarm related actions
 
+  findAlarm(source, alarmId) {
+    let alarm;
+    _.each(this.dataRaw, table => {
+      let matchedRow = _.find(table.rows, row => {
+        return row.meta.source === source && row.meta.alarm.id === alarmId;
+      });
+      if (matchedRow !== undefined) {
+        alarm = matchedRow.meta.alarm;
+      }
+    });
+    return alarm;
+  }
+
+  alarmDetails(source, alarmId) {
+    let alarm = this.findAlarm(source, alarmId);
+    if (alarm === undefined) {
+      this.$rootScope.appEvent('alert-error', ['Unable to find matching alarm', '']);
+      return;
+    }
+
+    let newScope = this.$rootScope.$new();
+    newScope.alarm = alarm;
+    this.$rootScope.appEvent('show-modal', {
+      templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
+      scope: newScope
+    });
+  }
+
   performAlarmActionOnDatasource(source, action, alarmId) {
     this.datasourceSrv.get(source).then(ds => {
       if (ds.type.indexOf("fm-ds") < 0) {
@@ -272,3 +302,5 @@ export {
   AlarmTableCtrl,
   AlarmTableCtrl as PanelCtrl
 };
+
+coreModule.directive('alarmDetailsAsModal',  alarmDetailsAsDirective);
