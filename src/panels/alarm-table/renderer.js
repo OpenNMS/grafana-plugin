@@ -231,7 +231,7 @@ export class TableRenderer {
       // FIXME: Sources with ' in the name will be problematic
       let source = row.meta.source;
       let alarm = row.meta.alarm;
-      let severity = alarm.severity.trim().toLowerCase();
+      let severity = alarm.severity.label.toLowerCase();
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
@@ -288,7 +288,7 @@ export class TableRenderer {
       }
 
       if (this.panel.severity) {
-        rowClass = ' class="' + alarm.severity.trim().toLowerCase() + '"';
+        rowClass = ' class="' + alarm.severity.label.toLowerCase() + '"';
       }
 
       html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';

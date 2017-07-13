@@ -1,33 +1,28 @@
-import {AlarmClientMock} from './alarm_client';
-import {AlarmQuery} from './alarm_query';
+import {ClientDelegate} from './client_delegate';
+import {API} from '../../opennms';
 import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
 
-    // TODO MVR some pieces are copied over from the "grafana-opennms-datasource", e.g. fetching nodes, and the modal selection dialog
-    // We should think about making this a "general, common or shared" project, which we can re-use here
-
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
+    this.type = instanceSettings.type;
+    this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.alarmClient = new AlarmClientMock(instanceSettings, backendSrv, $q);
+    this.alarmClient = new ClientDelegate(instanceSettings, backendSrv, $q);
   }
 
   query(options) {
-      var query = new AlarmQuery(options.targets[0].restrictions).getRestrictionsAsQuery();
-      // TODO MVR what about limiting the request? The rest endpoint enforces a default limit of 10 if not sent
-      query.limit = 100000;
-      query.match = 'any';
-      query.comparator = 'ilike';
-
+      var filter = options.targets[0].filter || new API.Filter();
+      filter.limit = 0; // no limit
       var self = this;
-    return this.alarmClient.findAlarms(query).then(function(data) {
-        return {
-            data: self.toTable(data)
-        };
-    });
+      return this.alarmClient.findAlarms(filter).then(function(alarms) {
+          return {
+              data: self.toTable(alarms)
+          };
+      });
   }
 
   testDatasource() {
@@ -59,10 +54,12 @@ export class OpenNMSFMDatasource {
     if (query.find == 'values') {
         return this.searchForValues(query);
     }
+    if (query.find === 'operators') {
+        return this.alarmClient.findOperators();
+    }
     return this.q.when([]);
   }
 
-  // TODO MVR revisit this and figure out if value/text can be set on the segment to have an id and a label set?!
   searchForValues(query) {
       let attribute = this.alarmClient.findAttribute(query.attribute) || {};
       switch (attribute.type) {
@@ -131,20 +128,20 @@ export class OpenNMSFMDatasource {
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
-    toTable(data) {
+    toTable(alarms) {
         var columnNames = [
-            "Node Label", "Log Message", "Description",
+            "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
             "IP Address", "Service", "Acked By", "Severity",
-            "First Event Time", "Last Event Time", "Event Source", "Count"];
+            "First Event Time", "Last Event Time", "Event Source",
+            "Trouble Ticket", "Trouble Ticket State", "Count"];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
         });
 
-        var rows = _.map(data.alarm, alarm => {
+        var rows = _.map(alarms, alarm => {
             var row = [
-                alarm.nodeLabel,
                 alarm.logMessage,
                 alarm.description,
                 alarm.uei,
@@ -153,10 +150,12 @@ export class OpenNMSFMDatasource {
                 alarm.ipAddress,
                 alarm.serviceType ? alarm.serviceType.name : undefined,
                 alarm.ackUser,
-                alarm.severity,
+                alarm.severity.label,
                 alarm.firstEventTime,
                 alarm.lastEventTime,
                 alarm.lastEvent.source,
+                alarm.troubleTicket,
+                alarm.troubleTicketState,
                 alarm.count
             ];
             row.meta = {
@@ -181,30 +180,30 @@ export class OpenNMSFMDatasource {
 
 
     acknowledgeAlarm(alarmId) {
-        console.log("Ack", alarmId);
+        this.alarmClient.doUpdate(alarmId, {ack: true});
     }
 
     unacknowledgeAlarm(alarmId) {
-        console.log("Unack", alarmId);
+        this.alarmClient.doUpdate(alarmId, {ack: false});
     }
 
     clearAlarm(alarmId) {
-        console.log("Clear", alarmId);
+        this.alarmClient.doUpdate(alarmId, {clear: true});
     }
 
     escalateAlarm(alarmId) {
-        console.log("Escalate", alarmId);
+        this.alarmClient.doUpdate(alarmId, {escalate: true});
     }
 
     createTicketForAlarm(alarmId) {
-        console.log("Create ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "create");
     }
 
     updateTicketForAlarm(alarmId) {
-        console.log("Update ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "update");
     }
 
     closeTicketForAlarm(alarmId) {
-        console.log("Close ticket", alarmId);
+        this.alarmClient.doTicketAction(alarmId, "close");
     }
 }

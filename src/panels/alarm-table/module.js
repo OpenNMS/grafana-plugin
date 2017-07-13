@@ -259,9 +259,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   performAlarmActionOnDatasource(source, action, alarmId) {
     this.datasourceSrv.get(source).then(ds => {
-      if (ds.type.indexOf("fm-ds") < 0) {
+      if (ds.type && ds.type.indexOf("fm-ds") < 0) {
         throw {message: 'Only OpenNMS datasources are supported'};
       } else {
+        if (!ds[action]) {
+          throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
+        }
         ds[action](alarmId);
       }
     });
