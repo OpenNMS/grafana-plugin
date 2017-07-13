@@ -76,7 +76,7 @@ transformers['table'] = {
 
   mergeTables: function(tables) {
     let model = new TableModel();
-    // Use the list of columsn from the first table:
+    // Use the list of columns from the first table:
     //  transformTable() will ensure that all tables have the same columns
     model.columns = tables[0].columns;
     // Concatenate the rows

@@ -1,0 +1,179 @@
+<query-editor-row query-ctrl="ctrl" can-collapse="true">
+    <div class="gf-form-inline">
+        <div class="gf-form max-width-25">
+            <label class="gf-form-label query-keyword width-10">
+                Type
+                <label class="gf-form-label" bs-tooltip="ctrl.target.error" style="color: rgb(229, 189, 28)" ng-show="ctrl.target.error">
+                    <i class="fa fa-warning"></i>
+                </label>
+            </label>
+            <select class="gf-form-input"
+                    ng-model="ctrl.target.type"
+                    ng-blur="ctrl.targetBlur()">
+                <option data-ng-repeat="(key, value) in ctrl.types" value="{{ value }}">{{ key }}</option>
+            </select>
+        </div>
+    </div>
+
+    <div ng-show="ctrl.target.type === 'attribute'">
+        <div class="gf-form-inline">
+            <div class="gf-form max-width-25">
+                <a class="gf-form-label query-keyword width-10"
+                   ng-click="ctrl.openNodeSelectionModal();"
+                   role="menuitem">
+                    Node <i class="fa fa-tree"></i>
+                </a>
+                <input type="text"
+                       class="gf-form-input"
+                       ng-model="ctrl.target.nodeId"
+                       spellcheck='false'
+
+                       placeholder="node id"
+                       data-min-length=0 data-items=100
+                       ng-blur="ctrl.targetBlur()"
+                >
+            </div>
+        </div>
+        <div class="gf-form-inline" ng-show="ctrl.target.nodeId">
+            <div class="gf-form max-width-25">
+                <a class="gf-form-label query-keyword width-10"
+                   ng-click="ctrl.openResourceSelectionModal();"
+                   role="menuitem">
+                    Resource <i class="fa fa-leaf"></i>
+                </a>
+                <input type="text"
+                       class="gf-form-input"
+                       ng-model="ctrl.target.resourceId"
+                       spellcheck='false'
+
+                       placeholder="resource id"
+                       data-min-length=0 data-items=100
+                       ng-blur="ctrl.targetBlur()"
+                >
+            </div>
+        </div>
+        <div ng-show="ctrl.target.resourceId">
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <a class="gf-form-label query-keyword width-10"
+                       ng-click="ctrl.openAttributeSelectionModal();"
+                       role="menuitem">
+                        Attribute <i class="fa fa-tag"></i>
+                    </a>
+                    <input type="text"
+                           class="gf-form-input"
+                           ng-model="ctrl.target.attribute"
+                           spellcheck='false'
+
+                           placeholder="attribute"
+                           data-min-length=0 data-items=100
+                           ng-blur="ctrl.targetBlur()"
+                    >
+                </div>
+            </div>
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <label class="gf-form-label query-keyword width-10">
+                        Sub-Attribute <i class="fa fa-flash"></i>
+                    </label>
+                    <input type="text"
+                           class="gf-form-input"
+                           ng-model="ctrl.target.subattribute"
+                           spellcheck='false'
+
+                           placeholder="subattribute"
+                           data-min-length=0 data-items=100
+                           ng-blur="ctrl.targetBlur()"
+                    >
+                </div>
+            </div>
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <label class="gf-form-label query-keyword width-10">
+                        Aggregation <i class="fa fa-calculator"></i>
+                    </label>
+                    <select class="gf-form-input"
+                            ng-model="ctrl.target.aggregation"
+                            ng-blur="ctrl.targetBlur()">
+                        <option value="AVERAGE">Average</option>
+                        <option value="MIN">Min</option>
+                        <option value="MAX">Max</option>
+                        <option value="LAST">Last</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gf-form-inline" ng-show="ctrl.target.type === 'expression'">
+        <div class="gf-form max-width">
+            <label class="gf-form-label query-keyword width-10">
+                Expression <i class="fa fa-calculator"></i>
+            </label>
+            <input type="text"
+                   class="gf-form-input max-width-30"
+                   ng-model="ctrl.target.expression"
+                   spellcheck='false'
+                   placeholder="series expression"
+                   data-min-length=0 data-items=2048
+                   ng-blur="ctrl.targetBlur()"
+            />
+        </div>
+    </div>
+
+    <div ng-show="ctrl.target.type === 'filter'">
+        <div class="gf-form-inline">
+            <div class="gf-form max-width-25">
+                <a class="gf-form-label query-keyword width-10"
+                   ng-click="ctrl.openFilterSelectionModal();"
+                   role="menuitem">
+                    Filter <i class="fa fa-filter"></i>
+                </a>
+                <input type="text"
+                       class="gf-form-input"
+                       ng-model="ctrl.target.filter.name"
+                       spellcheck='false'
+
+                       placeholder="filter type name"
+                       data-min-length=0 data-items=100
+                       ng-blur="ctrl.targetBlur()"
+                />
+            </div>
+        </div>
+
+        <div class="gf-form-inline" data-ng-repeat="param in ctrl.target.filter.parameter">
+            <div class="gf-form max-width">
+                <label class="gf-form-label query-keyword width-10">
+                    {{ param.displayName }}
+                </label>
+                <input type="text"
+                       class="gf-form-input width-18"
+                       ng-model="ctrl.target.filterParameters[param.key]"
+                       spellcheck='false'
+                       placeholder="{{ param.default != null ? param.default : '' }}"
+                       data-min-length=0 data-items=100
+                       ng-blur="targetBlur()"
+                >
+                <div class="help-block">
+                    {{ param.description }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gf-form-inline" ng-show="ctrl.target.type && ctrl.target.type !== 'filter'">
+        <div class="gf-form max-width-25">
+            <label class="gf-form-label query-keyword width-10">
+                Label <i class="fa fa-font"></i>
+            </label>
+            <input type="text"
+                   class="gf-form-input"
+                   ng-model="ctrl.target.label"
+                   spellcheck='false'
+                   placeholder="series label"
+                   data-min-length=0 data-items=100
+                   ng-blur="ctrl.targetBlur()"
+            />
+        </div>
+    </div>
+</query-editor-row>

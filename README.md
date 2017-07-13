@@ -52,7 +52,7 @@ docker run -p 3000:3000 -t myopennmshelmimage
 
 Login on http://your-ip:3000 with login admin:admin and go to Plugins and enable the Helm app.
 
-IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can be changed.
+IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can't be changed.
 
 ### Advanced Docker build
 
@@ -64,7 +64,7 @@ docker build -t mycustomforkbranch \
             --build-arg OPENNMS_HELM_GIT_BRANCH_REF=myBranch
 ```
 
-This will create a the plugin from the given GitHub URL and branch.
+This will create the plugin from the given GitHub URL and branch.
 
 ### Use Docker compose to build a service stack
 
@@ -76,4 +76,4 @@ With first running `docker-compose up -d` the _Grafana OpenNMS Helm App_ will be
 Any run will use the compiled image from on the local system.
 If you want to rebuild the image run `docker-compose build --no-cache` to rebuild the image with the build configuration in the given `docker-compose.yml`.
 
-The URL for the data source in Grafana for the OpenNMS Horizon server is `http://opennms:8980/rest`.
+The URL for the data source in Grafana for the OpenNMS Horizon server is `http://opennms:8980/opennms`.

@@ -251,6 +251,10 @@ export class TableRenderer {
                             </a>
                             <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">
                                 <li role="menuitem">
+                                    <a tabindex="1" ng-click="ctrl.alarmDetails('${source}', ${alarm.id})">Details</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.acknowledgeAlarm('${source}', ${alarm.id})">Acknowledge</a>
                                 </li>
                                 <li role="menuitem">
@@ -262,6 +266,7 @@ export class TableRenderer {
                                 <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.escalateAlarm('${source}', ${alarm.id})">Escalate</a>
                                 </li>
+                                <li class="divider"></li>
                                 <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.createTicketForAlarm('${source}', ${alarm.id})">Create Ticket</a>
                                 </li>
