@@ -44,6 +44,13 @@ export class ClientDelegate {
             });
     }
 
+    getAlarm(alarmId) {
+      return this.getAlarmDao()
+        .then(function(alarmDao) {
+            return alarmDao.get(alarmId);
+        });
+    }
+
     doUpdate(alarmId, options) {
         var self = this;
         return this.backendSrv.datasourceRequest({
@@ -57,6 +64,13 @@ export class ClientDelegate {
         });
     }
 
+    doAck(alarmId) {
+        return this.getAlarmDao()
+            .then(function(alarmDao) {
+                return alarmDao.acknowledge(alarmId);
+            });
+    }
+
     doTicketAction(alarmId, action) {
         var supportedActions = ["create", "update", "close"];
         if (supportedActions.indexOf(action) < 0) {
@@ -66,6 +80,34 @@ export class ClientDelegate {
         return this.backendSrv.datasourceRequest({
             url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
             method: 'POST',
+        });
+    }
+
+    saveSticky(alarmId, sticky) {
+      return this.getAlarmDao()
+        .then(function(alarmDao) {
+          return alarmDao.saveStickyMemo(alarmId, sticky);
+        });
+    }
+
+    deleteSticky(alarmId) {
+      return this.getAlarmDao()
+        .then(function(alarmDao) {
+          return alarmDao.deleteStickyMemo(alarmId);
+        });
+    }
+
+    saveJournal(alarmId, journal) {
+      return this.getAlarmDao()
+        .then(function(alarmDao) {
+          return alarmDao.saveJournalMemo(alarmId, journal);
+        });
+    }
+
+    deleteJournal(alarmId) {
+      return this.getAlarmDao()
+        .then(function(alarmDao) {
+          return alarmDao.deleteJournalMemo(alarmId);
         });
     }
 

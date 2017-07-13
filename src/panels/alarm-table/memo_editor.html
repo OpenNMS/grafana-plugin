@@ -1,0 +1,16 @@
+<textarea style="width: 100%" name="memoBody" ng-model="memoBody" ng-disabled="actionInProgress"></textarea>
+<div class="btn-group btn-group-sm">
+    <a type="button" class="btn gf-form-button btn-success" ng-click="saveMemo()" ng-disabled="!memoChanged || actionInProgress"><i class="fa fa-plus"></i>  Save</a>
+    <a type="button" class="btn gf-form-button btn-danger" ng-hide="memo === null" ng-click="deleteMemo()" ng-disabled="actionInProgress"><i class="fa fa-minus"></i>&nbsp;&nbsp;Delete</a>
+</div>
+<div class="row" ng-hide="memo === null">
+    <div class="col-md-2"><strong>Author:</strong><br/>
+        {{ memo.author }}
+    </div>
+    <div class="col-md-5"><strong>Updated:</strong><br/>
+        {{ memo.updated }}
+    </div>
+    <div class="col-md-5"><strong>Created:</strong><br/>
+        {{ memo.created }}
+    </div>
+</div>

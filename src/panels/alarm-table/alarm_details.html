@@ -59,11 +59,19 @@
         </div>
 
         <div ng-if="editor.index == 1">
-            <h5 class="section-heading">Sticky Memo</h5>
-            <pre class="small">insert sticky here</pre>
-
-            <h5 class="section-heading">Journal Memo</h5>
-            <pre class="small">insert journal here</pre>
+            <div class="row">
+                <div class="col-md-12">
+                  <h3>Sticky Memo</h3>
+                  <memo-editor alarm="ctrl.alarm" type="sticky" source="ctrl.source"></memo-editor>
+                </div>
+            </div>
+            <div class="col-xs-12" style="height:50px;"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Journal Memo</h3>
+                    <memo-editor alarm="ctrl.alarm" type="journal" source="ctrl.source"></memo-editor>
+                </div>
+            </div>
         </div>
 
         <div ng-if="editor.index == 2">

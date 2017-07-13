@@ -2,11 +2,15 @@
 export class AlarmDetailsCtrl {
 
   /** @ngInject */
-  constructor($scope) {
+  constructor($scope, datasourceSrv) {
     this.$scope = $scope;
     $scope.editor = { index: 0 };
-    $scope.alarm = $scope.$parent.alarm;
+
+    // Save the alarm
+    this.alarm = $scope.$parent.alarm;
+    this.source = $scope.$parent.source;
   }
+
 }
 
 /** @ngInject */
