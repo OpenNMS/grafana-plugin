@@ -16,17 +16,17 @@ module.exports = function(grunt) {
         src: ['**/*', '!**/*.js', '!**/*.scss'],
         dest: 'dist'
       },
-      vendor_to_dist: {
-          cwd: 'vendor',
-          expand: true,
-          src: ['**/*'],
-          dest: 'dist'
-      },
       opennms_to_vendor: {
         expand: true,
           src: ['node_modules/opennms/dist/opennms.js'],
           flatten: true,
           dest: 'vendor'
+      },
+      vendor_to_dist: {
+          cwd: 'vendor',
+          expand: true,
+          src: ['**/*'],
+          dest: 'dist'
       },
       vendor_to_dist_tests: {
           cwd: 'vendor',
