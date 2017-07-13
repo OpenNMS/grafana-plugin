@@ -130,7 +130,9 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             let mapping = new Mapping.FilterMapping(uiSegmentSrv);
 
             it ('should map from empty ui to api filter', function(done) {
-                expect(mapping.getApiFilter(new UI.Filter(uiSegmentSrv))).to.eql(new API.Filter());
+                let apiFilter = new API.Filter();
+                apiFilter.limit = 0;
+                expect(mapping.getApiFilter(new UI.Filter(uiSegmentSrv))).to.eql(apiFilter);
 
                 done();
             });
@@ -139,6 +141,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 const apiFilter = new API.Filter()
                     .withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "value"), API.Operators.OR))
                     .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.NE, "value2"), API.Operators.AND));
+                apiFilter.limit = 0;
 
                 const uiFilter = new UI.Filter(uiSegmentSrv)
                     .withClause(new UI.Clause(uiSegmentSrv, UI.Operators.OR, new UI.RestrictionDTO("key", "=", "value")))

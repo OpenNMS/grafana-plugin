@@ -16,6 +16,7 @@ export class OpenNMSFMDatasource {
 
   query(options) {
       var filter = options.targets[0].filter || new API.Filter();
+      filter.limit = 0; // no limit
       var self = this;
       return this.alarmClient.findAlarms(filter).then(function(alarms) {
           return {

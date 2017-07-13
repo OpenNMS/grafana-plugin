@@ -20,7 +20,7 @@ export class FilterMapping {
 
         const self = this;
         const filter = new API.Filter();
-        filter.limit = uiFilter.limit;
+        filter.limit = 0;
 
         _.each(uiFilter.query.clauses, function(eachClause) {
             const apiClause = new ClauseMapping(self.uiSegmentSrv).getApiClause(eachClause);
@@ -38,7 +38,6 @@ export class FilterMapping {
 
         const self = this;
         let uiFilter = new UI.Filter(this.uiSegmentSrv);
-        uiFilter.limit = apiFilter.limit;
 
         _.each(apiFilter.clauses, apiClause => {
             const uiClause = new ClauseMapping(self.uiSegmentSrv).getUiClause(apiClause);

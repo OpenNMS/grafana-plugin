@@ -5,7 +5,6 @@ import {UI} from '../UI';
 
 export class Filter {
     constructor(uiSegmentSrv) {
-        this.limit = 1000; // TODO MVR make this configurable
         this.uiSegmentSrv = uiSegmentSrv;
         this.query = new UI.Query(uiSegmentSrv);
         this.query.root = true;
