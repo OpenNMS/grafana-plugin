@@ -4,9 +4,6 @@ import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
 
-    // TODO MVR some pieces are copied over from the "grafana-opennms-datasource", e.g. fetching nodes, and the modal selection dialog
-    // We should think about making this a "general, common or shared" project, which we can re-use here
-
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
@@ -62,7 +59,6 @@ export class OpenNMSFMDatasource {
     return this.q.when([]);
   }
 
-  // TODO MVR revisit this and figure out if value/text can be set on the segment to have an id and a label set?!
   searchForValues(query) {
       let attribute = this.alarmClient.findAttribute(query.attribute) || {};
       switch (attribute.type) {

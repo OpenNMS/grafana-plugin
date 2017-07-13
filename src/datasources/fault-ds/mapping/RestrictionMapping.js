@@ -17,7 +17,6 @@ export class RestrictionMapping {
         if (apiRestriction instanceof API.NestedRestriction) {
             return this.getUiQuery(apiRestriction);
         } else {
-            // TODO MVR Only consider values which are set up correctly
             var uiRestriction = new UI.Restriction(
                 this.uiSegmentSrv,
                 new UI.RestrictionDTO(

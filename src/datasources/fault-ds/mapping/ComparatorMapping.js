@@ -2,7 +2,6 @@ import _ from 'lodash';
 import {API} from '../../../opennms';
 
 export class ComparatorMapping {
-    // TODO MVR this is not really a good way
     getUiComparator(apiComparator) {
         const theComparator = API.Comparators[apiComparator.label];
         if (theComparator.aliases && theComparator.aliases.length > 0) {
