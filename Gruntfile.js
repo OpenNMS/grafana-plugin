@@ -22,6 +22,12 @@ module.exports = function(grunt) {
           src: ['**/*'],
           dest: 'dist'
       },
+      opennms_to_vendor: {
+        expand: true,
+          src: ['node_modules/opennms/dist/opennms.js'],
+          flatten: true,
+          dest: 'vendor'
+      },
       vendor_to_dist_tests: {
           cwd: 'vendor',
           expand: true,
