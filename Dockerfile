@@ -1,4 +1,4 @@
-FROM grafana/grafana:4.3.1
+FROM grafana/grafana:4.4.1
 
 ARG NODEJS_SETUP_SCRIPT_URL=https://deb.nodesource.com/setup_6.x
 ARG YARN_KEY_URL=https://dl.yarnpkg.com/debian/pubkey.gpg
@@ -34,7 +34,7 @@ VOLUME ["/opt/grafana/plugins", "/var/lib/grafana", "/var/log/grafana", "/etc/gr
 EXPOSE 3000
 
 LABEL maintainer="ronny@opennms.org" \
-      grafana.version="4.3.1" \
+      grafana.version="4.4.1" \
       opennms.helm.git.url=${OPENNMS_HELM_GIT_URL} \
       opennms.helm.git.branch.ref=${OPENNMS_HELM_GIT_BRANCH_REF} \
       opennms.helm.license=MIT \
