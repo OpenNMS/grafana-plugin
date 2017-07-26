@@ -1,5 +1,8 @@
 # OpenNMS Helm - PM/FM Console for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/grafana-opennms-helm-app.svg?style=svg)](https://circleci.com/gh/OpenNMS/grafana-opennms-helm-app)
 
+## Issue Tracking
+
+We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) instance to track bugs and enhancements related this to project.
 
 ## Installing from source
 
