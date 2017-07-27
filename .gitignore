@@ -33,6 +33,3 @@ fig.yml
 profile.cov
 grafana
 .notouch
-
-# Not ready yet
-dist

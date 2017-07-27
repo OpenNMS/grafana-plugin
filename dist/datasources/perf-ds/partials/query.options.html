@@ -1,0 +1,92 @@
+<section class="grafana-metric-options">
+  <div class="gf-form-group">
+    <div class="gf-form-inline">
+      <div class="gf-form">
+        <span class="gf-form-label width-10">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(1);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+              <i class="fa fa-info-circle"></i>
+                &nbsp;names and labels
+            </a>
+        </span>
+        <span class="gf-form-label width-10">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(2);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+              <i class="fa fa-info-circle"></i>
+                &nbsp;attributes
+            </a>
+        </span>
+        <span class="gf-form-label width-10">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(3);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+              <i class="fa fa-info-circle"></i>
+                &nbsp;expressions
+            </a>
+        </span>
+        <span class="gf-form-label width-10">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(4);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+              <i class="fa fa-info-circle"></i>
+                &nbsp;filters
+            </a>
+        </span>
+        <span class="gf-form-label width-10">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(5);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+              <i class="fa fa-info-circle"></i>
+                &nbsp;template queries
+            </a>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="editor-row">
+  <div class="pull-left" style="margin-top: 30px;">
+
+    <div class="grafana-info-box span6" ng-if="ctrl.panelCtrl.editorHelpIndex === 1">
+      <h5>Names and labels</h5>
+      <ul>
+        <li>If no label is specified, the query will be identified using the name of the attribute.</li>
+        <li>All of the series must be uniquely identified, otherwise the query will fail.</li>
+      </ul>
+    </div>
+
+    <div class="grafana-info-box span6" ng-if="ctrl.panelCtrl.editorHelpIndex === 2">
+      <h5>Attributes</h5>
+      <ul>
+        <li>Click on the label with the icon to search the available values in the node, resource and attributes fields.</li>
+        <li>When searching for a node you can match on any of these fields: label, sysName, ip address, hostname, foreign id</li>
+      </ul>
+    </div>
+
+    <div class="grafana-info-box span6" ng-if="ctrl.panelCtrl.editorHelpIndex === 3">
+      <h5>Expressions</h5>
+      <ul>
+        <li>Expressions can be used to perform calculations or simple manipulation on previous queries.</li>
+        <li>Within the expression, you can refer to other queries using their name, however these must not contain any spaces.</li>
+        <li>Values that were typically stored in strings.attributes can be reference using $label.$property i.e. ifInOctets.ifSpeed</li>
+      </ul>
+    </div>
+
+    <div class="grafana-info-box span6" ng-if="ctrl.panelCtrl.editorHelpIndex === 4">
+      <h5>Filters</h5>
+      <ul>
+        <li>Filters do not support templated values.</li>
+        <li>Filters using the R backend required 'Rscript' to be available on OpenNMS server's system path.</li>
+      </ul>
+    </div>
+
+    <div class="grafana-info-box span6" ng-if="ctrl.panelCtrl.editorHelpIndex === 5">
+      <h5>Template queries</h5>
+      <ul>
+        <li>Query nodes using nodeFilter($filter), where $filter is a valid <a target="_blank" href="https://www.opennms.org/wiki/Filters">OpenNMS filter</a></li>
+        <li>Query child resources using nodeResources($nodecriteria) where $nodecriteria is the node id, or foreign source and foreign id</li>
+        <li>Examples
+          <ul>
+            <li>nodeFilter(catincProduction & catincLinux)</li>
+            <li>nodeFilter((isSMTP | isPOP3 ) & (categoryName == 'Production'))</li>
+            <li>nodeResources(1)</li>
+            <li>nodeResources(FS:FID)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

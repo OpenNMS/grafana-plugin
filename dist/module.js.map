@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/module.js"],"names":["OpenNMSHelmAppConfigCtrl"],"mappings":";;;;;;;;AAAQA,oC,qBAAAA,wB;;;kCAGJA,wB","file":"module.js","sourcesContent":["import {OpenNMSHelmAppConfigCtrl} from './components/config';\n\nexport {\n    OpenNMSHelmAppConfigCtrl as ConfigCtrl\n};\n"]}
