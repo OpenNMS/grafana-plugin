@@ -14,7 +14,7 @@ Releases will be tagged from the `master` branch and submitted to the [Grafana p
 
 ### Requirements
 
-* [Grafana 4.3.x](http://docs.grafana.org/installation) (tested with v4.3.1)
+* [Grafana 4.4.1](http://docs.grafana.org/installation) (tested with v4.4.1)
 * [yarn](https://yarnpkg.com/en/docs/install) (tested with v0.24.5)
 * [Node.js >= 6.x](https://nodejs.org/en/download) (tested with v6.10.3)
 
