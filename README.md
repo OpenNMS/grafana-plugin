@@ -4,6 +4,12 @@
 
 We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) instance to track bugs and enhancements related this to project.
 
+## Development and Production Versions
+
+Development is done in the `develop` (default GitHub) branch.
+Commits to the `develop` branch are automatically compiled and committed to the `master` branch.
+Releases will be tagged from the `master` branch and submitted to the [Grafana plugin repository](https://github.com/grafana/grafana-plugin-repository).
+
 ## Installing from source
 
 ### Requirements
