@@ -33,3 +33,10 @@ fig.yml
 profile.cov
 grafana
 .notouch
+
+# AsciiBinder documentation preview and package
+docs/_preview
+docs/_package
+
+# Not ready yet
+dist
