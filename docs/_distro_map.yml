@@ -6,6 +6,6 @@ helm:
   site_name: Helm
   site_url: https://docs.opennms.org/helm
   branches:
-    jira/HELM-6:
-      name: jira/HELM-6
-      dir: jira-helm-6
+    master:
+      name: Latest
+      dir: latest
