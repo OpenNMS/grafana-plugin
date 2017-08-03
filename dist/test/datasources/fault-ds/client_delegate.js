@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.FilterInitializer = exports.ClientDelegate = undefined;
+exports.ClientDelegate = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -58,8 +58,7 @@ var ClientDelegate = exports.ClientDelegate = function () {
         key: 'findAlarms',
         value: function findAlarms(filter) {
             return this.getAlarmDao().then(function (alarmDao) {
-                var theFilter = new FilterInitializer().createFilter(filter);
-                return alarmDao.find(theFilter);
+                return alarmDao.find(filter);
             });
         }
     }, {
@@ -247,65 +246,5 @@ var ClientDelegate = exports.ClientDelegate = function () {
     }]);
 
     return ClientDelegate;
-}();
-
-/**
- * The filter may be reloaded from a persisted state.
- * The internal opennms.js API requires a concrete implementation of Comparators or Operators in order to work.
- * As the object was persisted, the references DO NOT MATCH. In order to make them match, we just rebuild the filter.
- */
-
-
-var FilterInitializer = exports.FilterInitializer = function () {
-    function FilterInitializer() {
-        _classCallCheck(this, FilterInitializer);
-    }
-
-    _createClass(FilterInitializer, [{
-        key: 'createFilter',
-        value: function createFilter(filter) {
-            var newFilter = new _opennms.API.Filter();
-            newFilter.limit = filter.limit;
-            newFilter.clauses = this.createNestedRestriction(filter).clauses;
-            return newFilter;
-        }
-    }, {
-        key: 'createClause',
-        value: function createClause(clause) {
-            var operator = _lodash2.default.find(_opennms.API.Operators, function (operator) {
-                return operator.label === clause.operator.label;
-            });
-
-            // Nested restriction
-            if (clause.restriction.clauses) {
-                var nestedRestriction = this.createNestedRestriction(clause.restriction);
-                return new _opennms.API.Clause(nestedRestriction, operator);
-            } else {
-                // Normal restriction
-                var restriction = this.createRestriction(clause.restriction);
-                return new _opennms.API.Clause(restriction, operator);
-            }
-        }
-    }, {
-        key: 'createNestedRestriction',
-        value: function createNestedRestriction(nestedRestriction) {
-            var self = this;
-            var newNestedRestriction = new _opennms.API.NestedRestriction();
-            _lodash2.default.each(nestedRestriction.clauses, function (clause) {
-                newNestedRestriction.withClause(self.createClause(clause));
-            });
-            return newNestedRestriction;
-        }
-    }, {
-        key: 'createRestriction',
-        value: function createRestriction(restriction) {
-            var comparator = _lodash2.default.find(_opennms.API.Comparators, function (comparator) {
-                return comparator.label === restriction.comparator.label;
-            });
-            return new _opennms.API.Restriction(restriction.attribute, comparator, restriction.value);
-        }
-    }]);
-
-    return FilterInitializer;
 }();
 //# sourceMappingURL=client_delegate.js.map

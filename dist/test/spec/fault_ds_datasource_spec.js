@@ -14,7 +14,7 @@ var _opennms = require('../opennms');
 
 var _Mapping = require('../datasources/fault-ds/Mapping');
 
-var _client_delegate = require('../datasources/fault-ds/client_delegate');
+var _FilterCloner = require('../datasources/fault-ds/FilterCloner');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -168,23 +168,23 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
         });
     });
 
-    describe('FilterInitializer', function () {
+    describe('FilterCloner', function () {
 
         var apiFilter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction('key', _opennms.API.Comparators.EQ, 'value'), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction('key2', _opennms.API.Comparators.EQ, 'value2'), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.NestedRestriction().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.NE, "value3"), _opennms.API.Operators.OR)), _opennms.API.Operators.AND));
 
-        it('should initialize already initialized', function (done) {
-            var otherFilter = new _client_delegate.FilterInitializer().createFilter(apiFilter);
+        it('should clone already initialized', function (done) {
+            var otherFilter = new _FilterCloner.FilterCloner().cloneFilter(apiFilter);
             expect(apiFilter).to.eql(otherFilter);
 
             done();
         });
 
-        it('should initialize', function (done) {
+        it('should clone', function (done) {
             var jsonString = JSON.stringify(apiFilter);
             var object = JSON.parse(jsonString);
             expect(object).not.to.be.an.instanceof(_opennms.API.Filter);
 
-            var filterObject = new _client_delegate.FilterInitializer().createFilter(object);
+            var filterObject = new _FilterCloner.FilterCloner().cloneFilter(object);
             expect(filterObject).to.be.an.instanceof(_opennms.API.Filter);
             expect(apiFilter).to.eql(filterObject);
 

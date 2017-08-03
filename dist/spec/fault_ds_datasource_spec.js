@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/client_delegate'], function (_export, _context) {
+System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner'], function (_export, _context) {
     "use strict";
 
-    var Q, _, UI, API, Mapping, FilterInitializer;
+    var Q, _, UI, API, Mapping, FilterCloner;
 
     return {
         setters: [function (_q) {
@@ -16,8 +16,8 @@ System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../
             API = _opennms.API;
         }, function (_datasourcesFaultDsMapping) {
             Mapping = _datasourcesFaultDsMapping.Mapping;
-        }, function (_datasourcesFaultDsClient_delegate) {
-            FilterInitializer = _datasourcesFaultDsClient_delegate.FilterInitializer;
+        }, function (_datasourcesFaultDsFilterCloner) {
+            FilterCloner = _datasourcesFaultDsFilterCloner.FilterCloner;
         }],
         execute: function () {
 
@@ -171,23 +171,23 @@ System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../
                     });
                 });
 
-                describe('FilterInitializer', function () {
+                describe('FilterCloner', function () {
 
                     var apiFilter = new API.Filter().withClause(new API.Clause(new API.Restriction('key', API.Comparators.EQ, 'value'), API.Operators.AND)).withClause(new API.Clause(new API.Restriction('key2', API.Comparators.EQ, 'value2'), API.Operators.AND)).withClause(new API.Clause(new API.NestedRestriction().withClause(new API.Clause(new API.Restriction("key3", API.Comparators.NE, "value3"), API.Operators.OR)), API.Operators.AND));
 
-                    it('should initialize already initialized', function (done) {
-                        var otherFilter = new FilterInitializer().createFilter(apiFilter);
+                    it('should clone already initialized', function (done) {
+                        var otherFilter = new FilterCloner().cloneFilter(apiFilter);
                         expect(apiFilter).to.eql(otherFilter);
 
                         done();
                     });
 
-                    it('should initialize', function (done) {
+                    it('should clone', function (done) {
                         var jsonString = JSON.stringify(apiFilter);
                         var object = JSON.parse(jsonString);
                         expect(object).not.to.be.an.instanceof(API.Filter);
 
-                        var filterObject = new FilterInitializer().createFilter(object);
+                        var filterObject = new FilterCloner().cloneFilter(object);
                         expect(filterObject).to.be.an.instanceof(API.Filter);
                         expect(apiFilter).to.eql(filterObject);
 

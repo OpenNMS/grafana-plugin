@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['./client_delegate', '../../opennms', 'lodash'], function (_export, _context) {
+System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var ClientDelegate, API, _, _createClass, OpenNMSFMDatasource;
+    var ClientDelegate, API, FilterCloner, _, _createClass, OpenNMSFMDatasource;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -16,6 +16,8 @@ System.register(['./client_delegate', '../../opennms', 'lodash'], function (_exp
             ClientDelegate = _client_delegate.ClientDelegate;
         }, function (_opennms) {
             API = _opennms.API;
+        }, function (_FilterCloner) {
+            FilterCloner = _FilterCloner.FilterCloner;
         }, function (_lodash) {
             _ = _lodash.default;
         }],
@@ -54,13 +56,37 @@ System.register(['./client_delegate', '../../opennms', 'lodash'], function (_exp
                 _createClass(OpenNMSFMDatasource, [{
                     key: 'query',
                     value: function query(options) {
+                        // Initialize filter
                         var filter = options.targets[0].filter || new API.Filter();
                         filter.limit = 0; // no limit
+
+                        // Clone Filter to prevent some issues and also make substitution possible
+                        // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+                        var clonedFilter = new FilterCloner().cloneFilter(filter);
+                        this.substitute(clonedFilter.clauses, options);
+
                         var self = this;
-                        return this.alarmClient.findAlarms(filter).then(function (alarms) {
+                        return this.alarmClient.findAlarms(clonedFilter).then(function (alarms) {
                             return {
                                 data: self.toTable(alarms)
                             };
+                        });
+                    }
+                }, {
+                    key: 'substitute',
+                    value: function substitute(clauses, options) {
+                        var self = this;
+                        _.each(clauses, function (clause) {
+                            if (clause.restriction) {
+                                if (clause.restriction instanceof API.NestedRestriction) {
+                                    self.substitute(clause.restriction.clauses, options);
+                                } else if (clause.restriction.value) {
+                                    // TODO MVR: This is a hint on how to probably best implement HELM-12
+                                    // clause.restriction.value = clause.restriction.value.replace(/\$timeFrom/g, options.range.from.valueOf());
+                                    // clause.restriction.value = clause.restriction.value.replace(/\$timeTo/g, options.range.to.valueOf());
+                                    clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                                }
+                            }
                         });
                     }
                 }, {

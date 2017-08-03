@@ -3,7 +3,7 @@
 System.register(['../../opennms', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var API, Client, Rest, DAO, Model, _, _createClass, ClientDelegate, FilterInitializer;
+    var API, Client, Rest, DAO, Model, _, _createClass, ClientDelegate;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -81,8 +81,7 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     key: 'findAlarms',
                     value: function findAlarms(filter) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            var theFilter = new FilterInitializer().createFilter(filter);
-                            return alarmDao.find(theFilter);
+                            return alarmDao.find(filter);
                         });
                     }
                 }, {
@@ -270,61 +269,6 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
             }());
 
             _export('ClientDelegate', ClientDelegate);
-
-            _export('FilterInitializer', FilterInitializer = function () {
-                function FilterInitializer() {
-                    _classCallCheck(this, FilterInitializer);
-                }
-
-                _createClass(FilterInitializer, [{
-                    key: 'createFilter',
-                    value: function createFilter(filter) {
-                        var newFilter = new API.Filter();
-                        newFilter.limit = filter.limit;
-                        newFilter.clauses = this.createNestedRestriction(filter).clauses;
-                        return newFilter;
-                    }
-                }, {
-                    key: 'createClause',
-                    value: function createClause(clause) {
-                        var operator = _.find(API.Operators, function (operator) {
-                            return operator.label === clause.operator.label;
-                        });
-
-                        // Nested restriction
-                        if (clause.restriction.clauses) {
-                            var nestedRestriction = this.createNestedRestriction(clause.restriction);
-                            return new API.Clause(nestedRestriction, operator);
-                        } else {
-                            // Normal restriction
-                            var restriction = this.createRestriction(clause.restriction);
-                            return new API.Clause(restriction, operator);
-                        }
-                    }
-                }, {
-                    key: 'createNestedRestriction',
-                    value: function createNestedRestriction(nestedRestriction) {
-                        var self = this;
-                        var newNestedRestriction = new API.NestedRestriction();
-                        _.each(nestedRestriction.clauses, function (clause) {
-                            newNestedRestriction.withClause(self.createClause(clause));
-                        });
-                        return newNestedRestriction;
-                    }
-                }, {
-                    key: 'createRestriction',
-                    value: function createRestriction(restriction) {
-                        var comparator = _.find(API.Comparators, function (comparator) {
-                            return comparator.label === restriction.comparator.label;
-                        });
-                        return new API.Restriction(restriction.attribute, comparator, restriction.value);
-                    }
-                }]);
-
-                return FilterInitializer;
-            }());
-
-            _export('FilterInitializer', FilterInitializer);
         }
     };
 });

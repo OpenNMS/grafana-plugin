@@ -52,7 +52,7 @@ System.register([], function (_export, _context) {
                         if ("null" === value) {
                             value = '\0';
                         }
-                        return encodeURIComponent(value);
+                        return value;
                     }
                 }, {
                     key: 'getUiValue',
@@ -67,7 +67,7 @@ System.register([], function (_export, _context) {
                         if (value === '\0') {
                             return "null";
                         }
-                        return decodeURIComponent(value);
+                        return value;
                     }
                 }]);
 

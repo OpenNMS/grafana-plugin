@@ -28,7 +28,7 @@ var ValueMapping = exports.ValueMapping = function () {
             if ("null" === value) {
                 value = '\0';
             }
-            return encodeURIComponent(value);
+            return value;
         }
     }, {
         key: 'getUiValue',
@@ -43,7 +43,7 @@ var ValueMapping = exports.ValueMapping = function () {
             if (value === '\0') {
                 return "null";
             }
-            return decodeURIComponent(value);
+            return value;
         }
     }]);
 
