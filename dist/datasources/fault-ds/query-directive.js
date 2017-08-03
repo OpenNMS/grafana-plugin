@@ -90,6 +90,7 @@ System.register(['angular', 'lodash'], function (_export, _context) {
                 $scope.performClick = function (clause, control) {
                     if (control.action) {
                         control.action($scope.query, clause);
+                        QueryCtrl.updateTargetFilter();
                         $scope.query.findParent().updateControls();
                     }
                 };

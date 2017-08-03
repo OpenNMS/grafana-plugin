@@ -87,6 +87,7 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
     $scope.performClick = function (clause, control) {
         if (control.action) {
             control.action($scope.query, clause);
+            QueryCtrl.updateTargetFilter();
             $scope.query.findParent().updateControls();
         }
     };
