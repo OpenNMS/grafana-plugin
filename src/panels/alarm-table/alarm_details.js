@@ -7,8 +7,8 @@ export class AlarmDetailsCtrl {
     $scope.editor = { index: 0 };
 
     // Save the alarm
-    this.alarm = $scope.$parent.alarm;
-    this.source = $scope.$parent.source;
+    $scope.alarm = $scope.$parent.alarm;
+    $scope.source = $scope.$parent.source;
   }
 
 }
