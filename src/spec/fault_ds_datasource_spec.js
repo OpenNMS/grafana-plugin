@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {UI} from '../datasources/fault-ds/UI';
 import {API} from '../opennms';
 import {Mapping} from '../datasources/fault-ds/Mapping';
-import {FilterInitializer} from '../datasources/fault-ds/client_delegate';
+import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
 
 describe("OpenNMS_FaultManagement_Datasource", function() {
     let uiSegmentSrv = {
@@ -156,7 +156,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
     });
 
-    describe('FilterInitializer', function() {
+    describe('FilterCloner', function() {
 
         let apiFilter = new API.Filter()
             .withClause(new API.Clause(new API.Restriction('key', API.Comparators.EQ, 'value'), API.Operators.AND))
@@ -164,19 +164,19 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             .withClause(new API.Clause(new API.NestedRestriction()
                 .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.NE, "value3"), API.Operators.OR)), API.Operators.AND));
 
-        it('should initialize already initialized', function(done) {
-            const otherFilter = new FilterInitializer().createFilter(apiFilter);
+        it('should clone already initialized', function(done) {
+            const otherFilter = new FilterCloner().cloneFilter(apiFilter);
             expect(apiFilter).to.eql(otherFilter);
 
             done();
         });
 
-        it('should initialize', function(done) {
+        it('should clone', function(done) {
             const jsonString = JSON.stringify(apiFilter);
             const object = JSON.parse(jsonString);
             expect(object).not.to.be.an.instanceof(API.Filter);
 
-            const filterObject = new FilterInitializer().createFilter(object);
+            const filterObject = new FilterCloner().cloneFilter(object);
             expect(filterObject).to.be.an.instanceof(API.Filter);
             expect(apiFilter).to.eql(filterObject);
 
