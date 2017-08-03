@@ -39,8 +39,7 @@ export class ClientDelegate {
     findAlarms(filter) {
         return this.getAlarmDao()
             .then(function(alarmDao) {
-                var theFilter = new FilterInitializer().createFilter(filter);
-                return alarmDao.find(theFilter);
+                return alarmDao.find(filter);
             });
     }
 
@@ -218,50 +217,5 @@ export class ClientDelegate {
             return ['='];
         }
         return comparators;
-    }
-}
-
-/**
- * The filter may be reloaded from a persisted state.
- * The internal opennms.js API requires a concrete implementation of Comparators or Operators in order to work.
- * As the object was persisted, the references DO NOT MATCH. In order to make them match, we just rebuild the filter.
- */
-export class FilterInitializer {
-    createFilter(filter) {
-        const newFilter = new API.Filter();
-        newFilter.limit = filter.limit;
-        newFilter.clauses = this.createNestedRestriction(filter).clauses;
-        return newFilter;
-    }
-
-    createClause(clause) {
-        const operator = _.find(API.Operators, function(operator) {
-            return operator.label === clause.operator.label;
-        });
-
-        // Nested restriction
-        if (clause.restriction.clauses) {
-            const nestedRestriction = this.createNestedRestriction(clause.restriction);
-            return new API.Clause(nestedRestriction, operator);
-        } else { // Normal restriction
-            const restriction = this.createRestriction(clause.restriction);
-            return new API.Clause(restriction, operator);
-        }
-    }
-
-    createNestedRestriction(nestedRestriction) {
-        const self = this;
-        const newNestedRestriction = new API.NestedRestriction();
-        _.each(nestedRestriction.clauses, function(clause) {
-            newNestedRestriction.withClause(self.createClause(clause));
-        });
-        return newNestedRestriction;
-    }
-
-    createRestriction(restriction) {
-        const comparator = _.find(API.Comparators, function(comparator) {
-            return comparator.label === restriction.comparator.label;
-        });
-        return new API.Restriction(restriction.attribute, comparator, restriction.value);
     }
 }

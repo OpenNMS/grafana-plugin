@@ -13,7 +13,7 @@ export class ValueMapping {
         if ("null" === value) {
             value = '\u0000';
         }
-        return encodeURIComponent(value);
+        return value;
     }
 
     getUiValue(internalAttribute, value) {
@@ -27,6 +27,6 @@ export class ValueMapping {
         if (value === "\u0000") {
             return "null";
         }
-        return decodeURIComponent(value);
+        return value;
     }
 }
