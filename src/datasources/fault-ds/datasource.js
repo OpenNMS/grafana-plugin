@@ -40,10 +40,11 @@ export class OpenNMSFMDatasource {
             if (clause.restriction instanceof API.NestedRestriction) {
                 self.substitute(clause.restriction.clauses, options);
             } else if (clause.restriction.value) {
-                // TODO MVR: This is a hint on how to probably best implement HELM-12
-                // clause.restriction.value = clause.restriction.value.replace(/\$timeFrom/g, options.range.from.valueOf());
-                // clause.restriction.value = clause.restriction.value.replace(/\$timeTo/g, options.range.to.valueOf());
-                clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                const scopedVars = Object.assign({}, options.scopedVars, {
+                    "range_from":     {text: options.range.from.valueOf(),   value: options.range.from.valueOf()},
+                    "range_to":  {text: options.range.to.valueOf(), value: options.range.to.valueOf()},
+                });
+                clause.restriction.value = self.templateSrv.replace(clause.restriction.value, scopedVars);
             }
         }
       });
