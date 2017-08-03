@@ -1,5 +1,6 @@
 import {ClientDelegate} from './client_delegate';
 import {API} from '../../opennms';
+import {FilterCloner} from "./FilterCloner"
 import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
@@ -15,13 +16,36 @@ export class OpenNMSFMDatasource {
   }
 
   query(options) {
+      // Initialize filter
       var filter = options.targets[0].filter || new API.Filter();
       filter.limit = 0; // no limit
+
+      // Clone Filter to prevent some issues and also make substitution possible
+      // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+      var clonedFilter = new FilterCloner().cloneFilter(filter);
+      this.substitute(clonedFilter.clauses, options);
+
       var self = this;
-      return this.alarmClient.findAlarms(filter).then(function(alarms) {
+      return this.alarmClient.findAlarms(clonedFilter).then(function(alarms) {
           return {
               data: self.toTable(alarms)
           };
+      });
+  }
+
+  substitute(clauses, options) {
+      const self = this;
+      _.each(clauses, clause => {
+        if (clause.restriction) {
+            if (clause.restriction instanceof API.NestedRestriction) {
+                self.substitute(clause.restriction.clauses, options);
+            } else if (clause.restriction.value) {
+                // TODO MVR: This is a hint on how to probably best implement HELM-12
+                // clause.restriction.value = clause.restriction.value.replace(/\$timeFrom/g, options.range.from.valueOf());
+                // clause.restriction.value = clause.restriction.value.replace(/\$timeTo/g, options.range.to.valueOf());
+                clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+            }
+        }
       });
   }
 
