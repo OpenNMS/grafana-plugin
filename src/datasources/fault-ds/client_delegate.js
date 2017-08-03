@@ -75,15 +75,6 @@ export class ClientDelegate {
                 method: 'GET',
                 params: {
                     limit: options.limit || self.searchLimit,
-                    match: 'any',
-                    comparator: 'ilike',
-                    orderBy: options.orderBy || 'id',
-                    order: options.order || 'asc',
-                    label: '%' + options.query + '%',
-                    sysName: '%' + options.query + '%',
-                    'ipInterface.ipAddress': '%' + options.query + '%',
-                    'ipInterface.ipHostName': '%' + options.query + '%',
-                    'foreignId': options.query + '%' // doesn't support leading '%'
                 }
             }).then(function (results) {
                     return {
@@ -182,40 +173,36 @@ export class ClientDelegate {
         return this.$q.when(operators);
     }
 
-    getAttributes() {
-        let attributes = [
-            { name: "uei", type: "string" },
-            { name: "location", type: "location"},
-            { name: "ipAddress", type: "ipaddress" },
-            { name: "service", type: "service"},
-            { name: "severity", type: "severity" },
-            { name: "alarmAckTime", type: "date"}
-            // TODO MVR add more ...
-        ];
-        return attributes;
+    getProperties() {
+        return this.getAlarmDao()
+            .then(alarmDao => {
+                return alarmDao.searchProperties();
+            });
     }
 
-    findAttribute(attributeName) {
-        return _.find(this.getAttributes(), function(attribute) {
-            return attribute.name === attributeName;
-        });
+    // TODO MVR it would be nice to query the rest endpoint directly for the property, rather than queriing for all of the elements
+    findProperty(propertyId) {
+        return this.getProperties()
+            .then(properties => {
+                return _.find(properties, function(property) {
+                    return property.id === propertyId;
+                });
+            })
     }
 
-    // TODO MVR we should get rid of this as well
-    getAttributeComparators(attributeName) {
-        var comparatorMapping = {
-            'uei': ['=', '!='],
-            'location': ['=', '!='],
-            'severity': ['=', '>=', '<=', '>', '<', '!='],
-            'service': ['!=', '='],
-            'ipAddress': ['=', '!='],
-            'alarmAckTime': ['=', '!=']
-        };
-        var comparators = comparatorMapping[attributeName];
-        if (!comparators) {
-            console.log("No comparators for attribute with name '" + attributeName + "' found.");
-            return ['='];
-        }
-        return comparators;
+    getPropertyComparators(propertyId) {
+        return this.findProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.log("No comparators found for property with id '" + propertyId + "'. Falling back to EQ.");
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            });
     }
 }

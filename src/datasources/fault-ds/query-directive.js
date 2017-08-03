@@ -1,5 +1,6 @@
 import angular from 'angular';
 import _ from 'lodash';
+import {ComparatorMapping} from "./mapping/ComparatorMapping";
 
 angular.module('grafana.directives')
     .directive('onmsQuery', function() {
@@ -26,9 +27,9 @@ angular.module('grafana.directives')
             // attribute input
             if (segment.type == 'key' || segment.type == 'plus-button') {
                 return datasource.metricFindQuery({find: "attributes"})
-                    .then(function(attributes) {
-                        let segments = _.map(attributes, function(attribute) {
-                            var segment = uiSegmentSrv.newKey(attribute.name);
+                    .then(function(properties) {
+                        let segments = _.map(properties, function(property) {
+                            var segment = uiSegmentSrv.newKey(property.id);
                             return segment;
                         });
                         return segments;
@@ -41,10 +42,15 @@ angular.module('grafana.directives')
                 let attributeSegment = segments[index-1];
                 return datasource.metricFindQuery({'find': 'comparators', 'attribute': attributeSegment.value})
                     .then(function(comparators) {
-                        return _.map(comparators, function(comparator) {
-                            return uiSegmentSrv.newOperator(comparator);
+                        // the API.Comparator.id or API.Comparator.label fields cannot be used.
+                        comparators = _.filter(comparators, function(comparator) {
+                            return comparator.aliases && comparator.aliases.length > 0;
                         });
-                    })
+                        return _.map(comparators, function(comparator) {
+                            const uiComparator = new ComparatorMapping().getUiComparator(comparator);
+                            return uiSegmentSrv.newOperator(uiComparator);
+                        });
+                    }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
             }
 
             // value input
