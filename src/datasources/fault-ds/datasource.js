@@ -70,10 +70,10 @@ export class OpenNMSFMDatasource {
     }
 
     if (query.find === "attributes") {
-      return this.q.when(this.alarmClient.getAttributes());
+      return this.alarmClient.getProperties();
     }
     if (query.find === "comparators") {
-      return this.q.when(this.alarmClient.getAttributeComparators(query.attribute));
+      return this.alarmClient.getPropertyComparators(query.attribute);
     }
     if (query.find == 'values') {
         return this.searchForValues(query);
@@ -85,70 +85,76 @@ export class OpenNMSFMDatasource {
   }
 
   searchForValues(query) {
-      let attribute = this.alarmClient.findAttribute(query.attribute) || {};
-      switch (attribute.type) {
-          case 'user':
-              return this.alarmClient.findUsers({query: query.query})
-                  .then(function(data) {
-                      return _.map(data.rows, function(user) {
-                          return {
-                              id: user['user-id'],
-                              label: user['full-name']
-                          };
-                      });
-                  });
-          case 'node':
-              return this.alarmClient.findNodes({query: query.query})
-                  .then(function(data) {
-                      return _.map(data.rows, function(node) {
-                        return {
-                            id: node.id,
-                            label: node.label
-                        }
-                      });
-                  });
-          case 'category':
-              return this.alarmClient.findCategories({query: query.query})
-                  .then(function(data) {
-                      return _.map(data.rows, function(category) {
-                          return {
-                              id: category.id,
-                              label: category.name
-                          };
-                      })
-                  });
-          case 'location':
-              return this.alarmClient.findLocations({query: query.query})
-                  .then(function(data) {
-                      return _.map(data.rows, function(location) {
-                          return {
-                              id: location['location-name'],
-                              label: location['location-name']
-                          };
-                      })
-                  });
-          case 'severity':
-              return this.alarmClient.findSeverities({query: query.query})
-                  .then(function(data) {
-                      return _.map(data, function(severity) {
-                          return {
-                              id: severity.id,
-                              label: severity.label
-                          }
-                      })
-                  });
-          case 'service':
-              return this.alarmClient.findServices({query: query.query})
-                  .then(function(data) {
-                      return _.map(data.rows, function(service) {
-                          return {
-                              id: service,
-                              label: service
-                          }
-                      })
-                  })
-      }
-      return this.q.when([]);
+      return this.alarmClient.findProperty(query.attribute)
+          .then(property => {
+              if (!property) {
+                  return this.q.when([]);
+              }
+              switch (property.id) {
+                  case 'alarmAckUser':
+                  case 'suppressedUser':
+                  case 'lastEvent.eventAckUser':
+                      return this.alarmClient.findUsers({query: query.query})
+                          .then(function (data) {
+                              return _.map(data.rows, function (user) {
+                                  return {
+                                      id: user['user-id'],
+                                      label: user['full-name']
+                                  };
+                              });
+                          });
+                  case 'node.label':
+                      return this.alarmClient.findNodes({query: query.query})
+                          .then(function (data) {
+                              return _.map(data.rows, function (node) {
+                                  return {
+                                      id: node.label,
+                                      label: node.label
+                                  }
+                              });
+                          });
+                  case 'category.name':
+                      return this.alarmClient.findCategories({query: query.query})
+                          .then(function (data) {
+                              return _.map(data.rows, function (category) {
+                                  return {
+                                      id: category.id,
+                                      label: category.name
+                                  };
+                              })
+                          });
+                  case 'location.locationName':
+                      return this.alarmClient.findLocations({query: query.query})
+                          .then(function (data) {
+                              return _.map(data.rows, function (location) {
+                                  return {
+                                      id: location['location-name'],
+                                      label: location['location-name']
+                                  };
+                              })
+                          });
+                  case 'severity':
+                      return this.alarmClient.findSeverities({query: query.query})
+                          .then(function (data) {
+                              return _.map(data, function (severity) {
+                                  return {
+                                      id: severity.id,
+                                      label: severity.label
+                                  }
+                              })
+                          });
+                  case 'serviceType.name':
+                      return this.alarmClient.findServices({query: query.query})
+                          .then(function (data) {
+                              return _.map(data.rows, function (service) {
+                                  return {
+                                      id: service,
+                                      label: service
+                                  }
+                              })
+                          });
+          }
+      });
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
