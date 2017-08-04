@@ -33,12 +33,15 @@ System.register([], function (_export, _context) {
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl =
 
       /** @ngInject */
-      function AlarmDetailsCtrl($scope) {
+      function AlarmDetailsCtrl($scope, datasourceSrv) {
         _classCallCheck(this, AlarmDetailsCtrl);
 
         this.$scope = $scope;
         $scope.editor = { index: 0 };
+
+        // Save the alarm
         $scope.alarm = $scope.$parent.alarm;
+        $scope.source = $scope.$parent.source;
       });
 
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl);

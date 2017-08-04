@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/sdk', './transformers', './editor', './column_options', './renderer', './table_model', 'app/core/core_module', './alarm_details', '../css/styles.css!', '../css/ionicons.css!'], function (_export, _context) {
+System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './editor', './column_options', './renderer', 'app/core/core_module', './alarm_details', './memo_editor', '../css/styles.css!', '../css/ionicons.css!'], function (_export, _context) {
   "use strict";
 
-  var _, $, FileExport, MetricsPanelCtrl, transformDataToTable, tablePanelEditor, columnOptionsTab, TableRenderer, TableModel, coreModule, alarmDetailsAsDirective, _createClass, _get, AlarmTableCtrl;
+  var _, $, MetricsPanelCtrl, transformDataToTable, tablePanelEditor, columnOptionsTab, TableRenderer, coreModule, alarmDetailsAsDirective, memoEditorAsDirective, _createClass, _get, AlarmTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -40,8 +40,6 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
       _ = _lodash.default;
     }, function (_jquery) {
       $ = _jquery.default;
-    }, function (_appCoreUtilsFile_export) {
-      FileExport = _appCoreUtilsFile_export;
     }, function (_appPluginsSdk) {
       MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
     }, function (_transformers) {
@@ -52,12 +50,12 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
       columnOptionsTab = _column_options.columnOptionsTab;
     }, function (_renderer) {
       TableRenderer = _renderer.TableRenderer;
-    }, function (_table_model) {
-      TableModel = _table_model.TableModel;
     }, function (_appCoreCore_module) {
       coreModule = _appCoreCore_module.default;
     }, function (_alarm_details) {
       alarmDetailsAsDirective = _alarm_details.alarmDetailsAsDirective;
+    }, function (_memo_editor) {
+      memoEditorAsDirective = _memo_editor.memoEditorAsDirective;
     }, function (_cssStylesCss) {}, function (_cssIoniconsCss) {}],
     execute: function () {
       _createClass = function () {
@@ -350,6 +348,7 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
 
             var newScope = this.$rootScope.$new();
             newScope.alarm = alarm;
+            newScope.source = source;
             this.$rootScope.appEvent('show-modal', {
               templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
               scope: newScope
@@ -416,6 +415,7 @@ System.register(['lodash', 'jquery', 'app/core/utils/file_export', 'app/plugins/
       _export('PanelCtrl', AlarmTableCtrl);
 
       coreModule.directive('alarmDetailsAsModal', alarmDetailsAsDirective);
+      coreModule.directive('memoEditor', memoEditorAsDirective);
     }
   };
 });

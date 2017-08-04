@@ -85,6 +85,13 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                         });
                     }
                 }, {
+                    key: 'getAlarm',
+                    value: function getAlarm(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.get(alarmId);
+                        });
+                    }
+                }, {
                     key: 'doUpdate',
                     value: function doUpdate(alarmId, options) {
                         var self = this;
@@ -99,6 +106,13 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                         });
                     }
                 }, {
+                    key: 'doAck',
+                    value: function doAck(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.acknowledge(alarmId);
+                        });
+                    }
+                }, {
                     key: 'doTicketAction',
                     value: function doTicketAction(alarmId, action) {
                         var supportedActions = ["create", "update", "close"];
@@ -109,6 +123,34 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                         return this.backendSrv.datasourceRequest({
                             url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
                             method: 'POST'
+                        });
+                    }
+                }, {
+                    key: 'saveSticky',
+                    value: function saveSticky(alarmId, sticky) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.saveStickyMemo(alarmId, sticky);
+                        });
+                    }
+                }, {
+                    key: 'deleteSticky',
+                    value: function deleteSticky(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.deleteStickyMemo(alarmId);
+                        });
+                    }
+                }, {
+                    key: 'saveJournal',
+                    value: function saveJournal(alarmId, journal) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.saveJournalMemo(alarmId, journal);
+                        });
+                    }
+                }, {
+                    key: 'deleteJournal',
+                    value: function deleteJournal(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.deleteJournalMemo(alarmId);
                         });
                     }
                 }, {

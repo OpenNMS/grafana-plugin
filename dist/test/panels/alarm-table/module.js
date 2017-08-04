@@ -17,10 +17,6 @@ var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _file_export = require('app/core/utils/file_export');
-
-var FileExport = _interopRequireWildcard(_file_export);
-
 var _sdk = require('app/plugins/sdk');
 
 var _transformers = require('./transformers');
@@ -31,19 +27,17 @@ var _column_options = require('./column_options');
 
 var _renderer = require('./renderer');
 
-var _table_model = require('./table_model');
-
 var _core_module = require('app/core/core_module');
 
 var _core_module2 = _interopRequireDefault(_core_module);
 
 var _alarm_details = require('./alarm_details');
 
+var _memo_editor = require('./memo_editor');
+
 require('../css/styles.css!');
 
 require('../css/ionicons.css!');
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -303,6 +297,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
 
       var newScope = this.$rootScope.$new();
       newScope.alarm = alarm;
+      newScope.source = source;
       this.$rootScope.appEvent('show-modal', {
         templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
         scope: newScope
@@ -369,4 +364,5 @@ exports.PanelCtrl = AlarmTableCtrl;
 
 
 _core_module2.default.directive('alarmDetailsAsModal', _alarm_details.alarmDetailsAsDirective);
+_core_module2.default.directive('memoEditor', _memo_editor.memoEditorAsDirective);
 //# sourceMappingURL=module.js.map

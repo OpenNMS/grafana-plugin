@@ -204,9 +204,14 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
             }];
         }
     }, {
+        key: 'getAlarm',
+        value: function getAlarm(alarmId) {
+            return this.alarmClient.getAlarm(alarmId);
+        }
+    }, {
         key: 'acknowledgeAlarm',
         value: function acknowledgeAlarm(alarmId) {
-            this.alarmClient.doUpdate(alarmId, { ack: true });
+            return this.alarmClient.doAck(alarmId);
         }
     }, {
         key: 'unacknowledgeAlarm',
@@ -237,6 +242,26 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         key: 'closeTicketForAlarm',
         value: function closeTicketForAlarm(alarmId) {
             this.alarmClient.doTicketAction(alarmId, "close");
+        }
+    }, {
+        key: 'saveSticky',
+        value: function saveSticky(alarmId, sticky) {
+            return this.alarmClient.saveSticky(alarmId, sticky);
+        }
+    }, {
+        key: 'deleteSticky',
+        value: function deleteSticky(alarmId) {
+            return this.alarmClient.deleteSticky(alarmId);
+        }
+    }, {
+        key: 'saveJournal',
+        value: function saveJournal(alarmId, journal) {
+            return this.alarmClient.saveJournal(alarmId, journal);
+        }
+    }, {
+        key: 'deleteJournal',
+        value: function deleteJournal(alarmId) {
+            return this.alarmClient.deleteJournal(alarmId);
         }
     }]);
 
