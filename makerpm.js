@@ -35,14 +35,15 @@ try {
 program
   .version(pkginfo.version)
   .option('-r --release <release>', 'Specify release number of package')
-  .option('-d --distribution <dist>', 'Specify target distribution.(.el5, .el7, .fc26, .fc22')
   .parse(process.argv);
 
-pkginfo.version = version;
-pkginfo.release = release;
 if (program.release === undefined) {
   program.release = release;
 }
+
+pkginfo.version = version;
+pkginfo.release = release;
+release = program.release;
 
 console.log('Generating RPM spec for ' + pkginfo.name + ' ' + pkginfo.version + '-' + program.release);
 
