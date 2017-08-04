@@ -8,6 +8,8 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _ComparatorMapping = require('./mapping/ComparatorMapping');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _angular2.default.module('grafana.directives').directive('onmsQuery', function () {
@@ -31,9 +33,9 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
 
         // attribute input
         if (segment.type == 'key' || segment.type == 'plus-button') {
-            return datasource.metricFindQuery({ find: "attributes" }).then(function (attributes) {
-                var segments = _lodash2.default.map(attributes, function (attribute) {
-                    var segment = uiSegmentSrv.newKey(attribute.name);
+            return datasource.metricFindQuery({ find: "attributes" }).then(function (properties) {
+                var segments = _lodash2.default.map(properties, function (property) {
+                    var segment = uiSegmentSrv.newKey(property.id);
                     return segment;
                 });
                 return segments;
@@ -44,10 +46,15 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
         if (segment.type == 'operator') {
             var attributeSegment = segments[index - 1];
             return datasource.metricFindQuery({ 'find': 'comparators', 'attribute': attributeSegment.value }).then(function (comparators) {
-                return _lodash2.default.map(comparators, function (comparator) {
-                    return uiSegmentSrv.newOperator(comparator);
+                // the API.Comparator.id or API.Comparator.label fields cannot be used.
+                comparators = _lodash2.default.filter(comparators, function (comparator) {
+                    return comparator.aliases && comparator.aliases.length > 0;
                 });
-            });
+                return _lodash2.default.map(comparators, function (comparator) {
+                    var uiComparator = new _ComparatorMapping.ComparatorMapping().getUiComparator(comparator);
+                    return uiSegmentSrv.newOperator(uiComparator);
+                });
+            }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
         }
 
         // value input

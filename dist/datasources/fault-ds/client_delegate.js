@@ -264,37 +264,36 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                         return this.$q.when(operators);
                     }
                 }, {
-                    key: 'getAttributes',
-                    value: function getAttributes() {
-                        var attributes = [{ name: "uei", type: "string" }, { name: "location", type: "location" }, { name: "ipAddress", type: "ipaddress" }, { name: "service", type: "service" }, { name: "severity", type: "severity" }, { name: "alarmAckTime", type: "date" }
-                        // TODO MVR add more ...
-                        ];
-                        return attributes;
-                    }
-                }, {
-                    key: 'findAttribute',
-                    value: function findAttribute(attributeName) {
-                        return _.find(this.getAttributes(), function (attribute) {
-                            return attribute.name === attributeName;
+                    key: 'getProperties',
+                    value: function getProperties() {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.searchProperties();
                         });
                     }
                 }, {
-                    key: 'getAttributeComparators',
-                    value: function getAttributeComparators(attributeName) {
-                        var comparatorMapping = {
-                            'uei': ['=', '!='],
-                            'location': ['=', '!='],
-                            'severity': ['=', '>=', '<=', '>', '<', '!='],
-                            'service': ['!=', '='],
-                            'ipAddress': ['=', '!='],
-                            'alarmAckTime': ['=', '!=']
-                        };
-                        var comparators = comparatorMapping[attributeName];
-                        if (!comparators) {
-                            console.log("No comparators for attribute with name '" + attributeName + "' found.");
-                            return ['='];
-                        }
-                        return comparators;
+                    key: 'findProperty',
+                    value: function findProperty(propertyId) {
+                        return this.getProperties().then(function (properties) {
+                            return _.find(properties, function (property) {
+                                return property.id === propertyId;
+                            });
+                        });
+                    }
+                }, {
+                    key: 'getPropertyComparators',
+                    value: function getPropertyComparators(propertyId) {
+                        return this.findProperty(propertyId).then(function (property) {
+                            if (property) {
+                                var comparators = property.type.getComparators();
+                                if (comparators && comparators.length > 0) {
+                                    return comparators;
+                                }
+                            }
+                            console.log("No comparators found for property with id '" + propertyId + "'. Falling back to EQ.");
+                            // This may be the case when the user entered a property, which does not exist
+                            // therefore fallback to EQ
+                            return [API.Comparators.EQ];
+                        });
                     }
                 }]);
 

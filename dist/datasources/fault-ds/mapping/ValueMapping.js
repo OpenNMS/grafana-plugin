@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 System.register([], function (_export, _context) {
     "use strict";
@@ -32,39 +32,41 @@ System.register([], function (_export, _context) {
                 };
             }();
 
-            _export('ValueMapping', ValueMapping = function () {
+            _export("ValueMapping", ValueMapping = function () {
                 function ValueMapping() {
                     _classCallCheck(this, ValueMapping);
                 }
 
                 _createClass(ValueMapping, [{
-                    key: 'getApiValue',
+                    key: "getApiValue",
                     value: function getApiValue(internalAttribute, value) {
-                        if (internalAttribute === 'alarmAckTime') {
-                            if (value === 'null') {
-                                value = new Date(0);
-                            }
-
-                            // yyyy-MM-ddTHH:mm:ss.sssZ
-                            // 2017-06-08T10:17:17.173+0200
-                            value = value.toJSON().replace("Z", "+0000"); // make it parsable by java
-                        }
+                        // TODO MVR value mapping should be moved to the opennms-js implementation
+                        // if (internalAttribute === 'alarmAckTime') {
+                        //     if (value === 'null') {
+                        //         value = new Date(0);
+                        //     }
+                        //
+                        //     // yyyy-MM-ddTHH:mm:ss.sssZ
+                        //     // 2017-06-08T10:17:17.173+0200
+                        //     value = value.toJSON().replace("Z", "+0000"); // make it parsable by java
+                        // }
                         if ("null" === value) {
-                            value = '\0';
+                            value = "\0";
                         }
                         return value;
                     }
                 }, {
-                    key: 'getUiValue',
+                    key: "getUiValue",
                     value: function getUiValue(internalAttribute, value) {
-                        if (internalAttribute === 'alarmAckTime') {
-                            if (value === new Date(0)) {
-                                return 'null';
-                            }
-                            var stringified = JSON.parse(value.replace("+0000", "Z"));
-                            return new Date(stringified);
-                        }
-                        if (value === '\0') {
+                        // TODO MVR value mapping should be moved to the opennms-js implementation
+                        // if (internalAttribute === 'alarmAckTime') {
+                        //     if (value === new Date(0)) {
+                        //         return 'null';
+                        //     }
+                        //     var stringified = JSON.parse(value.replace("+0000", "Z"));
+                        //     return new Date(stringified);
+                        // }
+                        if (value === "\0") {
                             return "null";
                         }
                         return value;
@@ -74,7 +76,7 @@ System.register([], function (_export, _context) {
                 return ValueMapping;
             }());
 
-            _export('ValueMapping', ValueMapping);
+            _export("ValueMapping", ValueMapping);
         }
     };
 });

@@ -114,10 +114,10 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                         }
 
                         if (query.find === "attributes") {
-                            return this.q.when(this.alarmClient.getAttributes());
+                            return this.alarmClient.getProperties();
                         }
                         if (query.find === "comparators") {
-                            return this.q.when(this.alarmClient.getAttributeComparators(query.attribute));
+                            return this.alarmClient.getPropertyComparators(query.attribute);
                         }
                         if (query.find == 'values') {
                             return this.searchForValues(query);
@@ -130,69 +130,76 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'searchForValues',
                     value: function searchForValues(query) {
-                        var attribute = this.alarmClient.findAttribute(query.attribute) || {};
-                        switch (attribute.type) {
-                            case 'user':
-                                return this.alarmClient.findUsers({ query: query.query }).then(function (data) {
-                                    return _.map(data.rows, function (user) {
-                                        return {
-                                            id: user['user-id'],
-                                            label: user['full-name']
-                                        };
+                        var _this = this;
+
+                        return this.alarmClient.findProperty(query.attribute).then(function (property) {
+                            if (!property) {
+                                return _this.q.when([]);
+                            }
+                            switch (property.id) {
+                                case 'alarmAckUser':
+                                case 'suppressedUser':
+                                case 'lastEvent.eventAckUser':
+                                    return _this.alarmClient.findUsers({ query: query.query }).then(function (data) {
+                                        return _.map(data.rows, function (user) {
+                                            return {
+                                                id: user['user-id'],
+                                                label: user['full-name']
+                                            };
+                                        });
                                     });
-                                });
-                            case 'node':
-                                return this.alarmClient.findNodes({ query: query.query }).then(function (data) {
-                                    return _.map(data.rows, function (node) {
-                                        return {
-                                            id: node.id,
-                                            label: node.label
-                                        };
+                                case 'node.label':
+                                    return _this.alarmClient.findNodes({ query: query.query }).then(function (data) {
+                                        return _.map(data.rows, function (node) {
+                                            return {
+                                                id: node.label,
+                                                label: node.label
+                                            };
+                                        });
                                     });
-                                });
-                            case 'category':
-                                return this.alarmClient.findCategories({ query: query.query }).then(function (data) {
-                                    return _.map(data.rows, function (category) {
-                                        return {
-                                            id: category.id,
-                                            label: category.name
-                                        };
+                                case 'category.name':
+                                    return _this.alarmClient.findCategories({ query: query.query }).then(function (data) {
+                                        return _.map(data.rows, function (category) {
+                                            return {
+                                                id: category.id,
+                                                label: category.name
+                                            };
+                                        });
                                     });
-                                });
-                            case 'location':
-                                return this.alarmClient.findLocations({ query: query.query }).then(function (data) {
-                                    return _.map(data.rows, function (location) {
-                                        return {
-                                            id: location['location-name'],
-                                            label: location['location-name']
-                                        };
+                                case 'location.locationName':
+                                    return _this.alarmClient.findLocations({ query: query.query }).then(function (data) {
+                                        return _.map(data.rows, function (location) {
+                                            return {
+                                                id: location['location-name'],
+                                                label: location['location-name']
+                                            };
+                                        });
                                     });
-                                });
-                            case 'severity':
-                                return this.alarmClient.findSeverities({ query: query.query }).then(function (data) {
-                                    return _.map(data, function (severity) {
-                                        return {
-                                            id: severity.id,
-                                            label: severity.label
-                                        };
+                                case 'severity':
+                                    return _this.alarmClient.findSeverities({ query: query.query }).then(function (data) {
+                                        return _.map(data, function (severity) {
+                                            return {
+                                                id: severity.id,
+                                                label: severity.label
+                                            };
+                                        });
                                     });
-                                });
-                            case 'service':
-                                return this.alarmClient.findServices({ query: query.query }).then(function (data) {
-                                    return _.map(data.rows, function (service) {
-                                        return {
-                                            id: service,
-                                            label: service
-                                        };
+                                case 'serviceType.name':
+                                    return _this.alarmClient.findServices({ query: query.query }).then(function (data) {
+                                        return _.map(data.rows, function (service) {
+                                            return {
+                                                id: service,
+                                                label: service
+                                            };
+                                        });
                                     });
-                                });
-                        }
-                        return this.q.when([]);
+                            }
+                        });
                     }
                 }, {
                     key: 'toTable',
                     value: function toTable(alarms) {
-                        var _this = this;
+                        var _this2 = this;
 
                         var columnNames = ["Log Message", "Description", "UEI", "Node ID", "Node Label", "IP Address", "Service", "Acked By", "Severity", "First Event Time", "Last Event Time", "Event Source", "Trouble Ticket", "Trouble Ticket State", "Count"];
 
@@ -208,7 +215,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                 // Store the name of the data-source as part of the data so that
                                 // the panel can grab an instance of the DS to perform actions
                                 // on the alarms
-                                "source": _this.name
+                                "source": _this2.name
                             };
                             return row;
                         });
