@@ -288,7 +288,7 @@ export class TableRenderer {
       }
 
       if (this.panel.severity) {
-        rowClass = ' class="' + alarm.severity.label.toLowerCase() + '"';
+        rowClass = ' class="' + severity + '"';
       }
 
       html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
