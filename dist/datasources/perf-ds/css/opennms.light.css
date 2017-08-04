@@ -1,0 +1,33 @@
+.query-keyword {
+  width: 110px; }
+
+.input-error {
+  color: #e5bd1c; }
+
+.tight-form .help-block {
+  margin-left: 5px; }
+
+.info {
+  background-color: #000000; }
+
+.modal-selector {
+  display: block;
+  height: 350px;
+  overflow-y: scroll; }
+
+.modal-selector {
+  display: block;
+  height: 350px;
+  overflow-y: scroll;
+  overflow-x: hidden; }
+
+.modal-selector .table {
+  width: 100%;
+  margin-left: 5px;
+  margin-right: 5px; }
+
+.help-block {
+  display: block;
+  width: 100%; }
+
+/*# sourceMappingURL=opennms.light.css.map */

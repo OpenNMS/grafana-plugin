@@ -1,0 +1,11 @@
+---
+helm:
+  name: Helm
+  author: OpenNMS Docs Team <opennms-docs@lists.sourceforge.net>
+  site: helm
+  site_name: Helm
+  site_url: https://docs.opennms.org/helm
+  branches:
+    master:
+      name: Latest
+      dir: latest

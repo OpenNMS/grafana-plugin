@@ -34,5 +34,18 @@ profile.cov
 grafana
 .notouch
 
+# AsciiBinder documentation preview and package
+docs/_preview
+docs/_package
+
 # Not ready yet
-dist
+/dist
+/SPECS
+/SOURCES
+
+# Debian package droppings
+/dist/opennms-helm-app
+*.dsc
+*.tar.gz
+*.deb
+*.changes

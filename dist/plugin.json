@@ -1,0 +1,33 @@
+{
+  "name": "OpenNMS Helm",
+  "id": "opennms-helm-app",
+  "type": "app",
+  "info": {
+    "description": "PM/FM Console for Grafana",
+    "author": {
+      "name": "The OpenNMS Group Inc.",
+      "url": "http://www.opennms.com"
+    },
+    "keywords": ["opennms app", "opennms", "monitoring", "snmp"],
+    "logos": {
+      "small": "img/opennms_globe.svg",
+      "large": "img/opennms_globe.svg"
+    },
+    "links": [
+      {"name": "Project site", "url": "https://github.com/OpenNMS/grafana-opennms-helm-app"},
+      {"name": "License & Terms", "url": "https://github.com/OpenNMS/grafana-opennms-helm-app/blob/master/LICENSE"}
+    ],
+    "version": "1.0.0",
+    "updated": "2017-06-01"
+  },
+  "includes": [
+    {"type": "panel", "name": "Alarm Table"},
+    {"type": "panel", "name": "Alarm Histogram"},
+    {"type": "datasource", "name": "FM Datasource"},
+    {"type": "datasource", "name": "PM Datasource"}
+  ],
+  "dependencies": {
+    "grafanaVersion": "4.x.x",
+    "plugins": []
+  }
+}

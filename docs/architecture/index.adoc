@@ -1,0 +1,5 @@
+:imagesdir: images
+
+= Architecture
+
+image::helm-diagram.svg[Helm Diagram, 600]
