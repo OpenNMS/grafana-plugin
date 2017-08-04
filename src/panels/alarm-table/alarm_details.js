@@ -1,3 +1,4 @@
+import {TableRenderer} from "./renderer"
 
 export class AlarmDetailsCtrl {
 
@@ -9,6 +10,10 @@ export class AlarmDetailsCtrl {
     // Save the alarm
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
+
+    // Compute the icon
+    let severity = $scope.alarm.severity.label.toLowerCase();
+    $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
   }
 
 }

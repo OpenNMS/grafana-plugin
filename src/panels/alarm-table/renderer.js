@@ -235,7 +235,7 @@ export class TableRenderer {
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
-        cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
+        cellHtml += `<td ng-click="ctrl.alarmDetails('${source}', ${alarm.id})" class="severity-icon text-center"><i class="icon ${icon}"></i></td>`;
       }
 
       for (let i = 0; i < this.table.columns.length; i++) {
@@ -288,7 +288,7 @@ export class TableRenderer {
       }
 
       if (this.panel.severity) {
-        rowClass = ' class="' + alarm.severity.label.toLowerCase() + '"';
+        rowClass = ' class="' + severity + '"';
       }
 
       html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
