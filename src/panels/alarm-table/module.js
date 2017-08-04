@@ -1,14 +1,13 @@
 import _ from 'lodash';
 import $ from 'jquery';
-import * as FileExport from 'app/core/utils/file_export';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
 import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
-import {TableModel} from './table_model';
 import coreModule from 'app/core/core_module';
 import {alarmDetailsAsDirective} from './alarm_details';
+import {memoEditorAsDirective} from "./memo_editor"
 import '../css/styles.css!'
 import '../css/ionicons.css!'
 
@@ -251,6 +250,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     let newScope = this.$rootScope.$new();
     newScope.alarm = alarm;
+    newScope.source = source;
     this.$rootScope.appEvent('show-modal', {
       templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
       scope: newScope
@@ -307,3 +307,4 @@ export {
 };
 
 coreModule.directive('alarmDetailsAsModal',  alarmDetailsAsDirective);
+coreModule.directive('memoEditor',  memoEditorAsDirective);
