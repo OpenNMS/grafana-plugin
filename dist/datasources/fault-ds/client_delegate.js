@@ -161,16 +161,7 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                             url: self.url + '/rest/nodes',
                             method: 'GET',
                             params: {
-                                limit: options.limit || self.searchLimit,
-                                match: 'any',
-                                comparator: 'ilike',
-                                orderBy: options.orderBy || 'id',
-                                order: options.order || 'asc',
-                                label: '%' + options.query + '%',
-                                sysName: '%' + options.query + '%',
-                                'ipInterface.ipAddress': '%' + options.query + '%',
-                                'ipInterface.ipHostName': '%' + options.query + '%',
-                                'foreignId': options.query + '%' // doesn't support leading '%'
+                                limit: options.limit || self.searchLimit
                             }
                         }).then(function (results) {
                             return {
