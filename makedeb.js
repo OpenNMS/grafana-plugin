@@ -9,6 +9,7 @@ var spawn = require('child_process').spawnSync;
 var copy = require('recursive-copy');
 var rimraf = require('rimraf');
 var which = require('which');
+var program = require('commander');
 
 var pkginfo = require('./package.json');
 
@@ -26,6 +27,19 @@ if (version.indexOf('-SNAPSHOT')) {
   version = version.replace('-SNAPSHOT', '');
   release = 0;
 }
+
+ program
+   .version(pkginfo.version)
+   .option('-r --release <release>', 'Specify release number of package')
+   .parse(process.argv);
+
+ if (program.release === undefined) {
+   program.release = release;
+ }
+
+ pkginfo.version = version;
+ pkginfo.release = release;
+ release = program.release;
 
 var date = new Date().toUTCString().replace(/ [^ ]+$/, ' +0000');
 var changelog = `${pkginfo.name} (${version}-${release}) unstable; urgency=low
