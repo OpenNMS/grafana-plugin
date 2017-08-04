@@ -235,7 +235,7 @@ export class TableRenderer {
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
-        cellHtml += `<td class="severity-icon"><i class="icon ${icon}"></i></td>`;
+        cellHtml += `<td class="severity-icon text-center"><i class="icon ${icon}"></i></td>`;
       }
 
       for (let i = 0; i < this.table.columns.length; i++) {
