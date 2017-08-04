@@ -1,9 +1,9 @@
 'use strict';
 
-System.register([], function (_export, _context) {
+System.register(['./renderer'], function (_export, _context) {
   "use strict";
 
-  var AlarmDetailsCtrl;
+  var TableRenderer, AlarmDetailsCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -28,7 +28,9 @@ System.register([], function (_export, _context) {
   _export('alarmDetailsAsDirective', alarmDetailsAsDirective);
 
   return {
-    setters: [],
+    setters: [function (_renderer) {
+      TableRenderer = _renderer.TableRenderer;
+    }],
     execute: function () {
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl =
 
@@ -42,6 +44,10 @@ System.register([], function (_export, _context) {
         // Save the alarm
         $scope.alarm = $scope.$parent.alarm;
         $scope.source = $scope.$parent.source;
+
+        // Compute the icon
+        var severity = $scope.alarm.severity.label.toLowerCase();
+        $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
       });
 
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl);

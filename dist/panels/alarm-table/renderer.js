@@ -243,7 +243,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
 
               if (this.panel.severityIcons) {
                 var icon = TableRenderer.getIconForSeverity(severity);
-                cellHtml += '<td class="severity-icon"><i class="icon ' + icon + '"></i></td>';
+                cellHtml += '<td ng-click="ctrl.alarmDetails(\'' + source + '\', ' + alarm.id + ')" class="severity-icon text-center"><i class="icon ' + icon + '"></i></td>';
               }
 
               for (var i = 0; i < this.table.columns.length; i++) {
@@ -260,7 +260,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               }
 
               if (this.panel.severity) {
-                rowClass = ' class="' + alarm.severity.label.toLowerCase() + '"';
+                rowClass = ' class="' + severity + '"';
               }
 
               html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
