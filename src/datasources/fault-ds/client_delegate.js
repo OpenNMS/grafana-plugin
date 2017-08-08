@@ -50,17 +50,25 @@ export class ClientDelegate {
         });
     }
 
-    doUpdate(alarmId, options) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/api/v2/alarms/' + alarmId,
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            params: options || {},
-            data: '' // empty data or Content-Type header is reset
-        });
+    doEscalate(alarmId) {
+        return this.getAlarmDao()
+            .then(alarmDao => {
+                return alarmDao.escalate(alarmId)
+            });
+    }
+
+    doClear(alarmId) {
+        return this.getAlarmDao()
+            .then(alarmDao => {
+                return alarmDao.clear(alarmId);
+            });
+    }
+
+    doUnack(alarmId) {
+        return this.getAlarmDao()
+            .then(alarmDao => {
+                return alarmDao.unacknowledge(alarmId);
+            });
     }
 
     doAck(alarmId) {
