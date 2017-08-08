@@ -8,6 +8,13 @@
   },
 
   "metrics": true,
-  "annotations": false
+  "annotations": false,
+
+  "info": {
+    "logos": {
+      "small": "img/pm-ds.svg",
+      "large": "img/pm-ds.svg"
+    }
+  }
 
 }
