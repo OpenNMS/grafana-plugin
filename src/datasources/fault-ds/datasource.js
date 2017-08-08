@@ -217,15 +217,15 @@ export class OpenNMSFMDatasource {
     }
 
     unacknowledgeAlarm(alarmId) {
-        this.alarmClient.doUpdate(alarmId, {ack: false});
+        this.alarmClient.doUnack(alarmId);
     }
 
     clearAlarm(alarmId) {
-        this.alarmClient.doUpdate(alarmId, {clear: true});
+        this.alarmClient.doClear(alarmId);
     }
 
     escalateAlarm(alarmId) {
-        this.alarmClient.doUpdate(alarmId, {escalate: true});
+        this.alarmClient.doEscalate(alarmId);
     }
 
     createTicketForAlarm(alarmId) {
