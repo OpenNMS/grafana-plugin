@@ -10,8 +10,8 @@
     },
     "keywords": ["opennms app", "opennms", "monitoring", "snmp"],
     "logos": {
-      "small": "img/opennms_globe.svg",
-      "large": "img/opennms_globe.svg"
+      "small": "img/helm.svg",
+      "large": "img/helm.svg"
     },
     "links": [
       {"name": "Project site", "url": "https://github.com/OpenNMS/grafana-opennms-helm-app"},

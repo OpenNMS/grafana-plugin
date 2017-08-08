@@ -1,5 +1,13 @@
 {
   "type": "panel",
   "name": "Alarm Table",
-  "id": "opennms-helm-alarm-table-panel"
+  "id": "opennms-helm-alarm-table-panel",
+
+  "info": {
+    "logos": {
+      "small": "img/alarm-table.svg",
+      "large": "img/alarm-table.svg"
+    }
+  }
+
 }
