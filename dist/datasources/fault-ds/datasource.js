@@ -239,17 +239,17 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'unacknowledgeAlarm',
                     value: function unacknowledgeAlarm(alarmId) {
-                        this.alarmClient.doUpdate(alarmId, { ack: false });
+                        this.alarmClient.doUnack(alarmId);
                     }
                 }, {
                     key: 'clearAlarm',
                     value: function clearAlarm(alarmId) {
-                        this.alarmClient.doUpdate(alarmId, { clear: true });
+                        this.alarmClient.doClear(alarmId);
                     }
                 }, {
                     key: 'escalateAlarm',
                     value: function escalateAlarm(alarmId) {
-                        this.alarmClient.doUpdate(alarmId, { escalate: true });
+                        this.alarmClient.doEscalate(alarmId);
                     }
                 }, {
                     key: 'createTicketForAlarm',

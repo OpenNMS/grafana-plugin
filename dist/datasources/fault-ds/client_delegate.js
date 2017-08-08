@@ -92,17 +92,24 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                         });
                     }
                 }, {
-                    key: 'doUpdate',
-                    value: function doUpdate(alarmId, options) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/api/v2/alarms/' + alarmId,
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            params: options || {},
-                            data: '' // empty data or Content-Type header is reset
+                    key: 'doEscalate',
+                    value: function doEscalate(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.escalate(alarmId);
+                        });
+                    }
+                }, {
+                    key: 'doClear',
+                    value: function doClear(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.clear(alarmId);
+                        });
+                    }
+                }, {
+                    key: 'doUnack',
+                    value: function doUnack(alarmId) {
+                        return this.getAlarmDao().then(function (alarmDao) {
+                            return alarmDao.unacknowledge(alarmId);
                         });
                     }
                 }, {
