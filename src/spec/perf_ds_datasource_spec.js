@@ -93,6 +93,33 @@ describe('OpenNMSPMDatasource', function () {
       expect(query.source[0].attribute).to.equal("loadavg1");
     });
 
+    it('should support scoped variables', function () {
+      ctx.templateSrv.variables = [
+        {name: 'variable', current: {value: 'loadavg1'}}
+      ];
+
+      let options = {
+        range: {from: 'now-1h', to: 'now'},
+        targets: [{
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: '$variable',
+          aggregation: 'AVERAGE'
+        }],
+        interval: '1s',
+        scopedVars: {
+          'variable': {
+            value: 'loadavg5'
+          }
+        }
+      };
+      let query = ctx.ds.buildQuery(options);
+
+      expect(query.source.length).to.equal(1);
+      expect(query.source[0].attribute).to.equal("loadavg5");
+    });
+
     it('should use node[] or nodeSource[] based on the contents of the variable', function () {
       ctx.templateSrv.variables = [
         {name: 'node', current: {value: ['1', 'FS:FID']}}

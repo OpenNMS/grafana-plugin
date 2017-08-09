@@ -170,7 +170,7 @@ export class OpenNMSDatasource {
         }
 
         // Perform variable substitution - may generate additional queries
-        query.source = query.source.concat(self.interpolateSourceVariables(source, (interpolatedSource) => {
+        query.source = query.source.concat(self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
           // Calculate the effective resource id after the interpolation
           interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
           delete interpolatedSource.nodeId;
@@ -188,14 +188,14 @@ export class OpenNMSDatasource {
         };
 
         // Perform variable substitution - may generate additional expressions
-        query.expression = query.expression.concat(self.interpolateExpressionVariables(expression));
+        query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
       } else if (target.type === QueryType.Filter) {
         if (!((target.filter))) {
           return;
         }
 
         // Interpolate the filter parameters
-        var interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _.keys(target.filterParameters));
+        var interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _.keys(target.filterParameters), options.scopedVars);
 
         var filters = _.map(interpolatedFilterParms, (filterParms) => {
           // Build the filter definition
@@ -231,21 +231,21 @@ export class OpenNMSDatasource {
     return query;
   }
 
-  interpolateSourceVariables(source, callback) {
-    return this.interpolateVariables(source, ['nodeId', 'resourceId', 'attribute', 'datasource', 'label'], callback);
+  interpolateSourceVariables(source, scopedVars, callback) {
+    return this.interpolateVariables(source, ['nodeId', 'resourceId', 'attribute', 'datasource', 'label'], scopedVars, callback);
   }
 
-  interpolateExpressionVariables(expression) {
-    return this.interpolateVariables(expression, ['value', 'label']);
+  interpolateExpressionVariables(expression, scopedVars) {
+    return this.interpolateVariables(expression, ['value', 'label'], scopedVars);
   }
 
-  interpolateValue(value) {
-    return _.map(this.interpolateVariables({'value': value}, ['value']), function(entry) {
+  interpolateValue(value, scopedVars) {
+    return _.map(this.interpolateVariables({'value': value}, ['value'], scopedVars), function(entry) {
       return entry.value;
     });
   }
 
-  interpolateVariables(object, attributes, callback) {
+  interpolateVariables(object, attributes, scopedVars, callback) {
     // Reformat the variables to work with our interpolate function
     var variables = [];
     _.each(this.templateSrv.variables, function(templateVariable) {
@@ -254,22 +254,27 @@ export class OpenNMSDatasource {
         value: []
       };
 
-      // Single-valued?
-      if (_.isString(templateVariable.current.value)) {
-        variable.value.push(templateVariable.current.value);
+      // If this templateVar exists in scopedVars, we need to look at the scoped values
+      if (scopedVars && scopedVars[variable.name] !== undefined) {
+        variable.value.push(scopedVars[variable.name].value);
       } else {
-        _.each(templateVariable.current.value, function(value) {
-          if (value === "$__all") {
-            _.each(templateVariable.options, function(option) {
-              // "All" is part of the options, so make sure to skip that one
-              if (option.value !== "$__all") {
-                variable.value.push(option.value);
-              }
-            });
-          } else {
-            variable.value.push(value);
-          }
-        });
+        // Single-valued?
+        if (_.isString(templateVariable.current.value)) {
+          variable.value.push(templateVariable.current.value);
+        } else {
+          _.each(templateVariable.current.value, function(value) {
+            if (value === "$__all") {
+              _.each(templateVariable.options, function(option) {
+                // "All" is part of the options, so make sure to skip that one
+                if (option.value !== "$__all") {
+                  variable.value.push(option.value);
+                }
+              });
+            } else {
+              variable.value.push(value);
+            }
+          });
+        }
       }
 
       variables.push(variable);
