@@ -236,8 +236,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               var rowStyle = '';
               var rowClass = '';
 
-              // FIXME: Sources with ' in the name will be problematic
-              var source = row.meta.source;
+              var source = row.meta.source.replace(/'/g, '\\\'');
               var alarm = row.meta.alarm;
               var severity = alarm.severity.label.toLowerCase();
 

@@ -102,7 +102,7 @@ System.register(["app/plugins/sdk", "lodash", "jquery.flot", "jquery.flot.select
                                 {
                                     var counts = _.countBy(this.query(data, 'Acked By'), _.isNil);
                                     this.series = [{
-                                        name: 'Pending',
+                                        name: 'Outstanding',
                                         count: _.defaultTo(counts[true], 0),
                                         color: this.scope.$root.colors[0]
                                     }, {

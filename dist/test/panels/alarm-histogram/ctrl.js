@@ -71,7 +71,7 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
                     {
                         var counts = _lodash2.default.countBy(this.query(data, 'Acked By'), _lodash2.default.isNil);
                         this.series = [{
-                            name: 'Pending',
+                            name: 'Outstanding',
                             count: _lodash2.default.defaultTo(counts[true], 0),
                             color: this.scope.$root.colors[0]
                         }, {
