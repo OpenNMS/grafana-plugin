@@ -228,8 +228,7 @@ export class TableRenderer {
       let rowStyle = '';
       let rowClass = '';
 
-      // FIXME: Sources with ' in the name will be problematic
-      let source = row.meta.source;
+      let source = row.meta.source.replace(/'/g, '\\\'');
       let alarm = row.meta.alarm;
       let severity = alarm.severity.label.toLowerCase();
 
