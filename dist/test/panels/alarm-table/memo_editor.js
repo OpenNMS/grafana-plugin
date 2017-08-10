@@ -12,11 +12,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var MemoEditorCtrl = exports.MemoEditorCtrl = function () {
   /** @ngInject */
-  function MemoEditorCtrl($scope, datasourceSrv) {
+  function MemoEditorCtrl($scope, datasourceSrv, timeSrv) {
     _classCallCheck(this, MemoEditorCtrl);
 
     this.$scope = $scope;
     this.datasourceSrv = datasourceSrv;
+    this.timeSrv = timeSrv;
 
     // Require a valid type
     if ($scope.type !== 'journal' && $scope.type !== 'sticky') {
@@ -89,6 +90,8 @@ var MemoEditorCtrl = exports.MemoEditorCtrl = function () {
       }).then(function (alarm) {
         self.setupWithAlarm(alarm);
       });
+      // Refresh the dashboard
+      self.timeSrv.refreshDashboard();
     }
   }, {
     key: 'setupWithAlarm',

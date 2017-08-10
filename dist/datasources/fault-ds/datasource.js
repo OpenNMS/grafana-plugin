@@ -239,32 +239,32 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'unacknowledgeAlarm',
                     value: function unacknowledgeAlarm(alarmId) {
-                        this.alarmClient.doUnack(alarmId);
+                        return this.alarmClient.doUnack(alarmId);
                     }
                 }, {
                     key: 'clearAlarm',
                     value: function clearAlarm(alarmId) {
-                        this.alarmClient.doClear(alarmId);
+                        return this.alarmClient.doClear(alarmId);
                     }
                 }, {
                     key: 'escalateAlarm',
                     value: function escalateAlarm(alarmId) {
-                        this.alarmClient.doEscalate(alarmId);
+                        return this.alarmClient.doEscalate(alarmId);
                     }
                 }, {
                     key: 'createTicketForAlarm',
                     value: function createTicketForAlarm(alarmId) {
-                        this.alarmClient.doTicketAction(alarmId, "create");
+                        return this.alarmClient.doTicketAction(alarmId, "create");
                     }
                 }, {
                     key: 'updateTicketForAlarm',
                     value: function updateTicketForAlarm(alarmId) {
-                        this.alarmClient.doTicketAction(alarmId, "update");
+                        return this.alarmClient.doTicketAction(alarmId, "update");
                     }
                 }, {
                     key: 'closeTicketForAlarm',
                     value: function closeTicketForAlarm(alarmId) {
-                        this.alarmClient.doTicketAction(alarmId, "close");
+                        return this.alarmClient.doTicketAction(alarmId, "close");
                     }
                 }, {
                     key: 'saveSticky',

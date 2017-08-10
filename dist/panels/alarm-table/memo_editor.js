@@ -52,11 +52,12 @@ System.register([], function (_export, _context) {
 
       _export('MemoEditorCtrl', MemoEditorCtrl = function () {
         /** @ngInject */
-        function MemoEditorCtrl($scope, datasourceSrv) {
+        function MemoEditorCtrl($scope, datasourceSrv, timeSrv) {
           _classCallCheck(this, MemoEditorCtrl);
 
           this.$scope = $scope;
           this.datasourceSrv = datasourceSrv;
+          this.timeSrv = timeSrv;
 
           // Require a valid type
           if ($scope.type !== 'journal' && $scope.type !== 'sticky') {
@@ -129,6 +130,8 @@ System.register([], function (_export, _context) {
             }).then(function (alarm) {
               self.setupWithAlarm(alarm);
             });
+            // Refresh the dashboard
+            self.timeSrv.refreshDashboard();
           }
         }, {
           key: 'setupWithAlarm',

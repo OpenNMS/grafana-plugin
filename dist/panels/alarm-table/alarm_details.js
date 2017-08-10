@@ -35,7 +35,7 @@ System.register(['./renderer'], function (_export, _context) {
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl =
 
       /** @ngInject */
-      function AlarmDetailsCtrl($scope, datasourceSrv) {
+      function AlarmDetailsCtrl($scope) {
         _classCallCheck(this, AlarmDetailsCtrl);
 
         this.$scope = $scope;

@@ -13,7 +13,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var AlarmDetailsCtrl =
 
 /** @ngInject */
-exports.AlarmDetailsCtrl = function AlarmDetailsCtrl($scope, datasourceSrv) {
+exports.AlarmDetailsCtrl = function AlarmDetailsCtrl($scope) {
   _classCallCheck(this, AlarmDetailsCtrl);
 
   this.$scope = $scope;

@@ -50,7 +50,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AlarmTableCtrl = function (_MetricsPanelCtrl) {
   _inherits(AlarmTableCtrl, _MetricsPanelCtrl);
 
-  function AlarmTableCtrl($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv) {
+  function AlarmTableCtrl($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv, timeSrv) {
     _classCallCheck(this, AlarmTableCtrl);
 
     var _this = _possibleConstructorReturn(this, (AlarmTableCtrl.__proto__ || Object.getPrototypeOf(AlarmTableCtrl)).call(this, $scope, $injector));
@@ -60,6 +60,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
     _this.$sanitize = $sanitize;
     _this.$compile = $compile;
     _this.datasourceSrv = datasourceSrv;
+    _this.timeSrv = timeSrv;
 
     var panelDefaults = {
       targets: [{}],
@@ -306,6 +307,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
   }, {
     key: 'performAlarmActionOnDatasource',
     value: function performAlarmActionOnDatasource(source, action, alarmId) {
+      var self = this;
       this.datasourceSrv.get(source).then(function (ds) {
         if (ds.type && ds.type.indexOf("fm-ds") < 0) {
           throw { message: 'Only OpenNMS datasources are supported' };
@@ -313,8 +315,15 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
           if (!ds[action]) {
             throw { message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type };
           }
-          ds[action](alarmId);
+          return ds[action](alarmId);
         }
+      }).then(function () {
+        // Action was successful, remove any previous error
+        delete self.error;
+        // Refresh the dashboard
+        self.timeSrv.refreshDashboard();
+      }).catch(function (err) {
+        self.error = err.message || "Request Error";
       });
     }
   }, {
