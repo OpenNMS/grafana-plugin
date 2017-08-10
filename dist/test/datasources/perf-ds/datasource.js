@@ -199,7 +199,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           }
 
           // Perform variable substitution - may generate additional queries
-          query.source = query.source.concat(self.interpolateSourceVariables(source, function (interpolatedSource) {
+          query.source = query.source.concat(self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {
             // Calculate the effective resource id after the interpolation
             interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
             delete interpolatedSource.nodeId;
@@ -217,14 +217,14 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           };
 
           // Perform variable substitution - may generate additional expressions
-          query.expression = query.expression.concat(self.interpolateExpressionVariables(expression));
+          query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
         } else if (target.type === _constants.QueryType.Filter) {
           if (!target.filter) {
             return;
           }
 
           // Interpolate the filter parameters
-          var interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _lodash2.default.keys(target.filterParameters));
+          var interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _lodash2.default.keys(target.filterParameters), options.scopedVars);
 
           var filters = _lodash2.default.map(interpolatedFilterParms, function (filterParms) {
             // Build the filter definition
@@ -261,24 +261,24 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
     }
   }, {
     key: 'interpolateSourceVariables',
-    value: function interpolateSourceVariables(source, callback) {
-      return this.interpolateVariables(source, ['nodeId', 'resourceId', 'attribute', 'datasource', 'label'], callback);
+    value: function interpolateSourceVariables(source, scopedVars, callback) {
+      return this.interpolateVariables(source, ['nodeId', 'resourceId', 'attribute', 'datasource', 'label'], scopedVars, callback);
     }
   }, {
     key: 'interpolateExpressionVariables',
-    value: function interpolateExpressionVariables(expression) {
-      return this.interpolateVariables(expression, ['value', 'label']);
+    value: function interpolateExpressionVariables(expression, scopedVars) {
+      return this.interpolateVariables(expression, ['value', 'label'], scopedVars);
     }
   }, {
     key: 'interpolateValue',
-    value: function interpolateValue(value) {
-      return _lodash2.default.map(this.interpolateVariables({ 'value': value }, ['value']), function (entry) {
+    value: function interpolateValue(value, scopedVars) {
+      return _lodash2.default.map(this.interpolateVariables({ 'value': value }, ['value'], scopedVars), function (entry) {
         return entry.value;
       });
     }
   }, {
     key: 'interpolateVariables',
-    value: function interpolateVariables(object, attributes, callback) {
+    value: function interpolateVariables(object, attributes, scopedVars, callback) {
       // Reformat the variables to work with our interpolate function
       var variables = [];
       _lodash2.default.each(this.templateSrv.variables, function (templateVariable) {
@@ -287,22 +287,27 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           value: []
         };
 
-        // Single-valued?
-        if (_lodash2.default.isString(templateVariable.current.value)) {
-          variable.value.push(templateVariable.current.value);
+        // If this templateVar exists in scopedVars, we need to look at the scoped values
+        if (scopedVars && scopedVars[variable.name] !== undefined) {
+          variable.value.push(scopedVars[variable.name].value);
         } else {
-          _lodash2.default.each(templateVariable.current.value, function (value) {
-            if (value === "$__all") {
-              _lodash2.default.each(templateVariable.options, function (option) {
-                // "All" is part of the options, so make sure to skip that one
-                if (option.value !== "$__all") {
-                  variable.value.push(option.value);
-                }
-              });
-            } else {
-              variable.value.push(value);
-            }
-          });
+          // Single-valued?
+          if (_lodash2.default.isString(templateVariable.current.value)) {
+            variable.value.push(templateVariable.current.value);
+          } else {
+            _lodash2.default.each(templateVariable.current.value, function (value) {
+              if (value === "$__all") {
+                _lodash2.default.each(templateVariable.options, function (option) {
+                  // "All" is part of the options, so make sure to skip that one
+                  if (option.value !== "$__all") {
+                    variable.value.push(option.value);
+                  }
+                });
+              } else {
+                variable.value.push(value);
+              }
+            });
+          }
         }
 
         variables.push(variable);
