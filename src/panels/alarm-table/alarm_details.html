@@ -20,7 +20,7 @@
 
     <div class="modal-content">
         <div ng-if="editor.index == 0">
-            <table class="filter-table gf-form-group">
+            <table class="filter-table gf-form-group alarm-details-table">
                 <tr>
                     <td>UEI</td>
                     <td>{{alarm.uei}}</td>
@@ -38,7 +38,7 @@
                     <td ng-bind-html="alarm.description"></td>
                 </tr>
             </table>
-            <table class="filter-table gf-form-group">
+            <table class="filter-table gf-form-group alarm-details-table">
                 <tr>
                     <td>Last Event Time</td>
                     <td>{{alarm.lastEvent.time}}</td>
