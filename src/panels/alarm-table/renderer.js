@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
+import {Model} from '../../opennms';
 
 export class TableRenderer {
 
@@ -230,6 +231,7 @@ export class TableRenderer {
 
       let source = row.meta.source.replace(/'/g, '\\\'');
       let alarm = row.meta.alarm;
+      let ticketerConfig = row.meta.ticketerConfig;
       let severity = alarm.severity.label.toLowerCase();
 
       if (this.panel.severityIcons) {
@@ -264,18 +266,12 @@ export class TableRenderer {
                                 </li>
                                 <li role="menuitem">
                                     <a tabindex="1" ng-click="ctrl.escalateAlarm('${source}', ${alarm.id})">Escalate</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.createTicketForAlarm('${source}', ${alarm.id})">Create Ticket</a>
-                                </li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.updateTicketForAlarm('${source}', ${alarm.id})">Update Ticket</a>
-                                </li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.closeTicketForAlarm('${source}', ${alarm.id})">Close Ticket</a>
-                                </li>
-                            </ul>
+                                </li>`;
+            // Only show ticket related actions if enabled
+            if (ticketerConfig && ticketerConfig.enabled) {
+                cellHtml += this.getTicketActionsHtml(source, alarm);
+            }
+            cellHtml += `</ul>
                         </label>
                     </div>
                 </td>`;
@@ -294,6 +290,26 @@ export class TableRenderer {
     }
 
     return html;
+  }
+
+  getTicketActionsHtml(source, alarm) {
+    let cellHtml = ['<li class="divider"></li>'];
+
+    // Only show actions according to ticket state
+    if (!alarm.troubleTicketState || alarm.troubleTicketState === Model.TroubleTicketStates.CREATE_FAILED) {
+        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.createTicketForAlarm('${source}', ${alarm.id})">Create Ticket</a></li>`);
+    }
+    if (alarm.troubleTicketState && alarm.troubleTicket) {
+        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.updateTicketForAlarm('${source}', ${alarm.id})">Update Ticket</a></li>`);
+    }
+    if (alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == Model.TroubleTicketStates.CLOSE_FAILED)) {
+        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.closeTicketForAlarm('${source}', ${alarm.id})">Close Ticket</a></li>`);
+    }
+    // This ensures that the divider is not shown, when it is the only element in the array
+    if (cellHtml.length > 1) {
+      return cellHtml.join("");
+    }
+    return "";
   }
 
   render_values() {

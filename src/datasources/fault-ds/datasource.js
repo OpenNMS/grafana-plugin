@@ -26,10 +26,12 @@ export class OpenNMSFMDatasource {
       this.substitute(clonedFilter.clauses, options);
 
       var self = this;
-      return this.alarmClient.findAlarms(clonedFilter).then(function(alarms) {
-          return {
-              data: self.toTable(alarms)
-          };
+      return this.alarmClient.findAlarms(clonedFilter).then(alarms => {
+          return this.alarmClient.getClientWithMetadata().then(client => {
+              return {
+                data: self.toTable(alarms, client.server.metadata)
+              };
+          });
       });
   }
 
@@ -158,7 +160,7 @@ export class OpenNMSFMDatasource {
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
-    toTable(alarms) {
+    toTable(alarms, metadata) {
         var columnNames = [
             "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
@@ -194,7 +196,9 @@ export class OpenNMSFMDatasource {
                 // Store the name of the data-source as part of the data so that
                 // the panel can grab an instance of the DS to perform actions
                 // on the alarms
-                "source": this.name
+                "source": this.name,
+                // Store the ticketerConfig here
+                "ticketerConfig": metadata.ticketerConfig
             };
             return row;
         });
