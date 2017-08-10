@@ -1,8 +1,9 @@
 export class MemoEditorCtrl {
   /** @ngInject */
-  constructor($scope, datasourceSrv) {
+  constructor($scope, datasourceSrv, timeSrv) {
     this.$scope = $scope;
     this.datasourceSrv = datasourceSrv;
+    this.timeSrv = timeSrv;
 
     // Require a valid type
     if ($scope.type !== 'journal' && $scope.type !== 'sticky') {
@@ -75,6 +76,8 @@ export class MemoEditorCtrl {
       .then(alarm => {
         self.setupWithAlarm(alarm)
       });
+    // Refresh the dashboard
+    self.timeSrv.refreshDashboard();
   }
 
   setupWithAlarm(alarm) {
