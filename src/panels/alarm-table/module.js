@@ -13,13 +13,14 @@ import '../css/ionicons.css!'
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
-  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv) {
+  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv, timeSrv) {
     super($scope, $injector);
     this.$rootScope = $rootScope;
     this.annotationsSrv = annotationsSrv;
     this.$sanitize = $sanitize;
     this.$compile = $compile;
     this.datasourceSrv = datasourceSrv;
+    this.timeSrv = timeSrv;
 
     let panelDefaults = {
       targets: [{}],
@@ -258,6 +259,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   performAlarmActionOnDatasource(source, action, alarmId) {
+    let self = this;
     this.datasourceSrv.get(source).then(ds => {
       if (ds.type && ds.type.indexOf("fm-ds") < 0) {
         throw {message: 'Only OpenNMS datasources are supported'};
@@ -265,8 +267,15 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         if (!ds[action]) {
           throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
         }
-        ds[action](alarmId);
+        return ds[action](alarmId);
       }
+    }).then(() => {
+      // Action was successful, remove any previous error
+      delete self.error;
+      // Refresh the dashboard
+      self.timeSrv.refreshDashboard();
+    }).catch(err => {
+      self.error = err.message || "Request Error";
     });
   }
 

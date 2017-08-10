@@ -213,46 +213,46 @@ export class OpenNMSFMDatasource {
     }
 
     acknowledgeAlarm(alarmId) {
-      return this.alarmClient.doAck(alarmId);
+        return this.alarmClient.doAck(alarmId);
     }
 
     unacknowledgeAlarm(alarmId) {
-        this.alarmClient.doUnack(alarmId);
+        return this.alarmClient.doUnack(alarmId);
     }
 
     clearAlarm(alarmId) {
-        this.alarmClient.doClear(alarmId);
+        return this.alarmClient.doClear(alarmId);
     }
 
     escalateAlarm(alarmId) {
-        this.alarmClient.doEscalate(alarmId);
+        return this.alarmClient.doEscalate(alarmId);
     }
 
     createTicketForAlarm(alarmId) {
-        this.alarmClient.doTicketAction(alarmId, "create");
+        return this.alarmClient.doTicketAction(alarmId, "create");
     }
 
     updateTicketForAlarm(alarmId) {
-        this.alarmClient.doTicketAction(alarmId, "update");
+        return this.alarmClient.doTicketAction(alarmId, "update");
     }
 
     closeTicketForAlarm(alarmId) {
-        this.alarmClient.doTicketAction(alarmId, "close");
+        return this.alarmClient.doTicketAction(alarmId, "close");
     }
 
     saveSticky(alarmId, sticky) {
-      return this.alarmClient.saveSticky(alarmId, sticky);
+        return this.alarmClient.saveSticky(alarmId, sticky);
     }
 
     deleteSticky(alarmId) {
-      return this.alarmClient.deleteSticky(alarmId);
+        return this.alarmClient.deleteSticky(alarmId);
     }
 
     saveJournal(alarmId, journal) {
-      return this.alarmClient.saveJournal(alarmId, journal);
+        return this.alarmClient.saveJournal(alarmId, journal);
     }
 
     deleteJournal(alarmId) {
-      return this.alarmClient.deleteJournal(alarmId);
+        return this.alarmClient.deleteJournal(alarmId);
     }
 }

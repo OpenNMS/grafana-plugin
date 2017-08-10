@@ -3,7 +3,7 @@ import {TableRenderer} from "./renderer"
 export class AlarmDetailsCtrl {
 
   /** @ngInject */
-  constructor($scope, datasourceSrv) {
+  constructor($scope) {
     this.$scope = $scope;
     $scope.editor = { index: 0 };
 
