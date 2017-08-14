@@ -15,7 +15,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var KEY_PLACEHOLDER = 'select attribute';
+var VALUE_PLACEHOLDER = 'select value';
+
 var Restriction = exports.Restriction = function () {
+    _createClass(Restriction, null, [{
+        key: 'KEY_PLACEHOLDER',
+        get: function get() {
+            return KEY_PLACEHOLDER;
+        }
+    }, {
+        key: 'VALUE_PLACEHOLDER',
+        get: function get() {
+            return VALUE_PLACEHOLDER;
+        }
+    }]);
+
     function Restriction(uiSegmentSrv, restriction) {
         _classCallCheck(this, Restriction);
 
@@ -54,12 +69,28 @@ var Restriction = exports.Restriction = function () {
             this.segments[0] = this.uiSegmentSrv.newKey(attribute);
         }
     }, {
+        key: 'getAttribute',
+        value: function getAttribute() {
+            if (this.segments.length == 0) {
+                return void 0;
+            }
+            return this.segments[0].value;
+        }
+    }, {
         key: 'setComparator',
         value: function setComparator(comparator) {
             if (this.segments.length == 1) {
                 this.segments.push({});
             }
             this.segments[1] = this.uiSegmentSrv.newOperator(comparator);
+        }
+    }, {
+        key: 'getComparator',
+        value: function getComparator() {
+            if (this.segments.length == 1) {
+                return void 0;
+            }
+            return this.segments[1].value;
         }
     }, {
         key: 'setValue',
@@ -70,10 +101,18 @@ var Restriction = exports.Restriction = function () {
             this.segments[2] = this.uiSegmentSrv.newKeyValue(value);
         }
     }, {
+        key: 'getValue',
+        value: function getValue() {
+            if (this.segments.length == 2) {
+                return void 0;
+            }
+            return this.segments[2].value;
+        }
+    }, {
         key: 'asRestrictionDTO',
         value: function asRestrictionDTO() {
             var segments = _lodash2.default.filter(this.segments, function (segment) {
-                return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false);
+                return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false) && segment.value !== KEY_PLACEHOLDER && segment.value !== VALUE_PLACEHOLDER;
             });
             if (segments.length > 0 && segments.length % 3 == 0) {
                 var data = {};

@@ -192,6 +192,42 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
         });
     });
 
+    describe("UI.Restriction", function () {
+        // See HELM-25
+        it('should only convert to DTO when fully defined', function () {
+            // Should be null when not initialized
+            var restriction = new _UI.UI.Restriction(uiSegmentSrv);
+            expect(restriction.asRestrictionDTO()).to.eql(null);
+
+            // Should be null when initialized with defaults
+            restriction.setAttribute(_UI.UI.Restriction.KEY_PLACEHOLDER);
+            restriction.setComparator("=");
+            restriction.setValue(_UI.UI.Restriction.VALUE_PLACEHOLDER);
+
+            // Should be null for all other Comparators
+            Object.keys(_UI.UI.Comparators).forEach(function (key) {
+                restriction.setComparator(_UI.UI.Comparators[key]);
+                expect(restriction.asRestrictionDTO()).to.eql(null);
+            });
+
+            // Should be null if value is set
+            restriction.setValue("my value");
+            expect(restriction.asRestrictionDTO()).to.eql(null);
+
+            // Should be null if attribute is set
+            restriction.setValue(_UI.UI.Restriction.VALUE_PLACEHOLDER);
+            restriction.setAttribute("my attribute");
+            expect(restriction.asRestrictionDTO()).to.eql(null);
+
+            // should not be null if attribute and value is set
+            restriction.setAttribute("my attribute");
+            restriction.setComparator("=");
+            restriction.setValue("my value");
+            expect(restriction.asRestrictionDTO()).not.to.eql(null);
+            expect(restriction.asRestrictionDTO()).to.eql(new _UI.UI.RestrictionDTO("my attribute", "=", "my value"));
+        });
+    });
+
     describe("UI.Query", function () {
         var query = void 0;
 

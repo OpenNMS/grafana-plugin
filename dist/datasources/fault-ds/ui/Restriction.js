@@ -3,7 +3,7 @@
 System.register(['lodash'], function (_export, _context) {
     "use strict";
 
-    var _, _createClass, Restriction, RestrictionDTO;
+    var _, _createClass, KEY_PLACEHOLDER, VALUE_PLACEHOLDER, Restriction, RestrictionDTO;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -34,7 +34,22 @@ System.register(['lodash'], function (_export, _context) {
                 };
             }();
 
+            KEY_PLACEHOLDER = 'select attribute';
+            VALUE_PLACEHOLDER = 'select value';
+
             _export('Restriction', Restriction = function () {
+                _createClass(Restriction, null, [{
+                    key: 'KEY_PLACEHOLDER',
+                    get: function get() {
+                        return KEY_PLACEHOLDER;
+                    }
+                }, {
+                    key: 'VALUE_PLACEHOLDER',
+                    get: function get() {
+                        return VALUE_PLACEHOLDER;
+                    }
+                }]);
+
                 function Restriction(uiSegmentSrv, restriction) {
                     _classCallCheck(this, Restriction);
 
@@ -73,12 +88,28 @@ System.register(['lodash'], function (_export, _context) {
                         this.segments[0] = this.uiSegmentSrv.newKey(attribute);
                     }
                 }, {
+                    key: 'getAttribute',
+                    value: function getAttribute() {
+                        if (this.segments.length == 0) {
+                            return void 0;
+                        }
+                        return this.segments[0].value;
+                    }
+                }, {
                     key: 'setComparator',
                     value: function setComparator(comparator) {
                         if (this.segments.length == 1) {
                             this.segments.push({});
                         }
                         this.segments[1] = this.uiSegmentSrv.newOperator(comparator);
+                    }
+                }, {
+                    key: 'getComparator',
+                    value: function getComparator() {
+                        if (this.segments.length == 1) {
+                            return void 0;
+                        }
+                        return this.segments[1].value;
                     }
                 }, {
                     key: 'setValue',
@@ -89,10 +120,18 @@ System.register(['lodash'], function (_export, _context) {
                         this.segments[2] = this.uiSegmentSrv.newKeyValue(value);
                     }
                 }, {
+                    key: 'getValue',
+                    value: function getValue() {
+                        if (this.segments.length == 2) {
+                            return void 0;
+                        }
+                        return this.segments[2].value;
+                    }
+                }, {
                     key: 'asRestrictionDTO',
                     value: function asRestrictionDTO() {
                         var segments = _.filter(this.segments, function (segment) {
-                            return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false);
+                            return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false) && segment.value !== KEY_PLACEHOLDER && segment.value !== VALUE_PLACEHOLDER;
                         });
                         if (segments.length > 0 && segments.length % 3 == 0) {
                             var data = {};

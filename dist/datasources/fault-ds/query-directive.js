@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (_export, _context) {
+System.register(['angular', 'lodash', './mapping/ComparatorMapping', './UI'], function (_export, _context) {
     "use strict";
 
-    var angular, _, ComparatorMapping;
+    var angular, _, ComparatorMapping, UI;
 
     return {
         setters: [function (_angular) {
@@ -12,6 +12,8 @@ System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (
             _ = _lodash.default;
         }, function (_mappingComparatorMapping) {
             ComparatorMapping = _mappingComparatorMapping.ComparatorMapping;
+        }, function (_UI) {
+            UI = _UI.UI;
         }],
         execute: function () {
 
@@ -31,6 +33,19 @@ System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (
                 var QueryCtrl = $scope.queryCtrl;
                 $scope.query.updateControls();
 
+                $scope.findOperators = function (attribute) {
+                    return datasource.metricFindQuery({ 'find': 'comparators', 'attribute': attribute }).then(function (comparators) {
+                        // the API.Comparator.id or API.Comparator.label fields cannot be used.
+                        comparators = _.filter(comparators, function (comparator) {
+                            return comparator.aliases && comparator.aliases.length > 0;
+                        });
+                        return _.map(comparators, function (comparator) {
+                            var uiComparator = new ComparatorMapping().getUiComparator(comparator);
+                            return uiSegmentSrv.newOperator(uiComparator);
+                        });
+                    }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+                };
+
                 $scope.getSuggestions = function (clause, segment, index) {
                     var segments = clause.restriction.segments;
 
@@ -48,16 +63,7 @@ System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (
                     // comparator input
                     if (segment.type == 'operator') {
                         var attributeSegment = segments[index - 1];
-                        return datasource.metricFindQuery({ 'find': 'comparators', 'attribute': attributeSegment.value }).then(function (comparators) {
-                            // the API.Comparator.id or API.Comparator.label fields cannot be used.
-                            comparators = _.filter(comparators, function (comparator) {
-                                return comparator.aliases && comparator.aliases.length > 0;
-                            });
-                            return _.map(comparators, function (comparator) {
-                                var uiComparator = new ComparatorMapping().getUiComparator(comparator);
-                                return uiSegmentSrv.newOperator(uiComparator);
-                            });
-                        }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+                        return $scope.findOperators(attributeSegment.value);
                     }
 
                     // value input
@@ -66,7 +72,7 @@ System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (
                         var theQuery = {
                             'find': 'values',
                             'attribute': _attributeSegment.value,
-                            'query': segment.value === 'select attribute value' ? '' : segment.value
+                            'query': segment.value === UI.Restriction.VALUE_PLACEHOLDER ? '' : segment.value
                         };
 
                         return datasource.metricFindQuery(theQuery).then(function (values) {
@@ -92,6 +98,28 @@ System.register(['angular', 'lodash', './mapping/ComparatorMapping'], function (
                     $scope.query.segmentUpdated(clause, segment, segmentIndex);
                     $scope.query.updateControls();
                     QueryCtrl.updateTargetFilter();
+
+                    // After the update it must be verified that the comparator is still in the list of comparators.
+                    // If not, the first comparator in the list is fallen back to.
+                    // The check is only necessary if a restriction is already fully defined.
+                    if (segmentIndex == 0 && clause.restriction.asRestrictionDTO()) {
+                        var attribute = clause.restriction.getAttribute();
+                        $scope.findOperators(attribute).then(function (segments) {
+                            var comparators = _.map(segments, function (segment) {
+                                return segment.value;
+                            });
+                            var comparator = comparators.find(function (comparator) {
+                                return comparator === clause.restriction.getComparator();
+                            });
+                            // In case no comparator was found, fall back to the 1st one in the list
+                            if (comparators.length >= 1 && (!comparator || comparator === void 0)) {
+                                console.log("Comparator " + clause.restriction.getComparator() + " is selected but not supported. Falling back to " + comparators[0]);
+                                clause.restriction.setComparator(comparators[0]);
+                            }
+                        }).then(function () {
+                            QueryCtrl.updateTargetFilter(); // Finally update the target filter
+                        });
+                    }
                 };
 
                 $scope.performClick = function (clause, control) {

@@ -121,9 +121,9 @@ var Query = exports.Query = function () {
         key: 'createNewEmptyClause',
         value: function createNewEmptyClause(index) {
             var newClause = new _UI.UI.Clause(this.uiSegmentSrv, _UI.UI.Operators.AND, new _UI.UI.Restriction(this.uiSegmentSrv));
-            newClause.restriction.addSegment(this.uiSegmentSrv.newKey('select attribute'));
+            newClause.restriction.addSegment(this.uiSegmentSrv.newKey(_UI.UI.Restriction.KEY_PLACEHOLDER));
             newClause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
-            newClause.restriction.addSegment(this.uiSegmentSrv.newFake('select value', 'value', 'query-segment-value'));
+            newClause.restriction.addSegment(this.uiSegmentSrv.newFake(_UI.UI.Restriction.VALUE_PLACEHOLDER, 'value', 'query-segment-value'));
             this.addClause(newClause, index);
             return newClause;
         }
