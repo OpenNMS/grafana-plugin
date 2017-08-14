@@ -44,6 +44,13 @@ export class Restriction {
         this.segments[0] = this.uiSegmentSrv.newKey(attribute);
     }
 
+    getAttribute() {
+        if (this.segments.length == 0) {
+            return void 0;
+        }
+        return this.segments[0].value;
+    }
+
     setComparator(comparator) {
         if (this.segments.length == 1) {
             this.segments.push({});
@@ -51,11 +58,25 @@ export class Restriction {
         this.segments[1] = this.uiSegmentSrv.newOperator(comparator);
     }
 
+    getComparator() {
+        if (this.segments.length == 1) {
+            return void 0;
+        }
+        return this.segments[1].value;
+    }
+
     setValue(value) {
         if (this.segments.length == 2) {
             this.segments.push({});
         }
         this.segments[2] = this.uiSegmentSrv.newKeyValue(value);
+    }
+
+    getValue() {
+        if (this.segments.length == 2) {
+            return void 0;
+        }
+        return this.segments[2].value;
     }
 
     asRestrictionDTO() {
