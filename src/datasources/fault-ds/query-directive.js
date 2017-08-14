@@ -21,6 +21,20 @@ angular.module('grafana.directives')
         const QueryCtrl = $scope.queryCtrl;
         $scope.query.updateControls();
 
+        $scope.findOperators = function(attribute) {
+            return datasource.metricFindQuery({'find': 'comparators', 'attribute': attribute})
+                .then(function(comparators) {
+                    // the API.Comparator.id or API.Comparator.label fields cannot be used.
+                    comparators = _.filter(comparators, function(comparator) {
+                        return comparator.aliases && comparator.aliases.length > 0;
+                    });
+                    return _.map(comparators, function(comparator) {
+                        const uiComparator = new ComparatorMapping().getUiComparator(comparator);
+                        return uiSegmentSrv.newOperator(uiComparator);
+                    });
+                }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+        };
+
         $scope.getSuggestions = function(clause, segment, index) {
             var segments = clause.restriction.segments;
 
@@ -40,17 +54,7 @@ angular.module('grafana.directives')
             // comparator input
             if (segment.type == 'operator') {
                 let attributeSegment = segments[index-1];
-                return datasource.metricFindQuery({'find': 'comparators', 'attribute': attributeSegment.value})
-                    .then(function(comparators) {
-                        // the API.Comparator.id or API.Comparator.label fields cannot be used.
-                        comparators = _.filter(comparators, function(comparator) {
-                            return comparator.aliases && comparator.aliases.length > 0;
-                        });
-                        return _.map(comparators, function(comparator) {
-                            const uiComparator = new ComparatorMapping().getUiComparator(comparator);
-                            return uiSegmentSrv.newOperator(uiComparator);
-                        });
-                    }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+                return $scope.findOperators(attributeSegment.value);
             }
 
             // value input
@@ -87,6 +91,28 @@ angular.module('grafana.directives')
             $scope.query.segmentUpdated(clause, segment, segmentIndex);
             $scope.query.updateControls();
             QueryCtrl.updateTargetFilter();
+
+            // After the update it must be verified that the comparator is still in the list of comparators.
+            // If not, the first comparator in the list is fallen back to.
+            // The check is only necessary if a restriction is already fully defined.
+            if (segmentIndex == 0 && clause.restriction.asRestrictionDTO()) {
+                const attribute = clause.restriction.getAttribute();
+                $scope.findOperators(attribute).then(segments => {
+                    const comparators = _.map(segments, segment => {
+                        return segment.value;
+                    });
+                    const comparator = comparators.find(comparator => {
+                        return comparator === clause.restriction.getComparator();
+                    });
+                    // In case no comparator was found, fall back to the 1st one in the list
+                    if (comparators.length >= 1 && (!comparator || comparator === void 0)) {
+                        console.log("Comparator " + clause.restriction.getComparator() + " is selected but not supported. Falling back to " + comparators[0]);
+                        clause.restriction.setComparator(comparators[0]);
+                    }
+                }).then(() => {
+                    QueryCtrl.updateTargetFilter(); // Finally update the target filter
+                });
+            }
         };
 
         $scope.performClick = function(clause, control) {
