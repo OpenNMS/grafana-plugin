@@ -94,9 +94,9 @@ export class Query {
 
     createNewEmptyClause(index) {
         const newClause = new UI.Clause(this.uiSegmentSrv, UI.Operators.AND, new UI.Restriction(this.uiSegmentSrv));
-        newClause.restriction.addSegment(this.uiSegmentSrv.newKey('select attribute'));
+        newClause.restriction.addSegment(this.uiSegmentSrv.newKey(UI.Restriction.KEY_PLACEHOLDER));
         newClause.restriction.addSegment(this.uiSegmentSrv.newOperator('='));
-        newClause.restriction.addSegment(this.uiSegmentSrv.newFake('select value', 'value', 'query-segment-value'));
+        newClause.restriction.addSegment(this.uiSegmentSrv.newFake(UI.Restriction.VALUE_PLACEHOLDER, 'value', 'query-segment-value'));
         this.addClause(newClause, index);
         return newClause;
     }

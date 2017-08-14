@@ -1,6 +1,18 @@
 import _ from 'lodash';
 
+const KEY_PLACEHOLDER = 'select attribute';
+const VALUE_PLACEHOLDER = 'select value';
+
 export class Restriction {
+
+    static get KEY_PLACEHOLDER() {
+        return KEY_PLACEHOLDER;
+    }
+
+    static get VALUE_PLACEHOLDER() {
+        return VALUE_PLACEHOLDER;
+    }
+
     constructor(uiSegmentSrv, restriction) {
         this.uiSegmentSrv = uiSegmentSrv;
         this.segments = [];
@@ -32,11 +44,25 @@ export class Restriction {
         this.segments[0] = this.uiSegmentSrv.newKey(attribute);
     }
 
+    getAttribute() {
+        if (this.segments.length == 0) {
+            return void 0;
+        }
+        return this.segments[0].value;
+    }
+
     setComparator(comparator) {
         if (this.segments.length == 1) {
             this.segments.push({});
         }
         this.segments[1] = this.uiSegmentSrv.newOperator(comparator);
+    }
+
+    getComparator() {
+        if (this.segments.length == 1) {
+            return void 0;
+        }
+        return this.segments[1].value;
     }
 
     setValue(value) {
@@ -46,9 +72,18 @@ export class Restriction {
         this.segments[2] = this.uiSegmentSrv.newKeyValue(value);
     }
 
+    getValue() {
+        if (this.segments.length == 2) {
+            return void 0;
+        }
+        return this.segments[2].value;
+    }
+
     asRestrictionDTO() {
         const segments = _.filter(this.segments, function(segment) {
-            return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false)
+            return segment.type !== 'plus-button'
+                    && (segment.fake === undefined || segment.fake === false)
+                    && segment.value !== KEY_PLACEHOLDER && segment.value !== VALUE_PLACEHOLDER;
         });
         if (segments.length > 0 && segments.length % 3 == 0) {
             var data = {};
