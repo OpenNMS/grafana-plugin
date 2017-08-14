@@ -1,6 +1,7 @@
 import angular from 'angular';
 import _ from 'lodash';
 import {ComparatorMapping} from "./mapping/ComparatorMapping";
+import {UI} from "./UI";
 
 angular.module('grafana.directives')
     .directive('onmsQuery', function() {
@@ -59,7 +60,7 @@ angular.module('grafana.directives')
                 let theQuery = {
                     'find': 'values',
                     'attribute': attributeSegment.value,
-                    'query': segment.value === 'select attribute value' ? '' : segment.value
+                    'query': segment.value === UI.Restriction.VALUE_PLACEHOLDER ? '' : segment.value
                 };
 
                 return datasource.metricFindQuery(theQuery)
