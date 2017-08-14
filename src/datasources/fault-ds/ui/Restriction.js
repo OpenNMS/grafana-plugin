@@ -1,6 +1,18 @@
 import _ from 'lodash';
 
+const KEY_PLACEHOLDER = 'select attribute';
+const VALUE_PLACEHOLDER = 'select value';
+
 export class Restriction {
+
+    static get KEY_PLACEHOLDER() {
+        return KEY_PLACEHOLDER;
+    }
+
+    static get VALUE_PLACEHOLDER() {
+        return VALUE_PLACEHOLDER;
+    }
+
     constructor(uiSegmentSrv, restriction) {
         this.uiSegmentSrv = uiSegmentSrv;
         this.segments = [];
@@ -48,7 +60,9 @@ export class Restriction {
 
     asRestrictionDTO() {
         const segments = _.filter(this.segments, function(segment) {
-            return segment.type !== 'plus-button' && (segment.fake === undefined || segment.fake === false)
+            return segment.type !== 'plus-button'
+                    && (segment.fake === undefined || segment.fake === false)
+                    && segment.value !== KEY_PLACEHOLDER && segment.value !== VALUE_PLACEHOLDER;
         });
         if (segments.length > 0 && segments.length % 3 == 0) {
             var data = {};
