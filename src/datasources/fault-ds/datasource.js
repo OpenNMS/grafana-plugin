@@ -40,11 +40,14 @@ export class OpenNMSFMDatasource {
             if (clause.restriction instanceof API.NestedRestriction) {
                 self.substitute(clause.restriction.clauses, options);
             } else if (clause.restriction.value) {
-                const scopedVars = Object.assign({}, options.scopedVars, {
-                    "range_from":     {text: options.range.from.valueOf(),   value: options.range.from.valueOf()},
-                    "range_to":  {text: options.range.to.valueOf(), value: options.range.to.valueOf()},
-                });
-                clause.restriction.value = self.templateSrv.replace(clause.restriction.value, scopedVars);
+                // Range must be of type date, otherwise it is not parseable by the OpenNMS client
+                if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
+                    clause.restriction.value = options.range.from;
+                } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
+                    clause.restriction.value = options.range.from;
+                } else {
+                    clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                }
             }
         }
       });
