@@ -13,8 +13,13 @@ export class Clause {
         this.setOperator(operator);
     }
 
-    setOperator(operator) {
-        this.operator = this.uiSegmentSrv.newCondition(operator);
+    setOperator(newOperator) {
+        // initialize if not initialized
+        if (this.operator === void 0) {
+            this.operator = this.uiSegmentSrv.newCondition(newOperator);
+        }
+        // Update the value if already initialized
+        this.operator.value = newOperator;
     }
 
     updateControls(query) {
