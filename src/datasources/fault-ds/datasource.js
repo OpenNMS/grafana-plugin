@@ -49,7 +49,7 @@ export class OpenNMSFMDatasource {
                 if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
                     clause.restriction.value = options.range.from;
                 } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
-                    clause.restriction.value = options.range.from;
+                    clause.restriction.value = options.range.to;
                 } else {
                     clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
                 }
