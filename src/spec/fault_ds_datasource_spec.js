@@ -1,9 +1,11 @@
 import Q from "q";
 import _ from 'lodash';
+import moment from 'moment';
 import {UI} from '../datasources/fault-ds/UI';
 import {API} from '../opennms';
 import {Mapping} from '../datasources/fault-ds/Mapping';
 import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
+import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource'
 
 describe("OpenNMS_FaultManagement_Datasource", function() {
     let uiSegmentSrv = {
@@ -619,7 +621,81 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 done();
             });
         })
+    });
 
+    describe('Datasource', () => {
+        let ctx = {};
+
+        beforeEach(() => {
+            // Context initialization
+            ctx.$q = Q;
+            ctx.backendSrv = {};
+            ctx.templateSrv = {replace: (value, scopedVars) => value};
+            ctx.uiSegmentSrv = uiSegmentSrv;
+            ctx.datasource = new Datasource({
+                "type": "opennms-fm",
+                "url": "http://localhost:8980/opennms",
+                "name": "OpenNMS FM Datasource"
+            }, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+        });
+
+        describe('buildQuery', () => {
+            it('should substitute scoped variables', () => {
+                // Mock the replace function
+                ctx.templateSrv.replace = (value, scopedVars) => {
+                    return value.replace(/\$variable1/g, scopedVars['variable1'].value)
+                        .replace(/\[\[variable1\]\]/g, scopedVars['variable1'].value);
+                };
+
+                // The filter with variables
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$variable1"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "Hello this is my [[variable1]]"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "value3"), API.Operators.AND));
+
+                // The scoped variables
+                const options = {
+                    scopedVars: {
+                        "variable1": {value: "dummy-value"}
+                    }
+                };
+
+                const substituedFilter = ctx.datasource.buildQuery(filter, options);
+
+                // Verify
+                expect(substituedFilter.clauses[0].restriction.value).to.equal("dummy-value");
+                expect(substituedFilter.clauses[1].restriction.value).to.equal("Hello this is my dummy-value");
+                expect(substituedFilter.clauses[2].restriction.value).to.equal("value3");
+            });
+
+            it('should substitude $range_from and $range_to accordingly', () => {
+                // Options
+                const range_from = moment();
+                const range_to = range_from.add(1, 'days');
+                const options = {
+                    targets: [filter],
+                    range: {
+                        from: range_from,
+                        to: range_to,
+                    },
+                    scopedVars: {}
+                };
+
+                // The input filter
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
+
+                // Build query and verify
+                const substituedFilter = ctx.datasource.buildQuery(filter, options);
+                expect(substituedFilter.clauses[0].restriction.value).to.equal(range_from);
+                expect(substituedFilter.clauses[1].restriction.value).to.equal(range_to);
+                expect(substituedFilter.clauses[2].restriction.value).to.equal(range_from);
+                expect(substituedFilter.clauses[3].restriction.value).to.equal(range_to);
+            });
+        });
     });
 
 });

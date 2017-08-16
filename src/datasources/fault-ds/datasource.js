@@ -20,10 +20,7 @@ export class OpenNMSFMDatasource {
       var filter = options.targets[0].filter || new API.Filter();
       filter.limit = 0; // no limit
 
-      // Clone Filter to prevent some issues and also make substitution possible
-      // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
-      var clonedFilter = new FilterCloner().cloneFilter(filter);
-      this.substitute(clonedFilter.clauses, options);
+      const clonedFilter = this.buildQuery(filter, options);
 
       var self = this;
       return this.alarmClient.findAlarms(clonedFilter).then(function(alarms) {
@@ -31,6 +28,14 @@ export class OpenNMSFMDatasource {
               data: self.toTable(alarms)
           };
       });
+  }
+
+    // Clone Filter to prevent some issues and also make substitution possible
+    // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+  buildQuery(filter, options) {
+      var clonedFilter = new FilterCloner().cloneFilter(filter);
+      this.substitute(clonedFilter.clauses, options);
+      return clonedFilter;
   }
 
   substitute(clauses, options) {
