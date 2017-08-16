@@ -20,6 +20,7 @@ export class OpenNMSFMDatasource {
       var filter = options.targets[0].filter || new API.Filter();
       filter.limit = 0; // no limit
 
+      options.enforceTimeRange = true;
       const clonedFilter = this.buildQuery(filter, options);
 
       var self = this;
@@ -32,10 +33,20 @@ export class OpenNMSFMDatasource {
       });
   }
 
-    // Clone Filter to prevent some issues and also make substitution possible
-    // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+  // Clone Filter to prevent some issues and also make substitution possible
+  // (otherwise substitution would happen in original query, and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
   buildQuery(filter, options) {
       var clonedFilter = new FilterCloner().cloneFilter(filter);
+
+      // Before replacing any variables, add a global time range restriction (which is hidden to the user)
+      if (options && options.enforceTimeRange) {
+          clonedFilter.withAndRestriction(
+              new API.NestedRestriction()
+                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from"))
+                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
+      }
+
+      // Subsitute $<variable> or [[variable]] in the restriction value
       this.substitute(clonedFilter.clauses, options);
       return clonedFilter;
   }
