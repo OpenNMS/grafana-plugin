@@ -669,6 +669,8 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                             "url": "http://localhost:8980/opennms",
                             "name": "OpenNMS FM Datasource"
                         }, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+                        ctx.range_from = moment();
+                        ctx.range_to = ctx.range_from.add(1, 'days');
                     });
 
                     describe('buildQuery', function () {
@@ -698,13 +700,11 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
 
                         it('should substitude $range_from and $range_to accordingly', function () {
                             // Options
-                            var range_from = moment();
-                            var range_to = range_from.add(1, 'days');
                             var options = {
                                 targets: [filter],
                                 range: {
-                                    from: range_from,
-                                    to: range_to
+                                    from: ctx.range_from,
+                                    to: ctx.range_to
                                 },
                                 scopedVars: {}
                             };
@@ -714,10 +714,29 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
 
                             // Build query and verify
                             var substituedFilter = ctx.datasource.buildQuery(filter, options);
-                            expect(substituedFilter.clauses[0].restriction.value).to.equal(range_from);
-                            expect(substituedFilter.clauses[1].restriction.value).to.equal(range_to);
-                            expect(substituedFilter.clauses[2].restriction.value).to.equal(range_from);
-                            expect(substituedFilter.clauses[3].restriction.value).to.equal(range_to);
+                            expect(substituedFilter.clauses[0].restriction.value).to.equal(ctx.range_from);
+                            expect(substituedFilter.clauses[1].restriction.value).to.equal(ctx.range_to);
+                            expect(substituedFilter.clauses[2].restriction.value).to.equal(ctx.range_from);
+                            expect(substituedFilter.clauses[3].restriction.value).to.equal(ctx.range_to);
+                        });
+
+                        it('should include $range_from and $range_to when building the query', function () {
+                            var filter = new API.Filter();
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(actualFilter.clauses.length).to.equal(0);
+
+                            // Try building it with enforced range
+                            actualFilter = ctx.datasource.buildQuery(filter, {
+                                enforceTimeRange: true,
+                                range: {
+                                    from: ctx.range_from,
+                                    to: ctx.range_to
+                                }
+                            });
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal(ctx.range_from);
+                            expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal(ctx.range_to);
                         });
                     });
                 });

@@ -43,6 +43,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
             var filter = options.targets[0].filter || new _opennms.API.Filter();
             filter.limit = 0; // no limit
 
+            options.enforceTimeRange = true;
             var clonedFilter = this.buildQuery(filter, options);
 
             var self = this;
@@ -56,12 +57,19 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         }
 
         // Clone Filter to prevent some issues and also make substitution possible
-        // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+        // (otherwise substitution would happen in original query, and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
 
     }, {
         key: 'buildQuery',
         value: function buildQuery(filter, options) {
             var clonedFilter = new _FilterCloner.FilterCloner().cloneFilter(filter);
+
+            // Before replacing any variables, add a global time range restriction (which is hidden to the user)
+            if (options && options.enforceTimeRange) {
+                clonedFilter.withAndRestriction(new _opennms.API.NestedRestriction().withAndRestriction(new _opennms.API.Restriction("lastEventTime", _opennms.API.Comparators.GE, "$range_from")).withAndRestriction(new _opennms.API.Restriction("lastEventTime", _opennms.API.Comparators.LE, "$range_to")));
+            }
+
+            // Subsitute $<variable> or [[variable]] in the restriction value
             this.substitute(clonedFilter.clauses, options);
             return clonedFilter;
         }

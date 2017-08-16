@@ -62,6 +62,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                         var filter = options.targets[0].filter || new API.Filter();
                         filter.limit = 0; // no limit
 
+                        options.enforceTimeRange = true;
                         var clonedFilter = this.buildQuery(filter, options);
 
                         var self = this;
@@ -77,6 +78,13 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                     key: 'buildQuery',
                     value: function buildQuery(filter, options) {
                         var clonedFilter = new FilterCloner().cloneFilter(filter);
+
+                        // Before replacing any variables, add a global time range restriction (which is hidden to the user)
+                        if (options && options.enforceTimeRange) {
+                            clonedFilter.withAndRestriction(new API.NestedRestriction().withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from")).withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
+                        }
+
+                        // Subsitute $<variable> or [[variable]] in the restriction value
                         this.substitute(clonedFilter.clauses, options);
                         return clonedFilter;
                     }
