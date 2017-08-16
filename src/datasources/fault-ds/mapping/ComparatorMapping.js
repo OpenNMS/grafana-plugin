@@ -4,8 +4,12 @@ import {API} from '../../../opennms';
 export class ComparatorMapping {
     getUiComparator(apiComparator) {
         const theComparator = API.Comparators[apiComparator.label];
-        if (theComparator.aliases && theComparator.aliases.length > 0) {
-            return theComparator.aliases[0];
+        if (theComparator !== API.Comparators.NULL
+            && theComparator !== API.Comparators.NOTNULL
+            && theComparator != API.LIKE
+            && theComparator != API.ILIKE
+            && theComparator.aliases && theComparator.aliases.length > 0) {
+                return theComparator.aliases[0];
         }
         throw new Error("No matching UI comparator found for '" + apiComparator.label + "'.");
     }

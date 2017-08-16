@@ -20,17 +20,24 @@ export class OpenNMSFMDatasource {
       var filter = options.targets[0].filter || new API.Filter();
       filter.limit = 0; // no limit
 
-      // Clone Filter to prevent some issues and also make substitution possible
-      // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
-      var clonedFilter = new FilterCloner().cloneFilter(filter);
-      this.substitute(clonedFilter.clauses, options);
+      const clonedFilter = this.buildQuery(filter, options);
 
       var self = this;
-      return this.alarmClient.findAlarms(clonedFilter).then(function(alarms) {
-          return {
-              data: self.toTable(alarms)
-          };
+      return this.alarmClient.findAlarms(clonedFilter).then(alarms => {
+          return this.alarmClient.getClientWithMetadata().then(client => {
+              return {
+                data: self.toTable(alarms, client.server.metadata)
+              };
+          });
       });
+  }
+
+    // Clone Filter to prevent some issues and also make substitution possible
+    // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
+  buildQuery(filter, options) {
+      var clonedFilter = new FilterCloner().cloneFilter(filter);
+      this.substitute(clonedFilter.clauses, options);
+      return clonedFilter;
   }
 
   substitute(clauses, options) {
@@ -40,10 +47,14 @@ export class OpenNMSFMDatasource {
             if (clause.restriction instanceof API.NestedRestriction) {
                 self.substitute(clause.restriction.clauses, options);
             } else if (clause.restriction.value) {
-                // TODO MVR: This is a hint on how to probably best implement HELM-12
-                // clause.restriction.value = clause.restriction.value.replace(/\$timeFrom/g, options.range.from.valueOf());
-                // clause.restriction.value = clause.restriction.value.replace(/\$timeTo/g, options.range.to.valueOf());
-                clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                // Range must be of type date, otherwise it is not parseable by the OpenNMS client
+                if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
+                    clause.restriction.value = options.range.from;
+                } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
+                    clause.restriction.value = options.range.to;
+                } else {
+                    clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                }
             }
         }
       });
@@ -158,7 +169,7 @@ export class OpenNMSFMDatasource {
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
-    toTable(alarms) {
+    toTable(alarms, metadata) {
         var columnNames = [
             "Log Message", "Description",
             "UEI", "Node ID", "Node Label",
@@ -194,7 +205,9 @@ export class OpenNMSFMDatasource {
                 // Store the name of the data-source as part of the data so that
                 // the panel can grab an instance of the DS to perform actions
                 // on the alarms
-                "source": this.name
+                "source": this.name,
+                // Store the ticketerConfig here
+                "ticketerConfig": metadata.ticketerConfig
             };
             return row;
         });
