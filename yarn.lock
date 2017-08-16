@@ -2411,9 +2411,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-"opennms@https://github.com/OpenNMS/opennms-js.git#e202bf2c5f550318816d01ecb41e5b438c18c0be":
+"opennms@https://github.com/OpenNMS/opennms-js.git#bef4f4edaafb1d0c123ad212bef05b7a6916c2a8":
   version "1.0.0-beta.2"
-  resolved "https://github.com/OpenNMS/opennms-js.git#e202bf2c5f550318816d01ecb41e5b438c18c0be"
+  resolved "https://github.com/OpenNMS/opennms-js.git#bef4f4edaafb1d0c123ad212bef05b7a6916c2a8"
   dependencies:
     axios "^0.16.1"
     cli-table "^0.3.1"
