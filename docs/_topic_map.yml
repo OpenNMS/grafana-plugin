@@ -21,16 +21,38 @@
 # The ordering of the records in this document determines the ordering of the
 # topic groups and topics on the main page.
 ---
-Name: Project Info
-Dir: project-info
+Name: About
+Dir: welcome
 Topics:
   - Name: Welcome
     File: index
-  - Name: How to Build the Docs
-    File: how-to-build-docs
+  - Name: What is Helm?
+    File: introduction
 ---
-Name: Architecture
-Dir: architecture
+Name: Installation
+Dir: installation
+Topics:
+    - Name: Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)
+      File: rpm
+    - Name: Installing on Debian / Ubuntu
+      File: debian
+    - Name: Installing via plugin (for existing Grafana installations)
+      File: plugin
+    - Name: Installing from source
+      File: source
+---
+Name: Getting Started
+Dir: getting_started
 Topics:
     - Name: Overview
       File: index
+    - Name: Basic Walkthrough
+      File: basic_walkthrough
+---
+Name: Contributing
+Dir: contributing
+Topics:
+  - Name: Contributing
+    File: index
+  - Name: How to Build the Docs
+    File: how-to-build-docs
