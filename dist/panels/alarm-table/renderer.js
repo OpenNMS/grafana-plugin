@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _context) {
+System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], function (_export, _context) {
   "use strict";
 
-  var _, moment, kbn, _createClass, TableRenderer;
+  var _, moment, kbn, Model, _createClass, TableRenderer;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -18,6 +18,8 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
       moment = _moment.default;
     }, function (_appCoreUtilsKbn) {
       kbn = _appCoreUtilsKbn.default;
+    }, function (_opennms) {
+      Model = _opennms.Model;
     }],
     execute: function () {
       _createClass = function () {
@@ -238,6 +240,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
 
               var source = row.meta.source.replace(/'/g, '\\\'');
               var alarm = row.meta.alarm;
+              var ticketerConfig = row.meta.ticketerConfig;
               var severity = alarm.severity.label.toLowerCase();
 
               if (this.panel.severityIcons) {
@@ -250,7 +253,12 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               }
 
               if (this.panel.actions) {
-                cellHtml += '<td>\n                    <div class="gf-form gf-form-no-margin">\n                        <label class="gf-form-label gf-smaller-form-label dropdown">\n                            <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">\n                                <i class="fa fa-bars"></i>\n                            </a>\n                            <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.alarmDetails(\'' + source + '\', ' + alarm.id + ')">Details</a>\n                                </li>\n                                <li class="divider"></li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.acknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')">Acknowledge</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.unacknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')">Unacknowledge</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.clearAlarm(\'' + source + '\', ' + alarm.id + ')">Clear</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.escalateAlarm(\'' + source + '\', ' + alarm.id + ')">Escalate</a>\n                                </li>\n                                <li class="divider"></li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.createTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Create Ticket</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.updateTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Update Ticket</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.closeTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Close Ticket</a>\n                                </li>\n                            </ul>\n                        </label>\n                    </div>\n                </td>';
+                cellHtml += '<td>\n                    <div class="gf-form gf-form-no-margin">\n                        <label class="gf-form-label gf-smaller-form-label dropdown">\n                            <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">\n                                <i class="fa fa-bars"></i>\n                            </a>\n                            <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.alarmDetails(\'' + source + '\', ' + alarm.id + ')">Details</a>\n                                </li>\n                                <li class="divider"></li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.acknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')">Acknowledge</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.unacknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')">Unacknowledge</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.clearAlarm(\'' + source + '\', ' + alarm.id + ')">Clear</a>\n                                </li>\n                                <li role="menuitem">\n                                    <a tabindex="1" ng-click="ctrl.escalateAlarm(\'' + source + '\', ' + alarm.id + ')">Escalate</a>\n                                </li>';
+                // Only show ticket related actions if enabled
+                if (ticketerConfig && ticketerConfig.enabled) {
+                  cellHtml += this.getTicketActionsHtml(source, alarm);
+                }
+                cellHtml += '</ul>\n                        </label>\n                    </div>\n                </td>';
               }
 
               if (this.colorState.row) {
@@ -266,6 +274,27 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
             }
 
             return html;
+          }
+        }, {
+          key: 'getTicketActionsHtml',
+          value: function getTicketActionsHtml(source, alarm) {
+            var cellHtml = ['<li class="divider"></li>'];
+
+            // Only show actions according to ticket state
+            if (!alarm.troubleTicketState || alarm.troubleTicketState === Model.TroubleTicketStates.CREATE_FAILED) {
+              cellHtml.push('<li role="menuitem"><a tabindex="1" ng-click="ctrl.createTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Create Ticket</a></li>');
+            }
+            if (alarm.troubleTicketState && alarm.troubleTicket) {
+              cellHtml.push('<li role="menuitem"><a tabindex="1" ng-click="ctrl.updateTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Update Ticket</a></li>');
+            }
+            if (alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == Model.TroubleTicketStates.CLOSE_FAILED)) {
+              cellHtml.push('<li role="menuitem"><a tabindex="1" ng-click="ctrl.closeTicketForAlarm(\'' + source + '\', ' + alarm.id + ')">Close Ticket</a></li>');
+            }
+            // This ensures that the divider is not shown, when it is the only element in the array
+            if (cellHtml.length > 1) {
+              return cellHtml.join("");
+            }
+            return "";
           }
         }, {
           key: 'render_values',

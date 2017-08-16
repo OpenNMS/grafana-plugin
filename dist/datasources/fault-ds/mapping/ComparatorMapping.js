@@ -45,7 +45,7 @@ System.register(['lodash', '../../../opennms'], function (_export, _context) {
                     key: 'getUiComparator',
                     value: function getUiComparator(apiComparator) {
                         var theComparator = API.Comparators[apiComparator.label];
-                        if (theComparator.aliases && theComparator.aliases.length > 0) {
+                        if (theComparator !== API.Comparators.NULL && theComparator !== API.Comparators.NOTNULL && theComparator != API.LIKE && theComparator != API.ILIKE && theComparator.aliases && theComparator.aliases.length > 0) {
                             return theComparator.aliases[0];
                         }
                         throw new Error("No matching UI comparator found for '" + apiComparator.label + "'.");

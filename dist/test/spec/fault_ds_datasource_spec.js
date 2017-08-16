@@ -8,6 +8,10 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 var _UI = require('../datasources/fault-ds/UI');
 
 var _opennms = require('../opennms');
@@ -15,6 +19,8 @@ var _opennms = require('../opennms');
 var _Mapping = require('../datasources/fault-ds/Mapping');
 
 var _FilterCloner = require('../datasources/fault-ds/FilterCloner');
+
+var _datasource = require('../datasources/fault-ds/datasource');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -642,6 +648,75 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                 verifyControls(uiFilter.query.clauses[1].restriction.clauses[0], [_UI.UI.Controls.RemoveControl, _UI.UI.Controls.AddControl]); // limited controls on clause of nested clause
 
                 done();
+            });
+        });
+    });
+
+    describe('Datasource', function () {
+        var ctx = {};
+
+        beforeEach(function () {
+            // Context initialization
+            ctx.$q = _q2.default;
+            ctx.backendSrv = {};
+            ctx.templateSrv = { replace: function replace(value, scopedVars) {
+                    return value;
+                } };
+            ctx.uiSegmentSrv = uiSegmentSrv;
+            ctx.datasource = new _datasource.OpenNMSFMDatasource({
+                "type": "opennms-fm",
+                "url": "http://localhost:8980/opennms",
+                "name": "OpenNMS FM Datasource"
+            }, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+        });
+
+        describe('buildQuery', function () {
+            it('should substitute scoped variables', function () {
+                // Mock the replace function
+                ctx.templateSrv.replace = function (value, scopedVars) {
+                    return value.replace(/\$variable1/g, scopedVars['variable1'].value).replace(/\[\[variable1\]\]/g, scopedVars['variable1'].value);
+                };
+
+                // The filter with variables
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key", _opennms.API.Comparators.EQ, "$variable1"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key2", _opennms.API.Comparators.EQ, "Hello this is my [[variable1]]"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.EQ, "value3"), _opennms.API.Operators.AND));
+
+                // The scoped variables
+                var options = {
+                    scopedVars: {
+                        "variable1": { value: "dummy-value" }
+                    }
+                };
+
+                var substituedFilter = ctx.datasource.buildQuery(filter, options);
+
+                // Verify
+                expect(substituedFilter.clauses[0].restriction.value).to.equal("dummy-value");
+                expect(substituedFilter.clauses[1].restriction.value).to.equal("Hello this is my dummy-value");
+                expect(substituedFilter.clauses[2].restriction.value).to.equal("value3");
+            });
+
+            it('should substitude $range_from and $range_to accordingly', function () {
+                // Options
+                var range_from = (0, _moment2.default)();
+                var range_to = range_from.add(1, 'days');
+                var options = {
+                    targets: [filter],
+                    range: {
+                        from: range_from,
+                        to: range_to
+                    },
+                    scopedVars: {}
+                };
+
+                // The input filter
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key", _opennms.API.Comparators.EQ, "$range_from"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key2", _opennms.API.Comparators.EQ, "$range_to"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.EQ, "[[range_from]]"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key4", _opennms.API.Comparators.EQ, "[[range_to]]"), _opennms.API.Operators.AND));
+
+                // Build query and verify
+                var substituedFilter = ctx.datasource.buildQuery(filter, options);
+                expect(substituedFilter.clauses[0].restriction.value).to.equal(range_from);
+                expect(substituedFilter.clauses[1].restriction.value).to.equal(range_to);
+                expect(substituedFilter.clauses[2].restriction.value).to.equal(range_from);
+                expect(substituedFilter.clauses[3].restriction.value).to.equal(range_to);
             });
         });
     });

@@ -1,15 +1,17 @@
 'use strict';
 
-System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner'], function (_export, _context) {
+System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource'], function (_export, _context) {
     "use strict";
 
-    var Q, _, UI, API, Mapping, FilterCloner;
+    var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource;
 
     return {
         setters: [function (_q) {
             Q = _q.default;
         }, function (_lodash) {
             _ = _lodash.default;
+        }, function (_moment) {
+            moment = _moment.default;
         }, function (_datasourcesFaultDsUI) {
             UI = _datasourcesFaultDsUI.UI;
         }, function (_opennms) {
@@ -18,6 +20,8 @@ System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../
             Mapping = _datasourcesFaultDsMapping.Mapping;
         }, function (_datasourcesFaultDsFilterCloner) {
             FilterCloner = _datasourcesFaultDsFilterCloner.FilterCloner;
+        }, function (_datasourcesFaultDsDatasource) {
+            Datasource = _datasourcesFaultDsDatasource.OpenNMSFMDatasource;
         }],
         execute: function () {
 
@@ -645,6 +649,75 @@ System.register(['q', 'lodash', '../datasources/fault-ds/UI', '../opennms', '../
                             verifyControls(uiFilter.query.clauses[1].restriction.clauses[0], [UI.Controls.RemoveControl, UI.Controls.AddControl]); // limited controls on clause of nested clause
 
                             done();
+                        });
+                    });
+                });
+
+                describe('Datasource', function () {
+                    var ctx = {};
+
+                    beforeEach(function () {
+                        // Context initialization
+                        ctx.$q = Q;
+                        ctx.backendSrv = {};
+                        ctx.templateSrv = { replace: function replace(value, scopedVars) {
+                                return value;
+                            } };
+                        ctx.uiSegmentSrv = uiSegmentSrv;
+                        ctx.datasource = new Datasource({
+                            "type": "opennms-fm",
+                            "url": "http://localhost:8980/opennms",
+                            "name": "OpenNMS FM Datasource"
+                        }, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+                    });
+
+                    describe('buildQuery', function () {
+                        it('should substitute scoped variables', function () {
+                            // Mock the replace function
+                            ctx.templateSrv.replace = function (value, scopedVars) {
+                                return value.replace(/\$variable1/g, scopedVars['variable1'].value).replace(/\[\[variable1\]\]/g, scopedVars['variable1'].value);
+                            };
+
+                            // The filter with variables
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$variable1"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "Hello this is my [[variable1]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "value3"), API.Operators.AND));
+
+                            // The scoped variables
+                            var options = {
+                                scopedVars: {
+                                    "variable1": { value: "dummy-value" }
+                                }
+                            };
+
+                            var substituedFilter = ctx.datasource.buildQuery(filter, options);
+
+                            // Verify
+                            expect(substituedFilter.clauses[0].restriction.value).to.equal("dummy-value");
+                            expect(substituedFilter.clauses[1].restriction.value).to.equal("Hello this is my dummy-value");
+                            expect(substituedFilter.clauses[2].restriction.value).to.equal("value3");
+                        });
+
+                        it('should substitude $range_from and $range_to accordingly', function () {
+                            // Options
+                            var range_from = moment();
+                            var range_to = range_from.add(1, 'days');
+                            var options = {
+                                targets: [filter],
+                                range: {
+                                    from: range_from,
+                                    to: range_to
+                                },
+                                scopedVars: {}
+                            };
+
+                            // The input filter
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
+
+                            // Build query and verify
+                            var substituedFilter = ctx.datasource.buildQuery(filter, options);
+                            expect(substituedFilter.clauses[0].restriction.value).to.equal(range_from);
+                            expect(substituedFilter.clauses[1].restriction.value).to.equal(range_to);
+                            expect(substituedFilter.clauses[2].restriction.value).to.equal(range_from);
+                            expect(substituedFilter.clauses[3].restriction.value).to.equal(range_to);
                         });
                     });
                 });

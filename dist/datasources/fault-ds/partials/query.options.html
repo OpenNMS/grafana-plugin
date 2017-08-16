@@ -1,4 +1,23 @@
 <section class="grafana-metric-options" >
     <div class="gf-form">
+        <span class="gf-form-label">
+		    <i class="fa fa-info-circle"></i>
+        </span>
+        <span class="gf-form-label width-23">
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(1);" bs-tooltip="'click to show helpful info'" data-placement="bottom">
+                template variables
+            </a>
+        </span>
     </div>
 </section>
+
+<div class="pull-left">
+    <div class="grafana-info-box" style="border: 0;"  ng-if="ctrl.panelCtrl.editorHelpIndex === 1">
+        <h5>Template variables</h5>
+        <ul ng-non-bindable>
+            <li>null = Set the value to null to do "is null" or "is not null" queries</li>
+            <li>$range_from = The from time range defined in the upper right</li>
+            <li>$range_to = The to time range defined in the upper right</li>
+        </ul>
+    </div>
+</div>

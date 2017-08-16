@@ -26,7 +26,7 @@ var ComparatorMapping = exports.ComparatorMapping = function () {
         key: 'getUiComparator',
         value: function getUiComparator(apiComparator) {
             var theComparator = _opennms.API.Comparators[apiComparator.label];
-            if (theComparator.aliases && theComparator.aliases.length > 0) {
+            if (theComparator !== _opennms.API.Comparators.NULL && theComparator !== _opennms.API.Comparators.NOTNULL && theComparator != _opennms.API.LIKE && theComparator != _opennms.API.ILIKE && theComparator.aliases && theComparator.aliases.length > 0) {
                 return theComparator.aliases[0];
             }
             throw new Error("No matching UI comparator found for '" + apiComparator.label + "'.");

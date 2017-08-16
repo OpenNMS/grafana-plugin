@@ -56,21 +56,29 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 _createClass(OpenNMSFMDatasource, [{
                     key: 'query',
                     value: function query(options) {
+                        var _this = this;
+
                         // Initialize filter
                         var filter = options.targets[0].filter || new API.Filter();
                         filter.limit = 0; // no limit
 
-                        // Clone Filter to prevent some issues and also make substitution possible
-                        // (otherwise substitution would happen in original query, and overwriting the $<variable> which may not be the intention)
-                        var clonedFilter = new FilterCloner().cloneFilter(filter);
-                        this.substitute(clonedFilter.clauses, options);
+                        var clonedFilter = this.buildQuery(filter, options);
 
                         var self = this;
                         return this.alarmClient.findAlarms(clonedFilter).then(function (alarms) {
-                            return {
-                                data: self.toTable(alarms)
-                            };
+                            return _this.alarmClient.getClientWithMetadata().then(function (client) {
+                                return {
+                                    data: self.toTable(alarms, client.server.metadata)
+                                };
+                            });
                         });
+                    }
+                }, {
+                    key: 'buildQuery',
+                    value: function buildQuery(filter, options) {
+                        var clonedFilter = new FilterCloner().cloneFilter(filter);
+                        this.substitute(clonedFilter.clauses, options);
+                        return clonedFilter;
                     }
                 }, {
                     key: 'substitute',
@@ -81,10 +89,14 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                 if (clause.restriction instanceof API.NestedRestriction) {
                                     self.substitute(clause.restriction.clauses, options);
                                 } else if (clause.restriction.value) {
-                                    // TODO MVR: This is a hint on how to probably best implement HELM-12
-                                    // clause.restriction.value = clause.restriction.value.replace(/\$timeFrom/g, options.range.from.valueOf());
-                                    // clause.restriction.value = clause.restriction.value.replace(/\$timeTo/g, options.range.to.valueOf());
-                                    clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                                    // Range must be of type date, otherwise it is not parseable by the OpenNMS client
+                                    if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
+                                        clause.restriction.value = options.range.from;
+                                    } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
+                                        clause.restriction.value = options.range.to;
+                                    } else {
+                                        clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                                    }
                                 }
                             }
                         });
@@ -130,17 +142,17 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'searchForValues',
                     value: function searchForValues(query) {
-                        var _this = this;
+                        var _this2 = this;
 
                         return this.alarmClient.findProperty(query.attribute).then(function (property) {
                             if (!property) {
-                                return _this.q.when([]);
+                                return _this2.q.when([]);
                             }
                             switch (property.id) {
                                 case 'alarmAckUser':
                                 case 'suppressedUser':
                                 case 'lastEvent.eventAckUser':
-                                    return _this.alarmClient.findUsers({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findUsers({ query: query.query }).then(function (data) {
                                         return _.map(data.rows, function (user) {
                                             return {
                                                 id: user['user-id'],
@@ -149,7 +161,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                         });
                                     });
                                 case 'node.label':
-                                    return _this.alarmClient.findNodes({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findNodes({ query: query.query }).then(function (data) {
                                         return _.map(data.rows, function (node) {
                                             return {
                                                 id: node.label,
@@ -158,7 +170,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                         });
                                     });
                                 case 'category.name':
-                                    return _this.alarmClient.findCategories({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findCategories({ query: query.query }).then(function (data) {
                                         return _.map(data.rows, function (category) {
                                             return {
                                                 id: category.id,
@@ -167,7 +179,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                         });
                                     });
                                 case 'location.locationName':
-                                    return _this.alarmClient.findLocations({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findLocations({ query: query.query }).then(function (data) {
                                         return _.map(data.rows, function (location) {
                                             return {
                                                 id: location['location-name'],
@@ -176,7 +188,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                         });
                                     });
                                 case 'severity':
-                                    return _this.alarmClient.findSeverities({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findSeverities({ query: query.query }).then(function (data) {
                                         return _.map(data, function (severity) {
                                             return {
                                                 id: severity.id,
@@ -185,7 +197,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                         });
                                     });
                                 case 'serviceType.name':
-                                    return _this.alarmClient.findServices({ query: query.query }).then(function (data) {
+                                    return _this2.alarmClient.findServices({ query: query.query }).then(function (data) {
                                         return _.map(data.rows, function (service) {
                                             return {
                                                 id: service,
@@ -198,8 +210,8 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                     }
                 }, {
                     key: 'toTable',
-                    value: function toTable(alarms) {
-                        var _this2 = this;
+                    value: function toTable(alarms, metadata) {
+                        var _this3 = this;
 
                         var columnNames = ["Log Message", "Description", "UEI", "Node ID", "Node Label", "IP Address", "Service", "Acked By", "Severity", "First Event Time", "Last Event Time", "Event Source", "Trouble Ticket", "Trouble Ticket State", "Count"];
 
@@ -215,7 +227,9 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                                 // Store the name of the data-source as part of the data so that
                                 // the panel can grab an instance of the DS to perform actions
                                 // on the alarms
-                                "source": _this2.name
+                                "source": _this3.name,
+                                // Store the ticketerConfig here
+                                "ticketerConfig": metadata.ticketerConfig
                             };
                             return row;
                         });
