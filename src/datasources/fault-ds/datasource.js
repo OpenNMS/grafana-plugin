@@ -248,19 +248,19 @@ export class OpenNMSFMDatasource {
     }
 
     acknowledgeAlarm(alarmId) {
-        return this.alarmClient.doAck(alarmId);
+        return this.alarmClient.doAck(alarmId, this.user);
     }
 
     unacknowledgeAlarm(alarmId) {
-        return this.alarmClient.doUnack(alarmId);
+        return this.alarmClient.doUnack(alarmId, this.user);
     }
 
     clearAlarm(alarmId) {
-        return this.alarmClient.doClear(alarmId);
+        return this.alarmClient.doClear(alarmId, this.user);
     }
 
     escalateAlarm(alarmId) {
-        return this.alarmClient.doEscalate(alarmId);
+        return this.alarmClient.doEscalate(alarmId, this.user);
     }
 
     createTicketForAlarm(alarmId) {
@@ -276,7 +276,7 @@ export class OpenNMSFMDatasource {
     }
 
     saveSticky(alarmId, sticky) {
-        return this.alarmClient.saveSticky(alarmId, sticky);
+        return this.alarmClient.saveSticky(alarmId, sticky, this.user);
     }
 
     deleteSticky(alarmId) {
@@ -284,7 +284,7 @@ export class OpenNMSFMDatasource {
     }
 
     saveJournal(alarmId, journal) {
-        return this.alarmClient.saveJournal(alarmId, journal);
+        return this.alarmClient.saveJournal(alarmId, journal, this.user);
     }
 
     deleteJournal(alarmId) {

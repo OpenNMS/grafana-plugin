@@ -50,31 +50,31 @@ export class ClientDelegate {
         });
     }
 
-    doEscalate(alarmId) {
+    doEscalate(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
-                return alarmDao.escalate(alarmId)
+                return alarmDao.escalate(alarmId, user)
             });
     }
 
-    doClear(alarmId) {
+    doClear(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
-                return alarmDao.clear(alarmId);
+                return alarmDao.clear(alarmId, user);
             });
     }
 
-    doUnack(alarmId) {
+    doUnack(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
-                return alarmDao.unacknowledge(alarmId);
+                return alarmDao.unacknowledge(alarmId, user);
             });
     }
 
-    doAck(alarmId) {
+    doAck(alarmId, user) {
         return this.getAlarmDao()
             .then(function(alarmDao) {
-                return alarmDao.acknowledge(alarmId);
+                return alarmDao.acknowledge(alarmId, user);
             });
     }
 
@@ -90,10 +90,10 @@ export class ClientDelegate {
         });
     }
 
-    saveSticky(alarmId, sticky) {
+    saveSticky(alarmId, sticky, user) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
-          return alarmDao.saveStickyMemo(alarmId, sticky);
+          return alarmDao.saveStickyMemo(alarmId, sticky, user);
         });
     }
 
@@ -104,10 +104,10 @@ export class ClientDelegate {
         });
     }
 
-    saveJournal(alarmId, journal) {
+    saveJournal(alarmId, journal, user) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
-          return alarmDao.saveJournalMemo(alarmId, journal);
+          return alarmDao.saveJournalMemo(alarmId, journal, user);
         });
     }
 
