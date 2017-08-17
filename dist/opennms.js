@@ -10640,7 +10640,7 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
 
     }, {
         key: "unacknowledge",
-        value: function unacknowledge(alarm) {
+        value: function unacknowledge(alarm, user) {
             return __awaiter(this, void 0, void 0, _regenerator2.default.mark(function _callee4() {
                 var alarmId, parameters;
                 return _regenerator2.default.wrap(function _callee4$(_context4) {
@@ -10651,9 +10651,12 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
                                 parameters = {};
 
                                 parameters.ack = 'false';
+                                if (user !== undefined) {
+                                    parameters.ackUser = user;
+                                }
                                 return _context4.abrupt("return", this.put(this.pathToAlarmsEndpoint() + '/' + alarmId, parameters));
 
-                            case 4:
+                            case 5:
                             case "end":
                                 return _context4.stop();
                         }
