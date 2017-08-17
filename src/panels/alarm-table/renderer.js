@@ -247,7 +247,8 @@ export class TableRenderer {
         cellHtml += `<td>`;
         cellHtml += new Menu()
             .withGroup(
-                new Group().withItem(new MenuItem("Details", `ctrl.alarmDetails('${source}', ${alarm.id})`)))
+                new Group().withItem(new MenuItem("Details", `ctrl.alarmDetails('${source}', ${alarm.id})`))
+            )
             .withGroup(
                 new Group()
                     .withItem(new MenuItem("Acknowledge", `ctrl.acknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime === void 0))
