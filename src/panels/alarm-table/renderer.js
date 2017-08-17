@@ -250,10 +250,11 @@ export class TableRenderer {
                 new Group().withItem(new MenuItem("Details", `ctrl.alarmDetails('${source}', ${alarm.id})`)))
             .withGroup(
                 new Group()
-                    .withItem(new MenuItem("Acknowledge", `ctrl.acknowledgeAlarm('${source}', ${alarm.id})`))
-                    .withItem(new MenuItem("Unacknowledge", `ctrl.unacknowledgeAlarm('${source}', ${alarm.id})`))
-                    .withItem(new MenuItem("Clear", `ctrl.clearAlarm('${source}', ${alarm.id})`))
-                    .withItem(new MenuItem("Escalate", `ctrl.escalateAlarm('${source}', ${alarm.id})`)))
+                    .withItem(new MenuItem("Acknowledge", `ctrl.acknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime === void 0))
+                    .withItem(new MenuItem("Unacknowledge", `ctrl.unacknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime))
+                    .withItem(new MenuItem("Clear", `ctrl.clearAlarm('${source}', ${alarm.id})`, () => alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index <= Model.Severities.CRITICAL.index))
+                    .withItem(new MenuItem("Escalate", `ctrl.escalateAlarm('${source}', ${alarm.id})`, () => alarm.severity.index == Model.Severities.CLEARED.index || alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index < Model.Severities.CRITICAL.index))
+            )
             .withGroup(
                 new Group()
                     .withVisibility(() => ticketerConfig && ticketerConfig.enabled)
