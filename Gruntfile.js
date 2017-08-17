@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
 
-    clean: ["dist"],
+    clean: ["dist", "vendor/opennms.js"],
 
     copy: {
       src_to_dist: {
