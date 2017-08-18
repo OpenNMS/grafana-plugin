@@ -115,17 +115,4 @@ export class Query {
         }
         return this;
     };
-
-    segmentUpdated(clause, segment) {
-        if (segment.type === 'value') {
-            segment.fake = false;
-        }
-
-        if (segment.type === 'condition') {
-            clause.setOperator(segment.value);
-        }
-
-        // Ensure that we always have a plus button
-        this.updateControls();
-    }
 }
