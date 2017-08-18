@@ -144,20 +144,6 @@ var Query = exports.Query = function () {
             }
             return this;
         }
-    }, {
-        key: 'segmentUpdated',
-        value: function segmentUpdated(clause, segment) {
-            if (segment.type === 'value') {
-                segment.fake = false;
-            }
-
-            if (segment.type === 'condition') {
-                clause.setOperator(segment.value);
-            }
-
-            // Ensure that we always have a plus button
-            this.updateControls();
-        }
     }]);
 
     return Query;

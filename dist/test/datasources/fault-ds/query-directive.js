@@ -92,11 +92,12 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
     };
 
     $scope.segmentUpdated = function (clause, segment, segmentIndex) {
-        $scope.query.segmentUpdated(clause, segment, segmentIndex);
-        $scope.query.updateControls();
-        QueryCtrl.updateTargetFilter();
+        // Make the value not a fake input anymore
+        if (segment.type === 'value') {
+            segment.fake = false;
+        }
 
-        // After the update it must be verified that the comparator is still in the list of comparators.
+        // It must be verified that the comparator is still in the list of comparators.
         // If not, the first comparator in the list is fallen back to.
         // The check is only necessary if a restriction is already fully defined.
         if (segmentIndex == 0 && clause.restriction.asRestrictionDTO()) {
@@ -114,8 +115,13 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
                     clause.restriction.setComparator(comparators[0]);
                 }
             }).then(function () {
-                QueryCtrl.updateTargetFilter(); // Finally update the target filter
+                $scope.query.updateControls();
+                QueryCtrl.updateTargetFilter();
             });
+        } else {
+            // Default behaviour
+            $scope.query.updateControls();
+            QueryCtrl.updateTargetFilter();
         }
     };
 
