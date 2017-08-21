@@ -41,7 +41,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
             }();
 
             _export('OpenNMSFMDatasource', OpenNMSFMDatasource = function () {
-                function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+                function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
                     _classCallCheck(this, OpenNMSFMDatasource);
 
                     this.type = instanceSettings.type;
@@ -51,6 +51,18 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                     this.backendSrv = backendSrv;
                     this.templateSrv = templateSrv;
                     this.alarmClient = new ClientDelegate(instanceSettings, backendSrv, $q);
+
+                    // When enabled in the datasource, the grafana user should be used instead of the datasource username on
+                    // supported operations
+                    if (instanceSettings.jsonData && instanceSettings.jsonData.useGrafanaUser) {
+                        // If the datasource contains the field which should be used and that field is set, use it
+                        if (instanceSettings.jsonData.grafanaUserField && contextSrv.user[instanceSettings.jsonData.grafanaUserField]) {
+                            this.user = contextSrv.user[instanceSettings.jsonData.grafanaUserField];
+                        } else {
+                            // otherwise the login is used instead
+                            this.user = contextSrv.user.login;
+                        }
+                    }
                 }
 
                 _createClass(OpenNMSFMDatasource, [{
@@ -256,22 +268,22 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'acknowledgeAlarm',
                     value: function acknowledgeAlarm(alarmId) {
-                        return this.alarmClient.doAck(alarmId);
+                        return this.alarmClient.doAck(alarmId, this.user);
                     }
                 }, {
                     key: 'unacknowledgeAlarm',
                     value: function unacknowledgeAlarm(alarmId) {
-                        return this.alarmClient.doUnack(alarmId);
+                        return this.alarmClient.doUnack(alarmId, this.user);
                     }
                 }, {
                     key: 'clearAlarm',
                     value: function clearAlarm(alarmId) {
-                        return this.alarmClient.doClear(alarmId);
+                        return this.alarmClient.doClear(alarmId, this.user);
                     }
                 }, {
                     key: 'escalateAlarm',
                     value: function escalateAlarm(alarmId) {
-                        return this.alarmClient.doEscalate(alarmId);
+                        return this.alarmClient.doEscalate(alarmId, this.user);
                     }
                 }, {
                     key: 'createTicketForAlarm',
@@ -291,7 +303,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'saveSticky',
                     value: function saveSticky(alarmId, sticky) {
-                        return this.alarmClient.saveSticky(alarmId, sticky);
+                        return this.alarmClient.saveSticky(alarmId, sticky, this.user);
                     }
                 }, {
                     key: 'deleteSticky',
@@ -301,7 +313,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'saveJournal',
                     value: function saveJournal(alarmId, journal) {
-                        return this.alarmClient.saveJournal(alarmId, journal);
+                        return this.alarmClient.saveJournal(alarmId, journal, this.user);
                     }
                 }, {
                     key: 'deleteJournal',

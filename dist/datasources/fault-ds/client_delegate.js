@@ -93,30 +93,30 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     }
                 }, {
                     key: 'doEscalate',
-                    value: function doEscalate(alarmId) {
+                    value: function doEscalate(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.escalate(alarmId);
+                            return alarmDao.escalate(alarmId, user);
                         });
                     }
                 }, {
                     key: 'doClear',
-                    value: function doClear(alarmId) {
+                    value: function doClear(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.clear(alarmId);
+                            return alarmDao.clear(alarmId, user);
                         });
                     }
                 }, {
                     key: 'doUnack',
-                    value: function doUnack(alarmId) {
+                    value: function doUnack(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.unacknowledge(alarmId);
+                            return alarmDao.unacknowledge(alarmId, user);
                         });
                     }
                 }, {
                     key: 'doAck',
-                    value: function doAck(alarmId) {
+                    value: function doAck(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.acknowledge(alarmId);
+                            return alarmDao.acknowledge(alarmId, user);
                         });
                     }
                 }, {
@@ -134,9 +134,9 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     }
                 }, {
                     key: 'saveSticky',
-                    value: function saveSticky(alarmId, sticky) {
+                    value: function saveSticky(alarmId, sticky, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.saveStickyMemo(alarmId, sticky);
+                            return alarmDao.saveStickyMemo(alarmId, sticky, user);
                         });
                     }
                 }, {
@@ -148,9 +148,9 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     }
                 }, {
                     key: 'saveJournal',
-                    value: function saveJournal(alarmId, journal) {
+                    value: function saveJournal(alarmId, journal, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
-                            return alarmDao.saveJournalMemo(alarmId, journal);
+                            return alarmDao.saveJournalMemo(alarmId, journal, user);
                         });
                     }
                 }, {

@@ -22,7 +22,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
-    function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+    function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
         _classCallCheck(this, OpenNMSFMDatasource);
 
         this.type = instanceSettings.type;
@@ -32,6 +32,18 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         this.backendSrv = backendSrv;
         this.templateSrv = templateSrv;
         this.alarmClient = new _client_delegate.ClientDelegate(instanceSettings, backendSrv, $q);
+
+        // When enabled in the datasource, the grafana user should be used instead of the datasource username on
+        // supported operations
+        if (instanceSettings.jsonData && instanceSettings.jsonData.useGrafanaUser) {
+            // If the datasource contains the field which should be used and that field is set, use it
+            if (instanceSettings.jsonData.grafanaUserField && contextSrv.user[instanceSettings.jsonData.grafanaUserField]) {
+                this.user = contextSrv.user[instanceSettings.jsonData.grafanaUserField];
+            } else {
+                // otherwise the login is used instead
+                this.user = contextSrv.user.login;
+            }
+        }
     }
 
     _createClass(OpenNMSFMDatasource, [{
@@ -244,22 +256,22 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
     }, {
         key: 'acknowledgeAlarm',
         value: function acknowledgeAlarm(alarmId) {
-            return this.alarmClient.doAck(alarmId);
+            return this.alarmClient.doAck(alarmId, this.user);
         }
     }, {
         key: 'unacknowledgeAlarm',
         value: function unacknowledgeAlarm(alarmId) {
-            return this.alarmClient.doUnack(alarmId);
+            return this.alarmClient.doUnack(alarmId, this.user);
         }
     }, {
         key: 'clearAlarm',
         value: function clearAlarm(alarmId) {
-            return this.alarmClient.doClear(alarmId);
+            return this.alarmClient.doClear(alarmId, this.user);
         }
     }, {
         key: 'escalateAlarm',
         value: function escalateAlarm(alarmId) {
-            return this.alarmClient.doEscalate(alarmId);
+            return this.alarmClient.doEscalate(alarmId, this.user);
         }
     }, {
         key: 'createTicketForAlarm',
@@ -279,7 +291,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
     }, {
         key: 'saveSticky',
         value: function saveSticky(alarmId, sticky) {
-            return this.alarmClient.saveSticky(alarmId, sticky);
+            return this.alarmClient.saveSticky(alarmId, sticky, this.user);
         }
     }, {
         key: 'deleteSticky',
@@ -289,7 +301,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
     }, {
         key: 'saveJournal',
         value: function saveJournal(alarmId, journal) {
-            return this.alarmClient.saveJournal(alarmId, journal);
+            return this.alarmClient.saveJournal(alarmId, journal, this.user);
         }
     }, {
         key: 'deleteJournal',
