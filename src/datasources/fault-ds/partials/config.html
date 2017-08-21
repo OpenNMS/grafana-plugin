@@ -5,12 +5,11 @@
 <div class="gf-form-group">
     <div class="gf-form-inline">
         <gf-form-switch class="gf-form"
-                        label="Use grafana user"
-                        tooltip="Defines if on supported alarm operations the currently logged in
-                                 Grafana user or the datasource user is used to talk to the ReST endpoint.
-                                 Supported operations are escalating, clearing, un-/acknowleding alarms as
+                        label="Use Grafana user"
+                        tooltip="Used to control whether operations on alarms are performed the data source user, or the user that is currently logged in to Grafana.
+                                 Supported operations are escalating, clearing, un-/acknowledging alarms as
                                  well as creating/updating a journal/memo.
-                                 NOTE: Only OpenNMS admin users are allowed to perform actions as another user."
+                                 NOTE: The data source must be configured using an user with the 'admin' role in order to perform actions as other users."
                         checked="ctrl.current.jsonData.useGrafanaUser"
                         label-class="width-11"
                         switch-class="max-width-6">
@@ -21,7 +20,7 @@
                 Field
                 <info-popover mode="right-normal" position="top center">
                     Defines which field of the Grafana User should be used.
-                    This allows to fine grane what shows up as the "Action-Performing User" in OpenNMS. <br/>
+                    This allows for fine grained control over the value displayed as the "Action-Performing User" in OpenNMS. <br/>
                     <b>Examples</b>:
                      - login: ulf <br/>
                      - name: Ulf Blaskowitz <br/>
