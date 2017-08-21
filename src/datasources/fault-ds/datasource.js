@@ -33,8 +33,9 @@ export class OpenNMSFMDatasource {
       });
   }
 
-  // Clone Filter to prevent some issues and also make substitution possible
-  // (otherwise substitution would happen in original query, and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
+  // Clone Filter to make substitution possible
+  // (otherwise substitution would happen in original query,
+  // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
   buildQuery(filter, options) {
       var clonedFilter = new FilterCloner().cloneFilter(filter);
 
@@ -46,7 +47,7 @@ export class OpenNMSFMDatasource {
                   .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
       }
 
-      // Subsitute $<variable> or [[variable]] in the restriction value
+      // Substitute $<variable> or [[variable]] in the restriction value
       this.substitute(clonedFilter.clauses, options);
       return clonedFilter;
   }
