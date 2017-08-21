@@ -5,6 +5,7 @@ import {API} from '../../opennms';
 import {Mapping} from './Mapping';
 import {UI} from './UI';
 import './query-directive'
+import {FilterCloner} from "./FilterCloner";
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 
@@ -15,8 +16,13 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
     this.filterMapping = new Mapping.FilterMapping(this.uiSegmentSrv);
 
-    // define and set up model
-    this.target.filter = this.target.filter || new API.Filter();
+    // The target filter may be de-serialized from persistence.
+    // In order to re-initialize it properly, the filter is cloned.
+    if (this.target.filter) {
+      this.target.filter = new FilterCloner().cloneFilter(this.target.filter);
+    } else {
+      this.target.filter = new API.Filter();
+    }
     this.uiFilter = this.filterMapping.getUiFilter(this.target.filter);
   }
 
