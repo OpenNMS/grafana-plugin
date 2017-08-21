@@ -68,8 +68,9 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
             });
         }
 
-        // Clone Filter to prevent some issues and also make substitution possible
-        // (otherwise substitution would happen in original query, and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
+        // Clone Filter to make substitution possible
+        // (otherwise substitution would happen in original query,
+        // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
 
     }, {
         key: 'buildQuery',
@@ -81,7 +82,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                 clonedFilter.withAndRestriction(new _opennms.API.NestedRestriction().withAndRestriction(new _opennms.API.Restriction("lastEventTime", _opennms.API.Comparators.GE, "$range_from")).withAndRestriction(new _opennms.API.Restriction("lastEventTime", _opennms.API.Comparators.LE, "$range_to")));
             }
 
-            // Subsitute $<variable> or [[variable]] in the restriction value
+            // Substitute $<variable> or [[variable]] in the restriction value
             this.substitute(clonedFilter.clauses, options);
             return clonedFilter;
         }

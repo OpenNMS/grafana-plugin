@@ -171,6 +171,20 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
 
                 done();
             });
+
+            it('should map from api to ui filter with nested restrictions when serialized and deserialized again', function () {
+                // Create the filter
+                var apiFilter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("alarmAckUser", _opennms.API.Comparators.EQ, "Administrator"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.NestedRestriction().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("severity", _opennms.API.Comparators.GE, "WARNING"), _opennms.API.Operators.AND)), _opennms.API.Operators.AND));
+
+                // Simulate persisting and reloading
+                var serialized = JSON.stringify(apiFilter);
+                var deserialized = JSON.parse(serialized);
+                var cloned = new _FilterCloner.FilterCloner().cloneFilter(deserialized);
+
+                // Now try to map it to an ui filter
+                var uiFilter = mapping.getUiFilter(cloned);
+                expect(uiFilter.getQueryString()).to.eql("select all alarms where alarmAckUser = 'Administrator' and (severity >= 'WARNING')");
+            });
         });
     });
 

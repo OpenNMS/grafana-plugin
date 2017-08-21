@@ -23,6 +23,8 @@ var _UI = require('./UI');
 
 require('./query-directive');
 
+var _FilterCloner = require('./FilterCloner');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44,8 +46,13 @@ var OpenNMSFMDatasourceQueryCtrl = exports.OpenNMSFMDatasourceQueryCtrl = functi
     _this.uiSegmentSrv = uiSegmentSrv;
     _this.filterMapping = new _Mapping.Mapping.FilterMapping(_this.uiSegmentSrv);
 
-    // define and set up model
-    _this.target.filter = _this.target.filter || new _opennms.API.Filter();
+    // The target filter may be de-serialized from persistence.
+    // In order to re-initialize it properly, the filter is cloned.
+    if (_this.target.filter) {
+      _this.target.filter = new _FilterCloner.FilterCloner().cloneFilter(_this.target.filter);
+    } else {
+      _this.target.filter = new _opennms.API.Filter();
+    }
     _this.uiFilter = _this.filterMapping.getUiFilter(_this.target.filter);
     return _this;
   }

@@ -172,6 +172,20 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
 
                             done();
                         });
+
+                        it('should map from api to ui filter with nested restrictions when serialized and deserialized again', function () {
+                            // Create the filter
+                            var apiFilter = new API.Filter().withClause(new API.Clause(new API.Restriction("alarmAckUser", API.Comparators.EQ, "Administrator"), API.Operators.AND)).withClause(new API.Clause(new API.NestedRestriction().withClause(new API.Clause(new API.Restriction("severity", API.Comparators.GE, "WARNING"), API.Operators.AND)), API.Operators.AND));
+
+                            // Simulate persisting and reloading
+                            var serialized = JSON.stringify(apiFilter);
+                            var deserialized = JSON.parse(serialized);
+                            var cloned = new FilterCloner().cloneFilter(deserialized);
+
+                            // Now try to map it to an ui filter
+                            var uiFilter = mapping.getUiFilter(cloned);
+                            expect(uiFilter.getQueryString()).to.eql("select all alarms where alarmAckUser = 'Administrator' and (severity >= 'WARNING')");
+                        });
                     });
                 });
 

@@ -96,7 +96,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                             clonedFilter.withAndRestriction(new API.NestedRestriction().withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from")).withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
                         }
 
-                        // Subsitute $<variable> or [[variable]] in the restriction value
+                        // Substitute $<variable> or [[variable]] in the restriction value
                         this.substitute(clonedFilter.clauses, options);
                         return clonedFilter;
                     }

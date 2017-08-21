@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../opennms', './Mapping', './UI', './query-directive'], function (_export, _context) {
+System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../opennms', './Mapping', './UI', './query-directive', './FilterCloner'], function (_export, _context) {
   "use strict";
 
-  var QueryCtrl, _, API, Mapping, UI, _createClass, OpenNMSFMDatasourceQueryCtrl;
+  var QueryCtrl, _, API, Mapping, UI, FilterCloner, _createClass, OpenNMSFMDatasourceQueryCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -46,7 +46,9 @@ System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../
       Mapping = _Mapping.Mapping;
     }, function (_UI) {
       UI = _UI.UI;
-    }, function (_queryDirective) {}],
+    }, function (_queryDirective) {}, function (_FilterCloner) {
+      FilterCloner = _FilterCloner.FilterCloner;
+    }],
     execute: function () {
       _createClass = function () {
         function defineProperties(target, props) {
@@ -79,8 +81,13 @@ System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../
           _this.uiSegmentSrv = uiSegmentSrv;
           _this.filterMapping = new Mapping.FilterMapping(_this.uiSegmentSrv);
 
-          // define and set up model
-          _this.target.filter = _this.target.filter || new API.Filter();
+          // The target filter may be de-serialized from persistence.
+          // In order to re-initialize it properly, the filter is cloned.
+          if (_this.target.filter) {
+            _this.target.filter = new FilterCloner().cloneFilter(_this.target.filter);
+          } else {
+            _this.target.filter = new API.Filter();
+          }
           _this.uiFilter = _this.filterMapping.getUiFilter(_this.target.filter);
           return _this;
         }
