@@ -244,37 +244,26 @@ export class TableRenderer {
       }
 
       if (this.panel.actions) {
-        cellHtml += `<td>
-                    <div class="gf-form gf-form-no-margin">
-                        <label class="gf-form-label gf-smaller-form-label dropdown">
-                            <a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.alarmDetails('${source}', ${alarm.id})">Details</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.acknowledgeAlarm('${source}', ${alarm.id})">Acknowledge</a>
-                                </li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.unacknowledgeAlarm('${source}', ${alarm.id})">Unacknowledge</a>
-                                </li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.clearAlarm('${source}', ${alarm.id})">Clear</a>
-                                </li>
-                                <li role="menuitem">
-                                    <a tabindex="1" ng-click="ctrl.escalateAlarm('${source}', ${alarm.id})">Escalate</a>
-                                </li>`;
-            // Only show ticket related actions if enabled
-            if (ticketerConfig && ticketerConfig.enabled) {
-                cellHtml += this.getTicketActionsHtml(source, alarm);
-            }
-            cellHtml += `</ul>
-                        </label>
-                    </div>
-                </td>`;
+        cellHtml += `<td>`;
+        cellHtml += new Menu()
+            .withGroup(
+                new Group().withItem(new MenuItem("Details", `ctrl.alarmDetails('${source}', ${alarm.id})`))
+            )
+            .withGroup(
+                new Group()
+                    .withItem(new MenuItem("Acknowledge", `ctrl.acknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime === void 0))
+                    .withItem(new MenuItem("Unacknowledge", `ctrl.unacknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime))
+                    .withItem(new MenuItem("Escalate", `ctrl.escalateAlarm('${source}', ${alarm.id})`, () => alarm.severity.index == Model.Severities.CLEARED.index || alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index < Model.Severities.CRITICAL.index))
+                    .withItem(new MenuItem("Clear", `ctrl.clearAlarm('${source}', ${alarm.id})`, () => alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index <= Model.Severities.CRITICAL.index))
+            )
+            .withGroup(
+                new Group()
+                    .withVisibility(() => ticketerConfig && ticketerConfig.enabled)
+                    .withItem(new MenuItem("Create Ticket", `ctrl.createTicketForAlarm('${source}', ${alarm.id})`, () => !alarm.troubleTicketState || alarm.troubleTicketState === Model.TroubleTicketStates.CREATE_FAILED))
+                    .withItem(new MenuItem("Update Ticket", `ctrl.updateTicketForAlarm('${source}', ${alarm.id})`, () => alarm.troubleTicketState && alarm.troubleTicket))
+                    .withItem(new MenuItem("Close Ticket", `ctrl.closeTicketForAlarm('${source}', ${alarm.id})`, () => alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == Model.TroubleTicketStates.CLOSE_FAILED)))
+            ).render();
+        cellHtml += `</td>`;
       }
 
       if (this.colorState.row) {
@@ -292,26 +281,6 @@ export class TableRenderer {
     return html;
   }
 
-  getTicketActionsHtml(source, alarm) {
-    let cellHtml = ['<li class="divider"></li>'];
-
-    // Only show actions according to ticket state
-    if (!alarm.troubleTicketState || alarm.troubleTicketState === Model.TroubleTicketStates.CREATE_FAILED) {
-        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.createTicketForAlarm('${source}', ${alarm.id})">Create Ticket</a></li>`);
-    }
-    if (alarm.troubleTicketState && alarm.troubleTicket) {
-        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.updateTicketForAlarm('${source}', ${alarm.id})">Update Ticket</a></li>`);
-    }
-    if (alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == Model.TroubleTicketStates.CLOSE_FAILED)) {
-        cellHtml.push(`<li role="menuitem"><a tabindex="1" ng-click="ctrl.closeTicketForAlarm('${source}', ${alarm.id})">Close Ticket</a></li>`);
-    }
-    // This ensures that the divider is not shown, when it is the only element in the array
-    if (cellHtml.length > 1) {
-      return cellHtml.join("");
-    }
-    return "";
-  }
-
   render_values() {
     let rows = [];
 
@@ -327,5 +296,98 @@ export class TableRenderer {
       columns: this.table.columns,
       rows: rows,
     };
+  }
+}
+
+class Group {
+  constructor() {
+    this.items = [];
+    this.visibilityFn = () => true;
+  }
+
+  withVisibility(visibilityFn) {
+    this.visibilityFn = visibilityFn;
+    return this;
+  }
+
+  withItem(itemOrMenu) {
+    this.items.push(itemOrMenu);
+    return this;
+  }
+
+  withGroup(group) {
+    this.withItem(group);
+      return this;
+  }
+
+  isVisible() {
+    if (this.visibilityFn()) {
+      return this.getVisibleItems().length >= 1;
+    }
+    return false;
+  }
+
+  getVisibleItems() {
+    const visibleItems = _.filter(this.items, item => {
+        return item.isVisible();
+    });
+    return visibleItems;
+  }
+
+  render() {
+    const visibleItems = _.filter(this.items, item => {
+      return item.isVisible();
+    });
+
+    const renderedItems = _.map(visibleItems, item => {
+      return item.render();
+    });
+    return renderedItems.join('');
+  }
+}
+
+class Menu extends Group {
+
+    constructor() {
+        super();
+    }
+
+    render() {
+        let html = '<div class="gf-form gf-form-no-margin">';
+        html += '<label class="gf-form-label gf-smaller-form-label dropdown">';
+        html += '<a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1"><i class="fa fa-bars"></i></a>';
+        html += '<ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">';
+
+        const visibleItems = this.getVisibleItems();
+        html += _.map(visibleItems, (item, index) => {
+            let rendered = item.render();
+            if (index < visibleItems.length -1) {
+              rendered += '<li class="divider"></li>';
+            }
+            return rendered;
+        }).join('');
+
+        html += '</ul></label></div>';
+        return html;
+    }
+
+}
+
+class MenuItem {
+  constructor(label, action, visibilityFn) {
+    this.label = label;
+    this.action = action;
+    this.visibilityFn = visibilityFn;
+    if (!visibilityFn) {
+        this.visibilityFn = () => true;
+    }
+  }
+
+  isVisible() {
+    return this.visibilityFn();
+  }
+
+  render() {
+    return '<li role="menuitem"><a tabindex="1" ng-click="' + this.action + '">' + this.label + '</a></li>';
   }
 }
