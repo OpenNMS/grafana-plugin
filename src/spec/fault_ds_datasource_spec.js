@@ -662,19 +662,87 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
     describe('Datasource', () => {
         let ctx = {};
 
+        const defaultSettings = {
+            "type": "opennms-fm",
+            "url": "http://localhost:8980/opennms",
+            "name": "OpenNMS FM Datasource"
+        };
+
+        const createDatasource = function(settings, ctx) {
+            ctx.datasource = new Datasource(settings, ctx.$q, ctx.backendSrv, ctx.templateSrv, ctx.contextSrv);
+            return ctx.datasource;
+        };
+
         beforeEach(() => {
             // Context initialization
             ctx.$q = Q;
             ctx.backendSrv = {};
             ctx.templateSrv = {replace: (value, scopedVars) => value};
             ctx.uiSegmentSrv = uiSegmentSrv;
-            ctx.datasource = new Datasource({
-                "type": "opennms-fm",
-                "url": "http://localhost:8980/opennms",
-                "name": "OpenNMS FM Datasource"
-            }, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+            ctx.contextSrv = {user: {login: "admin", email: "admin@opennms.org", name:"The Administrator"}};
             ctx.range_from = moment();
             ctx.range_to = ctx.range_from.add(1, 'days');
+            createDatasource(defaultSettings, ctx);
+        });
+
+        describe('user field', () => {
+           it('should not be instantiated by default', () => {
+               expect(ctx.datasource.user).to.be.undefined;
+           });
+
+           it('should be ignored if useGrafanaUser is false', () => {
+               const settings = Object.assign({}, defaultSettings);
+               settings.jsonData = {
+                   useGrafanaUser: false,
+                   grafanaUserField: 'email'
+               };
+               expect(createDatasource(settings, ctx).user).to.be.undefined;
+           });
+
+           it('should be login if undefined', () => {
+                const settings = Object.assign({}, defaultSettings);
+                settings.jsonData = {
+                   useGrafanaUser: true,
+                };
+                expect(createDatasource(settings, ctx).user).to.equal("admin");
+           });
+
+           it('should be login if defined', () => {
+               const settings = Object.assign({}, defaultSettings);
+               settings.jsonData = {
+                   useGrafanaUser: true,
+                   grafanaUserField: 'login'
+               };
+               expect(createDatasource(settings, ctx).user).to.equal("admin");
+           });
+
+           it('should be email if defined', () => {
+               const settings = Object.assign({}, defaultSettings);
+               settings.jsonData = {
+                   useGrafanaUser: true,
+                   grafanaUserField: 'email'
+               };
+               expect(createDatasource(settings, ctx).user).to.equal("admin@opennms.org");
+           });
+
+           it('should be name if defined', () => {
+               const settings = Object.assign({}, defaultSettings);
+               settings.jsonData = {
+                   useGrafanaUser: true,
+                   grafanaUserField: 'name'
+               };
+               expect(createDatasource(settings, ctx).user).to.equal("The Administrator");
+           });
+
+           it('should fall back to login if field does not exist', () => {
+               delete ctx.contextSrv.user.email;
+               const settings = Object.assign({}, defaultSettings);
+               settings.jsonData = {
+                   useGrafanaUser: true,
+                   grafanaUserField: 'email'
+               };
+               expect(createDatasource(settings, ctx).user).to.equal("admin");
+           });
         });
 
         describe('buildQuery', () => {
