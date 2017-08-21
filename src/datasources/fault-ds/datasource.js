@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 export class OpenNMSFMDatasource {
 
-  constructor(instanceSettings, $q, backendSrv, templateSrv) {
+  constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -13,6 +13,17 @@ export class OpenNMSFMDatasource {
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
     this.alarmClient = new ClientDelegate(instanceSettings, backendSrv, $q);
+
+    // When enabled in the datasource, the grafana user should be used instead of the datasource username on
+    // supported operations
+    if (instanceSettings.jsonData && instanceSettings.jsonData.useGrafanaUser) {
+        // If the datasource contains the field which should be used and that field is set, use it
+        if (instanceSettings.jsonData.grafanaUserField && contextSrv.user[instanceSettings.jsonData.grafanaUserField]) {
+            this.user = contextSrv.user[instanceSettings.jsonData.grafanaUserField];
+        } else { // otherwise the login is used instead
+            this.user = contextSrv.user.login;
+        }
+    }
   }
 
   query(options) {
@@ -237,19 +248,19 @@ export class OpenNMSFMDatasource {
     }
 
     acknowledgeAlarm(alarmId) {
-        return this.alarmClient.doAck(alarmId);
+        return this.alarmClient.doAck(alarmId, this.user);
     }
 
     unacknowledgeAlarm(alarmId) {
-        return this.alarmClient.doUnack(alarmId);
+        return this.alarmClient.doUnack(alarmId, this.user);
     }
 
     clearAlarm(alarmId) {
-        return this.alarmClient.doClear(alarmId);
+        return this.alarmClient.doClear(alarmId, this.user);
     }
 
     escalateAlarm(alarmId) {
-        return this.alarmClient.doEscalate(alarmId);
+        return this.alarmClient.doEscalate(alarmId, this.user);
     }
 
     createTicketForAlarm(alarmId) {
@@ -265,7 +276,7 @@ export class OpenNMSFMDatasource {
     }
 
     saveSticky(alarmId, sticky) {
-        return this.alarmClient.saveSticky(alarmId, sticky);
+        return this.alarmClient.saveSticky(alarmId, sticky, this.user);
     }
 
     deleteSticky(alarmId) {
@@ -273,7 +284,7 @@ export class OpenNMSFMDatasource {
     }
 
     saveJournal(alarmId, journal) {
-        return this.alarmClient.saveJournal(alarmId, journal);
+        return this.alarmClient.saveJournal(alarmId, journal, this.user);
     }
 
     deleteJournal(alarmId) {
