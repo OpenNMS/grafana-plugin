@@ -8,8 +8,12 @@ import {TableRenderer} from './renderer';
 import coreModule from 'app/core/core_module';
 import {alarmDetailsAsDirective} from './alarm_details';
 import {memoEditorAsDirective} from "./memo_editor"
-import '../css/styles.css!'
-import '../css/ionicons.css!'
+import {loadPluginCss} from 'app/plugins/sdk';
+
+loadPluginCss({
+  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
+  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
+});
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
