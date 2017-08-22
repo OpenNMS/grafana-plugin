@@ -66,6 +66,11 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                             this.clientWithMetadata = Client.getMetadata(this.client.server, this.client.http).then(function (metadata) {
                                 self.client.server.metadata = metadata;
                                 return self.client;
+                            }).catch(function (e) {
+                                // in case of error, reset the client, otherwise
+                                // the datasource may never recover
+                                self.clientWithMetadata = void 0;
+                                throw e;
                             });
                         }
                         return this.clientWithMetadata;
