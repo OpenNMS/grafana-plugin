@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './editor', './column_options', './renderer', 'app/core/core_module', './alarm_details', './memo_editor', '../css/styles.css!', '../css/ionicons.css!'], function (_export, _context) {
+System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './editor', './column_options', './renderer', 'app/core/core_module', './alarm_details', './memo_editor'], function (_export, _context) {
   "use strict";
 
-  var _, $, MetricsPanelCtrl, transformDataToTable, tablePanelEditor, columnOptionsTab, TableRenderer, coreModule, alarmDetailsAsDirective, memoEditorAsDirective, _createClass, _get, AlarmTableCtrl;
+  var _, $, MetricsPanelCtrl, transformDataToTable, tablePanelEditor, columnOptionsTab, TableRenderer, coreModule, alarmDetailsAsDirective, memoEditorAsDirective, loadPluginCss, _createClass, _get, AlarmTableCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -42,6 +42,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       $ = _jquery.default;
     }, function (_appPluginsSdk) {
       MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
+      loadPluginCss = _appPluginsSdk.loadPluginCss;
     }, function (_transformers) {
       transformDataToTable = _transformers.transformDataToTable;
     }, function (_editor) {
@@ -56,7 +57,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       alarmDetailsAsDirective = _alarm_details.alarmDetailsAsDirective;
     }, function (_memo_editor) {
       memoEditorAsDirective = _memo_editor.memoEditorAsDirective;
-    }, function (_cssStylesCss) {}, function (_cssIoniconsCss) {}],
+    }],
     execute: function () {
       _createClass = function () {
         function defineProperties(target, props) {
@@ -100,6 +101,11 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
           return getter.call(receiver);
         }
       };
+
+      loadPluginCss({
+        dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
+        light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
+      });
 
       _export('PanelCtrl', _export('AlarmTableCtrl', AlarmTableCtrl = function (_MetricsPanelCtrl) {
         _inherits(AlarmTableCtrl, _MetricsPanelCtrl);
