@@ -25,6 +25,11 @@ export class ClientDelegate {
                 .then(function(metadata) {
                     self.client.server.metadata = metadata;
                     return self.client;
+                }).catch(function(e) {
+                    // in case of error, reset the client, otherwise
+                    // the datasource may never recover
+                    self.clientWithMetadata = void 0;
+                    throw e;
                 });
         }
         return this.clientWithMetadata;
