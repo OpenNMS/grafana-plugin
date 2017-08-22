@@ -194,11 +194,15 @@ export class OpenNMSFMDatasource {
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(alarms, metadata) {
         var columnNames = [
-            "Log Message", "Description",
-            "UEI", "Node ID", "Node Label",
-            "IP Address", "Service", "Acked By", "Severity",
-            "First Event Time", "Last Event Time", "Event Source",
-            "Trouble Ticket", "Trouble Ticket State", "Count"];
+            "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
+            "Type", "Description", "Log Message", "Reduction Key",
+            "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
+            "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
+            "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
+            "Last Event Creation Time", "Last Event Severity",
+            "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
+            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time"
+        ];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
@@ -206,22 +210,50 @@ export class OpenNMSFMDatasource {
 
         var rows = _.map(alarms, alarm => {
             var row = [
-                alarm.logMessage,
-                alarm.description,
-                alarm.uei,
-                alarm.nodeId,
-                alarm.nodeLabel,
-                alarm.ipAddress,
-                alarm.serviceType ? alarm.serviceType.name : undefined,
+                alarm.id,
+                alarm.count,
                 alarm.ackUser,
+                alarm.ackTime,
+                alarm.uei,
                 alarm.severity.label,
-                alarm.firstEventTime,
-                alarm.lastEventTime,
-                alarm.lastEvent.source,
+                alarm.type ? alarm.type.label : undefined,
+                alarm.description,
+
+                alarm.logMessage,
+                alarm.reductionKey,
                 alarm.troubleTicket,
                 alarm.troubleTicketState,
-                alarm.count
+                alarm.nodeId,
+                alarm.nodeLabel,
+                alarm.service ? alarm.service.name : undefined,
+                alarm.suppressedTime,
+                alarm.suppressedUntil,
+                alarm.suppressedBy,
+                alarm.ipAddress,
+
+                // Event
+                alarm.firstEventTime,
+                alarm.lastEvent ? alarm.lastEvent.id : undefined,
+                alarm.lastEvent ? alarm.lastEvent.time : undefined,
+                alarm.lastEvent ? alarm.lastEvent.source : undefined,
+                alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
+                alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+
+                // Sticky Note
+                alarm.sticky ? alarm.sticky.id : undefined,
+                alarm.sticky ? alarm.sticky.body : undefined,
+                alarm.sticky ? alarm.sticky.author : undefined,
+                alarm.sticky ? alarm.sticky.updated : undefined,
+                alarm.sticky ? alarm.sticky.created : undefined,
+
+                // Journal Note
+                alarm.journal ? alarm.journal.id : undefined,
+                alarm.journal ? alarm.journal.body : undefined,
+                alarm.journal ? alarm.journal.author : undefined,
+                alarm.journal ? alarm.journal.updated : undefined,
+                alarm.journal ? alarm.journal.created : undefined,
             ];
+
             row.meta = {
                 // Store the alarm for easy access by the panels - may not be necessary
                 'alarm': alarm,
