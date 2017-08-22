@@ -1,7 +1,7 @@
 :imagesdir: images
 = What is {product-title}?
 
-{product-title} is a https://grafana.com[Grafana] application that allows users to create flexible dashboards using both xref:fault[fault management (_FM_)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS Horizon] and/or https://www.opennms.com[OpenNMS Meridian].
+{product-title} is a https://grafana.com[Grafana] application that allows users to create flexible dashboards using both xref:fault[fault management (_FM_)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS(R) Horizon(TM)] and/or https://www.opennms.com[OpenNMS(R) Meridian(TM)].
 
 The application includes data sources for retrieving both _FM_ and _PM_ data from an existing _OpenNMS_ deployment as well as specialized panels built for displaying and interacting with the faults.
 

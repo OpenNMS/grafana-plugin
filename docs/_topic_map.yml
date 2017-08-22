@@ -28,6 +28,8 @@ Topics:
     File: index
   - Name: What is Helm?
     File: introduction
+  - Name: Legal Notice
+    File: legal_notice
 ---
 Name: Installation
 Dir: installation
