@@ -3,6 +3,12 @@ import {API} from '../../opennms';
 import {FilterCloner} from "./FilterCloner"
 import _ from 'lodash';
 
+const FeaturedAttributes = [
+    "alarmAckTime", "category", "ipAddress",
+    "location", "node.label", "reductionKey",
+    "service", "severity", "uei"
+];
+
 export class OpenNMSFMDatasource {
 
   constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -117,7 +123,14 @@ export class OpenNMSFMDatasource {
     }
 
     if (query.find === "attributes") {
-      return this.alarmClient.getProperties();
+        if (query.strategy === 'featured') {
+            const featuredAttributes = _.map(_.sortBy(FeaturedAttributes), (attribute) => {
+                return {id: attribute}
+            });
+            return this.q.when(featuredAttributes);
+        }
+        // assume all
+        return this.alarmClient.getProperties();
     }
     if (query.find === "comparators") {
       return this.alarmClient.getPropertyComparators(query.attribute);
