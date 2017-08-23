@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource'], function (_export, _context) {
+System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource', '../datasources/fault-ds/client_delegate'], function (_export, _context) {
     "use strict";
 
-    var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource;
+    var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource, ClientDelegate;
 
     return {
         setters: [function (_q) {
@@ -22,6 +22,8 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
             FilterCloner = _datasourcesFaultDsFilterCloner.FilterCloner;
         }, function (_datasourcesFaultDsDatasource) {
             Datasource = _datasourcesFaultDsDatasource.OpenNMSFMDatasource;
+        }, function (_datasourcesFaultDsClient_delegate) {
+            ClientDelegate = _datasourcesFaultDsClient_delegate.ClientDelegate;
         }],
         execute: function () {
 
@@ -662,6 +664,55 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                             verifyControls(uiFilter.query.clauses[1], []); // no controls on nested clause
                             verifyControls(uiFilter.query.clauses[1].restriction.clauses[0], [UI.Controls.RemoveControl, UI.Controls.AddControl]); // limited controls on clause of nested clause
 
+                            done();
+                        });
+                    });
+                });
+
+                describe('ClientDelegate', function () {
+                    var ctx = {};
+
+                    beforeEach(function () {
+                        ctx.backendSrv = {};
+                        ctx.$q = Q;
+                        ctx.settings = {
+                            type: "opennms-fm",
+                            name: "dummy-name",
+                            url: "http://localhost:8980/opennms"
+                        };
+                    });
+
+                    it('should not throw an exception when supported version is used', function (done) {
+                        // All requests assume the /rest/info call
+                        ctx.backendSrv.datasourceRequest = function (request) {
+                            return ctx.$q.when({
+                                _request: request,
+                                status: 200,
+                                data: { 'packageDescription': 'OpenNMS Meridian', 'displayVersion': '2017.1.0', 'packageName': 'meridian', 'version': '2017.1.0' }
+                            });
+                        };
+
+                        // Instantiate and try to do any operation on the delegate
+                        var delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+                        delegate.getClientWithMetadata().then(function (metadata) {
+                            done();
+                        });
+                    });
+
+                    it('should throw exception when unsupported version is used', function (done) {
+                        // All requests assume the /rest/info call
+                        ctx.backendSrv.datasourceRequest = function (request) {
+                            return ctx.$q.when({
+                                _request: request,
+                                status: 200,
+                                data: API.OnmsResult.ok({ 'packageDescription': 'OpenNMS', 'displayVersion': '19.1.0', 'packageName': 'opennms', 'version': '19.1.0' })
+                            });
+                        };
+
+                        // Instantiate and try to do any operation on the delegate
+                        var delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+                        delegate.getClientWithMetadata().catch(function (err) {
+                            expect(err.message).to.eql("Unsupported Version");
                             done();
                         });
                     });

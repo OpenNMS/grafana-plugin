@@ -44,6 +44,7 @@ var OpenNMSFMDatasourceQueryCtrl = exports.OpenNMSFMDatasourceQueryCtrl = functi
     _this.$q = $q;
     _this.$scope = $scope;
     _this.uiSegmentSrv = uiSegmentSrv;
+    _this.featuredAttributes = true; // limits the selection to the featured attributes
     _this.filterMapping = new _Mapping.Mapping.FilterMapping(_this.uiSegmentSrv);
 
     // The target filter may be de-serialized from persistence.

@@ -22,6 +22,7 @@ var AttributeMapping = exports.AttributeMapping = function () {
         this.attributeMapping = {
             'location': 'node.location.locationName',
             'service': 'service',
+            'category': 'category.name',
             'ipAddress': 'ipAddr',
             'severity': 'alarm.severity'
         };

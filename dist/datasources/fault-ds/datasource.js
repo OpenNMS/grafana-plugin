@@ -3,7 +3,7 @@
 System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var ClientDelegate, API, FilterCloner, _, _createClass, OpenNMSFMDatasource;
+    var ClientDelegate, API, FilterCloner, _, _createClass, FeaturedAttributes, OpenNMSFMDatasource;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -39,6 +39,8 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                     return Constructor;
                 };
             }();
+
+            FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "location", "node.label", "reductionKey", "service", "severity", "uei"];
 
             _export('OpenNMSFMDatasource', OpenNMSFMDatasource = function () {
                 function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -124,12 +126,23 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                 }, {
                     key: 'testDatasource',
                     value: function testDatasource() {
-                        return this.backendSrv.datasourceRequest({
-                            url: this.url + '/rest/info',
-                            method: 'GET'
-                        }).then(function (response) {
-                            if (response.status === 200) {
-                                return { status: "success", message: "Data source is working", title: "Success" };
+                        return this.alarmClient.getClientWithMetadata().then(function (metadata) {
+                            if (metadata) {
+                                return {
+                                    status: "success",
+                                    message: "Data source is working",
+                                    title: "Success"
+                                };
+                            }
+                        }).catch(function (e) {
+                            if (e.message === "Unsupported Version") {
+                                return {
+                                    status: "danger",
+                                    message: "The OpenNMS version you are trying to connect to is not supported. " + "OpenNMS Horizon version >= 21.0.0 or OpenNMS Meridian version >= 2017.1.0 is required.",
+                                    title: e.message
+                                };
+                            } else {
+                                throw e;
                             }
                         });
                     }
@@ -146,6 +159,13 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', 'lodash
                         }
 
                         if (query.find === "attributes") {
+                            if (query.strategy === 'featured') {
+                                var featuredAttributes = _.map(_.sortBy(FeaturedAttributes), function (attribute) {
+                                    return { id: attribute };
+                                });
+                                return this.q.when(featuredAttributes);
+                            }
+                            // assume all
                             return this.alarmClient.getProperties();
                         }
                         if (query.find === "comparators") {

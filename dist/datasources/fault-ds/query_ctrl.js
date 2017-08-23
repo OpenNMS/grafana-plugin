@@ -79,6 +79,7 @@ System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../
           _this.$q = $q;
           _this.$scope = $scope;
           _this.uiSegmentSrv = uiSegmentSrv;
+          _this.featuredAttributes = true; // limits the selection to the featured attributes
           _this.filterMapping = new Mapping.FilterMapping(_this.uiSegmentSrv);
 
           // The target filter may be de-serialized from persistence.

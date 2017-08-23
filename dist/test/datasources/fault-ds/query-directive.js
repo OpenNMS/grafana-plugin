@@ -48,7 +48,7 @@ _angular2.default.module('grafana.directives').directive('onmsQuery', function (
 
         // attribute input
         if (segment.type == 'key' || segment.type == 'plus-button') {
-            return datasource.metricFindQuery({ find: "attributes" }).then(function (properties) {
+            return datasource.metricFindQuery({ find: "attributes", strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all' }).then(function (properties) {
                 var segments = _lodash2.default.map(properties, function (property) {
                     var segment = uiSegmentSrv.newKey(property.id);
                     return segment;

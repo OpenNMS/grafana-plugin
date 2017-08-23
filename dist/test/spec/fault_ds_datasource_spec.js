@@ -22,6 +22,8 @@ var _FilterCloner = require('../datasources/fault-ds/FilterCloner');
 
 var _datasource = require('../datasources/fault-ds/datasource');
 
+var _client_delegate = require('../datasources/fault-ds/client_delegate');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 describe("OpenNMS_FaultManagement_Datasource", function () {
@@ -661,6 +663,55 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                 verifyControls(uiFilter.query.clauses[1], []); // no controls on nested clause
                 verifyControls(uiFilter.query.clauses[1].restriction.clauses[0], [_UI.UI.Controls.RemoveControl, _UI.UI.Controls.AddControl]); // limited controls on clause of nested clause
 
+                done();
+            });
+        });
+    });
+
+    describe('ClientDelegate', function () {
+        var ctx = {};
+
+        beforeEach(function () {
+            ctx.backendSrv = {};
+            ctx.$q = _q2.default;
+            ctx.settings = {
+                type: "opennms-fm",
+                name: "dummy-name",
+                url: "http://localhost:8980/opennms"
+            };
+        });
+
+        it('should not throw an exception when supported version is used', function (done) {
+            // All requests assume the /rest/info call
+            ctx.backendSrv.datasourceRequest = function (request) {
+                return ctx.$q.when({
+                    _request: request,
+                    status: 200,
+                    data: { 'packageDescription': 'OpenNMS Meridian', 'displayVersion': '2017.1.0', 'packageName': 'meridian', 'version': '2017.1.0' }
+                });
+            };
+
+            // Instantiate and try to do any operation on the delegate
+            var delegate = new _client_delegate.ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+            delegate.getClientWithMetadata().then(function (metadata) {
+                done();
+            });
+        });
+
+        it('should throw exception when unsupported version is used', function (done) {
+            // All requests assume the /rest/info call
+            ctx.backendSrv.datasourceRequest = function (request) {
+                return ctx.$q.when({
+                    _request: request,
+                    status: 200,
+                    data: _opennms.API.OnmsResult.ok({ 'packageDescription': 'OpenNMS', 'displayVersion': '19.1.0', 'packageName': 'opennms', 'version': '19.1.0' })
+                });
+            };
+
+            // Instantiate and try to do any operation on the delegate
+            var delegate = new _client_delegate.ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+            delegate.getClientWithMetadata().catch(function (err) {
+                expect(err.message).to.eql("Unsupported Version");
                 done();
             });
         });

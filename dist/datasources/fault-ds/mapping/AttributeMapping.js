@@ -41,6 +41,7 @@ System.register(['lodash'], function (_export, _context) {
                     this.attributeMapping = {
                         'location': 'node.location.locationName',
                         'service': 'service',
+                        'category': 'category.name',
                         'ipAddress': 'ipAddr',
                         'severity': 'alarm.severity'
                     };
