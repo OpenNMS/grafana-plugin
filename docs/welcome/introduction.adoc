@@ -1,0 +1,37 @@
+:imagesdir: images
+= What is {product-title}?
+
+{product-title} is a https://grafana.com[Grafana] application that allows users to create flexible dashboards using both xref:fault[fault management (_FM_)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS(R) Horizon(TM)] and/or https://www.opennms.com[OpenNMS(R) Meridian(TM)].
+
+The application includes data sources for retrieving both _FM_ and _PM_ data from an existing OpenNMS deployment as well as specialized panels built for displaying and interacting with the faults.
+
+Data from multiple instances of OpenNMS can be aggregated into a single panel, allowing operators to build a single pane of glass from distributed deployemnts.
+
+All interactions with OpenNMS are done via the _REST API_.
+No _FM_ or _PM_ data is stored within {product-title} or Grafana.
+
+[.text-center]
+image::helm-diagram.svg[Helm Diagram, 400]
+
+[[fault]]
+== Fault Management
+
+Fault management (abbreviated  as _FM_ throughout the application) is the process of identifying problems (or faults) related to network devices and systems, and managing their lifecycle.
+
+In OpenNMS, this can be done using a combination of events, outages, alarms, notifications, tickets, etc...
+
+{product-title} currently supports filtering, retrieving, displaying and performing actions against *alarms in OpenNMS*.
+
+This documentation will assume that you're already familiar with concepts related to alarms in OpenNMS.
+For further details on how _alarms_ work, this *OpenNMS 101* video on Youtube is a great resource: https://youtu.be/06mLvyGQCkg[OpenNMS 101 - Module 5: Alarms].
+
+[[performance]]
+== Performance Management
+
+Fault management (abbreviated  as _PM_ throughout the application) is the process of gathering, storing, and analyzing system health using a series of metrics or key performance indicators (_KPIs_).
+These metrics can be used for historical analysis, or used to automatically generate faults when certain conditions or thresholds are met.
+
+{product-title} currently supports retrieving and visualizing *metric data (measurements) that is stored by OpenNMS*.
+
+This documentation will assume that you're already familiar with concepts related to data collection and storage in OpenNMS.
+For further details on how this works, this *OpenNMS 101* video on Youtube is a great resource: https://youtu.be/7qRrTM1Wv-0[OpenNMS 101 - Module 11: Data Collection].
