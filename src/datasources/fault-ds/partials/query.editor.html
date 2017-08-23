@@ -11,8 +11,16 @@
 
     </onms-query>
 
-    <div class="gf-form" style="padding-top: 10px">
-        <button class="btn btn-inverse gf-form-btn" ng-click="ctrl.clearRestrictions()" ng-show="ctrl.showClearRestrictions()">
+    <div class="gf-form" style="padding-top: 15px">
+        <gf-form-switch class="gf-form"
+                        label="Featured attributes"
+                        tooltip="Used to toggle whether to show a list of featured attributes or all attributes when selecting an attribute"
+                        checked="ctrl.featuredAttributes"
+                        switch-class="max-width-6">
+        </gf-form-switch>
+        <button class="btn btn-inverse gf-form-btn"
+                ng-click="ctrl.clearRestrictions()"
+                ng-show="ctrl.showClearRestrictions()">
             <i class="fa fa-times"></i>&nbsp;Clear Restrictions
         </button>
     </div>
