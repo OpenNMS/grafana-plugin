@@ -5,6 +5,7 @@ export class AttributeMapping {
         this.attributeMapping = {
             'location': 'node.location.locationName',
             'service': 'service',
+            'category': 'category.name',
             'ipAddress': 'ipAddr',
             'severity': 'alarm.severity'
         };

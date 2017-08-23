@@ -14,6 +14,7 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.$q = $q;
     this.$scope = $scope;
     this.uiSegmentSrv = uiSegmentSrv;
+    this.featuredAttributes = true; // limits the selection to the featured attributes
     this.filterMapping = new Mapping.FilterMapping(this.uiSegmentSrv);
 
     // The target filter may be de-serialized from persistence.

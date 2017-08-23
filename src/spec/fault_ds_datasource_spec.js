@@ -6,6 +6,7 @@ import {API} from '../opennms';
 import {Mapping} from '../datasources/fault-ds/Mapping';
 import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
 import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource'
+import {ClientDelegate} from '../datasources/fault-ds/client_delegate';
 
 describe("OpenNMS_FaultManagement_Datasource", function() {
     let uiSegmentSrv = {
@@ -676,6 +677,55 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 done();
             });
         })
+    });
+
+    describe('ClientDelegate', () => {
+       let ctx = {};
+
+       beforeEach(() => {
+            ctx.backendSrv = {};
+            ctx.$q = Q;
+            ctx.settings = {
+                type: "opennms-fm",
+                name: "dummy-name",
+                url: "http://localhost:8980/opennms"
+            }
+       });
+
+       it('should not throw an exception when supported version is used', (done) => {
+           // All requests assume the /rest/info call
+           ctx.backendSrv.datasourceRequest = function(request) {
+               return ctx.$q.when({
+                   _request: request,
+                   status: 200,
+                   data: {'packageDescription':'OpenNMS Meridian','displayVersion':'2017.1.0','packageName':'meridian','version':'2017.1.0'}
+               });
+           };
+
+           // Instantiate and try to do any operation on the delegate
+           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+           delegate.getClientWithMetadata().then((metadata) => {
+               done();
+           });
+       });
+
+       it('should throw exception when unsupported version is used', (done) => {
+           // All requests assume the /rest/info call
+           ctx.backendSrv.datasourceRequest = function(request) {
+               return ctx.$q.when({
+                    _request: request,
+                   status: 200,
+                   data: API.OnmsResult.ok({'packageDescription':'OpenNMS','displayVersion':'19.1.0','packageName':'opennms','version':'19.1.0'})
+                });
+           };
+
+           // Instantiate and try to do any operation on the delegate
+           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+           delegate.getClientWithMetadata().catch(err => {
+               expect(err.message).to.eql("Unsupported Version");
+               done();
+           });
+       });
     });
 
     describe('Datasource', () => {
