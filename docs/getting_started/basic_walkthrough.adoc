@@ -14,17 +14,17 @@ This guide demonstrates how to create a simple dashboard with {product-title}.
 
 The tutorial assumes that you have:
 
-- an instance of _Grafana_ with the {product-title} application installed.
-- an instance of _OpenNMS_ that is reachable from the _Grafana_ instance above.
-- one or mode nodes being monitored by _OpenNMS_.
+- an instance of Grafana with the {product-title} application installed.
+- an instance of OpenNMS that is reachable from the Grafana instance above.
+- one or mode nodes being monitored by OpenNMS.
 
 [[bw-app-setup]]
 == Application Setup
 
-In this section, you will enable the {product-title} application in _Grafana_.
+In this section, you will enable the {product-title} application in Grafana.
 
-. Navigate to the http://127.0.0.1:3000/[home page] of your _Grafana_ instance.
-In the top-left corner of the page, click on the _Grafana_ icon, and then click *Plugins*:
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+In the top-left corner of the page, click on the Grafana icon, and then click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
 
@@ -32,7 +32,7 @@ image::gf-plugins.png[Plugins, 100]
 +
 [NOTE]
 ====
-If the `OpenNMS Helm` is application is not listed on the `Apps` tab, try restarting the _Grafana_ server.
+If the `OpenNMS Helm` is application is not listed on the `Apps` tab, try restarting the Grafana server.
 If the issue persists, make sure the application is installed correctly.
 ====
 
@@ -48,8 +48,8 @@ If you see a `Disable` button, then the application is already enabled and you c
 
 In this section, you will configure the _Fault Management (FM)_ data source.
 
-. Navigate to the http://127.0.0.1:3000/[home page] of your _Grafana_ instance.
-In the top-left corner of the page, click on the _Grafana_ icon, and then click *Data Sources*:
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+In the top-left corner of the page, click on the Grafana icon, and then click *Data Sources*:
 +
 image::gf-data-sources.png[Data Sources, 100]
 
@@ -59,16 +59,16 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . Change the *Type* to `OpenNMS FM Datasource`.
 
-. In the *Url* field enter the URL to your _OpenNMS_ instance i.e. `http://localhost:8980/opennms`.
+. In the *Url* field enter the URL to your OpenNMS instance i.e. `http://localhost:8980/opennms`.
 +
 [NOTE]
 ====
-The URL to your _OpenNMS_ instance should normally end with `/opennms`.
+The URL to your OpenNMS instance should normally end with `/opennms`.
 ====
 
 . Click the checkbox next to *Basic Auth*.
 
-. Enter the credentials for an _OpenNMS_ user in the *User* and *Password* fields.
+. Enter the credentials for an OpenNMS user in the *User* and *Password* fields.
 
 . Click the *Add* button.
 +
