@@ -20,7 +20,7 @@ export const Examples = [
         new API.Filter().withAndRestriction(new API.Restriction("category.name", API.Comparators.EQ, 'Severs'))),
     new Example("Show all unacknowledged alarms",
         new API.Filter().withAndRestriction(new API.Restriction("alarmAckTime", API.Comparators.EQ, 'null'))),
-    new Example("Shoe all acknowledged alarms",
+    new Example("Show all acknowledged alarms",
         new API.Filter().withAndRestriction(new API.Restriction("alarmAckTime", API.Comparators.NE, 'null'))),
 
 ];
