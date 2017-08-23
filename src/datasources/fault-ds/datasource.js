@@ -84,14 +84,27 @@ export class OpenNMSFMDatasource {
   }
 
   testDatasource() {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/info',
-      method: 'GET'
-    }).then(response => {
-      if (response.status === 200) {
-        return {status: "success", message: "Data source is working", title: "Success"};
-      }
-    });
+      return this.alarmClient.getClientWithMetadata()
+          .then(metadata => {
+              if (metadata) {
+                  return {
+                      status: "success",
+                      message: "Data source is working",
+                      title: "Success"
+                  };
+              }
+          }).catch(e => {
+              if (e.message === "Unsupported Version") {
+                  return {
+                      status: "danger",
+                      message: "The OpenNMS version you are trying to connect to is not supported. " +
+                               "OpenNMS Horizon version >= 22.0.0 or OpenNMS Meridian version >= 2017.1.0 is required.",
+                      title: e.message
+                  }
+              } else {
+                  throw e;
+              }
+          });
   }
 
   annotationQuery(options) {
