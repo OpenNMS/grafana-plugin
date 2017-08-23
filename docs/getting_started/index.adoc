@@ -1,0 +1,22 @@
+[[getting-started-index]]
+= Overview
+
+[.lead]
+{product-title} is a https://grafana.com[Grafana] application that allows users to create flexible dashboards to interact with data stored by OpenNMS.
+
+In order to be able to leverage all of the features {product-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana.
+
+Check out the following topics to get started with OpenNMS:
+
+* Step through the https://www.opennms.org/en/install[*installation*]
+* Watch the https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[*OpenNMS 101 training videos*]
+
+Check out the following topics to get started with Grafana:
+
+* Review the http://docs.grafana.org/guides/basic_concepts/[*concepts and terminology*]
+* Watch the http://docs.grafana.org/tutorials/screencasts/[*screencasts*]
+
+Once you have a good handle on both OpenNMS and Grafana, you can get started with {product-title}:
+
+* Step through a xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[*basic walkthrough*]
+using the web interface and create your first dashboard

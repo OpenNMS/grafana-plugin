@@ -1,0 +1,24 @@
+= {product-title} {product-version} Documentation
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+== Welcome to the _OpenNMS Helm_ documenation
+
+_OpenNMS Helm_ is a https://grafana.com[Grafana] application that allows users to create flexible dashboards with fault and performance data from https://www.opennms.org[OpenNMS Horizon] and https://www.opennms.org[OpenNMS Meridian].
+
+* Author: {product-author}
+* Version: {product-version}
+
+== Installing _OpenNMS Helm_
+
+* xref:../installation/install-centos-redhat.adoc#[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
+* xref:../installation/install-debian-ubuntu.adoc#[Installing on Debian / Ubuntu]
+
+== Need Help?
+
+* Fork me on https://github.com/OpenNMS/grafana-opennms-helm-app[GitHub]
+* Join our https://wiki.opennms.org/wiki/Mailing_lists[mailing lists]
+* Talk to us in our https://chat.opennms.com/opennms[Web Chat]
+* Open an https://issues.opennms.org/projects/HELM/summary[issue in JIRA]

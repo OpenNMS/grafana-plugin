@@ -1,0 +1,106 @@
+:imagesdir: images
+[[getting-started-basic-walkthrough]]
+= Basic Walkthrough
+:toc: macro
+:toc-title:
+:data-uri:
+:prewrap!:
+
+toc::[]
+
+== Overview
+
+This guide demonstrates how to create a simple dashboard with {product-title}.
+
+The tutorial assumes that you have:
+
+- an instance of Grafana with the {product-title} application installed.
+- an instance of OpenNMS that is reachable from the Grafana instance above.
+- one or mode nodes being monitored by OpenNMS.
+
+[[bw-app-setup]]
+== Application Setup
+
+In this section, you will enable the {product-title} application in Grafana.
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+In the top-left corner of the page, click on the Grafana icon, and then click *Plugins*:
++
+image::gf-plugins.png[Plugins, 100]
+
+. Next, navigate to the `Apps` tab, and click on the `OpenNMS Helm` application.
++
+[NOTE]
+====
+If the `OpenNMS Helm` is application is not listed on the `Apps` tab, try restarting the Grafana server.
+If the issue persists, make sure the application is installed correctly.
+====
+
+. Enable the application by clicking on the `Enable` button.
++
+[NOTE]
+====
+If you see a `Disable` button, then the application is already enabled and you can skip to the next step.
+====
+
+[[bw-ds-setup]]
+== Data Source Setup
+
+In this section, you will configure the _Fault Management (FM)_ data source.
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+In the top-left corner of the page, click on the Grafana icon, and then click *Data Sources*:
++
+image::gf-data-sources.png[Data Sources, 100]
+
+. Next, click on `Add data source`.
+
+. In the *Name* field enter: `My First OpenNMS FM DS`.
+
+. Change the *Type* to `OpenNMS FM Datasource`.
+
+. In the *Url* field enter the URL to your OpenNMS instance i.e. `http://localhost:8980/opennms`.
++
+[NOTE]
+====
+The URL to your OpenNMS instance should normally end with `/opennms`.
+====
+
+. Click the checkbox next to *Basic Auth*.
+
+. Enter the credentials for an OpenNMS user in the *User* and *Password* fields.
+
+. Click the *Add* button.
++
+image::gf-data-source-is-working.png[Data source is working, 500]
+
+If the data source is configured correctly you should see a message indicating that the `Data source is working`.
+If the message indicates a failure, review the information that was entered and click *Save & Test* to test the data source again.
+
+[[bw-dash-setup]]
+== Dashboard Setup
+
+. Create a new Dashboard by click on the dashboard selector at the top of the page, and the clicking on `New Dashboard`.
++
+image::gf-new-dashboard.png[New Dashboard, 500]
+
+. Add a new *Alarm Table* panel to either a new or an existing row.
+
+. Edit the *Alarm Table* panel, by click on the panel title, and then clicking `Edit`.
++
+image::gf-edit-panel.png[Edit Panel, 200]
+
+. Navigate to *Metrics* tab and select the data source we previously created in the *Panel Data Source* selection.
+
+. Navigate to the *Options* tab, click the `+` next to *Columns* and select `UEI` from the list.
+
+* Repeat this for `Node Label`, `Severity` and `Last Event Time`.
+
+. Again, from the *Options* tab, check the boxes next to `Style with severity`, `Severity icons` and `Action drop-down`.
+
+. Return to the dashboard view by clicking `Back to dashboard` near the top of the screen.
+
+. Save the dashboard by clicking the disk icon near the top of the screen, enter a name, and click `Save`.
+
+That's it! Now, you have your first dashboard.
+Try changing the time range at the top right of the screen, or try performing actions against the alarms using the hamburger menu on the right of the alarm rows.
