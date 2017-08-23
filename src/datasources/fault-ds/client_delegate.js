@@ -23,6 +23,10 @@ export class ClientDelegate {
               let self = this;
               this.clientWithMetadata = Client.getMetadata(this.client.server, this.client.http)
                 .then(function(metadata) {
+                    // Ensure the OpenNMS we are talking to is compatible
+                    if (metadata.apiVersion() !== 2) {
+                        throw new Error("Unsupported Version");
+                    }
                     self.client.server.metadata = metadata;
                     return self.client;
                 }).catch(function(e) {
