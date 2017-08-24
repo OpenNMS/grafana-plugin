@@ -26,8 +26,8 @@ var GenericQueryOptionsCtrl = function GenericQueryOptionsCtrl() {
 GenericQueryOptionsCtrl.templateUrl = 'datasources/perf-ds/partials/query.options.html';
 
 (0, _sdk.loadPluginCss)({
-  dark: 'plugins/opennms-helm-app/datasources/perf-ds/css/opennms.dark.css',
-  light: 'plugins/opennms-helm-app/datasources/perf-ds/css/opennms.light.css'
+  dark: 'plugins/opennms-helm/datasources/perf-ds/css/opennms.dark.css',
+  light: 'plugins/opennms-helm/datasources/perf-ds/css/opennms.light.css'
 });
 
 exports.Datasource = _datasource.OpenNMSDatasource;

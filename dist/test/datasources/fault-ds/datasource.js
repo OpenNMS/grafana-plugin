@@ -242,12 +242,13 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         value: function toTable(alarms, metadata) {
             var _this3 = this;
 
-            var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time"];
+            var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
 
             var columns = _lodash2.default.map(columnNames, function (column) {
                 return { "text": column };
             });
 
+            var self = this;
             var rows = _lodash2.default.map(alarms, function (alarm) {
                 var row = [alarm.id, alarm.count, alarm.ackUser, alarm.ackTime, alarm.uei, alarm.severity.label, alarm.type ? alarm.type.label : undefined, alarm.description, alarm.logMessage, alarm.reductionKey, alarm.troubleTicket, alarm.troubleTicketState, alarm.nodeId, alarm.nodeLabel, alarm.service ? alarm.service.name : undefined, alarm.suppressedTime, alarm.suppressedUntil, alarm.suppressedBy, alarm.ipAddress,
 
@@ -258,7 +259,10 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                 alarm.sticky ? alarm.sticky.id : undefined, alarm.sticky ? alarm.sticky.body : undefined, alarm.sticky ? alarm.sticky.author : undefined, alarm.sticky ? alarm.sticky.updated : undefined, alarm.sticky ? alarm.sticky.created : undefined,
 
                 // Journal Note
-                alarm.journal ? alarm.journal.id : undefined, alarm.journal ? alarm.journal.body : undefined, alarm.journal ? alarm.journal.author : undefined, alarm.journal ? alarm.journal.updated : undefined, alarm.journal ? alarm.journal.created : undefined];
+                alarm.journal ? alarm.journal.id : undefined, alarm.journal ? alarm.journal.body : undefined, alarm.journal ? alarm.journal.author : undefined, alarm.journal ? alarm.journal.updated : undefined, alarm.journal ? alarm.journal.created : undefined,
+
+                // Data Source
+                self.name];
 
                 row.meta = {
                     // Store the alarm for easy access by the panels - may not be necessary

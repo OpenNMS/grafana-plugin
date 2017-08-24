@@ -17,7 +17,7 @@ System.register(['./renderer'], function (_export, _context) {
 
     return {
       restrict: 'E',
-      templateUrl: 'public/plugins/opennms-helm-app/panels/alarm-table/alarm_details.html',
+      templateUrl: 'public/plugins/opennms-helm/panels/alarm-table/alarm_details.html',
       controller: AlarmDetailsCtrl,
       bindToController: true,
       controllerAs: 'ctrl',
