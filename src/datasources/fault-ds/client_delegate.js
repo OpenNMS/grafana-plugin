@@ -144,7 +144,6 @@ export class ClientDelegate {
             });
     }
 
-    // TODO MVR it would be nice to query the rest endpoint directly for the property, rather than queriing for all of the elements
     findProperty(propertyId) {
         return this.getProperties()
             .then(properties => {
