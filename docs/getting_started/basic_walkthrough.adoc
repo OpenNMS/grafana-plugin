@@ -57,7 +57,7 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . In the *Name* field enter: `My First OpenNMS FM DS`.
 
-. Change the *Type* to `OpenNMS FM Datasource`.
+. Change the *Type* to `OpenNMS Faults`.
 
 . In the *Url* field enter the URL to your OpenNMS instance i.e. `http://localhost:8980/opennms`.
 +
