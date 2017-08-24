@@ -101,7 +101,7 @@ export function memoEditorAsDirective() {
   'use strict';
   return {
     restrict: 'E',
-    templateUrl: 'public/plugins/opennms-helm-app/panels/alarm-table/memo_editor.html',
+    templateUrl: 'public/plugins/opennms-helm/panels/alarm-table/memo_editor.html',
     controller: MemoEditorCtrl,
     scope: {
       alarm: '=',

@@ -31,7 +31,7 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
     }
 
     onInitEditMode() {
-        this.addEditorTab('Grouping', 'public/plugins/opennms-helm-app/panels/alarm-histogram/editor.html', 2);
+        this.addEditorTab('Grouping', 'public/plugins/opennms-helm/panels/alarm-histogram/editor.html', 2);
     }
 
     onDataReceived(data) {

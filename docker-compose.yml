@@ -61,7 +61,7 @@ services:
       context: ./
       dockerfile: Dockerfile
       args:
-        OPENNMS_HELM_GIT_URL: https://github.com/OpenNMS/grafana-opennms-helm-app.git
+        OPENNMS_HELM_GIT_URL: https://github.com/OpenNMS/opennms-helm.git
         OPENNMS_HELM_GIT_BRANCH_REF: master
     image: opennms-helm:master
     volumes:

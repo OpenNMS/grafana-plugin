@@ -1,4 +1,4 @@
-# OpenNMS Helm - PM/FM Console for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/grafana-opennms-helm-app.svg?style=svg)](https://circleci.com/gh/OpenNMS/grafana-opennms-helm-app)
+# OpenNMS Helm - PM/FM Console for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/opennms-helm.svg?style=svg)](https://circleci.com/gh/OpenNMS/opennms-helm)
 
 ## Issue Tracking
 
@@ -20,18 +20,18 @@ Releases will be tagged from the `master` branch and submitted to the [Grafana p
 
 ### Steps
 
-Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory i.e.:
+Download the source tree into a subfolder called `opennms-helm` in Grafana's plugin directory i.e.:
 
 ```sh
 mkdir -p /var/lib/grafana/plugins
 cd /var/lib/grafana/plugins
-git clone https://github.com/OpenNMS/grafana-opennms-helm-app.git opennms-helm-app
+git clone https://github.com/OpenNMS/opennms-helm.git opennms-helm
 ```
 
 Compile the application:
 
 ```sh
-cd /var/lib/grafana/plugins/opennms-helm-app
+cd /var/lib/grafana/plugins/opennms-helm
 yarn
 yarn build
 ```
@@ -69,7 +69,7 @@ If you want to build an image based on a specific GitHub fork or branch you can 
 
 ```
 docker build -t mycustomforkbranch \
-            --build-arg OPENNMS_HELM_GIT_URL=https://github.com/OpenNMS/grafana-opennms-helm-app.git \
+            --build-arg OPENNMS_HELM_GIT_URL=https://github.com/OpenNMS/opennms-helm.git \
             --build-arg OPENNMS_HELM_GIT_BRANCH_REF=myBranch
 ```
 
