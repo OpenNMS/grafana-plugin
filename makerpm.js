@@ -72,7 +72,7 @@ generate(cwd, pkginfo, program, pkginfo.name, function (err, generated) {
     [
       '--define', '_topdir ' + path.join(os.tmpdir(), 'rpmbuild'),
       '-ba',
-      'SPECS/opennms-helm-app.spec'
+      'SPECS/opennms-helm.spec'
     ],
     {
       stdio: ['inherit', 'inherit', 'inherit']

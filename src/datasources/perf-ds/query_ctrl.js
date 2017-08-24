@@ -160,7 +160,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     scope.result.promise.then(callback);
 
     var modal = this.$modal({
-      template: 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/modal.selection.html',
+      template: 'public/plugins/opennms-helm/datasources/perf-ds/partials/modal.selection.html',
       persist: false,
       show: false,
       scope: scope,

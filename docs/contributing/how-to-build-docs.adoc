@@ -23,7 +23,7 @@ If you already know how to use https://git-scm.com/[git], then this is going to 
 If not, here’s the full walk-through:
 
 1. Install git.
-2. If the docs source is hosted on GitHub, you will probably next need to https://help.github.com/articles/fork-a-repo/[fork] the https://github.com/OpenNMS/grafana-opennms-helm-app[OpenNMS Helm repo].
+2. If the docs source is hosted on GitHub, you will probably next need to https://help.github.com/articles/fork-a-repo/[fork] the https://github.com/OpenNMS/opennms-helm[OpenNMS Helm repo].
 3. Using git, clone the repo (either the original or your fork, as appropriate) to your local system: `git clone <repo URL>`
 
 If the project that you are working in already has version branches, then you will want to set up local copies of those as well.

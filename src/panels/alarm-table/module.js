@@ -11,8 +11,8 @@ import {memoEditorAsDirective} from "./memo_editor"
 import {loadPluginCss} from 'app/plugins/sdk';
 
 loadPluginCss({
-  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
-  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
+  dark: 'plugins/opennms-helm/panels/alarm-table/css/table.dark.css',
+  light: 'plugins/opennms-helm/panels/alarm-table/css/table.light.css'
 });
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
