@@ -227,13 +227,15 @@ export class OpenNMSFMDatasource {
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
             "Last Event Creation Time", "Last Event Severity",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
-            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time"
+            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
+            "Data Source"
         ];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
         });
 
+        let self = this;
         var rows = _.map(alarms, alarm => {
             var row = [
                 alarm.id,
@@ -278,6 +280,9 @@ export class OpenNMSFMDatasource {
                 alarm.journal ? alarm.journal.author : undefined,
                 alarm.journal ? alarm.journal.updated : undefined,
                 alarm.journal ? alarm.journal.created : undefined,
+
+                // Data Source
+                self.name
             ];
 
             row.meta = {
