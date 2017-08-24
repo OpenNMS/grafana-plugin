@@ -1,5 +1,5 @@
 {
-  "name": "OpenNMS FM Datasource",
+  "name": "OpenNMS Faults",
   "id": "opennms-helm-fm-ds",
   "type": "datasource",
 

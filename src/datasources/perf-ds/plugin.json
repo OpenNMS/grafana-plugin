@@ -1,5 +1,5 @@
 {
-  "name": "OpenNMS PM Datasource",
+  "name": "OpenNMS Performance",
   "id": "opennms-helm-pm-ds",
   "type": "datasource",
 
