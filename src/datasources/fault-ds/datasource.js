@@ -134,7 +134,8 @@ export class OpenNMSFMDatasource {
         return this.alarmClient.getProperties();
     }
     if (query.find === "comparators") {
-      return this.alarmClient.getPropertyComparators(query.attribute);
+        const attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+        return this.alarmClient.getPropertyComparators(attribute);
     }
     if (query.find == 'values') {
         return this.searchForValues(query);
@@ -146,7 +147,8 @@ export class OpenNMSFMDatasource {
   }
 
   searchForValues(query) {
-      return this.alarmClient.findProperty(query.attribute)
+      const attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+      return this.alarmClient.findProperty(attribute)
           .then(property => {
               if (!property) {
                   return this.q.when([]);

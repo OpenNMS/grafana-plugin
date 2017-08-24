@@ -3,11 +3,11 @@ import _ from 'lodash';
 export class AttributeMapping {
     constructor() {
         this.attributeMapping = {
-            'location': 'node.location.locationName',
-            'service': 'service',
+            'location': 'location.locationName',
+            'service': 'serviceType.name',
             'category': 'category.name',
             'ipAddress': 'ipAddr',
-            'severity': 'alarm.severity'
+            'severity': 'severity'
         };
     }
 
