@@ -6,6 +6,10 @@ These instructions assume that https://grafana.com[Grafana] is NOT already insta
 If you have an existing instance of https://grafana.com[Grafana] you would like to use, refer to xref:../installation/plugin.adoc#[Installing via plugin].
 ====
 
+== Install Node.js
+
+First, follow the instructions at https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions[the Node.js site] for installing Node.js (6.x or higher).
+
 == Install stable
 
 Create a new apt source file (eg: `/etc/apt/sources.list.d/opennms.list`), and add the following 2 lines:
