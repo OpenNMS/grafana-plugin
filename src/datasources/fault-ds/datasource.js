@@ -1,6 +1,7 @@
 import {ClientDelegate} from './client_delegate';
-import {API} from '../../opennms';
-import {FilterCloner} from "./FilterCloner"
+import {API, Model} from '../../opennms';
+import {FilterCloner} from './FilterCloner';
+import {Mapping} from './Mapping';
 import _ from 'lodash';
 
 const FeaturedAttributes = [

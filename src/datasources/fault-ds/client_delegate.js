@@ -1,4 +1,4 @@
-import {API, Client, Rest, DAO, Model} from '../../opennms'
+import {API, Client, Rest, DAO} from '../../opennms'
 import _ from 'lodash';
 
 export class ClientDelegate {
