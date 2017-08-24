@@ -44,7 +44,7 @@ docs/_package
 /SOURCES
 
 # Debian package droppings
-/dist/opennms-helm-app
+/dist/opennms-helm
 *.dsc
 *.tar.gz
 *.deb
