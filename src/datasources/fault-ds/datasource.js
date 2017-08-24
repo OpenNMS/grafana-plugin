@@ -150,71 +150,25 @@ export class OpenNMSFMDatasource {
               if (!property) {
                   return this.q.when([]);
               }
-              switch (property.id) {
-                  case 'alarmAckUser':
-                  case 'suppressedUser':
-                  case 'lastEvent.eventAckUser':
-                      return this.alarmClient.findUsers({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (user) {
-                                  return {
-                                      id: user['user-id'],
-                                      label: user['full-name']
-                                  };
-                              });
-                          });
-                  case 'node.label':
-                      return this.alarmClient.findNodes({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (node) {
-                                  return {
-                                      id: node.label,
-                                      label: node.label
-                                  }
-                              });
-                          });
-                  case 'category.name':
-                      return this.alarmClient.findCategories({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (category) {
-                                  return {
-                                      id: category.id,
-                                      label: category.name
-                                  };
-                              })
-                          });
-                  case 'location.locationName':
-                      return this.alarmClient.findLocations({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (location) {
-                                  return {
-                                      id: location['location-name'],
-                                      label: location['location-name']
-                                  };
-                              })
-                          });
+              // Special handling for properties
+              switch(property.id) {
+                  // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
+                  // used, but that may not be ideal for the user
                   case 'severity':
-                      return this.alarmClient.findSeverities({query: query.query})
-                          .then(function (data) {
-                              return _.map(data, function (severity) {
-                                  return {
-                                      id: severity.id,
-                                      label: severity.label
-                                  }
-                              })
-                          });
-                  case 'serviceType.name':
-                      return this.alarmClient.findServices({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (service) {
-                                  return {
-                                      id: service,
-                                      label: service
-                                  }
-                              })
-                          });
-          }
-      });
+                      const severities = _.map(Model.Severities, severity => {
+                          return {
+                              id: severity.id,
+                              label: severity.label
+                          }
+                      });
+                      return this.q.when(severities);
+              }
+              return property.findValues({limit: 1000}).then(values => {
+                  return values.map(value => {
+                      return {id: value, label: value}
+                  });
+              });
+          });
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
