@@ -23,7 +23,6 @@ BuildArch: noarch
 %global __strip /bin/true
 %define __spec_build_post true
 {{/noarch}}
-Requires: nodejs{{#nodeVersion}} {{{nodeVersion}}}{{/nodeVersion}}
 {{#requires}}
 Requires: {{{.}}}
 {{/requires}}
