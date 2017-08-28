@@ -250,7 +250,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
 
             var self = this;
             var rows = _lodash2.default.map(alarms, function (alarm) {
-                var row = [alarm.id, alarm.count, alarm.ackUser, alarm.ackTime, alarm.uei, alarm.severity.label, alarm.type ? alarm.type.label : undefined, alarm.description, alarm.logMessage, alarm.reductionKey, alarm.troubleTicket, alarm.troubleTicketState, alarm.nodeId, alarm.nodeLabel, alarm.service ? alarm.service.name : undefined, alarm.suppressedTime, alarm.suppressedUntil, alarm.suppressedBy, alarm.ipAddress,
+                var row = [alarm.id, alarm.count, alarm.ackUser, alarm.ackTime, alarm.uei, alarm.severity.label, alarm.type ? alarm.type.label : undefined, alarm.description, alarm.logMessage, alarm.reductionKey, alarm.troubleTicket, alarm.troubleTicketState, alarm.nodeId, alarm.nodeLabel, alarm.service ? alarm.service.name : undefined, alarm.suppressedTime, alarm.suppressedUntil, alarm.suppressedBy, alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
 
                 // Event
                 alarm.firstEventTime, alarm.lastEvent ? alarm.lastEvent.id : undefined, alarm.lastEvent ? alarm.lastEvent.time : undefined, alarm.lastEvent ? alarm.lastEvent.source : undefined, alarm.lastEvent ? alarm.lastEvent.createTime : undefined, alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
