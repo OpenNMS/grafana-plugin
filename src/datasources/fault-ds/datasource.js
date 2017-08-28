@@ -147,7 +147,10 @@ export class OpenNMSFMDatasource {
   }
 
   searchForValues(query) {
-      const attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+      let attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+      if (attribute === 'ipAddr') {
+          attribute = 'ipInterface.ipAddress';
+      }
       return this.alarmClient.findProperty(attribute)
           .then(property => {
               if (!property) {
