@@ -42,8 +42,19 @@ export class FilterMapping {
         _.each(apiFilter.clauses, apiClause => {
             const uiClause = new ClauseMapping(self.uiSegmentSrv).getUiClause(apiClause);
             uiFilter.addClause(uiClause);
+
+            // set parentQuery for all nested queries
+            self.applyParentQuery(uiClause, uiFilter.query);
+
         });
 
         return uiFilter;
+    }
+
+    applyParentQuery(clause, parentQuery) {
+        if (clause.restriction instanceof UI.Query) {
+            clause.restriction.parentQuery = parentQuery;
+            this.applyParentQuery(clause.restriction.clauses, clause.restriction);
+        }
     }
 }
