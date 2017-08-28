@@ -257,7 +257,7 @@ export class OpenNMSFMDatasource {
                 alarm.suppressedTime,
                 alarm.suppressedUntil,
                 alarm.suppressedBy,
-                alarm.ipAddress,
+                alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
 
                 // Event
                 alarm.firstEventTime,
