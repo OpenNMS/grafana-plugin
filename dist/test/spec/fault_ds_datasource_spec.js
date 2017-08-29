@@ -687,6 +687,9 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                 return ctx.$q.when({
                     _request: request,
                     status: 200,
+                    headers: {
+                        'content-type': 'application/json'
+                    },
                     data: { 'packageDescription': 'OpenNMS Meridian', 'displayVersion': '2017.1.0', 'packageName': 'meridian', 'version': '2017.1.0' }
                 });
             };
@@ -704,6 +707,9 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                 return ctx.$q.when({
                     _request: request,
                     status: 200,
+                    headers: {
+                        'content-type': 'application/json'
+                    },
                     data: _opennms.API.OnmsResult.ok({ 'packageDescription': 'OpenNMS', 'displayVersion': '19.1.0', 'packageName': 'opennms', 'version': '19.1.0' })
                 });
             };

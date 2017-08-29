@@ -147,105 +147,6 @@ var ClientDelegate = exports.ClientDelegate = function () {
             });
         }
     }, {
-        key: 'findNodes',
-        value: function findNodes(options) {
-            var self = this;
-            return this.backendSrv.datasourceRequest({
-                url: self.url + '/rest/nodes',
-                method: 'GET',
-                params: {
-                    limit: options.limit || self.searchLimit
-                }
-            }).then(function (results) {
-                return {
-                    'count': results.data.count,
-                    'totalCount': results.data.totalCount,
-                    'rows': results.data.node
-                };
-            });
-        }
-    }, {
-        key: 'findUsers',
-        value: function findUsers(options) {
-            var self = this;
-            return this.backendSrv.datasourceRequest({
-                url: self.url + '/rest/users',
-                method: 'GET',
-                params: {
-                    limit: options.limit || self.searchLimit }
-            }).then(function (results) {
-                return {
-                    'count': results.data.count,
-                    'totalCount': results.data.totalCount,
-                    'rows': results.data.user
-                };
-            });
-        }
-    }, {
-        key: 'findLocations',
-        value: function findLocations(query) {
-            var self = this;
-            return this.backendSrv.datasourceRequest({
-                url: self.url + '/api/v2/monitoringLocations',
-                method: 'GET',
-                params: {
-                    limit: query.limit || self.searchLimit
-                }
-            }).then(function (results) {
-                return {
-                    'count': results.data.count,
-                    'totalCount': results.data.totalCount,
-                    'rows': results.data.location
-                };
-            });
-        }
-    }, {
-        key: 'findCategories',
-        value: function findCategories(options) {
-            var self = this;
-            return this.backendSrv.datasourceRequest({
-                url: self.url + '/rest/categories',
-                method: 'GET',
-                params: {
-                    limit: options.limit || self.searchLimit }
-            }).then(function (results) {
-                return {
-                    'count': results.data.count,
-                    'totalCount': results.data.totalCount,
-                    'rows': results.data.category
-                };
-            });
-        }
-    }, {
-        key: 'findSeverities',
-        value: function findSeverities(options) {
-            var severities = _lodash2.default.map(_opennms.Model.Severities, function (severity) {
-                return {
-                    id: severity.id,
-                    label: severity.label
-                };
-            });
-            return this.$q.when(severities);
-        }
-    }, {
-        key: 'findServices',
-        value: function findServices(options) {
-            var self = this;
-            return this.backendSrv.datasourceRequest({
-                url: self.url + '/rest/foreignSourcesConfig/services/default',
-                method: 'GET',
-                params: {
-                    limit: options.limit || self.searchLimit
-                }
-            }).then(function (results) {
-                return {
-                    'count': results.data.count,
-                    'totalCount': results.data.totalCount,
-                    'rows': results.data.element
-                };
-            });
-        }
-    }, {
         key: 'findOperators',
         value: function findOperators() {
             var operators = _lodash2.default.map(_opennms.API.Operators, function (operator) {
@@ -263,9 +164,6 @@ var ClientDelegate = exports.ClientDelegate = function () {
                 return alarmDao.searchProperties();
             });
         }
-
-        // TODO MVR it would be nice to query the rest endpoint directly for the property, rather than queriing for all of the elements
-
     }, {
         key: 'findProperty',
         value: function findProperty(propertyId) {

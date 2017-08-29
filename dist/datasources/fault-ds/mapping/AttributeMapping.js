@@ -39,11 +39,11 @@ System.register(['lodash'], function (_export, _context) {
                     _classCallCheck(this, AttributeMapping);
 
                     this.attributeMapping = {
-                        'location': 'node.location.locationName',
-                        'service': 'service',
+                        'location': 'location.locationName',
+                        'service': 'serviceType.name',
                         'category': 'category.name',
                         'ipAddress': 'ipAddr',
-                        'severity': 'alarm.severity'
+                        'severity': 'severity'
                     };
                 }
 

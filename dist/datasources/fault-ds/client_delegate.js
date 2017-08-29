@@ -3,7 +3,7 @@
 System.register(['../../opennms', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var API, Client, Rest, DAO, Model, _, _createClass, ClientDelegate;
+    var API, Client, Rest, DAO, _, _createClass, ClientDelegate;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -17,7 +17,6 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
             Client = _opennms.Client;
             Rest = _opennms.Rest;
             DAO = _opennms.DAO;
-            Model = _opennms.Model;
         }, function (_lodash) {
             _ = _lodash.default;
         }],
@@ -167,105 +166,6 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     value: function deleteJournal(alarmId) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.deleteJournalMemo(alarmId);
-                        });
-                    }
-                }, {
-                    key: 'findNodes',
-                    value: function findNodes(options) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/rest/nodes',
-                            method: 'GET',
-                            params: {
-                                limit: options.limit || self.searchLimit
-                            }
-                        }).then(function (results) {
-                            return {
-                                'count': results.data.count,
-                                'totalCount': results.data.totalCount,
-                                'rows': results.data.node
-                            };
-                        });
-                    }
-                }, {
-                    key: 'findUsers',
-                    value: function findUsers(options) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/rest/users',
-                            method: 'GET',
-                            params: {
-                                limit: options.limit || self.searchLimit }
-                        }).then(function (results) {
-                            return {
-                                'count': results.data.count,
-                                'totalCount': results.data.totalCount,
-                                'rows': results.data.user
-                            };
-                        });
-                    }
-                }, {
-                    key: 'findLocations',
-                    value: function findLocations(query) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/api/v2/monitoringLocations',
-                            method: 'GET',
-                            params: {
-                                limit: query.limit || self.searchLimit
-                            }
-                        }).then(function (results) {
-                            return {
-                                'count': results.data.count,
-                                'totalCount': results.data.totalCount,
-                                'rows': results.data.location
-                            };
-                        });
-                    }
-                }, {
-                    key: 'findCategories',
-                    value: function findCategories(options) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/rest/categories',
-                            method: 'GET',
-                            params: {
-                                limit: options.limit || self.searchLimit }
-                        }).then(function (results) {
-                            return {
-                                'count': results.data.count,
-                                'totalCount': results.data.totalCount,
-                                'rows': results.data.category
-                            };
-                        });
-                    }
-                }, {
-                    key: 'findSeverities',
-                    value: function findSeverities(options) {
-                        var severities = _.map(Model.Severities, function (severity) {
-                            return {
-                                id: severity.id,
-                                label: severity.label
-                            };
-                        });
-                        return this.$q.when(severities);
-                    }
-                }, {
-                    key: 'findServices',
-                    value: function findServices(options) {
-                        var self = this;
-                        return this.backendSrv.datasourceRequest({
-                            url: self.url + '/rest/foreignSourcesConfig/services/default',
-                            method: 'GET',
-                            params: {
-                                limit: options.limit || self.searchLimit
-                            }
-                        }).then(function (results) {
-                            return {
-                                'count': results.data.count,
-                                'totalCount': results.data.totalCount,
-                                'rows': results.data.element
-                            };
                         });
                     }
                 }, {

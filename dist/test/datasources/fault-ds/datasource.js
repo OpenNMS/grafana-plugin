@@ -13,6 +13,8 @@ var _opennms = require('../../opennms');
 
 var _FilterCloner = require('./FilterCloner');
 
+var _Mapping = require('./Mapping');
+
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -155,7 +157,8 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                 return this.alarmClient.getProperties();
             }
             if (query.find === "comparators") {
-                return this.alarmClient.getPropertyComparators(query.attribute);
+                var attribute = new _Mapping.Mapping.AttributeMapping().getApiAttribute(query.attribute);
+                return this.alarmClient.getPropertyComparators(attribute);
             }
             if (query.find == 'values') {
                 return this.searchForValues(query);
@@ -170,68 +173,32 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         value: function searchForValues(query) {
             var _this2 = this;
 
-            return this.alarmClient.findProperty(query.attribute).then(function (property) {
+            var attribute = new _Mapping.Mapping.AttributeMapping().getApiAttribute(query.attribute);
+            if (attribute === 'ipAddr') {
+                attribute = 'ipInterface.ipAddress';
+            }
+            return this.alarmClient.findProperty(attribute).then(function (property) {
                 if (!property) {
                     return _this2.q.when([]);
                 }
+                // Special handling for properties
                 switch (property.id) {
-                    case 'alarmAckUser':
-                    case 'suppressedUser':
-                    case 'lastEvent.eventAckUser':
-                        return _this2.alarmClient.findUsers({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data.rows, function (user) {
-                                return {
-                                    id: user['user-id'],
-                                    label: user['full-name']
-                                };
-                            });
-                        });
-                    case 'node.label':
-                        return _this2.alarmClient.findNodes({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data.rows, function (node) {
-                                return {
-                                    id: node.label,
-                                    label: node.label
-                                };
-                            });
-                        });
-                    case 'category.name':
-                        return _this2.alarmClient.findCategories({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data.rows, function (category) {
-                                return {
-                                    id: category.id,
-                                    label: category.name
-                                };
-                            });
-                        });
-                    case 'location.locationName':
-                        return _this2.alarmClient.findLocations({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data.rows, function (location) {
-                                return {
-                                    id: location['location-name'],
-                                    label: location['location-name']
-                                };
-                            });
-                        });
+                    // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
+                    // used, but that may not be ideal for the user
                     case 'severity':
-                        return _this2.alarmClient.findSeverities({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data, function (severity) {
-                                return {
-                                    id: severity.id,
-                                    label: severity.label
-                                };
-                            });
+                        var severities = _lodash2.default.map(_opennms.Model.Severities, function (severity) {
+                            return {
+                                id: severity.id,
+                                label: severity.label
+                            };
                         });
-                    case 'serviceType.name':
-                        return _this2.alarmClient.findServices({ query: query.query }).then(function (data) {
-                            return _lodash2.default.map(data.rows, function (service) {
-                                return {
-                                    id: service,
-                                    label: service
-                                };
-                            });
-                        });
+                        return _this2.q.when(severities);
                 }
+                return property.findValues({ limit: 1000 }).then(function (values) {
+                    return values.map(function (value) {
+                        return { id: value, label: value };
+                    });
+                });
             });
         }
 
@@ -242,7 +209,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         value: function toTable(alarms, metadata) {
             var _this3 = this;
 
-            var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
+            var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Location", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
 
             var columns = _lodash2.default.map(columnNames, function (column) {
                 return { "text": column };
@@ -250,10 +217,10 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
 
             var self = this;
             var rows = _lodash2.default.map(alarms, function (alarm) {
-                var row = [alarm.id, alarm.count, alarm.ackUser, alarm.ackTime, alarm.uei, alarm.severity.label, alarm.type ? alarm.type.label : undefined, alarm.description, alarm.logMessage, alarm.reductionKey, alarm.troubleTicket, alarm.troubleTicketState, alarm.nodeId, alarm.nodeLabel, alarm.service ? alarm.service.name : undefined, alarm.suppressedTime, alarm.suppressedUntil, alarm.suppressedBy, alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
+                var row = [alarm.id, alarm.count, alarm.ackUser, alarm.ackTime, alarm.uei, alarm.severity.label, alarm.type ? alarm.type.label : undefined, alarm.description, alarm.location, alarm.logMessage, alarm.reductionKey, alarm.troubleTicket, alarm.troubleTicketState, alarm.nodeId, alarm.nodeLabel, alarm.service ? alarm.service.name : undefined, alarm.suppressedTime, alarm.suppressedUntil, alarm.suppressedBy, alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
 
                 // Event
-                alarm.firstEventTime, alarm.lastEvent ? alarm.lastEvent.id : undefined, alarm.lastEvent ? alarm.lastEvent.time : undefined, alarm.lastEvent ? alarm.lastEvent.source : undefined, alarm.lastEvent ? alarm.lastEvent.createTime : undefined, alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+                alarm.firstEventTime, alarm.lastEvent ? alarm.lastEvent.id : undefined, alarm.lastEvent ? alarm.lastEvent.time : undefined, alarm.lastEvent ? alarm.lastEvent.source : undefined, alarm.lastEvent ? alarm.lastEvent.createTime : undefined, alarm.lastEvent ? alarm.lastEvent.severity.label : undefined, alarm.lastEvent ? alarm.lastEvent.label : undefined, alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
                 // Sticky Note
                 alarm.sticky ? alarm.sticky.id : undefined, alarm.sticky ? alarm.sticky.body : undefined, alarm.sticky ? alarm.sticky.author : undefined, alarm.sticky ? alarm.sticky.updated : undefined, alarm.sticky ? alarm.sticky.created : undefined,
