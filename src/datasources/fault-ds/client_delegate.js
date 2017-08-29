@@ -1,4 +1,4 @@
-import {API, Client, Rest, DAO, Model} from '../../opennms'
+import {API, Client, Rest, DAO} from '../../opennms'
 import _ from 'lodash';
 
 export class ClientDelegate {
@@ -127,101 +127,6 @@ export class ClientDelegate {
         });
     }
 
-    findNodes(options) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-                url: self.url + '/rest/nodes',
-                method: 'GET',
-                params: {
-                    limit: options.limit || self.searchLimit,
-                }
-            }).then(function (results) {
-                    return {
-                        'count': results.data.count,
-                        'totalCount': results.data.totalCount,
-                        'rows': results.data.node
-                    };
-                });
-    }
-
-    findUsers(options) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/rest/users',
-            method: 'GET',
-            params: {
-                limit: options.limit || self.searchLimit, // TODO MVR this is not implemented on the user rest service
-            }
-        }).then(function (results) {
-            return {
-                'count': results.data.count,
-                'totalCount': results.data.totalCount,
-                'rows': results.data.user
-            };
-        });
-    }
-
-    findLocations(query) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/api/v2/monitoringLocations',
-            method: 'GET',
-            params: {
-                limit: query.limit || self.searchLimit,
-            }
-        }).then(function (results) {
-            return {
-                'count': results.data.count,
-                'totalCount': results.data.totalCount,
-                'rows': results.data.location
-            };
-        });
-    }
-
-    findCategories(options) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/rest/categories',
-            method: 'GET',
-            params: {
-                limit: options.limit || self.searchLimit, // TODO MVR this is not implemented on the rest service
-            }
-        }).then(function (results) {
-            return {
-                'count': results.data.count,
-                'totalCount': results.data.totalCount,
-                'rows': results.data.category
-            };
-        });
-    }
-
-    findSeverities(options) {
-        var severities = _.map(Model.Severities, function(severity) {
-            return {
-                id: severity.id,
-                label: severity.label
-            };
-        });
-        return this.$q.when(severities);
-    }
-
-    findServices(options) {
-        var self = this;
-        return this.backendSrv.datasourceRequest({
-            url: self.url + '/rest/foreignSourcesConfig/services/default',
-            method: 'GET',
-            params : {
-                limit: options.limit || self.searchLimit
-            }
-        }).then(function (results) {
-            return {
-                'count': results.data.count,
-                'totalCount': results.data.totalCount,
-                'rows': results.data.element
-            };
-        });
-    }
-
     findOperators() {
         var operators = _.map(API.Operators, function(operator) {
             return {
@@ -239,7 +144,6 @@ export class ClientDelegate {
             });
     }
 
-    // TODO MVR it would be nice to query the rest endpoint directly for the property, rather than queriing for all of the elements
     findProperty(propertyId) {
         return this.getProperties()
             .then(properties => {

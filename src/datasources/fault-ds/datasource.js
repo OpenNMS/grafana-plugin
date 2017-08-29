@@ -1,6 +1,7 @@
 import {ClientDelegate} from './client_delegate';
-import {API} from '../../opennms';
-import {FilterCloner} from "./FilterCloner"
+import {API, Model} from '../../opennms';
+import {FilterCloner} from './FilterCloner';
+import {Mapping} from './Mapping';
 import _ from 'lodash';
 
 const FeaturedAttributes = [
@@ -133,7 +134,8 @@ export class OpenNMSFMDatasource {
         return this.alarmClient.getProperties();
     }
     if (query.find === "comparators") {
-      return this.alarmClient.getPropertyComparators(query.attribute);
+        const attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+        return this.alarmClient.getPropertyComparators(attribute);
     }
     if (query.find == 'values') {
         return this.searchForValues(query);
@@ -145,87 +147,45 @@ export class OpenNMSFMDatasource {
   }
 
   searchForValues(query) {
-      return this.alarmClient.findProperty(query.attribute)
+      let attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+      if (attribute === 'ipAddr') {
+          attribute = 'ipInterface.ipAddress';
+      }
+      return this.alarmClient.findProperty(attribute)
           .then(property => {
               if (!property) {
                   return this.q.when([]);
               }
-              switch (property.id) {
-                  case 'alarmAckUser':
-                  case 'suppressedUser':
-                  case 'lastEvent.eventAckUser':
-                      return this.alarmClient.findUsers({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (user) {
-                                  return {
-                                      id: user['user-id'],
-                                      label: user['full-name']
-                                  };
-                              });
-                          });
-                  case 'node.label':
-                      return this.alarmClient.findNodes({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (node) {
-                                  return {
-                                      id: node.label,
-                                      label: node.label
-                                  }
-                              });
-                          });
-                  case 'category.name':
-                      return this.alarmClient.findCategories({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (category) {
-                                  return {
-                                      id: category.id,
-                                      label: category.name
-                                  };
-                              })
-                          });
-                  case 'location.locationName':
-                      return this.alarmClient.findLocations({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (location) {
-                                  return {
-                                      id: location['location-name'],
-                                      label: location['location-name']
-                                  };
-                              })
-                          });
+              // Special handling for properties
+              switch(property.id) {
+                  // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
+                  // used, but that may not be ideal for the user
                   case 'severity':
-                      return this.alarmClient.findSeverities({query: query.query})
-                          .then(function (data) {
-                              return _.map(data, function (severity) {
-                                  return {
-                                      id: severity.id,
-                                      label: severity.label
-                                  }
-                              })
-                          });
-                  case 'serviceType.name':
-                      return this.alarmClient.findServices({query: query.query})
-                          .then(function (data) {
-                              return _.map(data.rows, function (service) {
-                                  return {
-                                      id: service,
-                                      label: service
-                                  }
-                              })
-                          });
-          }
-      });
+                      const severities = _.map(Model.Severities, severity => {
+                          return {
+                              id: severity.id,
+                              label: severity.label
+                          }
+                      });
+                      return this.q.when(severities);
+              }
+              return property.findValues({limit: 1000}).then(values => {
+                  return values.map(value => {
+                      return {id: value, label: value}
+                  });
+              });
+          });
   }
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(alarms, metadata) {
         var columnNames = [
             "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
-            "Type", "Description", "Log Message", "Reduction Key",
+            "Type", "Description", "Location", "Log Message", "Reduction Key",
             "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
             "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
-            "Last Event Creation Time", "Last Event Severity",
+            "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
             "Data Source"
@@ -246,6 +206,7 @@ export class OpenNMSFMDatasource {
                 alarm.severity.label,
                 alarm.type ? alarm.type.label : undefined,
                 alarm.description,
+                alarm.location,
 
                 alarm.logMessage,
                 alarm.reductionKey,
@@ -266,6 +227,8 @@ export class OpenNMSFMDatasource {
                 alarm.lastEvent ? alarm.lastEvent.source : undefined,
                 alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
                 alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
                 // Sticky Note
                 alarm.sticky ? alarm.sticky.id : undefined,
