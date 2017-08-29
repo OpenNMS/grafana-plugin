@@ -1,11 +1,11 @@
-Source: opennms-helm-app
+Source: opennms-helm
 Section: contrib/net
 Priority: optional
 Maintainer: Benjamin Reed <ranger@opennms.org>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.7.3
 
-Package: opennms-helm-app
+Package: opennms-helm
 Architecture: all
 Depends: grafana (>= 4.4.1), grafana (<< 5)
 Description: A PM/FM console for Grafana

@@ -181,19 +181,21 @@ export class OpenNMSFMDatasource {
     toTable(alarms, metadata) {
         var columnNames = [
             "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
-            "Type", "Description", "Log Message", "Reduction Key",
+            "Type", "Description", "Location", "Log Message", "Reduction Key",
             "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
             "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
-            "Last Event Creation Time", "Last Event Severity",
+            "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
-            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time"
+            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
+            "Data Source"
         ];
 
         var columns = _.map(columnNames, column => {
             return { "text" : column }
         });
 
+        let self = this;
         var rows = _.map(alarms, alarm => {
             var row = [
                 alarm.id,
@@ -204,6 +206,7 @@ export class OpenNMSFMDatasource {
                 alarm.severity.label,
                 alarm.type ? alarm.type.label : undefined,
                 alarm.description,
+                alarm.location,
 
                 alarm.logMessage,
                 alarm.reductionKey,
@@ -215,7 +218,7 @@ export class OpenNMSFMDatasource {
                 alarm.suppressedTime,
                 alarm.suppressedUntil,
                 alarm.suppressedBy,
-                alarm.ipAddress,
+                alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
 
                 // Event
                 alarm.firstEventTime,
@@ -224,6 +227,8 @@ export class OpenNMSFMDatasource {
                 alarm.lastEvent ? alarm.lastEvent.source : undefined,
                 alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
                 alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
                 // Sticky Note
                 alarm.sticky ? alarm.sticky.id : undefined,
@@ -238,6 +243,9 @@ export class OpenNMSFMDatasource {
                 alarm.journal ? alarm.journal.author : undefined,
                 alarm.journal ? alarm.journal.updated : undefined,
                 alarm.journal ? alarm.journal.created : undefined,
+
+                // Data Source
+                self.name
             ];
 
             row.meta = {

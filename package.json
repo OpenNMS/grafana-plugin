@@ -1,5 +1,5 @@
 {
-  "name": "opennms-helm-app",
+  "name": "opennms-helm",
   "version": "1.0.0-SNAPSHOT",
   "description": "A PM/FM console for Grafana",
   "scripts": {
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenNMS/grafana-opennms-helm-app.git"
+    "url": "git+https://github.com/OpenNMS/opennms-helm.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/OpenNMS/grafana-opennms-helm-app/issues"
+    "url": "https://issues.opennms.org/projects/HELM/summary"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -48,7 +48,7 @@
     "opennms": "https://github.com/OpenNMS/opennms-js.git#ad4bde416bf58b3dfadb80d9a8859e8f8295c8b7",
     "q": "^1.5.0"
   },
-  "homepage": "https://github.com/OpenNMS/grafana-opennms-helm-app",
+  "homepage": "https://github.com/OpenNMS/opennms-helm",
   "spec": {
     "specTemplate": "src/rpm/spec.mustache",
     "installDir": "/var/lib/grafana/plugins",

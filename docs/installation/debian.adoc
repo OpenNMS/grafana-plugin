@@ -30,7 +30,7 @@ Install the packages:
 [source, shell]
 ----
 sudo apt-get update
-sudo apt-get install opennms-helm-app
+sudo apt-get install opennms-helm
 ----
 
 == Start the server (init.d service)

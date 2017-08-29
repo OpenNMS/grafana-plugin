@@ -20,7 +20,7 @@ Install the packages:
 
 [source, shell]
 ----
-sudo yum install opennms-helm-app
+sudo yum install opennms-helm
 ----
 
 == Start the server (init.d service)
