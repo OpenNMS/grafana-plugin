@@ -221,11 +221,11 @@ export class OpenNMSFMDatasource {
     toTable(alarms, metadata) {
         var columnNames = [
             "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
-            "Type", "Description", "Log Message", "Reduction Key",
+            "Type", "Description", "Location", "Log Message", "Reduction Key",
             "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
             "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
-            "Last Event Creation Time", "Last Event Severity",
+            "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
             "Data Source"
@@ -246,6 +246,7 @@ export class OpenNMSFMDatasource {
                 alarm.severity.label,
                 alarm.type ? alarm.type.label : undefined,
                 alarm.description,
+                alarm.location,
 
                 alarm.logMessage,
                 alarm.reductionKey,
@@ -266,6 +267,8 @@ export class OpenNMSFMDatasource {
                 alarm.lastEvent ? alarm.lastEvent.source : undefined,
                 alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
                 alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.label : undefined,
+                alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
                 // Sticky Note
                 alarm.sticky ? alarm.sticky.id : undefined,
