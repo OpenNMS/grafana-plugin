@@ -80,9 +80,20 @@ System.register(['lodash', '../../../opennms', '../UI', './ClauseMapping'], func
                         _.each(apiFilter.clauses, function (apiClause) {
                             var uiClause = new ClauseMapping(self.uiSegmentSrv).getUiClause(apiClause);
                             uiFilter.addClause(uiClause);
+
+                            // set parentQuery for all nested queries
+                            self.applyParentQuery(uiClause, uiFilter.query);
                         });
 
                         return uiFilter;
+                    }
+                }, {
+                    key: 'applyParentQuery',
+                    value: function applyParentQuery(clause, parentQuery) {
+                        if (clause.restriction instanceof UI.Query) {
+                            clause.restriction.parentQuery = parentQuery;
+                            this.applyParentQuery(clause.restriction.clauses, clause.restriction);
+                        }
                     }
                 }]);
 

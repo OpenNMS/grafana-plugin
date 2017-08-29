@@ -64,9 +64,20 @@ var FilterMapping = exports.FilterMapping = function () {
             _lodash2.default.each(apiFilter.clauses, function (apiClause) {
                 var uiClause = new _ClauseMapping.ClauseMapping(self.uiSegmentSrv).getUiClause(apiClause);
                 uiFilter.addClause(uiClause);
+
+                // set parentQuery for all nested queries
+                self.applyParentQuery(uiClause, uiFilter.query);
             });
 
             return uiFilter;
+        }
+    }, {
+        key: 'applyParentQuery',
+        value: function applyParentQuery(clause, parentQuery) {
+            if (clause.restriction instanceof _UI.UI.Query) {
+                clause.restriction.parentQuery = parentQuery;
+                this.applyParentQuery(clause.restriction.clauses, clause.restriction);
+            }
         }
     }]);
 
