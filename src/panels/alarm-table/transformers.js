@@ -41,6 +41,9 @@ transformers['table'] = {
       }
     });
 
+    // Used when no matching column is found
+    let emptyColumn = new Array(data.rows.length);
+
     // Now reorder the columns according the list of columns in the panel definition
     let cellsByPanelColumnIndex = [];
     for (let j = 0; j < columnsToInclude.length; j++) {
@@ -50,8 +53,9 @@ transformers['table'] = {
         return col === colDef.text || col.text === colDef.text;
       });
       if (idx < 0) {
-        throw {message: 'The column named "' + colDef.text + '" was specified in the panel definition,' +
-        ' but was not found in the given data. The available columns include: ' + JSON.stringify(data.columns)};
+        // The column does not exist
+        cellsByPanelColumnIndex[j] = emptyColumn;
+        continue;
       }
       // Re-order
       cellsByPanelColumnIndex[j] = cellsByColumnIndex[idx];

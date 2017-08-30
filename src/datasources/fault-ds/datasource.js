@@ -179,7 +179,7 @@ export class OpenNMSFMDatasource {
 
     // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
     toTable(alarms, metadata) {
-        var columnNames = [
+        let columnNames = [
             "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
             "Type", "Description", "Location", "Log Message", "Reduction Key",
             "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
@@ -191,13 +191,28 @@ export class OpenNMSFMDatasource {
             "Data Source"
         ];
 
-        var columns = _.map(columnNames, column => {
+        // Build a sorted list of (unique) event parameter names
+        let parameterNames = _.uniq(_.sortBy(_.flatten(_.map(alarms, alarm => {
+          if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
+            return [];
+          }
+          return _.map(alarm.lastEvent.parameters, parameter => {
+            return parameter.name;
+          });
+        })), name => name), true);
+
+        // Include the event parameters as columns
+        _.each(parameterNames, parameterName => {
+          columnNames.push("Param_" + parameterName);
+        });
+
+        let columns = _.map(columnNames, column => {
             return { "text" : column }
         });
 
         let self = this;
-        var rows = _.map(alarms, alarm => {
-            var row = [
+        let rows = _.map(alarms, alarm => {
+            let row = [
                 alarm.id,
                 alarm.count,
                 alarm.ackUser,
@@ -247,6 +262,23 @@ export class OpenNMSFMDatasource {
                 // Data Source
                 self.name
             ];
+
+            // Index the event parameters by name
+            let eventParametersByName = {};
+            if (alarm.lastEvent && alarm.lastEvent.parameters) {
+              _.each(alarm.lastEvent.parameters, parameter => {
+                eventParametersByName[parameter.name] = parameter.value;
+              });
+            }
+
+            // Append the event parameters to the row
+            row = row.concat(_.map(parameterNames, parameterName => {
+              if (_.has(eventParametersByName, parameterName)) {
+                return eventParametersByName[parameterName];
+              } else {
+                return undefined;
+              }
+            }));
 
             row.meta = {
                 // Store the alarm for easy access by the panels - may not be necessary
