@@ -1,5 +1,0 @@
-{
-  "type": "panel",
-  "name": "Alarm Histogram",
-  "id": "opennms-helm-alarm-histogram-panel"
-}

@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../src/panels/alarm-histogram/module.js"],"names":["AlarmHistogramCtrl"],"mappings":";;;;;;;;AAAQA,8B,SAAAA,kB;;;iCAGJA,kB","file":"module.js","sourcesContent":["import {AlarmHistogramCtrl} from './ctrl';\n\nexport {\n    AlarmHistogramCtrl as PanelCtrl\n};\n"]}
