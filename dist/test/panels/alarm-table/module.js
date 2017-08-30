@@ -66,13 +66,27 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
     var panelDefaults = {
       targets: [{}],
       transform: 'table',
-      pageSize: null,
+      pageSize: 5,
       showHeader: true,
       styles: [{
         type: 'date',
-        pattern: 'Time',
-        alias: 'Time',
+        pattern: '/.*Time/', // Render all "* Time" columns as date, e.g. "Last Event Time", "First Event Time", etc.
         dateFormat: 'YYYY-MM-DD HH:mm:ss'
+      }, {
+        type: 'date',
+        pattern: 'Suppressed Until',
+        dateFormat: 'YYYY-MM-DD HH:mm:ss'
+      }, {
+        type: 'string',
+        pattern: '/.*ID/' }, {
+        type: 'string',
+        pattern: 'Description',
+        sanitize: true
+      }, {
+        unit: 'short',
+        type: 'number',
+        decimals: 0,
+        pattern: 'Count'
       }, {
         unit: 'short',
         type: 'number',
@@ -83,10 +97,13 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
         pattern: '/.*/',
         thresholds: []
       }],
-      columns: [],
-      scroll: true,
+      columns: [{ text: 'UEI' }, { text: 'Log Message' }, { text: 'Node Label' }, { text: 'Count' }, { text: 'Last Event Time' }],
+      scroll: false, // disable scrolling as the actions popup is not working properly otherwise
       fontSize: '100%',
-      sort: { col: 0, desc: true }
+      sort: { col: 0, desc: true },
+      severity: true,
+      severityIcons: true,
+      actions: true
     };
 
     _this.pageIndex = 0;
