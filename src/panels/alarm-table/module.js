@@ -34,9 +34,22 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       styles: [
         {
           type: 'date',
-          pattern: 'Time',
-          alias: 'Time',
+          pattern: '/.*Time/', // Render all "* Time" columns as date, e.g. "Last Event Time", "First Event Time", etc.
           dateFormat: 'YYYY-MM-DD HH:mm:ss',
+        },
+        {
+          type: 'date',
+          pattern: 'Suppressed Until',
+          dateFormat: 'YYYY-MM-DD HH:mm:ss',
+        },
+        {
+          type: 'string',
+          pattern: '/.*ID/', // Render all "* ID" columns as string, otherwise ID 1000 appears as 1.0 K
+        },
+        {
+          type: 'string',
+          pattern: 'Description',
+          sanitize: true
         },
         {
           unit: 'short',
@@ -49,10 +62,18 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           thresholds: [],
         }
       ],
-      columns: [],
-      scroll: true,
+      columns: [
+          {text: 'UEI'},
+          {text: 'Log Message'},
+          {text: 'Node Label'},
+          {text: 'Count'},
+          {text: 'Last Event Time',}],
+      scroll: false, // disable scrolling as the actions popup is not working properly otherwise
       fontSize: '100%',
       sort: {col: 0, desc: true},
+      severity: true,
+      severityIcons: true,
+      actions: true
     };
 
     this.pageIndex = 0;
