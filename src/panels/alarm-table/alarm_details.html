@@ -1,7 +1,7 @@
-<div class="modal-body">
-    <div class="modal-header">
+<div class="modal-body severity">
+    <div class="modal-header {{alarm.severity.label|lowercase}}">
         <h2 class="modal-header-title">
-            <i class="fa fa-info-circle"></i>
+            <i class="icon" ng-class="severityIcon" title="{{alarm.severity.label}}"></i>
             <span class="p-l-1">Alarm Details</span>
         </h2>
 
@@ -24,10 +24,6 @@
                 <tr>
                     <td>UEI</td>
                     <td>{{alarm.uei}}</td>
-                </tr>
-                <tr>
-                    <td>Severity</td>
-                    <td><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</td>
                 </tr>
                 <tr>
                     <td>Log Message</td>
