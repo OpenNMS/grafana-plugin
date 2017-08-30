@@ -11177,6 +11177,7 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
             alarm.logMessage = data.logMessage;
             alarm.reductionKey = data.reductionKey;
             alarm.troubleTicket = data.troubleTicket;
+            alarm.troubleTicketLink = data.troubleTicketLink;
             alarm.nodeId = this.toNumber(data.nodeId);
             alarm.nodeLabel = data.nodeLabel;
             alarm.suppressedBy = data.suppressedBy;
@@ -11190,8 +11191,13 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
                 var type = this.toNumber(data.type);
                 alarm.type = OnmsAlarmType_1.AlarmTypes[type];
             }
-            if (data.troubleTicketState) {
-                alarm.troubleTicketState = OnmsTroubleTicketState_1.TroubleTicketStates[data.troubleTicketState];
+            if (typeof data.troubleTicketState !== 'undefined') {
+                var troubleTicketKey = Object.keys(OnmsTroubleTicketState_1.TroubleTicketStates).find(function (key) {
+                    return OnmsTroubleTicketState_1.TroubleTicketStates[key].id === data.troubleTicketState;
+                });
+                if (troubleTicketKey) {
+                    alarm.troubleTicketState = OnmsTroubleTicketState_1.TroubleTicketStates[troubleTicketKey];
+                }
             }
             if (data.serviceType) {
                 var st = data.serviceType;
@@ -36087,7 +36093,7 @@ var GrafanaHTTP = function (_AbstractHTTP_1$Abstr) {
             var allOptions = this.getOptions(options);
             var ret = clonedeep(allOptions);
             ret.transformResponse = []; // we do this so we can post-process only on success
-            if (!allOptions.headers) {
+            if (allOptions.headers) {
                 ret.headers = clonedeep(allOptions.headers);
             } else {
                 ret.headers = {};
