@@ -211,7 +211,7 @@ export class OpenNMSFMDatasource {
                 alarm.logMessage,
                 alarm.reductionKey,
                 alarm.troubleTicket,
-                alarm.troubleTicketState,
+                alarm.troubleTicketState ? alarm.troubleTicketState.label : undefined,
                 alarm.nodeId,
                 alarm.nodeLabel,
                 alarm.service ? alarm.service.name : undefined,
