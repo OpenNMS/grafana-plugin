@@ -6575,7 +6575,7 @@ var Util = function () {
         value: function toDateString(date) {
             var ret = Util.toMoment(date);
             if (ret) {
-                return ret.utc().format(dateFormat).replace('+0000', '-0000');
+                return ret.utc().format(dateFormat);
             } else {
                 return undefined;
             }
@@ -12145,16 +12145,16 @@ var V2FilterProcessor = function () {
             switch (restriction.comparator) {
                 case Comparator_1.Comparators.NULL:
                 case Comparator_1.Comparators.NOTNULL:
-                    return restriction.value === undefined ? V2FilterProcessor.NULL_VALUE : restriction.value;
+                    return restriction.value === undefined ? V2FilterProcessor.NULL_VALUE : encodeURIComponent(restriction.value);
                 default:
                     if (restriction.value === 'null' || restriction.value === void 0) {
                         var property = this.searchPropertyAccessor.getProperty(restriction.attribute);
                         if (property && property.type === SearchPropertyType_1.SearchPropertyTypes.TIMESTAMP) {
-                            return V2FilterProcessor.NULL_DATE;
+                            return V2FilterProcessor.NULL_DATE_ENCODED;
                         }
                         return V2FilterProcessor.NULL_VALUE;
                     }
-                    return this.applyDateConversion(restriction.value);
+                    return encodeURIComponent(this.applyDateConversion(restriction.value));
             }
         }
         /** Given an operator, convert it to the corresponding FIQL operator. */
@@ -12241,7 +12241,12 @@ V2FilterProcessor.NULL_VALUE = "\0";
  *  This must be explicitly set as the restriction value when using
  *  either the NULL or NOTNULL comparators on date fields.
  */
-V2FilterProcessor.NULL_DATE = '1970-01-01T00:00:00.000-0000';
+V2FilterProcessor.NULL_DATE = '1970-01-01T00:00:00.000+0000';
+/**
+ * pre-encoded to avoid running `encodeURIComponent` every time we deal with a null date
+ * @hidden
+ */
+V2FilterProcessor.NULL_DATE_ENCODED = encodeURIComponent(V2FilterProcessor.NULL_DATE);
 exports.V2FilterProcessor = V2FilterProcessor;
 
 /***/ }),

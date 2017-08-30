@@ -211,6 +211,23 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
 
             var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Location", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
 
+            // Build a sorted list of (unique) event parameter names
+            var parameterNames = _lodash2.default.uniq(_lodash2.default.sortBy(_lodash2.default.flatten(_lodash2.default.map(alarms, function (alarm) {
+                if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
+                    return [];
+                }
+                return _lodash2.default.map(alarm.lastEvent.parameters, function (parameter) {
+                    return parameter.name;
+                });
+            })), function (name) {
+                return name;
+            }), true);
+
+            // Include the event parameters as columns
+            _lodash2.default.each(parameterNames, function (parameterName) {
+                columnNames.push("Param_" + parameterName);
+            });
+
             var columns = _lodash2.default.map(columnNames, function (column) {
                 return { "text": column };
             });
@@ -230,6 +247,23 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
 
                 // Data Source
                 self.name];
+
+                // Index the event parameters by name
+                var eventParametersByName = {};
+                if (alarm.lastEvent && alarm.lastEvent.parameters) {
+                    _lodash2.default.each(alarm.lastEvent.parameters, function (parameter) {
+                        eventParametersByName[parameter.name] = parameter.value;
+                    });
+                }
+
+                // Append the event parameters to the row
+                row = row.concat(_lodash2.default.map(parameterNames, function (parameterName) {
+                    if (_lodash2.default.has(eventParametersByName, parameterName)) {
+                        return eventParametersByName[parameterName];
+                    } else {
+                        return undefined;
+                    }
+                }));
 
                 row.meta = {
                     // Store the alarm for easy access by the panels - may not be necessary

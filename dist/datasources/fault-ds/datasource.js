@@ -223,6 +223,23 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapp
 
                         var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Location", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
 
+                        // Build a sorted list of (unique) event parameter names
+                        var parameterNames = _.uniq(_.sortBy(_.flatten(_.map(alarms, function (alarm) {
+                            if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
+                                return [];
+                            }
+                            return _.map(alarm.lastEvent.parameters, function (parameter) {
+                                return parameter.name;
+                            });
+                        })), function (name) {
+                            return name;
+                        }), true);
+
+                        // Include the event parameters as columns
+                        _.each(parameterNames, function (parameterName) {
+                            columnNames.push("Param_" + parameterName);
+                        });
+
                         var columns = _.map(columnNames, function (column) {
                             return { "text": column };
                         });
@@ -242,6 +259,23 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapp
 
                             // Data Source
                             self.name];
+
+                            // Index the event parameters by name
+                            var eventParametersByName = {};
+                            if (alarm.lastEvent && alarm.lastEvent.parameters) {
+                                _.each(alarm.lastEvent.parameters, function (parameter) {
+                                    eventParametersByName[parameter.name] = parameter.value;
+                                });
+                            }
+
+                            // Append the event parameters to the row
+                            row = row.concat(_.map(parameterNames, function (parameterName) {
+                                if (_.has(eventParametersByName, parameterName)) {
+                                    return eventParametersByName[parameterName];
+                                } else {
+                                    return undefined;
+                                }
+                            }));
 
                             row.meta = {
                                 // Store the alarm for easy access by the panels - may not be necessary

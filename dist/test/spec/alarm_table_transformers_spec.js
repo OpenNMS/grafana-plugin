@@ -97,6 +97,26 @@ describe('Table transformer', function () {
       expect(model.rows).to.eql([[3, 2]]);
     });
 
+    it('should use an undefined value when a column is present in the panel definition, but not in any of the tables', function () {
+      var table = new _table_model.TableModel();
+      table.columns.push('A', 'B', 'C');
+      table.rows.push([1, 2, 3]);
+
+      var panel = { columns: [{
+          'text': 'C'
+        }, {
+          'text': 'Z'
+        }, {
+          'text': 'B'
+        }] };
+      var model = new _table_model.TableModel();
+
+      transformer.transform([table], panel, model);
+
+      expect(model.columns).to.eql(panel.columns);
+      expect(model.rows).to.eql([[3, undefined, 2]]);
+    });
+
     it('should combine multiple tables into a single table', function () {
       var t1 = new _table_model.TableModel();
       t1.columns.push("A");

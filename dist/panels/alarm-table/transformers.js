@@ -70,6 +70,9 @@ System.register(['lodash', './table_model'], function (_export, _context) {
             }
           });
 
+          // Used when no matching column is found
+          var emptyColumn = new Array(data.rows.length);
+
           // Now reorder the columns according the list of columns in the panel definition
           var cellsByPanelColumnIndex = [];
 
@@ -80,14 +83,18 @@ System.register(['lodash', './table_model'], function (_export, _context) {
               return col === colDef.text || col.text === colDef.text;
             });
             if (idx < 0) {
-              throw { message: 'The column named "' + colDef.text + '" was specified in the panel definition,' + ' but was not found in the given data. The available columns include: ' + JSON.stringify(data.columns) };
+              // The column does not exist
+              cellsByPanelColumnIndex[j] = emptyColumn;
+              return 'continue';
             }
             // Re-order
             cellsByPanelColumnIndex[j] = cellsByColumnIndex[idx];
           };
 
           for (var j = 0; j < columnsToInclude.length; j++) {
-            _loop(j);
+            var _ret = _loop(j);
+
+            if (_ret === 'continue') continue;
           }
 
           // Convert the columns back to rows
