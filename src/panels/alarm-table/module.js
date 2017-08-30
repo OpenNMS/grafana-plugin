@@ -29,7 +29,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     let panelDefaults = {
       targets: [{}],
       transform: 'table',
-      pageSize: null,
+      pageSize: 5,
       showHeader: true,
       styles: [
         {
@@ -50,6 +50,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           type: 'string',
           pattern: 'Description',
           sanitize: true
+        },
+        {
+          unit: 'short',
+          type: 'number',
+          decimals: 0,
+          pattern: 'Count',
         },
         {
           unit: 'short',
