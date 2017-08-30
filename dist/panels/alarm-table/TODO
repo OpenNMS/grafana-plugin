@@ -1,0 +1,5 @@
+* Update the dashboard after an action that changes an alarm is performed (other panels may be affected too)
+* Properly escape quotes in renderer.js
+
+Nice to haves:
+* Drag and drop the column names for easy reordering
