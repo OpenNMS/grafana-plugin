@@ -2279,6 +2279,27 @@
   color: #000000;
   font-weight: 600; }
 
+.alarm-table tr.indeterminate:hover {
+  background-color: #ff1a1a; }
+
+.alarm-table tr.cleared:hover {
+  background-color: #fff76f; }
+
+.alarm-table tr.normal:hover {
+  background-color: #c6dab1; }
+
+.alarm-table tr.warning:hover {
+  background-color: #feedb9; }
+
+.alarm-table tr.minor:hover {
+  background-color: #f7ca93; }
+
+.alarm-table tr.major:hover {
+  background-color: #f2ba9f; }
+
+.alarm-table tr.critical:hover {
+  background-color: #efaeaf; }
+
 .gf-form-no-margin {
   margin-bottom: .0rem !important; }
 
