@@ -70,6 +70,52 @@ $critical-color: #DB4345;
   font-weight: $cell-font-weight;
 }
 
+.alarm-table .selected {
+  background-color: $selected-cell-no-severity-background-color;
+}
+
+.alarm-table > .severity > .indeterminate {
+  background-color: lighten($indeterminate-color, 25%);
+}
+
+.alarm-table > .severity > .selected.cleared {
+  background-color: lighten($cleared-color, 25%);
+}
+
+.alarm-table >.severity > .selected.normal {
+  background-color: lighten($normal-color, 25%);
+}
+
+.alarm-table > .severity > .selected.warning {
+  background-color: lighten($warning-color, 25%);
+}
+
+.alarm-table > .severity > .selected.minor {
+  background-color: lighten($minor-color, 25%);
+}
+
+.alarm-table > .severity > .selected.major {
+  background-color: lighten($major-color, 25%);
+}
+
+.alarm-table > .severity > .selected.critical {
+  background-color: lighten($critical-color, 35%);
+}
+
+.alarm-table tr.next-selected, .alarm-table tr.next-selected td {
+  border-bottom: 2px dashed $selected-cell-border-color;
+}
+
+.alarm-table tr.selected, .alarm-table tr.selected td {
+  border: 2px dashed $selected-cell-border-color;
+  border-top: 2px dashed $selected-cell-border-color;
+  border-bottom: 2px dashed $selected-cell-border-color;
+}
+
+.alarm-table tr:hover {
+  background-color: $selected-cell-no-severity-background-color;
+}
+
 .alarm-table tr.indeterminate:hover {
   background-color: lighten($indeterminate-color, 25%);
 }

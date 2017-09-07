@@ -18,21 +18,21 @@ module.exports = function(grunt) {
       },
       opennms_to_vendor: {
         expand: true,
-          src: ['node_modules/opennms/dist/opennms.js'],
-          flatten: true,
-          dest: 'vendor'
+        src: ['node_modules/opennms/dist/opennms.js'],
+        flatten: true,
+        dest: 'vendor'
       },
       vendor_to_dist: {
-          cwd: 'vendor',
-          expand: true,
-          src: ['**/*'],
-          dest: 'dist'
+        cwd: 'vendor',
+        expand: true,
+        src: ['**/*'],
+        dest: 'dist'
       },
       vendor_to_dist_tests: {
-          cwd: 'vendor',
-          expand: true,
-          src: ['**/*'],
-          dest: 'dist/test'
+        cwd: 'vendor',
+        expand: true,
+        src: ['**/*'],
+        dest: 'dist/test'
       },
       pluginDef: {
         expand: true,

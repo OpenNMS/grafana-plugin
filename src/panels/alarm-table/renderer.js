@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
-import {Model} from '../../opennms';
 
 export class TableRenderer {
 
-  constructor(panel, table, isUtc, sanitize) {
+  constructor(panel, table, isUtc, sanitize, selectionMgr) {
     this.panel = panel;
     this.table = table;
     this.isUtc = isUtc;
     this.sanitize = sanitize;
+    this.selectionMgr = selectionMgr;
 
     this.initColumns();
   }
@@ -216,6 +216,12 @@ export class TableRenderer {
     return icon;
   }
 
+  isRowSelected(row) {
+    return this.selectionMgr.isRowSelected({
+      source: row.meta.source,
+      alarmId: row.meta.alarm.id
+    });
+  }
 
   render(page) {
     let pageSize = this.panel.pageSize || 100;
@@ -225,45 +231,26 @@ export class TableRenderer {
 
     for (let y = startPos; y < endPos; y++) {
       let row = this.table.rows[y];
+      let nextRow;
+      if (y+1 < endPos) {
+        nextRow = this.table.rows[y+1];
+      }
+
       let cellHtml = '';
       let rowStyle = '';
-      let rowClass = '';
+      let rowClasses = [];
 
       let source = row.meta.source.replace(/'/g, '\\\'');
       let alarm = row.meta.alarm;
-      let ticketerConfig = row.meta.ticketerConfig;
       let severity = alarm.severity.label.toLowerCase();
 
       if (this.panel.severityIcons) {
         let icon = TableRenderer.getIconForSeverity(severity);
-        cellHtml += `<td ng-click="ctrl.alarmDetails('${source}', ${alarm.id})" class="severity-icon text-center"><i class="icon ${icon}"></i></td>`;
+        cellHtml += `<td class="severity-icon text-center"><i class="icon ${icon}"></i></td>`;
       }
 
       for (let i = 0; i < this.table.columns.length; i++) {
         cellHtml += this.renderCell(i, row[i], y === startPos);
-      }
-
-      if (this.panel.actions) {
-        cellHtml += `<td>`;
-        cellHtml += new Menu()
-            .withGroup(
-                new Group().withItem(new MenuItem("Details", `ctrl.alarmDetails('${source}', ${alarm.id})`))
-            )
-            .withGroup(
-                new Group()
-                    .withItem(new MenuItem("Acknowledge", `ctrl.acknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime === void 0))
-                    .withItem(new MenuItem("Unacknowledge", `ctrl.unacknowledgeAlarm('${source}', ${alarm.id})`, () => alarm.ackTime))
-                    .withItem(new MenuItem("Escalate", `ctrl.escalateAlarm('${source}', ${alarm.id})`, () => alarm.severity.index == Model.Severities.CLEARED.index || alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index < Model.Severities.CRITICAL.index))
-                    .withItem(new MenuItem("Clear", `ctrl.clearAlarm('${source}', ${alarm.id})`, () => alarm.severity.index >= Model.Severities.NORMAL.index && alarm.severity.index <= Model.Severities.CRITICAL.index))
-            )
-            .withGroup(
-                new Group()
-                    .withVisibility(() => ticketerConfig && ticketerConfig.enabled)
-                    .withItem(new MenuItem("Create Ticket", `ctrl.createTicketForAlarm('${source}', ${alarm.id})`, () => !alarm.troubleTicketState || alarm.troubleTicketState === Model.TroubleTicketStates.CREATE_FAILED))
-                    .withItem(new MenuItem("Update Ticket", `ctrl.updateTicketForAlarm('${source}', ${alarm.id})`, () => alarm.troubleTicketState && alarm.troubleTicket))
-                    .withItem(new MenuItem("Close Ticket", `ctrl.closeTicketForAlarm('${source}', ${alarm.id})`, () => alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == Model.TroubleTicketStates.CLOSE_FAILED)))
-            ).render();
-        cellHtml += `</td>`;
       }
 
       if (this.colorState.row) {
@@ -272,10 +259,19 @@ export class TableRenderer {
       }
 
       if (this.panel.severity) {
-        rowClass = ' class="' + severity + '"';
+        rowClasses.push(severity);
       }
 
-      html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
+      if (this.isRowSelected(row)) {
+        rowClasses.push("selected");
+      }
+
+      if (nextRow && this.isRowSelected(nextRow)) {
+        rowClasses.push("next-selected");
+      }
+
+      let rowClass = 'class="' + rowClasses.join(' ') + '"';
+      html += '<tr ' + rowStyle + rowClass + ` ng-click="ctrl.onRowClick($event, '${source}', ${alarm.id})"  ng-dblclick="ctrl.onRowDoubleClick($event, '${source}', ${alarm.id})" context-menu="ctrl.getContextMenu($event, '${source}', ${alarm.id})">` + cellHtml + '</tr>';
     }
 
     return html;
@@ -296,98 +292,5 @@ export class TableRenderer {
       columns: this.table.columns,
       rows: rows,
     };
-  }
-}
-
-class Group {
-  constructor() {
-    this.items = [];
-    this.visibilityFn = () => true;
-  }
-
-  withVisibility(visibilityFn) {
-    this.visibilityFn = visibilityFn;
-    return this;
-  }
-
-  withItem(itemOrMenu) {
-    this.items.push(itemOrMenu);
-    return this;
-  }
-
-  withGroup(group) {
-    this.withItem(group);
-      return this;
-  }
-
-  isVisible() {
-    if (this.visibilityFn()) {
-      return this.getVisibleItems().length >= 1;
-    }
-    return false;
-  }
-
-  getVisibleItems() {
-    const visibleItems = _.filter(this.items, item => {
-        return item.isVisible();
-    });
-    return visibleItems;
-  }
-
-  render() {
-    const visibleItems = _.filter(this.items, item => {
-      return item.isVisible();
-    });
-
-    const renderedItems = _.map(visibleItems, item => {
-      return item.render();
-    });
-    return renderedItems.join('');
-  }
-}
-
-class Menu extends Group {
-
-    constructor() {
-        super();
-    }
-
-    render() {
-        let html = '<div class="gf-form gf-form-no-margin">';
-        html += '<label class="gf-form-label gf-smaller-form-label dropdown">';
-        html += '<a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1"><i class="fa fa-bars"></i></a>';
-        html += '<ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">';
-
-        const visibleItems = this.getVisibleItems();
-        html += _.map(visibleItems, (item, index) => {
-            let rendered = item.render();
-            if (index < visibleItems.length -1) {
-              rendered += '<li class="divider"></li>';
-            }
-            return rendered;
-        }).join('');
-
-        html += '</ul></label></div>';
-        return html;
-    }
-
-}
-
-class MenuItem {
-  constructor(label, action, visibilityFn) {
-    this.label = label;
-    this.action = action;
-    this.visibilityFn = visibilityFn;
-    if (!visibilityFn) {
-        this.visibilityFn = () => true;
-    }
-  }
-
-  isVisible() {
-    return this.visibilityFn();
-  }
-
-  render() {
-    return '<li role="menuitem"><a tabindex="1" ng-click="' + this.action + '">' + this.label + '</a></li>';
   }
 }
