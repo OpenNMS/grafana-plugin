@@ -20,47 +20,82 @@
 }
 
 $cell-font-weight: 600;
+$indeterminate-color: #990000;
+$cleared-color: #EEE000;
+$normal-color: #86B15B;
+$warning-color: #FCCC3B;
+$minor-color: #EE901C;
+$major-color: #E3692F;
+$critical-color: #DB4345;
 
 .severity .indeterminate {
-  background-color: #990000;
+  background-color: $indeterminate-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .cleared {
-  background-color: #EEE000;
+  background-color: $cleared-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .normal {
-  background-color: #86B15B;
+  background-color: $normal-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .warning {
-  background-color: #FCCC3B;
+  background-color: $warning-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .minor {
-  background-color: #EE901C;
+  background-color: $minor-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .major {
-  background-color: #E3692F;
+  background-color: $major-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
 }
 
 .severity .critical {
-  background-color: #DB4345;
+  background-color: $critical-color;
   color: $cell-text-color;
   font-weight: $cell-font-weight;
+}
+
+.alarm-table tr.indeterminate:hover {
+  background-color: lighten($indeterminate-color, 25%);
+}
+
+.alarm-table tr.cleared:hover {
+  background-color: lighten($cleared-color, 25%);
+}
+
+.alarm-table tr.normal:hover {
+  background-color: lighten($normal-color, 25%);
+}
+
+.alarm-table tr.warning:hover {
+  background-color: lighten($warning-color, 25%);
+}
+
+.alarm-table tr.minor:hover {
+  background-color: lighten($minor-color, 25%);
+}
+
+.alarm-table tr.major:hover {
+  background-color: lighten($major-color, 25%);
+}
+
+.alarm-table tr.critical:hover {
+  background-color: lighten($critical-color, 25%);
 }
 
 .gf-form-no-margin {
@@ -75,3 +110,4 @@ $cell-font-weight: 600;
 .dropdown-menu-with-smaller-form-label {
   font-size: .875rem !important;
 }
+
