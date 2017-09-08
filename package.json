@@ -45,7 +45,7 @@
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "lodash": "~4.17.4",
-    "opennms": "https://github.com/OpenNMS/opennms-js.git#cb094ca133484962eeef52307d382551a56b0ecb",
+    "opennms": "https://github.com/OpenNMS/opennms-js.git#0df0c3e6407da86964405fa87811ad06d0cce0c9",
     "q": "^1.5.0"
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
