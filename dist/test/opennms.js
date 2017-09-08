@@ -10240,13 +10240,14 @@ var OnmsServer = function () {
     /**
      * Given a relative URL fragment, construct a URL for that fragment on the server.
      * @param forFragment - The URL fragment to append to the server URL.
+     * @parm withQuery - Query parameters to be appended to the URL.
      * @returns A complete URL.
      */
 
 
     _createClass(OnmsServer, [{
         key: "resolveURL",
-        value: function resolveURL(forFragment) {
+        value: function resolveURL(forFragment, withQuery) {
             if (!this.url) {
                 return undefined;
             }
@@ -10256,7 +10257,11 @@ var OnmsServer = function () {
             if (forFragment.indexOf('/') === 0 || forFragment.indexOf('http') === 0) {
                 return forFragment;
             }
-            return URI(this.url).segment(forFragment).toString();
+            var uri = URI(this.url).segment(forFragment);
+            if (withQuery !== undefined) {
+                uri = uri.addQuery(withQuery);
+            }
+            return uri.toString();
         }
         /**
          * Create a new server object from this existing one.
@@ -11246,6 +11251,7 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
             }
             alarm.sticky = this.toMemo(data.stickyMemo);
             alarm.journal = this.toMemo(data.reductionKeyMemo);
+            alarm.detailsPage = this.getDetailsPage(alarm);
             return alarm;
         }
         /**
@@ -11467,6 +11473,19 @@ var AlarmDAO = function (_AbstractDAO_1$Abstra) {
                     }
                 }, _callee20, this);
             }));
+        }
+        /**
+         * Retrieves the URL to the details page for the given alarm.
+         *
+         * @param {number|OnmsAlarm} alarm - The [[OnmsAlarm]] or alarm ID.
+         * @returns {URL} URL on the associated OpenNMS server for the alarm details page.
+         */
+
+    }, {
+        key: "getDetailsPage",
+        value: function getDetailsPage(alarm) {
+            var alarmId = typeof alarm === 'number' ? alarm : alarm.id;
+            return this.http.server.resolveURL("alarm/detail.htm", { id: alarmId });
         }
     }]);
 
