@@ -14,6 +14,13 @@ export class AlarmDetailsCtrl {
     // Compute the icon
     let severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
+
+    // Compute the tabs
+    $scope.tabs = ['Overview', 'Memos'];
+    $scope.ticketingEnabled = $scope.$parent.ticketerConfig && $scope.$parent.ticketerConfig.enabled;
+    if ($scope.ticketingEnabled) {
+      $scope.tabs.push('Ticketing');
+    }
   }
 
 }
