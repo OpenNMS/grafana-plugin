@@ -99,4 +99,4 @@ image::gf-edit-panel.png[Edit Panel, 200]
 . Save the dashboard by clicking the disk icon near the top of the screen, enter a name, and click `Save`.
 
 That's it! Now, you have your first dashboard.
-Try changing the time range at the top right of the screen, or try performing actions against the alarms using the hamburger menu on the right of the alarm rows.
+Try changing the time range at the top right of the screen, or try performing actions against the alarms by right on any of the alarm rows.
