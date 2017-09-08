@@ -48,6 +48,13 @@ System.register(['./renderer'], function (_export, _context) {
         // Compute the icon
         var severity = $scope.alarm.severity.label.toLowerCase();
         $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
+
+        // Compute the tabs
+        $scope.tabs = ['Overview', 'Memos'];
+        $scope.ticketingEnabled = $scope.$parent.ticketerConfig && $scope.$parent.ticketerConfig.enabled;
+        if ($scope.ticketingEnabled) {
+          $scope.tabs.push('Ticketing');
+        }
       });
 
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl);

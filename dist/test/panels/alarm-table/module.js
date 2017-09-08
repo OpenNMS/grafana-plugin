@@ -317,14 +317,6 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
       return matchedRow;
     }
   }, {
-    key: 'findAlarm',
-    value: function findAlarm(source, alarmId) {
-      var row = this.findTableRow(source, alarmId);
-      if (row !== undefined) {
-        return row.meta.alarm;
-      }
-    }
-  }, {
     key: 'getContextMenu',
     value: function getContextMenu($event, source, alarmId) {
       // Treat the right click as a left click on the row, if the row is not part of the current selection
@@ -374,15 +366,17 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
   }, {
     key: 'alarmDetails',
     value: function alarmDetails(source, alarmId) {
-      var alarm = this.findAlarm(source, alarmId);
-      if (alarm === undefined) {
+      var row = this.findTableRow(source, alarmId);
+      if (row === undefined) {
         this.$rootScope.appEvent('alert-error', ['Unable to find matching alarm', '']);
         return;
       }
 
       var newScope = this.$rootScope.$new();
-      newScope.alarm = alarm;
       newScope.source = source;
+      newScope.alarm = row.meta.alarm;
+      newScope.ticketerConfig = row.meta.ticketerConfig;
+
       this.$rootScope.appEvent('show-modal', {
         templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
         scope: newScope
