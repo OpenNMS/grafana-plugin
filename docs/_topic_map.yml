@@ -56,5 +56,13 @@ Dir: contributing
 Topics:
   - Name: Contributing
     File: index
-  - Name: How to Build the Docs
+  - Name: Developing
+    File: developing
+  - Name: How to build the docs
     File: how-to-build-docs
+---
+Name: Reference
+Dir: reference
+Topics:
+  - Name: How to build with Docker
+    File: how-to-build-with-docker
