@@ -277,13 +277,6 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     return matchedRow;
   }
 
-  findAlarm(source, alarmId) {
-    let row = this.findTableRow(source, alarmId);
-    if (row !== undefined) {
-      return row.meta.alarm;
-    }
-  }
-
   getContextMenu($event, source, alarmId) {
     // Treat the right click as a left click on the row, if the row is not part of the current selection
     if (!this.selectionMgr.isRowSelected({
@@ -327,15 +320,17 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   alarmDetails(source, alarmId) {
-    let alarm = this.findAlarm(source, alarmId);
-    if (alarm === undefined) {
+    const row = this.findTableRow(source, alarmId);
+    if (row === undefined) {
       this.$rootScope.appEvent('alert-error', ['Unable to find matching alarm', '']);
       return;
     }
 
     let newScope = this.$rootScope.$new();
-    newScope.alarm = alarm;
     newScope.source = source;
+    newScope.alarm = row.meta.alarm;
+    newScope.ticketerConfig = row.meta.ticketerConfig;
+
     this.$rootScope.appEvent('show-modal', {
       templateHtml: '<alarm-details-as-modal dismiss="dismiss()"></alarm-details-as-modal>',
       scope: newScope

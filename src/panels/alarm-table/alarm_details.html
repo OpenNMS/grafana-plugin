@@ -6,7 +6,7 @@
         </h2>
 
         <ul class="gf-tabs">
-            <li class="gf-tabs-item" ng-repeat="tab in ['Overview', 'Memos', 'Ticketing']">
+            <li class="gf-tabs-item" ng-repeat="tab in tabs">
                 <a class="gf-tabs-link" ng-click="editor.index = $index" ng-class="{active: editor.index === $index}">
                     {{::tab}}
                 </a>
