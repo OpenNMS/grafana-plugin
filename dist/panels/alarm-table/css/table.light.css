@@ -2279,6 +2279,41 @@
   color: #000000;
   font-weight: 600; }
 
+.alarm-table .selected {
+  background-color: lightblue; }
+
+.alarm-table > .severity > .indeterminate {
+  background-color: #ff1a1a; }
+
+.alarm-table > .severity > .selected.cleared {
+  background-color: #fff76f; }
+
+.alarm-table > .severity > .selected.normal {
+  background-color: #c6dab1; }
+
+.alarm-table > .severity > .selected.warning {
+  background-color: #feedb9; }
+
+.alarm-table > .severity > .selected.minor {
+  background-color: #f7ca93; }
+
+.alarm-table > .severity > .selected.major {
+  background-color: #f2ba9f; }
+
+.alarm-table > .severity > .selected.critical {
+  background-color: #f8d9d9; }
+
+.alarm-table tr.next-selected, .alarm-table tr.next-selected td {
+  border-bottom: 2px dashed darkblue; }
+
+.alarm-table tr.selected, .alarm-table tr.selected td {
+  border: 2px dashed darkblue;
+  border-top: 2px dashed darkblue;
+  border-bottom: 2px dashed darkblue; }
+
+.alarm-table tr:hover {
+  background-color: lightblue; }
+
 .alarm-table tr.indeterminate:hover {
   background-color: #ff1a1a; }
 

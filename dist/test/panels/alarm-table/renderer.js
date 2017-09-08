@@ -19,24 +19,19 @@ var _kbn = require('app/core/utils/kbn');
 
 var _kbn2 = _interopRequireDefault(_kbn);
 
-var _opennms = require('../../opennms');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var TableRenderer = exports.TableRenderer = function () {
-  function TableRenderer(panel, table, isUtc, sanitize) {
+  function TableRenderer(panel, table, isUtc, sanitize, selectionMgr) {
     _classCallCheck(this, TableRenderer);
 
     this.panel = panel;
     this.table = table;
     this.isUtc = isUtc;
     this.sanitize = sanitize;
+    this.selectionMgr = selectionMgr;
 
     this.initColumns();
   }
@@ -214,71 +209,64 @@ var TableRenderer = exports.TableRenderer = function () {
       return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
     }
   }, {
+    key: 'isRowSelected',
+    value: function isRowSelected(row) {
+      return this.selectionMgr.isRowSelected({
+        source: row.meta.source,
+        alarmId: row.meta.alarm.id
+      });
+    }
+  }, {
     key: 'render',
     value: function render(page) {
-      var _this2 = this;
-
       var pageSize = this.panel.pageSize || 100;
       var startPos = page * pageSize;
       var endPos = Math.min(startPos + pageSize, this.table.rows.length);
       var html = "";
 
-      var _loop = function _loop(y) {
-        var row = _this2.table.rows[y];
+      for (var y = startPos; y < endPos; y++) {
+        var row = this.table.rows[y];
+        var nextRow = void 0;
+        if (y + 1 < endPos) {
+          nextRow = this.table.rows[y + 1];
+        }
+
         var cellHtml = '';
         var rowStyle = '';
-        var rowClass = '';
+        var rowClasses = [];
 
         var source = row.meta.source.replace(/'/g, '\\\'');
         var alarm = row.meta.alarm;
-        var ticketerConfig = row.meta.ticketerConfig;
         var severity = alarm.severity.label.toLowerCase();
 
-        if (_this2.panel.severityIcons) {
+        if (this.panel.severityIcons) {
           var icon = TableRenderer.getIconForSeverity(severity);
-          cellHtml += '<td ng-click="ctrl.alarmDetails(\'' + source + '\', ' + alarm.id + ')" class="severity-icon text-center"><i class="icon ' + icon + '"></i></td>';
+          cellHtml += '<td class="severity-icon text-center"><i class="icon ' + icon + '"></i></td>';
         }
 
-        for (var i = 0; i < _this2.table.columns.length; i++) {
-          cellHtml += _this2.renderCell(i, row[i], y === startPos);
+        for (var i = 0; i < this.table.columns.length; i++) {
+          cellHtml += this.renderCell(i, row[i], y === startPos);
         }
 
-        if (_this2.panel.actions) {
-          cellHtml += '<td>';
-          cellHtml += new Menu().withGroup(new Group().withItem(new MenuItem("Details", 'ctrl.alarmDetails(\'' + source + '\', ' + alarm.id + ')'))).withGroup(new Group().withItem(new MenuItem("Acknowledge", 'ctrl.acknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.ackTime === void 0;
-          })).withItem(new MenuItem("Unacknowledge", 'ctrl.unacknowledgeAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.ackTime;
-          })).withItem(new MenuItem("Escalate", 'ctrl.escalateAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.severity.index == _opennms.Model.Severities.CLEARED.index || alarm.severity.index >= _opennms.Model.Severities.NORMAL.index && alarm.severity.index < _opennms.Model.Severities.CRITICAL.index;
-          })).withItem(new MenuItem("Clear", 'ctrl.clearAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.severity.index >= _opennms.Model.Severities.NORMAL.index && alarm.severity.index <= _opennms.Model.Severities.CRITICAL.index;
-          }))).withGroup(new Group().withVisibility(function () {
-            return ticketerConfig && ticketerConfig.enabled;
-          }).withItem(new MenuItem("Create Ticket", 'ctrl.createTicketForAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return !alarm.troubleTicketState || alarm.troubleTicketState === _opennms.Model.TroubleTicketStates.CREATE_FAILED;
-          })).withItem(new MenuItem("Update Ticket", 'ctrl.updateTicketForAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.troubleTicketState && alarm.troubleTicket;
-          })).withItem(new MenuItem("Close Ticket", 'ctrl.closeTicketForAlarm(\'' + source + '\', ' + alarm.id + ')', function () {
-            return alarm.troubleTicketState && (alarm.troubleTicketState === _opennms.Model.TroubleTicketStates.OPEN || alarm.troubleTicketState == _opennms.Model.TroubleTicketStates.CLOSE_FAILED);
-          }))).render();
-          cellHtml += '</td>';
+        if (this.colorState.row) {
+          rowStyle = ' style="background-color:' + this.colorState.row + ';color: white"';
+          this.colorState.row = null;
         }
 
-        if (_this2.colorState.row) {
-          rowStyle = ' style="background-color:' + _this2.colorState.row + ';color: white"';
-          _this2.colorState.row = null;
+        if (this.panel.severity) {
+          rowClasses.push(severity);
         }
 
-        if (_this2.panel.severity) {
-          rowClass = ' class="' + severity + '"';
+        if (this.isRowSelected(row)) {
+          rowClasses.push("selected");
         }
 
-        html += '<tr ' + rowStyle + rowClass + '>' + cellHtml + '</tr>';
-      };
+        if (nextRow && this.isRowSelected(nextRow)) {
+          rowClasses.push("next-selected");
+        }
 
-      for (var y = startPos; y < endPos; y++) {
-        _loop(y);
+        var rowClass = 'class="' + rowClasses.join(' ') + '"';
+        html += '<tr ' + rowStyle + rowClass + (' ng-click="ctrl.onRowClick($event, \'' + source + '\', ' + alarm.id + ')"  ng-dblclick="ctrl.onRowDoubleClick($event, \'' + source + '\', ' + alarm.id + ')" context-menu="ctrl.getContextMenu($event, \'' + source + '\', ' + alarm.id + ')">') + cellHtml + '</tr>';
       }
 
       return html;
@@ -289,10 +277,10 @@ var TableRenderer = exports.TableRenderer = function () {
       var rows = [];
 
       for (var y = 0; y < this.table.rows.length; y++) {
-        var _row = this.table.rows[y];
+        var row = this.table.rows[y];
         var new_row = [];
         for (var i = 0; i < this.table.columns.length; i++) {
-          new_row.push(this.formatColumnValue(i, _row[i]));
+          new_row.push(this.formatColumnValue(i, row[i]));
         }
         rows.push(new_row);
       }
@@ -347,129 +335,5 @@ var TableRenderer = exports.TableRenderer = function () {
   }]);
 
   return TableRenderer;
-}();
-
-var Group = function () {
-  function Group() {
-    _classCallCheck(this, Group);
-
-    this.items = [];
-    this.visibilityFn = function () {
-      return true;
-    };
-  }
-
-  _createClass(Group, [{
-    key: 'withVisibility',
-    value: function withVisibility(visibilityFn) {
-      this.visibilityFn = visibilityFn;
-      return this;
-    }
-  }, {
-    key: 'withItem',
-    value: function withItem(itemOrMenu) {
-      this.items.push(itemOrMenu);
-      return this;
-    }
-  }, {
-    key: 'withGroup',
-    value: function withGroup(group) {
-      this.withItem(group);
-      return this;
-    }
-  }, {
-    key: 'isVisible',
-    value: function isVisible() {
-      if (this.visibilityFn()) {
-        return this.getVisibleItems().length >= 1;
-      }
-      return false;
-    }
-  }, {
-    key: 'getVisibleItems',
-    value: function getVisibleItems() {
-      var visibleItems = _lodash2.default.filter(this.items, function (item) {
-        return item.isVisible();
-      });
-      return visibleItems;
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var visibleItems = _lodash2.default.filter(this.items, function (item) {
-        return item.isVisible();
-      });
-
-      var renderedItems = _lodash2.default.map(visibleItems, function (item) {
-        return item.render();
-      });
-      return renderedItems.join('');
-    }
-  }]);
-
-  return Group;
-}();
-
-var Menu = function (_Group) {
-  _inherits(Menu, _Group);
-
-  function Menu() {
-    _classCallCheck(this, Menu);
-
-    return _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this));
-  }
-
-  _createClass(Menu, [{
-    key: 'render',
-    value: function render() {
-      var html = '<div class="gf-form gf-form-no-margin">';
-      html += '<label class="gf-form-label gf-smaller-form-label dropdown">';
-      html += '<a class="pointer dropdown-toggle" data-toggle="dropdown" tabindex="1"><i class="fa fa-bars"></i></a>';
-      html += '<ul class="dropdown-menu dropdown-menu-with-smaller-form-label pull-right"role="menu">';
-
-      var visibleItems = this.getVisibleItems();
-      html += _lodash2.default.map(visibleItems, function (item, index) {
-        var rendered = item.render();
-        if (index < visibleItems.length - 1) {
-          rendered += '<li class="divider"></li>';
-        }
-        return rendered;
-      }).join('');
-
-      html += '</ul></label></div>';
-      return html;
-    }
-  }]);
-
-  return Menu;
-}(Group);
-
-var MenuItem = function () {
-  function MenuItem(label, action, visibilityFn) {
-    _classCallCheck(this, MenuItem);
-
-    this.label = label;
-    this.action = action;
-    this.visibilityFn = visibilityFn;
-    if (!visibilityFn) {
-      this.visibilityFn = function () {
-        return true;
-      };
-    }
-  }
-
-  _createClass(MenuItem, [{
-    key: 'isVisible',
-    value: function isVisible() {
-      return this.visibilityFn();
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return '<li role="menuitem"><a tabindex="1" ng-click="' + this.action + '">' + this.label + '</a></li>';
-    }
-  }]);
-
-  return MenuItem;
 }();
 //# sourceMappingURL=renderer.js.map
