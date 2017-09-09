@@ -8,6 +8,9 @@ export class OpenNMSDatasource {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
+    this.basicAuth = instanceSettings.basicAuth;
+    this.withCredentials = instanceSettings.withCredentials;
+
     this.$q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
@@ -16,6 +19,20 @@ export class OpenNMSDatasource {
     this.target = {};
   }
 
+  doOpenNMSRequest(options) {
+    if (this.basicAuth || this.withCredentials) {
+      options.withCredentials = true;
+    }
+    if (this.basicAuth) {
+      options.headers = options.headers || {};
+      options.headers.Authorization = this.basicAuth;
+    }
+
+    options.url = this.url + options.url;
+
+    return this.backendSrv.datasourceRequest(options);
+  };
+
   query(options) {
     // Generate the query
     var query = this.buildQuery(options);
@@ -23,8 +40,8 @@ export class OpenNMSDatasource {
     // Issue the request
     var request;
     if (query.source.length > 0) {
-      request = this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/measurements',
+      request = this.doOpenNMSRequest({
+        url: '/rest/measurements',
         data: query,
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
@@ -46,8 +63,8 @@ export class OpenNMSDatasource {
 
   // Used for testing the connection from the datasource configuration page
   testDatasource() {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/info',
+    return this.doOpenNMSRequest({
+      url: '/rest/info',
       method: 'GET'
     }).then(response => {
       if (response.status === 200) {
@@ -82,8 +99,8 @@ export class OpenNMSDatasource {
   }
 
   metricFindNodeFilterQuery(query) {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/nodes',
+    return this.doOpenNMSRequest({
+      url: '/rest/nodes',
       method: 'GET',
       params: {
         filterRule: query,
@@ -106,8 +123,8 @@ export class OpenNMSDatasource {
   }
 
   metricFindNodeResourceQuery(query) {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
       method: 'GET',
       params: {
         depth: 1
@@ -341,8 +358,8 @@ export class OpenNMSDatasource {
   }
 
   searchForNodes(query) {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/nodes',
+    return this.doOpenNMSRequest({
+      url: '/rest/nodes',
       method: 'GET',
       params: {
         limit: this.searchLimit,
@@ -362,8 +379,8 @@ export class OpenNMSDatasource {
   getResourcesWithAttributesForNode(nodeId) {
     var interpolatedNodeId = _.first(this.interpolateValue(nodeId));
 
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
       method: 'GET',
       params: {
         depth: -1
@@ -374,8 +391,8 @@ export class OpenNMSDatasource {
   }
 
   getAvailableFilters() {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/measurements/filters',
+    return this.doOpenNMSRequest({
+      url: '/rest/measurements/filters',
       method: 'GET'
     });
   }
@@ -385,8 +402,8 @@ export class OpenNMSDatasource {
         interpolatedResourceId = _.first(this.interpolateValue(resourceId));
     var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/rest/resources/' + encodeURIComponent(remoteResourceId),
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
       method: 'GET',
       params: {
         depth: -1
