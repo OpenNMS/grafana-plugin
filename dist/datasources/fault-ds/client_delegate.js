@@ -50,7 +50,19 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     this.searchLimit = 1000;
                     this.$q = $q;
 
-                    var server = new API.OnmsServer(this.name, this.url);
+                    var authConfig = undefined;
+                    if (settings.basicAuth) {
+                        // If basic auth is configured, pass the username and password to the client
+                        // This allows the datasource to work in direct mode
+                        // We need the raw username and password, so we decode the token
+                        var token = settings.basicAuth.split(' ')[1];
+                        var decodedToken = atob(token);
+                        var username = decodedToken.split(':')[0];
+                        var password = decodedToken.substring(username.length + 1, decodedToken.length);
+                        authConfig = new API.OnmsAuthConfig(username, password);
+                    }
+
+                    var server = new API.OnmsServer(this.name, this.url, authConfig);
                     var http = new Rest.GrafanaHTTP(this.backendSrv, server);
                     this.client = new Client(http);
                     this.client.server = server;

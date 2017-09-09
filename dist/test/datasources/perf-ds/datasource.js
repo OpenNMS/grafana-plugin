@@ -26,6 +26,9 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
+    this.basicAuth = instanceSettings.basicAuth;
+    this.withCredentials = instanceSettings.withCredentials;
+
     this.$q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
@@ -35,6 +38,21 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }
 
   _createClass(OpenNMSDatasource, [{
+    key: 'doOpenNMSRequest',
+    value: function doOpenNMSRequest(options) {
+      if (this.basicAuth || this.withCredentials) {
+        options.withCredentials = true;
+      }
+      if (this.basicAuth) {
+        options.headers = options.headers || {};
+        options.headers.Authorization = this.basicAuth;
+      }
+
+      options.url = this.url + options.url;
+
+      return this.backendSrv.datasourceRequest(options);
+    }
+  }, {
     key: 'query',
     value: function query(options) {
       // Generate the query
@@ -43,8 +61,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       // Issue the request
       var request;
       if (query.source.length > 0) {
-        request = this.backendSrv.datasourceRequest({
-          url: this.url + '/rest/measurements',
+        request = this.doOpenNMSRequest({
+          url: '/rest/measurements',
           data: query,
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -69,8 +87,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }, {
     key: 'testDatasource',
     value: function testDatasource() {
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/info',
+      return this.doOpenNMSRequest({
+        url: '/rest/info',
         method: 'GET'
       }).then(function (response) {
         if (response.status === 200) {
@@ -109,8 +127,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }, {
     key: 'metricFindNodeFilterQuery',
     value: function metricFindNodeFilterQuery(query) {
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/nodes',
+      return this.doOpenNMSRequest({
+        url: '/rest/nodes',
         method: 'GET',
         params: {
           filterRule: query,
@@ -134,8 +152,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }, {
     key: 'metricFindNodeResourceQuery',
     value: function metricFindNodeResourceQuery(query) {
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
+      return this.doOpenNMSRequest({
+        url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
         method: 'GET',
         params: {
           depth: 1
@@ -317,8 +335,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }, {
     key: 'searchForNodes',
     value: function searchForNodes(query) {
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/nodes',
+      return this.doOpenNMSRequest({
+        url: '/rest/nodes',
         method: 'GET',
         params: {
           limit: this.searchLimit,
@@ -339,8 +357,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
     value: function getResourcesWithAttributesForNode(nodeId) {
       var interpolatedNodeId = _lodash2.default.first(this.interpolateValue(nodeId));
 
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
+      return this.doOpenNMSRequest({
+        url: '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
         method: 'GET',
         params: {
           depth: -1
@@ -352,8 +370,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
   }, {
     key: 'getAvailableFilters',
     value: function getAvailableFilters() {
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/measurements/filters',
+      return this.doOpenNMSRequest({
+        url: '/rest/measurements/filters',
         method: 'GET'
       });
     }
@@ -364,8 +382,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           interpolatedResourceId = _lodash2.default.first(this.interpolateValue(resourceId));
       var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
-      return this.backendSrv.datasourceRequest({
-        url: this.url + '/rest/resources/' + encodeURIComponent(remoteResourceId),
+      return this.doOpenNMSRequest({
+        url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
         method: 'GET',
         params: {
           depth: -1

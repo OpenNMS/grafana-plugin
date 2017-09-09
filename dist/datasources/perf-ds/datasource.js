@@ -45,6 +45,9 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
           this.type = instanceSettings.type;
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
+          this.basicAuth = instanceSettings.basicAuth;
+          this.withCredentials = instanceSettings.withCredentials;
+
           this.$q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
@@ -54,6 +57,21 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }
 
         _createClass(OpenNMSDatasource, [{
+          key: 'doOpenNMSRequest',
+          value: function doOpenNMSRequest(options) {
+            if (this.basicAuth || this.withCredentials) {
+              options.withCredentials = true;
+            }
+            if (this.basicAuth) {
+              options.headers = options.headers || {};
+              options.headers.Authorization = this.basicAuth;
+            }
+
+            options.url = this.url + options.url;
+
+            return this.backendSrv.datasourceRequest(options);
+          }
+        }, {
           key: 'query',
           value: function query(options) {
             // Generate the query
@@ -62,8 +80,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             // Issue the request
             var request;
             if (query.source.length > 0) {
-              request = this.backendSrv.datasourceRequest({
-                url: this.url + '/rest/measurements',
+              request = this.doOpenNMSRequest({
+                url: '/rest/measurements',
                 data: query,
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
@@ -85,8 +103,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }, {
           key: 'testDatasource',
           value: function testDatasource() {
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/info',
+            return this.doOpenNMSRequest({
+              url: '/rest/info',
               method: 'GET'
             }).then(function (response) {
               if (response.status === 200) {
@@ -122,8 +140,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }, {
           key: 'metricFindNodeFilterQuery',
           value: function metricFindNodeFilterQuery(query) {
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/nodes',
+            return this.doOpenNMSRequest({
+              url: '/rest/nodes',
               method: 'GET',
               params: {
                 filterRule: query,
@@ -147,8 +165,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }, {
           key: 'metricFindNodeResourceQuery',
           value: function metricFindNodeResourceQuery(query) {
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
+            return this.doOpenNMSRequest({
+              url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
               method: 'GET',
               params: {
                 depth: 1
@@ -330,8 +348,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }, {
           key: 'searchForNodes',
           value: function searchForNodes(query) {
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/nodes',
+            return this.doOpenNMSRequest({
+              url: '/rest/nodes',
               method: 'GET',
               params: {
                 limit: this.searchLimit,
@@ -352,8 +370,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
           value: function getResourcesWithAttributesForNode(nodeId) {
             var interpolatedNodeId = _.first(this.interpolateValue(nodeId));
 
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
+            return this.doOpenNMSRequest({
+              url: '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
               method: 'GET',
               params: {
                 depth: -1
@@ -365,8 +383,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
         }, {
           key: 'getAvailableFilters',
           value: function getAvailableFilters() {
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/measurements/filters',
+            return this.doOpenNMSRequest({
+              url: '/rest/measurements/filters',
               method: 'GET'
             });
           }
@@ -377,8 +395,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                 interpolatedResourceId = _.first(this.interpolateValue(resourceId));
             var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
-            return this.backendSrv.datasourceRequest({
-              url: this.url + '/rest/resources/' + encodeURIComponent(remoteResourceId),
+            return this.doOpenNMSRequest({
+              url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
               method: 'GET',
               params: {
                 depth: -1
