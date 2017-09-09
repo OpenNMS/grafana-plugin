@@ -11,7 +11,19 @@ export class ClientDelegate {
         this.searchLimit = 1000;
         this.$q = $q;
 
-        let server = new API.OnmsServer(this.name, this.url);
+        let authConfig = undefined;
+        if (settings.basicAuth) {
+          // If basic auth is configured, pass the username and password to the client
+          // This allows the datasource to work in direct mode
+          // We need the raw username and password, so we decode the token
+          const token = settings.basicAuth.split(' ')[1];
+          const decodedToken = atob(token);
+          const username = decodedToken.split(':')[0];
+          const password = decodedToken.substring(username.length+1, decodedToken.length);
+          authConfig = new API.OnmsAuthConfig(username, password);
+        }
+
+        let server = new API.OnmsServer(this.name, this.url, authConfig);
         let http = new Rest.GrafanaHTTP(this.backendSrv, server);
         this.client = new Client(http);
         this.client.server = server;
