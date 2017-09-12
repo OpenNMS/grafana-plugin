@@ -64,5 +64,7 @@ Topics:
 Name: Reference
 Dir: reference
 Topics:
+  - Name: Severities
+    File: severities
   - Name: How to build with Docker
     File: how-to-build-with-docker
