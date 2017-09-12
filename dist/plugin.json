@@ -3,12 +3,12 @@
   "id": "opennms-helm",
   "type": "app",
   "info": {
-    "description": "PM/FM Console for Grafana",
+    "description": "Helm is a Grafana plugin that allows you to create flexible dashboards using both using both fault management (FM) and performance management (PM) data from OpenNMS® Horizon™ and/or OpenNMS® Meridian™.",
     "author": {
       "name": "The OpenNMS Group Inc.",
-      "url": "http://www.opennms.com"
+      "url": "https://www.opennms.com"
     },
-    "keywords": ["opennms app", "opennms", "monitoring", "snmp"],
+    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "snmp"],
     "logos": {
       "small": "img/helm.svg",
       "large": "img/helm.svg"
@@ -17,14 +17,21 @@
       {"name": "Project site", "url": "https://github.com/OpenNMS/opennms-helm"},
       {"name": "License & Terms", "url": "https://github.com/OpenNMS/opennms-helm/blob/master/LICENSE"}
     ],
+    "screenshots": [
+      {"name": "Alarms", "path": "img/Helm_Screenshot_Alarms.png"},
+      {"name": "Environemnt Sensors", "path": "img/Helm_Screenshot_Environmental.png"},
+      {"name": "Fault Data Source", "path": "img/Helm_Screenshot_Faults_Data_Source.png"},
+      {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
+      {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
+    ],
     "version": "1.0.0",
-    "updated": "2017-06-01"
+    "updated": "2017-09-12"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
-    {"type": "datasource", "name": "FM Datasource"},
-    {"type": "datasource", "name": "PM Datasource"}
+    {"type": "datasource", "name": "OpenNMS Faults"},
+    {"type": "datasource", "name": "OpenNMS Performance"}
   ],
   "dependencies": {
     "grafanaVersion": "4.x.x",
