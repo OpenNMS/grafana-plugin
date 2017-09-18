@@ -33,7 +33,7 @@ export class ClientDelegate {
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {
               let self = this;
-              this.clientWithMetadata = Client.getMetadata(this.client.server, this.client.http)
+              let client = Client.getMetadata(this.client.server, this.client.http)
                 .then(function(metadata) {
                     // Ensure the OpenNMS we are talking to is compatible
                     if (metadata.apiVersion() !== 2) {
@@ -47,6 +47,12 @@ export class ClientDelegate {
                     self.clientWithMetadata = void 0;
                     throw e;
                 });
+
+          // Grafana functions that invoke the datasource expect the
+          // promise to be one that is returned by $q.
+          let deferred = this.$q.defer();
+          client.then((success) => deferred.resolve(success)).catch((error) => deferred.reject(error));
+          this.clientWithMetadata = deferred.promise;
         }
         return this.clientWithMetadata;
       }
