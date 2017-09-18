@@ -45,7 +45,7 @@ Derive new series using
    * OpenNMS Horizon v16.x or greater
    * OpenNMS Meridian v2016.1.0 or greater
  * Fault Management Data Source
-   * OpenNMS Horizon v21.x or greater
+   * OpenNMS Horizon v20.1.x or greater
    * OpenNMS Meridian v2017.1.0 or greater
 
 ## Issue Tracking

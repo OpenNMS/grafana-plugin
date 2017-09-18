@@ -74,7 +74,7 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                     value: function getClientWithMetadata() {
                         if (!this.clientWithMetadata) {
                             var self = this;
-                            this.clientWithMetadata = Client.getMetadata(this.client.server, this.client.http).then(function (metadata) {
+                            var client = Client.getMetadata(this.client.server, this.client.http).then(function (metadata) {
                                 // Ensure the OpenNMS we are talking to is compatible
                                 if (metadata.apiVersion() !== 2) {
                                     throw new Error("Unsupported Version");
@@ -87,6 +87,16 @@ System.register(['../../opennms', 'lodash'], function (_export, _context) {
                                 self.clientWithMetadata = void 0;
                                 throw e;
                             });
+
+                            // Grafana functions that invoke the datasource expect the
+                            // promise to be one that is returned by $q.
+                            var deferred = this.$q.defer();
+                            client.then(function (success) {
+                                return deferred.resolve(success);
+                            }).catch(function (error) {
+                                return deferred.reject(error);
+                            });
+                            this.clientWithMetadata = deferred.promise;
                         }
                         return this.clientWithMetadata;
                     }

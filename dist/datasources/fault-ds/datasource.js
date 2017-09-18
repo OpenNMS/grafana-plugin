@@ -141,7 +141,7 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapp
                             if (e.message === "Unsupported Version") {
                                 return {
                                     status: "danger",
-                                    message: "The OpenNMS version you are trying to connect to is not supported. " + "OpenNMS Horizon version >= 21.0.0 or OpenNMS Meridian version >= 2017.1.0 is required.",
+                                    message: "The OpenNMS version you are trying to connect to is not supported. " + "OpenNMS Horizon version >= 20.1.0 or OpenNMS Meridian version >= 2017.1.0 is required.",
                                     title: e.message
                                 };
                             } else {
