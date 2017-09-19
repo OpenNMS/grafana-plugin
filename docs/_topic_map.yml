@@ -50,6 +50,8 @@ Topics:
       File: index
     - Name: Basic Walkthrough
       File: basic_walkthrough
+    - Name: Migrating from the OpenNMS Data Source plugin
+      File: migrating_from_opennms_datasource
 ---
 Name: Contributing
 Dir: contributing
