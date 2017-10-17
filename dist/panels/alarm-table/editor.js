@@ -18,7 +18,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
     return {
       restrict: 'E',
       scope: true,
-      templateUrl: '/public/plugins/opennms-helm/panels/alarm-table/editor.html',
+      templateUrl: '/public/plugins/opennms-helm-app/panels/alarm-table/editor.html',
       controller: TablePanelEditorCtrl
     };
   }

@@ -109,8 +109,8 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       };
 
       loadPluginCss({
-        dark: 'plugins/opennms-helm/panels/alarm-table/css/table.dark.css',
-        light: 'plugins/opennms-helm/panels/alarm-table/css/table.light.css'
+        dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
+        light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
       });
 
       _export('PanelCtrl', _export('AlarmTableCtrl', AlarmTableCtrl = function (_MetricsPanelCtrl) {
@@ -443,7 +443,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
           value: function performAlarmActionOnDatasource(source, action, alarmId) {
             var self = this;
             this.datasourceSrv.get(source).then(function (ds) {
-              if (ds.type && ds.type.indexOf("fm-ds") < 0) {
+              if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
                 throw { message: 'Only OpenNMS datasources are supported' };
               } else {
                 if (!ds[action]) {

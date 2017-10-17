@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS Helm",
-  "id": "opennms-helm",
+  "id": "opennms-helm-app",
   "type": "app",
   "info": {
     "description": "Helm is a Grafana plugin that allows you to create flexible dashboards using both using both fault management (FM) and performance management (PM) data from OpenNMS® Horizon™ and/or OpenNMS® Meridian™.",

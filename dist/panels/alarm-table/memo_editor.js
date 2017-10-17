@@ -17,7 +17,7 @@ System.register([], function (_export, _context) {
 
     return {
       restrict: 'E',
-      templateUrl: 'public/plugins/opennms-helm/panels/alarm-table/memo_editor.html',
+      templateUrl: 'public/plugins/opennms-helm-app/panels/alarm-table/memo_editor.html',
       controller: MemoEditorCtrl,
       scope: {
         alarm: '=',
@@ -114,7 +114,7 @@ System.register([], function (_export, _context) {
           key: 'getDatasource',
           value: function getDatasource() {
             return this.datasourceSrv.get(this.$scope.source).then(function (ds) {
-              if (ds.type && ds.type.indexOf("fm-ds") < 0) {
+              if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
                 throw { message: 'Only OpenNMS datasources are supported' };
               } else {
                 return ds;

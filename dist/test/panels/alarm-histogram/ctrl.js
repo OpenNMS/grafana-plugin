@@ -61,7 +61,7 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
     }, {
         key: "onInitEditMode",
         value: function onInitEditMode() {
-            this.addEditorTab('Grouping', 'public/plugins/opennms-helm/panels/alarm-histogram/editor.html', 2);
+            this.addEditorTab('Grouping', 'public/plugins/opennms-helm-app/panels/alarm-histogram/editor.html', 2);
         }
     }, {
         key: "onDataReceived",

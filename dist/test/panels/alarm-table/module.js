@@ -50,8 +50,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 (0, _sdk.loadPluginCss)({
-  dark: 'plugins/opennms-helm/panels/alarm-table/css/table.dark.css',
-  light: 'plugins/opennms-helm/panels/alarm-table/css/table.light.css'
+  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
+  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
 });
 
 var AlarmTableCtrl = function (_MetricsPanelCtrl) {
@@ -387,7 +387,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
     value: function performAlarmActionOnDatasource(source, action, alarmId) {
       var self = this;
       this.datasourceSrv.get(source).then(function (ds) {
-        if (ds.type && ds.type.indexOf("fm-ds") < 0) {
+        if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
           throw { message: 'Only OpenNMS datasources are supported' };
         } else {
           if (!ds[action]) {
