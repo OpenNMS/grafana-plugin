@@ -4,7 +4,7 @@ ARG NODEJS_SETUP_SCRIPT_URL=https://deb.nodesource.com/setup_6.x
 ARG YARN_KEY_URL=https://dl.yarnpkg.com/debian/pubkey.gpg
 ARG OPENNMS_HELM_GIT_URL=https://github.com/OpenNMS/opennms-helm.git
 ARG OPENNMS_HELM_GIT_BRANCH_REF="master"
-ARG OPENNMS_HELM_APP_DIR=opennms-helm
+ARG OPENNMS_HELM_APP_DIR=opennms-helm-app
 ENV GF_PATHS_PLUGINS /opt/grafana/plugins
 ENV OPENNMS_HELM_HOME=${GF_PATHS_PLUGINS}/${OPENNMS_HELM_APP_DIR}
 

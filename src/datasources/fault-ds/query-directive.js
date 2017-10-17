@@ -6,7 +6,7 @@ import {UI} from "./UI";
 angular.module('grafana.directives')
     .directive('onmsQuery', function() {
         return {
-            templateUrl: 'public/plugins/opennms-helm/datasources/fault-ds/partials/query.html',
+            templateUrl: 'public/plugins/opennms-helm-app/datasources/fault-ds/partials/query.html',
             controller: 'QueryController',
             restrict: 'EA',
             controllerAs: 'ctrl',

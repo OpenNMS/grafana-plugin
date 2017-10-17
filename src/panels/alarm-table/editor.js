@@ -71,7 +71,7 @@ export function tablePanelEditor($q, uiSegmentSrv) {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: '/public/plugins/opennms-helm/panels/alarm-table/editor.html',
+    templateUrl: '/public/plugins/opennms-helm-app/panels/alarm-table/editor.html',
     controller: TablePanelEditorCtrl,
   };
 }
