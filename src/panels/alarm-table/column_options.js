@@ -104,7 +104,7 @@ export function columnOptionsTab($q, uiSegmentSrv) {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/plugins/opennms-helm/panels/alarm-table/column_options.html',
+    templateUrl: 'public/plugins/opennms-helm-app/panels/alarm-table/column_options.html',
     controller: ColumnOptionsCtrl,
   };
 }

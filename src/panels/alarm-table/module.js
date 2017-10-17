@@ -14,8 +14,8 @@ import {SelectionMgr} from "./selection_mgr";
 import {ActionMgr} from "./action_mgr";
 
 loadPluginCss({
-  dark: 'plugins/opennms-helm/panels/alarm-table/css/table.dark.css',
-  light: 'plugins/opennms-helm/panels/alarm-table/css/table.light.css'
+  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
+  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
 });
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
@@ -340,7 +340,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   performAlarmActionOnDatasource(source, action, alarmId) {
     let self = this;
     this.datasourceSrv.get(source).then(ds => {
-      if (ds.type && ds.type.indexOf("fm-ds") < 0) {
+      if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
         throw {message: 'Only OpenNMS datasources are supported'};
       } else {
         if (!ds[action]) {

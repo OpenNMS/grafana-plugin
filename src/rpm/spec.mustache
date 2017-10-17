@@ -56,8 +56,8 @@ npm rebuild
 {{/noarch}}
 
 %install
-mkdir -p %{buildroot}{{installDir}}/{{name}}
-cp -r ./* %{buildroot}{{installDir}}/{{name}}
+mkdir -p %{buildroot}{{installDir}}/{{name}}-app
+cp -r ./* %{buildroot}{{installDir}}/{{name}}-app
 
 %post
 {{#postInstallCommands}}
@@ -69,7 +69,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644, grafana, grafana, 755)
-{{installDir}}/{{name}}
+{{installDir}}/{{name}}-app
 {{#hasExecutableFiles}}
 %defattr(755, grafana, grafana, 755)
 {{#executableFiles}}
