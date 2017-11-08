@@ -152,7 +152,7 @@
                        spellcheck='false'
                        placeholder="{{ param.default != null ? param.default : '' }}"
                        data-min-length=0 data-items=100
-                       ng-blur="targetBlur('filterParameter')"
+                       ng-blur="ctrl.targetBlur('filterParameter')"
                 >
                 <div class="help-block">
                     {{ param.description }}
