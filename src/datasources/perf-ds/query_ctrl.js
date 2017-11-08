@@ -1,6 +1,7 @@
 import './modal_ctrl';
 import {QueryType} from './constants';
 import {QueryCtrl} from 'app/plugins/sdk';
+import appEvents from 'app/core/app_events';
 import _ from 'lodash';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
@@ -170,8 +171,12 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   targetBlur() {
-    this.error = this.validateTarget();
-    this.refresh();
+    if (this.error = this.validateTarget()) {
+      appEvents.emit('alert-error', ['Error', this.error]);
+    } else {
+      // Only send valid requests to the API
+      this.refresh();
+    }
   }
 
   validateTarget() {
