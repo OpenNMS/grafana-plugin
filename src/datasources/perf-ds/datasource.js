@@ -47,9 +47,8 @@ export class OpenNMSDatasource {
         headers: {'Content-Type': 'application/json'}
       });
     } else {
-      // There are no sources listed, use an empty set of measurements
-      request = this.$q.defer();
-      request.resolve({measurements: []});
+      // There are no sources listed, let Grafana display "No data points" to the user
+      return;
     }
 
     // Convert the results to the expected format
