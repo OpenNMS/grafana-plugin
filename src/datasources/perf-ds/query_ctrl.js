@@ -174,14 +174,14 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     var checkError = this.validateTarget();
     if (checkError) {
       if (checkError.length === 2 && checkError[0] === blurredElement) {
-        // Only display errors if the user was been editing the item with errors
+        // Only display errors if the user was actively editing this particular item
         appEvents.emit('alert-error', ['Error', checkError[1]]);
         this.error = checkError[1];
       } else {
         this.error = checkError;
       }
     } else {
-      // Only send valid requests to the API, even if the error is transient due to editing other fields
+      // Only send valid requests to the API
       this.refresh();
     }
   }
