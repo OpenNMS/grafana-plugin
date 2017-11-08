@@ -212,9 +212,14 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
 
   getCollapsedText() {
     if (this.target.type === QueryType.Attribute) {
-      return "Attribute: " + this.target.attribute;
+      return "Attribute: " + 'node[' + this.target.nodeId + '].' + this.target.resourceId + '.' + this.target.attribute
+              + ' (' + this.target.label + ')';
     } else if (this.target.type === QueryType.Expression) {
-      return "Expression: " + (this.target.label ? this.target.label : this.target.expression);
+      var expressionDescription = this.target.expression;
+      if (this.target.label) {
+        expressionDescription += ' (' + this.target.label + ')';
+      }
+      return "Expression: " + expressionDescription;
     } else if (this.target.type === QueryType.Filter) {
       return "Filter: " + this.target.filter.name;
     } else {
