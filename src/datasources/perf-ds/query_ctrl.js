@@ -43,7 +43,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         // Fallback to node id
         self.target.nodeId = node.id;
       }
-      self.targetBlur();
+      self.targetBlur('nodeId');
     });
   }
 
@@ -99,7 +99,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       var re = /node(Source)?\[.*?]\.(.*)$/;
       var match = re.exec(resource.id);
       self.target.resourceId = match[2];
-      self.targetBlur();
+      self.targetBlur('resourceId');
     });
   }
 
@@ -124,7 +124,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         });
     }, function (attribute) {
       self.target.attribute = attribute.name;
-      self.targetBlur();
+      self.targetBlur('attribute');
     });
   }
 
@@ -146,7 +146,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         });
     }, function (filter) {
       self.target.filter = filter;
-      self.targetBlur();
+      self.targetBlur('filter');
     });
   }
 
@@ -170,11 +170,18 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     this.$q.when(modal).then(function (modalEl) { modalEl.modal('show'); });
   }
 
-  targetBlur() {
-    if (this.error = this.validateTarget()) {
-      appEvents.emit('alert-error', ['Error', this.error]);
+  targetBlur(blurredElement) {
+    var checkError = this.validateTarget();
+    if (checkError) {
+      if (checkError.length === 2 && checkError[0] === blurredElement) {
+        // Only display errors if the user was been editing the item with errors
+        appEvents.emit('alert-error', ['Error', checkError[1]]);
+        this.error = checkError[1];
+      } else {
+        this.error = checkError;
+      }
     } else {
-      // Only send valid requests to the API
+      // Only send valid requests to the API, even if the error is transient due to editing other fields
       this.refresh();
     }
   }
@@ -182,24 +189,24 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   validateTarget() {
     if (this.target.type === QueryType.Attribute) {
       if (!this.target.nodeId) {
-        return "You must supply a node id.";
+        return ['nodeId', "You must supply a node id."];
       } else if (!this.target.resourceId) {
-        return "You must supply a resource id.";
+        return ['resourceId', "You must supply a resource id."];
       } else if (!this.target.attribute) {
-        return "You must supply an attribute.";
+        return ['attribute', "You must supply an attribute."];
       }
     } else if (this.target.type === QueryType.Expression) {
       if (!this.target.label) {
-        return "You must supply a label.";
+        return ['label', "You must supply a label."];
       } else if (!this.target.expression) {
-        return "You must supply an expression.";
+        return ['expression', "You must supply an expression."];
       }
     } else if (this.target.type === QueryType.Filter) {
       if (!this.target.filter) {
-        return "You must select a filter.";
+        return ['filter', "You must select a filter."];
       }
     } else {
-      return "Invalid type.";
+      return ['type', "Invalid type."];
     }
 
     return undefined;
