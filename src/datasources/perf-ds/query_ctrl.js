@@ -196,9 +196,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         return ['attribute', "You must supply an attribute."];
       }
     } else if (this.target.type === QueryType.Expression) {
-      if (!this.target.label) {
-        return ['label', "You must supply a label."];
-      } else if (!this.target.expression) {
+      if (!this.target.expression) {
         return ['expression', "You must supply an expression."];
       }
     } else if (this.target.type === QueryType.Filter) {
@@ -216,7 +214,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     if (this.target.type === QueryType.Attribute) {
       return "Attribute: " + this.target.attribute;
     } else if (this.target.type === QueryType.Expression) {
-      return "Expression: " + this.target.label;
+      return "Expression: " + (this.target.label ? this.target.label : this.target.expression);
     } else if (this.target.type === QueryType.Filter) {
       return "Filter: " + this.target.filter.name;
     } else {

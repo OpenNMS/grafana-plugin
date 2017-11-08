@@ -192,13 +192,13 @@ export class OpenNMSDatasource {
           delete interpolatedSource.nodeId;
         }));
       } else if (target.type === QueryType.Expression) {
-        if (!((target.label && target.expression))) {
+        if (!target.expression) {
           return;
         }
 
         // Build the expression
         var expression = {
-          "label": target.label,
+          "label": target.label ? target.label : target.expression,
           "value": target.expression,
           "transient": transient
         };
