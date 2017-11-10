@@ -10,6 +10,7 @@ export class OpenNMSDatasource {
     this.name = instanceSettings.name;
     this.basicAuth = instanceSettings.basicAuth;
     this.withCredentials = instanceSettings.withCredentials;
+    this.interval = (instanceSettings.jsonData || {}).timeInterval;
 
     this.$q = $q;
     this.backendSrv = backendSrv;
@@ -145,6 +146,7 @@ export class OpenNMSDatasource {
       start = options.range.from.valueOf(),
       end = options.range.to.valueOf(),
       step = Math.floor((end - start) / options.maxDataPoints);
+      step = (step < options.intervalMs) ? options.intervalMs : step;
 
     var query = {
       "start": start,
