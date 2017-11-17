@@ -498,4 +498,12 @@ exports.PanelCtrl = AlarmTableCtrl;
 _core_module2.default.directive('alarmDetailsAsModal', _alarm_details.alarmDetailsAsDirective);
 _core_module2.default.directive('memoEditor', _memo_editor.memoEditorAsDirective);
 _core_module2.default.directive('contextMenu', (0, _context_menu.contextMenuAsDirective)());
+_core_module2.default.directive('dynamicHeight', function ($window) {
+  // Used to dynamically size the alarm details modal window
+  return {
+    link: function link(scope, element, attrs) {
+      element.css('max-height', $window.innerHeight * 0.8 + 'px');
+    }
+  };
+});
 //# sourceMappingURL=module.js.map

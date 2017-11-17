@@ -549,6 +549,14 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       coreModule.directive('alarmDetailsAsModal', alarmDetailsAsDirective);
       coreModule.directive('memoEditor', memoEditorAsDirective);
       coreModule.directive('contextMenu', contextMenuAsDirective());
+      coreModule.directive('dynamicHeight', function ($window) {
+        // Used to dynamically size the alarm details modal window
+        return {
+          link: function link(scope, element, attrs) {
+            element.css('max-height', $window.innerHeight * 0.8 + 'px');
+          }
+        };
+      });
     }
   };
 });
