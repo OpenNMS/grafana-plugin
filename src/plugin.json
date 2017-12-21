@@ -31,7 +31,8 @@
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
     {"type": "datasource", "name": "OpenNMS Faults"},
-    {"type": "datasource", "name": "OpenNMS Performance"}
+    {"type": "datasource", "name": "OpenNMS Performance"},
+    {"type": "datasource", "name": "OpenNMS Flows"}
   ],
   "dependencies": {
     "grafanaVersion": "4.x.x",

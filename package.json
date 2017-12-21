@@ -31,7 +31,7 @@
     "grunt-mocha-test": "^0.13.2",
     "grunt-sass": "^2.0.0",
     "grunt-systemjs-builder": "^1.0.0",
-    "jsdom": "^10.1.0",
+    "jsdom": "^11.6.2",
     "load-grunt-tasks": "~3.5.2",
     "lodash": "~4.17.4",
     "mocha": "^3.4.1",

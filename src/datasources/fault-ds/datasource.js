@@ -1,4 +1,4 @@
-import {ClientDelegate} from './client_delegate';
+import {ClientDelegate} from '../../lib/client_delegate';
 import {API, Model} from '../../opennms';
 import {FilterCloner} from './FilterCloner';
 import {Mapping} from './Mapping';
