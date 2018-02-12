@@ -101,9 +101,20 @@ describe('CustomAction', function() {
         ca.url = 'baz';
       }).to.throw();
     });
+    it('should validate a url with no variables', () => {
+      const ca = new CustomAction('foo', 'http://bar/');
+      expect(ca.validate()).to.be.true;
+    });
     it('should interpolate a url with no variables', () => {
       const ca = new CustomAction('foo', 'http://bar/');
       expect(ca.interpolate()).to.equal('http://bar/');
+    });
+    it('should validate a url with a nodeLabel variable', () => {
+      const ca = new CustomAction('foo', 'http://bar/$nodeLabel');
+      const alarm = new Model.OnmsAlarm();
+      alarm.nodeId = 5;
+      alarm.nodeLabel = 'theLabel';
+      expect(ca.validate(alarm)).to.be.true;
     });
     it('should interpolate a url with a nodeLabel variable', () => {
       const ca = new CustomAction('foo', 'http://bar/$nodeLabel');
@@ -112,17 +123,38 @@ describe('CustomAction', function() {
       alarm.nodeLabel = 'theLabel';
       expect(ca.interpolate(alarm)).to.equal('http://bar/theLabel');
     });
+    it('should validate a variable that refers to an object', () => {
+      const ca = new CustomAction('foo', 'http://bar/$severity');
+      const alarm = new Model.OnmsAlarm();
+      alarm.severity = Model.Severities.NORMAL;
+      expect(ca.validate(alarm)).to.be.true;
+    });
     it('should interpolate a variable that refers to an object', () => {
       const ca = new CustomAction('foo', 'http://bar/$severity');
       const alarm = new Model.OnmsAlarm();
       alarm.severity = Model.Severities.NORMAL;
       expect(ca.interpolate(alarm)).to.equal('http://bar/NORMAL');
     });
+    it('should validate a variable with a number index', () => {
+      const ca = new CustomAction('foo', 'http://bar/$parameters[0]');
+      const alarm = new Model.OnmsAlarm();
+      alarm.parameters = [new Model.OnmsParm('blah', 'string', 'yo')];
+      expect(ca.validate(alarm)).to.be.true;
+    });
     it('should interpolate a variable with a number index', () => {
       const ca = new CustomAction('foo', 'http://bar/$parameters[0]');
       const alarm = new Model.OnmsAlarm();
       alarm.parameters = [new Model.OnmsParm('blah', 'string', 'yo')];
       expect(ca.interpolate(alarm)).to.equal('http://bar/yo');
+    });
+    it('should validate a variable with a string index', () => {
+      const ca = new CustomAction('foo', 'http://bar/$blah[monkey]');
+      const obj = {
+        blah: {
+          monkey: 'see'
+        }
+      };
+      expect(ca.validate(obj)).to.be.true;
     });
     it('should interpolate a variable with a string index', () => {
       const ca = new CustomAction('foo', 'http://bar/$blah[monkey]');
@@ -132,6 +164,22 @@ describe('CustomAction', function() {
         }
       };
       expect(ca.interpolate(obj)).to.equal('http://bar/see');
+    });
+    it('should validate a variable with a named event parm', () => {
+      const ca = new CustomAction('foo', 'http://bar/$parameters[monkey]');
+      const obj = new Model.OnmsAlarm();
+      obj.parameters = [
+        new Model.OnmsParm('monkey', 'Int32', '6')
+      ];
+      expect(ca.validate(obj)).to.be.true;
+    });
+    it('should interpolate a variable with a named event parm', () => {
+      const ca = new CustomAction('foo', 'http://bar/$parameters[monkey]');
+      const obj = new Model.OnmsAlarm();
+      obj.parameters = [
+        new Model.OnmsParm('monkey', 'Int32', '6')
+      ];
+      expect(ca.interpolate(obj)).to.equal('http://bar/6');
     });
   });
 

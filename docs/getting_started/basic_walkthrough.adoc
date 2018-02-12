@@ -49,6 +49,11 @@ In the Helm Config tab, you can add custom actions.  These will (currently) show
 
 Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.  A list of the available properties can be seen at the http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation].
 
+[NOTE]
+====
+Special case: event parameters on the alarm can be accessed either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
+====
+
 If a variable can't be matched against the row, the action will not appear in the context menu.
 
 Variables will be URL-encoded when they are injected into the URL.

@@ -54,6 +54,37 @@ function getValue(v) {
   return ret;
 }
 
+function getValueForMatch(match, key, model) {
+  let ret = undefined;
+  if (match) {
+    if (match.index) {
+      const v = model[key];
+      if (v) {
+        let indexed = v[match.index];
+        if (Array.isArray(v)
+          && v.length > 0
+          && v[0]
+          && v[0].name && v[0].type && v[0].valueString // can't do TypeScript instanceOf() at runtime
+          && typeof match.index === 'string') {
+          // special case, handle named event parameters
+          const parm = v.filter((p) => {
+            return p.name === match.index;
+          })[0];
+          ret = getValue(parm);
+        } else {
+          ret = getValue(indexed);
+        }
+      } else {
+        console.warn('Indexed match ($' + key + '[' + match.index + ']) does not exist.');
+        ret = failed;
+      }
+    } else {
+      ret = getValue(model[key]);
+    }
+  }
+  return ret;
+}
+
 export function replace(text, match, value) {
   const escaped = new RegExp(match.replace(escapeRE, '\\$&'), 'g');
   //console.log('replacing ' + match + ' with ' + value + ' (re=' + escaped + ')');
@@ -81,13 +112,7 @@ export class CustomAction {
       for (const key of Object.keys(model)) {
         const match = getMatch(interpolated, key);
         if (match) {
-          let value = undefined;
-          if (match.index) {
-            value = getValue(model[key][match.index]);
-          } else {
-            value = getValue(model[key]);
-          }
-
+          let value = getValueForMatch(match, key, model);
           if (value === failed) {
             value = '';
           }
@@ -101,22 +126,15 @@ export class CustomAction {
   }
 
   validate(model) {
+    const interpolated = this.url;
     let passed = true;
     if (model) {
-      const interpolated = this.url;
       for (const key of Object.keys(model)) {
         const match = getMatch(interpolated, key);
-        if (match) {
-          let value = undefined;
-          if (match.index) {
-            value = getValue(model[key][match.index]);
-          } else {
-            value = getValue(model[key]);
-          }
-          if (value === failed) {
-            console.warn('Variable $' + key + ' was found in the model object, but no value was found.', model);
-            passed = false;
-          }
+        const value = getValueForMatch(match, key, model);
+        if (value === failed) {
+          console.warn('Variable $' + key + ' was found in the model object, but no value was found.', model);
+          passed = false;
         }
       }
     }
