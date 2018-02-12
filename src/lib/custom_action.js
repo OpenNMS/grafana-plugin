@@ -91,6 +91,8 @@ export class CustomAction {
           if (value === failed) {
             value = '';
           }
+
+          value = encodeURIComponent(value);
           interpolated = replace(interpolated, match.token, value);
         }
       }

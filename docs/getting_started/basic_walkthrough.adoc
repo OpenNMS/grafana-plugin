@@ -51,6 +51,8 @@ Custom action URLs may contain `$variables` that reference properties of an Open
 
 If a variable can't be matched against the row, the action will not appear in the context menu.
 
+Variables will be URL-encoded when they are injected into the URL.
+
 .Create action URLs using parameters.
 image::gf-custom-actions.png[Custom Actions, 500]
 
