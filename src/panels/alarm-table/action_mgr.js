@@ -1,11 +1,13 @@
 import _ from 'lodash';
 import {Model} from '../../opennms';
+import {CustomAction} from '../../lib/custom_action';
 
 export class ActionMgr {
-  constructor(ctrl, rows) {
+  constructor(ctrl, rows, appConfig) {
     this.ctrl = ctrl;
     this.rows = rows;
     this.options = [];
+    this.appConfig = appConfig;
     this.buildContextMenu();
   }
 
@@ -75,6 +77,22 @@ export class ActionMgr {
     });
     this.addOptionToContextMenu('Ticketing', 'Close Ticket', closeTicketRows,
       (row) => self.ctrl.closeTicketForAlarm(row.source, row.alarmId));
+
+    if (self.rows.length === 1 && self.appConfig.actions && self.appConfig.actions.length > 0) {
+      for (let action of self.appConfig.actions) {
+        if (!action.label || !action.url || action.label.trim().length === 0 || action.url.trim().length === 0) {
+          console.warn('invalid label or URL:',action);
+          continue;
+        }
+        const a = new CustomAction(action);
+        const row = self.rows[0];
+        if (row && row.alarm && a.validate(row.alarm)) {
+          self.addOptionToContextMenu('Actions', action.label, self.rows, (row) => {
+            a.open(row.alarm);
+          });
+        }
+      }
+    }
   }
 
   getSuffix(actionableRows) {

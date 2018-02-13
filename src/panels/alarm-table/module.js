@@ -20,12 +20,13 @@ loadPluginCss({
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
-  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv, timeSrv) {
+  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, timeSrv) {
     super($scope, $injector);
     this.$rootScope = $rootScope;
     this.annotationsSrv = annotationsSrv;
     this.$sanitize = $sanitize;
     this.$compile = $compile;
+    this.backendSrv = backendSrv;
     this.datasourceSrv = datasourceSrv;
     this.timeSrv = timeSrv;
 
@@ -101,8 +102,20 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+
+    self.refreshAppConfig();
   }
 
+  refreshAppConfig() {
+    const self = this;
+    self.backendSrv.get(`/api/plugins/opennms-helm-app/settings`).then(result => {
+      if (result && result.jsonData) {
+        self.appConfig = result.jsonData;
+      } else {
+        console.warn('No settings found.');
+      }
+    });
+  }
 
   onInitEditMode() {
     this.addEditorTab('Options', tablePanelEditor, 2);
@@ -305,7 +318,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     selectedRows = _.filter(selectedRows, row => row.alarm !== void 0);
 
     // Generate selection-based context menu
-    return new ActionMgr(this, selectedRows).getContextMenu();
+    return new ActionMgr(this, selectedRows, this.appConfig).getContextMenu();
   }
 
   onRowClick($event, source, alarmId) {
