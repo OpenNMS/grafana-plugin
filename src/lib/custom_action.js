@@ -87,7 +87,6 @@ function getValueForMatch(match, key, model) {
 
 export function replace(text, match, value) {
   const escaped = new RegExp(match.replace(escapeRE, '\\$&'), 'g');
-  //console.log('replacing ' + match + ' with ' + value + ' (re=' + escaped + ')');
   return text.replace(escaped, value);
 }
 
@@ -133,7 +132,6 @@ export class CustomAction {
         const match = getMatch(interpolated, key);
         const value = getValueForMatch(match, key, model);
         if (value === failed) {
-          console.warn('Variable $' + key + ' was found in the model object, but no value was found.', model);
           passed = false;
         }
       }

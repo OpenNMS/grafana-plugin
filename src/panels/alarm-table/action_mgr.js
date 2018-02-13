@@ -86,7 +86,6 @@ export class ActionMgr {
         }
         const a = new CustomAction(action);
         const row = self.rows[0];
-        console.log('row=',row);
         if (row && row.alarm && a.validate(row.alarm)) {
           self.addOptionToContextMenu('Actions', action.label, self.rows, (row) => {
             a.open(row.alarm);
