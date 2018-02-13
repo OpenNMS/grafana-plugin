@@ -116,7 +116,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       _export('PanelCtrl', _export('AlarmTableCtrl', AlarmTableCtrl = function (_MetricsPanelCtrl) {
         _inherits(AlarmTableCtrl, _MetricsPanelCtrl);
 
-        function AlarmTableCtrl($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, datasourceSrv, timeSrv) {
+        function AlarmTableCtrl($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, timeSrv) {
           _classCallCheck(this, AlarmTableCtrl);
 
           var _this = _possibleConstructorReturn(this, (AlarmTableCtrl.__proto__ || Object.getPrototypeOf(AlarmTableCtrl)).call(this, $scope, $injector));
@@ -125,6 +125,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
           _this.annotationsSrv = annotationsSrv;
           _this.$sanitize = $sanitize;
           _this.$compile = $compile;
+          _this.backendSrv = backendSrv;
           _this.datasourceSrv = datasourceSrv;
           _this.timeSrv = timeSrv;
 
@@ -191,10 +192,24 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
           _this.events.on('data-error', _this.onDataError.bind(_this));
           _this.events.on('data-snapshot-load', _this.onDataReceived.bind(_this));
           _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
+
+          self.refreshAppConfig();
           return _this;
         }
 
         _createClass(AlarmTableCtrl, [{
+          key: 'refreshAppConfig',
+          value: function refreshAppConfig() {
+            var self = this;
+            self.backendSrv.get('/api/plugins/opennms-helm-app/settings').then(function (result) {
+              if (result && result.jsonData) {
+                self.appConfig = result.jsonData;
+              } else {
+                console.warn('No settings found.');
+              }
+            });
+          }
+        }, {
           key: 'onInitEditMode',
           value: function onInitEditMode() {
             this.addEditorTab('Options', tablePanelEditor, 2);
@@ -404,7 +419,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
             });
 
             // Generate selection-based context menu
-            return new ActionMgr(this, selectedRows).getContextMenu();
+            return new ActionMgr(this, selectedRows, this.appConfig).getContextMenu();
           }
         }, {
           key: 'onRowClick',

@@ -13,17 +13,20 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 var _opennms = require('../../opennms');
 
+var _custom_action = require('../../lib/custom_action');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ActionMgr = exports.ActionMgr = function () {
-  function ActionMgr(ctrl, rows) {
+  function ActionMgr(ctrl, rows, appConfig) {
     _classCallCheck(this, ActionMgr);
 
     this.ctrl = ctrl;
     this.rows = rows;
     this.options = [];
+    this.appConfig = appConfig;
     this.buildContextMenu();
   }
 
@@ -105,6 +108,49 @@ var ActionMgr = exports.ActionMgr = function () {
       this.addOptionToContextMenu('Ticketing', 'Close Ticket', closeTicketRows, function (row) {
         return self.ctrl.closeTicketForAlarm(row.source, row.alarmId);
       });
+
+      if (self.rows.length === 1 && self.appConfig.actions && self.appConfig.actions.length > 0) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          var _loop = function _loop() {
+            var action = _step.value;
+
+            if (!action.label || !action.url || action.label.trim().length === 0 || action.url.trim().length === 0) {
+              console.warn('invalid label or URL:', action);
+              return 'continue';
+            }
+            var a = new _custom_action.CustomAction(action);
+            var row = self.rows[0];
+            if (row && row.alarm && a.validate(row.alarm)) {
+              self.addOptionToContextMenu('Actions', action.label, self.rows, function (row) {
+                a.open(row.alarm);
+              });
+            }
+          };
+
+          for (var _iterator = self.appConfig.actions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _ret = _loop();
+
+            if (_ret === 'continue') continue;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
     }
   }, {
     key: 'getSuffix',

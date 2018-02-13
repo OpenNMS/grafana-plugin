@@ -22,5 +22,5 @@ include /usr/share/dpkg/default.mk
 
 override_dh_auto_install:
 	echo "installing"
-	install -d -m 755 debian/opennms-helm-app/var/lib/grafana/plugins/opennms-helm-app/
-	find * -maxdepth 0 | grep -vE '^debian$$' | while read LINE; do cp -pR "$$LINE" "debian/opennms-helm-app/var/lib/grafana/plugins/opennms-helm-app/$$LINE"; done
+	install -d -m 755 debian/opennms-helm/var/lib/grafana/plugins/opennms-helm-app/
+	find * -maxdepth 0 | grep -vE '^debian$$' | while read LINE; do cp -pR "$$LINE" "debian/opennms-helm/var/lib/grafana/plugins/opennms-helm-app/$$LINE"; done
