@@ -9,7 +9,7 @@
             </label>
             <select class="gf-form-input"
                     ng-model="ctrl.target.type"
-                    ng-blur="ctrl.targetBlur()">
+                    ng-blur="ctrl.targetBlur('type')">
                 <option data-ng-repeat="(key, value) in ctrl.types" value="{{ value }}">{{ key }}</option>
             </select>
         </div>
@@ -30,7 +30,7 @@
 
                        placeholder="node id"
                        data-min-length=0 data-items=100
-                       ng-blur="ctrl.targetBlur()"
+                       ng-blur="ctrl.targetBlur('nodeId')"
                 >
             </div>
         </div>
@@ -48,7 +48,7 @@
 
                        placeholder="resource id"
                        data-min-length=0 data-items=100
-                       ng-blur="ctrl.targetBlur()"
+                       ng-blur="ctrl.targetBlur('resourceId')"
                 >
             </div>
         </div>
@@ -67,7 +67,7 @@
 
                            placeholder="attribute"
                            data-min-length=0 data-items=100
-                           ng-blur="ctrl.targetBlur()"
+                           ng-blur="ctrl.targetBlur('attribute')"
                     >
                 </div>
             </div>
@@ -83,7 +83,7 @@
 
                            placeholder="subattribute"
                            data-min-length=0 data-items=100
-                           ng-blur="ctrl.targetBlur()"
+                           ng-blur="ctrl.targetBlur('subattribute')"
                     >
                 </div>
             </div>
@@ -94,7 +94,7 @@
                     </label>
                     <select class="gf-form-input"
                             ng-model="ctrl.target.aggregation"
-                            ng-blur="ctrl.targetBlur()">
+                            ng-blur="ctrl.targetBlur('aggregation')">
                         <option value="AVERAGE">Average</option>
                         <option value="MIN">Min</option>
                         <option value="MAX">Max</option>
@@ -116,7 +116,7 @@
                    spellcheck='false'
                    placeholder="series expression"
                    data-min-length=0 data-items=2048
-                   ng-blur="ctrl.targetBlur()"
+                   ng-blur="ctrl.targetBlur('expression')"
             />
         </div>
     </div>
@@ -136,7 +136,7 @@
 
                        placeholder="filter type name"
                        data-min-length=0 data-items=100
-                       ng-blur="ctrl.targetBlur()"
+                       ng-blur="ctrl.targetBlur('filterName')"
                 />
             </div>
         </div>
@@ -152,7 +152,7 @@
                        spellcheck='false'
                        placeholder="{{ param.default != null ? param.default : '' }}"
                        data-min-length=0 data-items=100
-                       ng-blur="targetBlur()"
+                       ng-blur="targetBlur('filterParameter')"
                 >
                 <div class="help-block">
                     {{ param.description }}
@@ -172,7 +172,7 @@
                    spellcheck='false'
                    placeholder="series label"
                    data-min-length=0 data-items=100
-                   ng-blur="ctrl.targetBlur()"
+                   ng-blur="ctrl.targetBlur('label')"
             />
         </div>
     </div>
