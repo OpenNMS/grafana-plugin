@@ -4,6 +4,8 @@
 ====
 These instructions assume that https://grafana.com[Grafana] is already installed on the target system.
 If you do have an existing instance of https://grafana.com[Grafana], refer to xref:../installation/install-centos-redhat.adoc#[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)] or xref:../installation/install-debian-ubuntu.adoc#[Installing on Debian / Ubuntu].
+
+The required Grafana-Server version is *4.4.1* up to *< 5*.
 ====
 
 == Install the application
