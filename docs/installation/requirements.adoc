@@ -1,0 +1,12 @@
+= Requirements
+
+== Runtime Requirements
+
+* http://docs.grafana.org/installation[Grafana]
+The required Grafana-Server version is *4.4.1* up to *< 6*.
+
+== Build Requirements
+
+* https://yarnpkg.com/en/docs/install[yarn]
+* https://nodejs.org/en/download[Node.js >= 6.x]
+
