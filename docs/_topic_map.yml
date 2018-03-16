@@ -34,6 +34,8 @@ Topics:
 Name: Installation
 Dir: installation
 Topics:
+    - Name: Requirements
+      File: requirements
     - Name: Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)
       File: rpm
     - Name: Installing on Debian / Ubuntu

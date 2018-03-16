@@ -59,37 +59,37 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                     {
                         name: 'Cleared',
                         count: _.defaultTo(counts['CLEARED'], 0),
-                        color: this.scope.$root.colors[23],
+                        color: '#EEE000',
                     },
                     {
                         name: 'Normal',
                         count: _.defaultTo(counts['NORMAL'], 0),
-                        color: this.scope.$root.colors[0],
+                        color: '#86B15B',
                     },
                     {
                         name: 'Indeterm.',
                         count: _.defaultTo(counts['INDETERMINATE'], 0),
-                        color: this.scope.$root.colors[55],
+                        color: '#990000',
                     },
                     {
                         name: 'Warning',
                         count: _.defaultTo(counts['WARNING'], 0),
-                        color: this.scope.$root.colors[1],
+                        color: '#FCCC3B',
                     },
                     {
                         name: 'Minor',
                         count: _.defaultTo(counts['MINOR'], 0),
-                        color: this.scope.$root.colors[3],
+                        color: '#EE901C',
                     },
                     {
                         name: 'Major',
                         count: _.defaultTo(counts['MAJOR'], 0),
-                        color: this.scope.$root.colors[4],
+                        color: '#E3692F',
                     },
                     {
                         name: 'Critical',
                         count: _.defaultTo(counts['CRITICAL'], 0),
-                        color: this.scope.$root.colors[28],
+                        color: '#DB4345',
                     },
 
                 ];
