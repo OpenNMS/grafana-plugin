@@ -37,6 +37,10 @@
                     <td>Description</td>
                     <td ng-bind-html="alarm.description"></td>
                 </tr>
+                <tr ng-if="alarm.operatorInstructions">
+                    <td>Operator Instructions</td>
+                    <td ng-bind-html="alarm.operatorInstructions"></td>
+                </tr>
             </table>
             <table class="filter-table gf-form-group alarm-details-table">
                 <tr>
