@@ -2245,9 +2245,9 @@ mocha@^3.4.1:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
-moment@^2.12.0:
-  version "2.18.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+moment@^2.19.3:
+  version "2.21.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
 
 ms@0.7.1:
   version "0.7.1"
@@ -2411,9 +2411,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.0.3.tgz#bb346c449ded7628bb216046c664acc7e2ae9a75"
+opennms@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.1.1.tgz#e6bb82e0e349ce17fc961d5399758bd90adb71d8"
   dependencies:
     axios "^0.16.1"
     cli-table "^0.3.1"
@@ -2421,7 +2421,7 @@ opennms@^1.0.3:
     fs "^0.0.1-security"
     ip-address "^5.8.8"
     lodash.startcase "^4.4.0"
-    moment "^2.12.0"
+    moment "^2.19.3"
     qs "^6.5.0"
     typescript-logging "^0.3.1"
     version_compare "^0.0.3"
