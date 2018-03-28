@@ -51,3 +51,18 @@ Derive new series using
 ## Issue Tracking
 
 We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) instance to track bugs and enhancements related this to project.
+
+## Changelog
+
+### v1.1.0
+
+- Added support for custom actions in the Alarm Table panel
+- Added the operator instructions field to the alarm details modal
+- Updated the package dependencies to support Grafana 5.x
+- Fixed a bug where long alarm descriptions and log messages would fill the alarm details modal
+- Use consistent colors in both the Alarm Table and Alarm Histogram panels
+
+### v1.0.0
+
+- Initial release
+

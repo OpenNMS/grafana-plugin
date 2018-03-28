@@ -128,7 +128,7 @@ System.register(['lodash', '../../opennms', '../../lib/custom_action'], function
               return self.ctrl.closeTicketForAlarm(row.source, row.alarmId);
             });
 
-            if (self.rows.length === 1 && self.appConfig.actions && self.appConfig.actions.length > 0) {
+            if (self.rows.length === 1 && self.appConfig && self.appConfig.actions && self.appConfig.actions.length > 0) {
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
               var _iteratorError = undefined;
