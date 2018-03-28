@@ -78,7 +78,7 @@ export class ActionMgr {
     this.addOptionToContextMenu('Ticketing', 'Close Ticket', closeTicketRows,
       (row) => self.ctrl.closeTicketForAlarm(row.source, row.alarmId));
 
-    if (self.rows.length === 1 && self.appConfig.actions && self.appConfig.actions.length > 0) {
+    if (self.rows.length === 1 && self.appConfig && self.appConfig.actions && self.appConfig.actions.length > 0) {
       for (let action of self.appConfig.actions) {
         if (!action.label || !action.url || action.label.trim().length === 0 || action.url.trim().length === 0) {
           console.warn('invalid label or URL:',action);
