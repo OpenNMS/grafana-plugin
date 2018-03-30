@@ -1,6 +1,7 @@
 import {OpenNMSDatasource} from './datasource';
 import {OpenNMSQueryCtrl} from './query_ctrl';
 import {loadPluginCss} from 'app/plugins/sdk';
+import '../../components/timeout';
 
 class GenericConfigCtrl {}
 GenericConfigCtrl.templateUrl = 'datasources/perf-ds/partials/config.html';

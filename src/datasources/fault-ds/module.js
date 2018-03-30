@@ -1,6 +1,7 @@
 import {OpenNMSFMDatasource} from './datasource';
 import {OpenNMSFMDatasourceQueryCtrl} from './query_ctrl';
 import {Examples} from './Examples';
+import '../../components/timeout';
 
 class OpenNMSFMDatasourceConfigCtrl {}
 OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/fault-ds/partials/config.html';
