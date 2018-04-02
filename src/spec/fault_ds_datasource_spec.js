@@ -6,7 +6,7 @@ import {API} from '../opennms';
 import {Mapping} from '../datasources/fault-ds/Mapping';
 import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
 import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource'
-import {ClientDelegate} from '../datasources/fault-ds/client_delegate';
+import {ClientDelegate} from '../lib/client_delegate';
 
 describe("OpenNMS_FaultManagement_Datasource", function() {
     let uiSegmentSrv = {

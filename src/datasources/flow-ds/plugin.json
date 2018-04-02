@@ -1,0 +1,20 @@
+{
+  "name": "OpenNMS Flow",
+  "id": "opennms-helm-flow-datasource",
+  "type": "datasource",
+
+  "partials": {
+    "config": "datasources/flow-ds/partials/config.html"
+  },
+
+  "metrics": true,
+  "annotations": false,
+
+  "info": {
+    "logos": {
+      "small": "img/flow-ds.svg",
+      "large": "img/flow-ds.svg"
+    }
+  }
+
+}
