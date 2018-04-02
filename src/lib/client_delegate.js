@@ -1,4 +1,4 @@
-import {API, Client, Rest, DAO} from '../../opennms'
+import {API, Client, Rest, DAO} from '../opennms';
 import _ from 'lodash';
 
 export class ClientDelegate {
@@ -55,7 +55,9 @@ export class ClientDelegate {
           this.clientWithMetadata = deferred.promise;
         }
         return this.clientWithMetadata;
-      }
+    }
+
+    // Fault related functions
 
     getAlarmDao() {
         return this.getClientWithMetadata().then(function(client) {
@@ -106,11 +108,11 @@ export class ClientDelegate {
     }
 
     doTicketAction(alarmId, action) {
-        var supportedActions = ["create", "update", "close"];
+        const supportedActions = ["create", "update", "close"];
         if (supportedActions.indexOf(action) < 0) {
             throw {message: "Action '" + action + "' not supported."};
         }
-        var self = this;
+        const self = this;
         return this.backendSrv.datasourceRequest({
             url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
             method: 'POST',
@@ -146,7 +148,7 @@ export class ClientDelegate {
     }
 
     findOperators() {
-        var operators = _.map(API.Operators, function(operator) {
+        const operators = _.map(API.Operators, function(operator) {
             return {
                 id: operator.id,
                 label: operator.label
@@ -184,6 +186,56 @@ export class ClientDelegate {
                 // This may be the case when the user entered a property, which does not exist
                 // therefore fallback to EQ
                 return [ API.Comparators.EQ ];
+            });
+    }
+
+    // Flow related functions
+
+    getFlowDao() {
+        return this.getClientWithMetadata().then(function(c) {
+            return c.flows();
+        });
+    }
+
+    getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId) {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId);
+            });
+    }
+
+    getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId) {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId);
+            });
+    }
+
+    getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId) {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId);
+            });
+    }
+
+    getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId) {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId);
+            });
+    }
+
+    getExporters() {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getExporters(10);
+            });
+    }
+
+    getExporter(nodeCriteria) {
+        return this.getFlowDao()
+            .then(function(flowDao) {
+                return flowDao.getExporter(nodeCriteria, 10);
             });
     }
 }
