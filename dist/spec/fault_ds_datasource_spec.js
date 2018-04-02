@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource', '../datasources/fault-ds/client_delegate'], function (_export, _context) {
+System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource', '../lib/client_delegate'], function (_export, _context) {
     "use strict";
 
     var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource, ClientDelegate;
@@ -22,8 +22,8 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
             FilterCloner = _datasourcesFaultDsFilterCloner.FilterCloner;
         }, function (_datasourcesFaultDsDatasource) {
             Datasource = _datasourcesFaultDsDatasource.OpenNMSFMDatasource;
-        }, function (_datasourcesFaultDsClient_delegate) {
-            ClientDelegate = _datasourcesFaultDsClient_delegate.ClientDelegate;
+        }, function (_libClient_delegate) {
+            ClientDelegate = _libClient_delegate.ClientDelegate;
         }],
         execute: function () {
 

@@ -1,0 +1,21 @@
+<query-editor-row query-ctrl="ctrl">
+
+    <div class="gf-form-inline">
+      <div ng-repeat="segment in ctrl.segments" role="menuitem" class="gf-form">
+        <metric-segment segment="segment" get-options="ctrl.getAltSegments($index)" on-change="ctrl.targetChanged()"></metric-segment>
+      </div>
+
+      <div ng-repeat="func in ctrl.functions" class="gf-form">
+        <span opennms-func-editor class="gf-form-label query-part"></span>
+      </div>
+
+      <div class="gf-form dropdown">
+        <span opennms-add-func></span>
+      </div>
+
+      <div class="gf-form gf-form--grow">
+        <div class="gf-form-label gf-form-label--grow"></div>
+      </div>
+    </div>
+
+</query-editor-row>

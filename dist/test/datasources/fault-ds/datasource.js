@@ -7,7 +7,7 @@ exports.OpenNMSFMDatasource = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _client_delegate = require('./client_delegate');
+var _client_delegate = require('../../lib/client_delegate');
 
 var _opennms = require('../../opennms');
 
@@ -120,6 +120,12 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                         status: "success",
                         message: "Data source is working",
                         title: "Success"
+                    };
+                } else {
+                    return {
+                        status: "danger",
+                        message: "OpenNMS provided a response, but no metadata was found.",
+                        title: "Unexpected Response"
                     };
                 }
             }).catch(function (e) {

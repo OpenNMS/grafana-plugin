@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapping', 'lodash'], function (_export, _context) {
+System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner', './Mapping', 'lodash'], function (_export, _context) {
     "use strict";
 
     var ClientDelegate, API, Model, FilterCloner, Mapping, _, _createClass, FeaturedAttributes, OpenNMSFMDatasource;
@@ -12,8 +12,8 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapp
     }
 
     return {
-        setters: [function (_client_delegate) {
-            ClientDelegate = _client_delegate.ClientDelegate;
+        setters: [function (_libClient_delegate) {
+            ClientDelegate = _libClient_delegate.ClientDelegate;
         }, function (_opennms) {
             API = _opennms.API;
             Model = _opennms.Model;
@@ -135,6 +135,12 @@ System.register(['./client_delegate', '../../opennms', './FilterCloner', './Mapp
                                     status: "success",
                                     message: "Data source is working",
                                     title: "Success"
+                                };
+                            } else {
+                                return {
+                                    status: "danger",
+                                    message: "OpenNMS provided a response, but no metadata was found.",
+                                    title: "Unexpected Response"
                                 };
                             }
                         }).catch(function (e) {

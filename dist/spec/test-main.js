@@ -3,7 +3,7 @@
 System.register(['prunk', 'jsdom', 'chai'], function (_export, _context) {
   "use strict";
 
-  var prunk, jsdom, chai, JSDOM;
+  var prunk, jsdom, chai, JSDOM, dom;
   return {
     setters: [function (_prunk) {
       prunk = _prunk.default;
@@ -26,8 +26,9 @@ System.register(['prunk', 'jsdom', 'chai'], function (_export, _context) {
 
       // Setup jsdom
       // Required for loading angularjs
-      global.document = new JSDOM('<html><head><script></script></head><body></body></html>');
-      global.window = global.document.parentWindow;
+      dom = new JSDOM('<html><head><script></script></head><body></body></html>');
+
+      global.window = dom.window;
 
       // Setup Chai
       chai.should();

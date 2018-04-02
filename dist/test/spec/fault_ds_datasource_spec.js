@@ -22,7 +22,7 @@ var _FilterCloner = require('../datasources/fault-ds/FilterCloner');
 
 var _datasource = require('../datasources/fault-ds/datasource');
 
-var _client_delegate = require('../datasources/fault-ds/client_delegate');
+var _client_delegate = require('../lib/client_delegate');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

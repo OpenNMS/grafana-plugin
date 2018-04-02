@@ -92,7 +92,13 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
         method: 'GET'
       }).then(function (response) {
         if (response.status === 200) {
-          return { status: "success", message: "Data source is working!", title: "Success" };
+          return { status: "success", message: "Data source is working", title: "Success" };
+        } else {
+          return {
+            status: "danger",
+            message: "OpenNMS provided a response, but no metadata was found.",
+            title: "Unexpected Response " + response.status
+          };
         }
       });
     }
