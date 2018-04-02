@@ -99,6 +99,12 @@ export class OpenNMSFMDatasource {
                       message: "Data source is working",
                       title: "Success"
                   };
+              } else {
+                return {
+                  status: "danger",
+                  message: "OpenNMS provided a response, but no metadata was found.",
+                  title: "Unexpected Response"
+                }
               }
           }).catch(e => {
               if (e.message === "Unsupported Version") {
