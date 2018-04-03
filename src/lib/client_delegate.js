@@ -37,7 +37,7 @@ export class ClientDelegate {
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {
               let self = this;
-              let client = Client.getMetadata(this.client.server, this.client.http)
+              let client = Client.getMetadata(self.client.server, self.client.http, self.timeout)
                 .then(function(metadata) {
                     // Ensure the OpenNMS we are talking to is compatible
                     if (metadata.apiVersion() !== 2) {
