@@ -10,6 +10,7 @@ export class OpenNMSDatasource {
     this.name = instanceSettings.name;
     this.basicAuth = instanceSettings.basicAuth;
     this.withCredentials = instanceSettings.withCredentials;
+    this.interval = (instanceSettings.jsonData || {}).timeInterval;
 
     this.$q = $q;
     this.backendSrv = backendSrv;
@@ -47,9 +48,8 @@ export class OpenNMSDatasource {
         headers: {'Content-Type': 'application/json'}
       });
     } else {
-      // There are no sources listed, use an empty set of measurements
-      request = this.$q.defer();
-      request.resolve({measurements: []});
+      // There are no sources listed, let Grafana display "No data points" to the user
+      return;
     }
 
     // Convert the results to the expected format
@@ -152,6 +152,7 @@ export class OpenNMSDatasource {
       start = options.range.from.valueOf(),
       end = options.range.to.valueOf(),
       step = Math.floor((end - start) / options.maxDataPoints);
+      step = (step < options.intervalMs) ? options.intervalMs : step;
 
     var query = {
       "start": start,
@@ -199,13 +200,13 @@ export class OpenNMSDatasource {
           delete interpolatedSource.nodeId;
         }));
       } else if (target.type === QueryType.Expression) {
-        if (!((target.label && target.expression))) {
+        if (!target.expression) {
           return;
         }
 
         // Build the expression
         var expression = {
-          "label": target.label,
+          "label": target.label ? target.label : target.expression,
           "value": target.expression,
           "transient": transient
         };
