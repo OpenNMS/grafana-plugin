@@ -189,6 +189,7 @@ export class OpenNMSDatasource {
         var source = {
           "aggregation": target.aggregation,
           "attribute": target.attribute,
+          "fallback-attribute": target.fallbackAttribute,
           "label": label,
           "resourceId": target.resourceId,
           "nodeId": target.nodeId, // temporary attribute used for interpolation

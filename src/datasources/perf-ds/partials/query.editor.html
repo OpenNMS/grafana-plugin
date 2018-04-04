@@ -90,6 +90,21 @@
             <div class="gf-form-inline">
                 <div class="gf-form max-width-25">
                     <label class="gf-form-label query-keyword width-10">
+                        Fallback Attribute <i class="fa fa-tag"></i>
+                    </label>
+                    <input type="text"
+                           class="gf-form-input"
+                           ng-model="ctrl.target.fallbackAttribute"
+                           spellcheck="false"
+                           placeholder="fallback attribute"
+                           data-min-length=0 data-items=100
+                           ng-blur="ctrl.targetBlur()"
+                    >
+                </div>
+            </div>
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <label class="gf-form-label query-keyword width-10">
                         Aggregation <i class="fa fa-calculator"></i>
                     </label>
                     <select class="gf-form-input"
