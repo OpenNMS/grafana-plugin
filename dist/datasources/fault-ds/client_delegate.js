@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['../opennms', 'lodash'], function (_export, _context) {
+System.register(['../../opennms', 'lodash'], function (_export, _context) {
     "use strict";
 
     var API, Client, Rest, DAO, _, _createClass, ClientDelegate;
@@ -50,10 +50,6 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     this.searchLimit = 1000;
                     this.$q = $q;
 
-                    if (settings.jsonData && settings.jsonData.timeout) {
-                        this.timeout = parseInt(settings.jsonData.timeout, 10) * 1000;
-                    }
-
                     var authConfig = undefined;
                     if (settings.basicAuth) {
                         // If basic auth is configured, pass the username and password to the client
@@ -67,7 +63,7 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     }
 
                     var server = new API.OnmsServer(this.name, this.url, authConfig);
-                    var http = new Rest.GrafanaHTTP(this.backendSrv, server, this.timeout);
+                    var http = new Rest.GrafanaHTTP(this.backendSrv, server);
                     this.client = new Client(http);
                     this.client.server = server;
                     this.clientWithMetadata = undefined;
@@ -78,7 +74,7 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     value: function getClientWithMetadata() {
                         if (!this.clientWithMetadata) {
                             var self = this;
-                            var client = Client.getMetadata(self.client.server, self.client.http, self.timeout).then(function (metadata) {
+                            var client = Client.getMetadata(this.client.server, this.client.http).then(function (metadata) {
                                 // Ensure the OpenNMS we are talking to is compatible
                                 if (metadata.apiVersion() !== 2) {
                                     throw new Error("Unsupported Version");
@@ -235,55 +231,6 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                             // This may be the case when the user entered a property, which does not exist
                             // therefore fallback to EQ
                             return [API.Comparators.EQ];
-                        });
-                    }
-                }, {
-                    key: 'getFlowDao',
-                    value: function getFlowDao() {
-                        return this.getClientWithMetadata().then(function (c) {
-                            return c.flows();
-                        });
-                    }
-                }, {
-                    key: 'getSeriesForTopNApplications',
-                    value: function getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId) {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId);
-                        });
-                    }
-                }, {
-                    key: 'getSeriesForTopNConversations',
-                    value: function getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId) {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId);
-                        });
-                    }
-                }, {
-                    key: 'getSummaryForTopNApplications',
-                    value: function getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId) {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId);
-                        });
-                    }
-                }, {
-                    key: 'getSummaryForTopNConversations',
-                    value: function getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId) {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId);
-                        });
-                    }
-                }, {
-                    key: 'getExporters',
-                    value: function getExporters() {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getExporters(10);
-                        });
-                    }
-                }, {
-                    key: 'getExporter',
-                    value: function getExporter(nodeCriteria) {
-                        return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getExporter(nodeCriteria, 10);
                         });
                     }
                 }]);

@@ -9,6 +9,8 @@ var _datasource = require('./datasource');
 
 var _query_ctrl = require('./query_ctrl');
 
+require('../../components/timeout');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var GenericConfigCtrl = function GenericConfigCtrl() {

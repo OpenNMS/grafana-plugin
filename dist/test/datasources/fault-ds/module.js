@@ -13,6 +13,8 @@ var _query_ctrl = require('./query_ctrl');
 
 var _Examples = require('./Examples');
 
+require('../../components/timeout');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var OpenNMSFMDatasourceConfigCtrl = function OpenNMSFMDatasourceConfigCtrl() {

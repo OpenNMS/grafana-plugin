@@ -48,6 +48,10 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
           this.basicAuth = instanceSettings.basicAuth;
           this.withCredentials = instanceSettings.withCredentials;
 
+          if (instanceSettings.jsonData && instanceSettings.jsonData.timeout) {
+            this.timeout = parseInt(instanceSettings.jsonData.timeout, 10) * 1000;
+          }
+
           this.$q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
@@ -68,6 +72,9 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             }
 
             options.url = this.url + options.url;
+            if (this.timeout) {
+              options.timeout = this.timeout;
+            }
 
             return this.backendSrv.datasourceRequest(options);
           }

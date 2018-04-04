@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['./datasource', './query_ctrl', 'app/plugins/sdk'], function (_export, _context) {
+System.register(['./datasource', './query_ctrl', 'app/plugins/sdk', '../../components/timeout'], function (_export, _context) {
   "use strict";
 
   var OpenNMSDatasource, OpenNMSQueryCtrl, loadPluginCss, GenericConfigCtrl, GenericQueryOptionsCtrl;
@@ -18,7 +18,7 @@ System.register(['./datasource', './query_ctrl', 'app/plugins/sdk'], function (_
       OpenNMSQueryCtrl = _query_ctrl.OpenNMSQueryCtrl;
     }, function (_appPluginsSdk) {
       loadPluginCss = _appPluginsSdk.loadPluginCss;
-    }],
+    }, function (_componentsTimeout) {}],
     execute: function () {
       _export('ConfigCtrl', GenericConfigCtrl = function GenericConfigCtrl() {
         _classCallCheck(this, GenericConfigCtrl);

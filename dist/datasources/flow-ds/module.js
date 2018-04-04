@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['./datasource', './query_ctrl'], function (_export, _context) {
+System.register(['./datasource', './query_ctrl', '../../components/timeout'], function (_export, _context) {
   "use strict";
 
   var FlowDatasource, FlowDatasourceQueryCtrl, GenericConfigCtrl, GenericQueryOptionsCtrl;
@@ -16,7 +16,7 @@ System.register(['./datasource', './query_ctrl'], function (_export, _context) {
       FlowDatasource = _datasource.FlowDatasource;
     }, function (_query_ctrl) {
       FlowDatasourceQueryCtrl = _query_ctrl.FlowDatasourceQueryCtrl;
-    }],
+    }, function (_componentsTimeout) {}],
     execute: function () {
       _export('ConfigCtrl', GenericConfigCtrl = function GenericConfigCtrl() {
         _classCallCheck(this, GenericConfigCtrl);

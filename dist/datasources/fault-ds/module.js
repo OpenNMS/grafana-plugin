@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['./datasource', './query_ctrl', './Examples'], function (_export, _context) {
+System.register(['./datasource', './query_ctrl', './Examples', '../../components/timeout'], function (_export, _context) {
   "use strict";
 
   var OpenNMSFMDatasource, OpenNMSFMDatasourceQueryCtrl, Examples, _createClass, OpenNMSFMDatasourceConfigCtrl, OpenNMSFMDatasourceQueryOptionsCtrl;
@@ -18,7 +18,7 @@ System.register(['./datasource', './query_ctrl', './Examples'], function (_expor
       OpenNMSFMDatasourceQueryCtrl = _query_ctrl.OpenNMSFMDatasourceQueryCtrl;
     }, function (_Examples) {
       Examples = _Examples.Examples;
-    }],
+    }, function (_componentsTimeout) {}],
     execute: function () {
       _createClass = function () {
         function defineProperties(target, props) {
