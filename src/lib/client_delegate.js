@@ -11,6 +11,10 @@ export class ClientDelegate {
         this.searchLimit = 1000;
         this.$q = $q;
 
+        if (settings.jsonData && settings.jsonData.timeout) {
+            this.timeout = parseInt(settings.jsonData.timeout,10) * 1000;
+        }
+
         let authConfig = undefined;
         if (settings.basicAuth) {
           // If basic auth is configured, pass the username and password to the client
@@ -24,7 +28,7 @@ export class ClientDelegate {
         }
 
         let server = new API.OnmsServer(this.name, this.url, authConfig);
-        let http = new Rest.GrafanaHTTP(this.backendSrv, server);
+        let http = new Rest.GrafanaHTTP(this.backendSrv, server, this.timeout);
         this.client = new Client(http);
         this.client.server = server;
         this.clientWithMetadata = undefined;
@@ -33,7 +37,7 @@ export class ClientDelegate {
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {
               let self = this;
-              let client = Client.getMetadata(this.client.server, this.client.http)
+              let client = Client.getMetadata(self.client.server, self.client.http, self.timeout)
                 .then(function(metadata) {
                     // Ensure the OpenNMS we are talking to is compatible
                     if (metadata.apiVersion() !== 2) {

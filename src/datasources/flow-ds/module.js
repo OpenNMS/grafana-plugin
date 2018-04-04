@@ -1,5 +1,6 @@
 import {FlowDatasource} from './datasource';
 import {FlowDatasourceQueryCtrl} from './query_ctrl';
+import '../../components/timeout';
 
 class GenericConfigCtrl {}
 
