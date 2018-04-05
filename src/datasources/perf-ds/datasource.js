@@ -55,12 +55,11 @@ export class OpenNMSDatasource {
       });
     } else {
       // There are no sources listed, use an empty set of measurements
-      request = this.$q.defer();
-      request.resolve({measurements: []});
+      request = this.$q.resolve({measurements: []});
     }
 
     // Convert the results to the expected format
-    return this.$q.when(request).then(function (response) {
+    return request.then((response) => {
       if (response.status !== 200) {
         throw { message: 'Query failed.' };
       }
