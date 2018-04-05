@@ -40,7 +40,27 @@ export class OpenNMSDatasource {
     return this.backendSrv.datasourceRequest(options);
   };
 
+  decorateError(err) {
+    let ret = err;
+    if (err.err) {
+      ret = err.err;
+    }
+    // cancelled property causes the UI to never complete on failure
+    if (ret.hasOwnProperty('cancelled')) {
+      delete ret.cancelled;
+    }
+    if (!ret.message) {
+      ret.message = ret.statusText || 'Request failed.';
+    }
+    if (!ret.status) {
+      ret.status = 'error';
+    }
+    return ret;
+  };
+
   query(options) {
+    const self = this;
+
     // Generate the query
     var query = this.buildQuery(options);
 
@@ -61,9 +81,12 @@ export class OpenNMSDatasource {
     // Convert the results to the expected format
     return request.then((response) => {
       if (response.status !== 200) {
-        throw { message: 'Query failed.' };
+        console.warn('Successful response had status != 200:',response);
+        return self.$q.reject(response);
       }
       return OpenNMSDatasource.processMeasurementsResponse(response);
+    }).catch(err => {
+      return self.$q.reject(self.decorateError(err));
     });
   }
 
@@ -82,6 +105,8 @@ export class OpenNMSDatasource {
           title: "Unexpected Response " + response.status
         }
       }
+    }).catch(err => {
+      return this.decorateError(err);
     });
   }
 
