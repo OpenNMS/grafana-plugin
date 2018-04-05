@@ -128,8 +128,13 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
     }
   }, {
     key: 'openAttributeSelectionModal',
-    value: function openAttributeSelectionModal() {
+    value: function openAttributeSelectionModal(prop) {
       var self = this;
+
+      if (!prop) {
+        prop = 'attribute';
+      }
+
       this.showSelectionModal("attributes", {
         'Name': 'name'
       }, function (query) {
@@ -146,7 +151,7 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
           };
         });
       }, function (attribute) {
-        self.target.attribute = attribute.name;
+        self.target[prop] = attribute.name;
         self.targetBlur();
       });
     }

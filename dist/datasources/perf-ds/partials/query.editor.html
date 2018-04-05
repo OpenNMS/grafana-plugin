@@ -56,7 +56,7 @@
             <div class="gf-form-inline">
                 <div class="gf-form max-width-25">
                     <a class="gf-form-label query-keyword width-10"
-                       ng-click="ctrl.openAttributeSelectionModal();"
+                       ng-click="ctrl.openAttributeSelectionModal('attribute');"
                        role="menuitem">
                         Attribute <i class="fa fa-tag"></i>
                     </a>
@@ -82,6 +82,24 @@
                            spellcheck='false'
 
                            placeholder="subattribute"
+                           data-min-length=0 data-items=100
+                           ng-blur="ctrl.targetBlur()"
+                    >
+                </div>
+            </div>
+        <div ng-show="ctrl.target.resourceId">
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <a class="gf-form-label query-keyword width-10"
+                       ng-click="ctrl.openAttributeSelectionModal('fallbackAttribute');"
+                       role="menuitem">
+                        Fallback Attribute <i class="fa fa-tag"></i>
+                    </a>
+                    <input type="text"
+                           class="gf-form-input"
+                           ng-model="ctrl.target.fallbackAttribute"
+                           spellcheck="false"
+                           placeholder="fallback attribute"
                            data-min-length=0 data-items=100
                            ng-blur="ctrl.targetBlur()"
                     >

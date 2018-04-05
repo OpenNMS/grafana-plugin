@@ -241,6 +241,9 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                 if (target.subattribute !== undefined && target.subattribute !== '') {
                   source.datasource = target.subattribute;
                 }
+                if (target.fallbackAttribute !== undefined && target.fallbackAttribute !== '') {
+                  source['fallback-attribute'] = target.fallbackAttribute;
+                }
 
                 // Perform variable substitution - may generate additional queries
                 query.source = query.source.concat(self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {

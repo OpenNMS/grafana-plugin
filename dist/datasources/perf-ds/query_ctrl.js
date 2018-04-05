@@ -165,8 +165,13 @@ System.register(['./modal_ctrl', './constants', 'app/plugins/sdk', 'lodash'], fu
           }
         }, {
           key: 'openAttributeSelectionModal',
-          value: function openAttributeSelectionModal() {
+          value: function openAttributeSelectionModal(prop) {
             var self = this;
+
+            if (!prop) {
+              prop = 'attribute';
+            }
+
             this.showSelectionModal("attributes", {
               'Name': 'name'
             }, function (query) {
@@ -183,7 +188,7 @@ System.register(['./modal_ctrl', './constants', 'app/plugins/sdk', 'lodash'], fu
                 };
               });
             }, function (attribute) {
-              self.target.attribute = attribute.name;
+              self.target[prop] = attribute.name;
               self.targetBlur();
             });
           }
