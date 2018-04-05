@@ -102,8 +102,13 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     });
   }
 
-  openAttributeSelectionModal() {
+  openAttributeSelectionModal(prop) {
     var self = this;
+
+    if (!prop) {
+      prop = 'attribute';
+    }
+
     this.showSelectionModal("attributes", {
       'Name': 'name'
     }, function (query) {
@@ -122,7 +127,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
           };
         });
     }, function (attribute) {
-      self.target.attribute = attribute.name;
+      self.target[prop] = attribute.name;
       self.targetBlur();
     });
   }
