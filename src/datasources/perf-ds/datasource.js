@@ -189,7 +189,6 @@ export class OpenNMSDatasource {
         var source = {
           "aggregation": target.aggregation,
           "attribute": target.attribute,
-          "fallback-attribute": target.fallbackAttribute,
           "label": label,
           "resourceId": target.resourceId,
           "nodeId": target.nodeId, // temporary attribute used for interpolation
@@ -198,6 +197,9 @@ export class OpenNMSDatasource {
 
         if (target.subattribute !== undefined && target.subattribute !== '') {
           source.datasource = target.subattribute;
+        }
+        if (target.fallbackAttribute !== undefined && target.fallbackAttribute !== '') {
+          source['fallback-attribute'] = target.fallbackAttribute;
         }
 
         // Perform variable substitution - may generate additional queries
