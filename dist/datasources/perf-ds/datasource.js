@@ -79,8 +79,29 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             return this.backendSrv.datasourceRequest(options);
           }
         }, {
+          key: 'decorateError',
+          value: function decorateError(err) {
+            var ret = err;
+            if (err.err) {
+              ret = err.err;
+            }
+            // cancelled property causes the UI to never complete on failure
+            if (ret.hasOwnProperty('cancelled')) {
+              delete ret.cancelled;
+            }
+            if (!ret.message) {
+              ret.message = ret.statusText || 'Request failed.';
+            }
+            if (!ret.status) {
+              ret.status = 'error';
+            }
+            return ret;
+          }
+        }, {
           key: 'query',
           value: function query(options) {
+            var self = this;
+
             // Generate the query
             var query = this.buildQuery(options);
 
@@ -95,21 +116,25 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
               });
             } else {
               // There are no sources listed, use an empty set of measurements
-              request = this.$q.defer();
-              request.resolve({ measurements: [] });
+              request = this.$q.resolve({ measurements: [] });
             }
 
             // Convert the results to the expected format
-            return this.$q.when(request).then(function (response) {
+            return request.then(function (response) {
               if (response.status !== 200) {
-                throw { message: 'Query failed.' };
+                console.warn('Successful response had status != 200:', response);
+                return self.$q.reject(response);
               }
               return OpenNMSDatasource.processMeasurementsResponse(response);
+            }).catch(function (err) {
+              return self.$q.reject(self.decorateError(err));
             });
           }
         }, {
           key: 'testDatasource',
           value: function testDatasource() {
+            var _this = this;
+
             return this.doOpenNMSRequest({
               url: '/rest/info',
               method: 'GET'
@@ -123,6 +148,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                   title: "Unexpected Response " + response.status
                 };
               }
+            }).catch(function (err) {
+              return _this.decorateError(err);
             });
           }
         }, {
