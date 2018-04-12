@@ -1,6 +1,8 @@
 import {API, Client, Rest, DAO} from '../opennms';
 import _ from 'lodash';
 
+let Q;
+
 export class ClientDelegate {
 
     constructor(settings, backendSrv, $q) {
@@ -10,6 +12,9 @@ export class ClientDelegate {
         this.backendSrv = backendSrv;
         this.searchLimit = 1000;
         this.$q = $q;
+        if (!Q) {
+            Q = $q;
+        }
 
         if (settings.jsonData && settings.jsonData.timeout) {
             this.timeout = parseInt(settings.jsonData.timeout,10) * 1000;
@@ -33,6 +38,35 @@ export class ClientDelegate {
         this.client.server = server;
         this.clientWithMetadata = undefined;
      }
+
+    decorateError(err) {
+        let ret = err;
+        if (err.err) {
+            ret = err.err;
+        }
+        if (err.data.err) {
+            ret = err.data.err;
+        }
+        let statusText = 'Request failed.';
+
+        // cancelled property causes the UI to never complete on failure
+        if (err.cancelled) {
+            statusText = 'Request timed out.';
+            delete err.cancelled;
+        }
+        if (err.data && err.data.cancelled) {
+            statusText = 'Request timed out.';
+            delete err.data.cancelled;
+        }
+
+        if (!ret.message) {
+            ret.message = ret.statusText || statusText;
+        }
+        if (!ret.status) {
+            ret.status = 'error';
+        }
+        return Q.reject(ret);
+    };
 
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {
@@ -73,42 +107,42 @@ export class ClientDelegate {
         return this.getAlarmDao()
             .then(function(alarmDao) {
                 return alarmDao.find(filter);
-            });
+            }).catch(this.decorateError);
     }
 
     getAlarm(alarmId) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
             return alarmDao.get(alarmId);
-        });
+        }).catch(this.decorateError);
     }
 
     doEscalate(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.escalate(alarmId, user)
-            });
+            }).catch(this.decorateError);
     }
 
     doClear(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.clear(alarmId, user);
-            });
+            }).catch(this.decorateError);
     }
 
     doUnack(alarmId, user) {
         return this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.unacknowledge(alarmId, user);
-            });
+            }).catch(this.decorateError);
     }
 
     doAck(alarmId, user) {
         return this.getAlarmDao()
             .then(function(alarmDao) {
                 return alarmDao.acknowledge(alarmId, user);
-            });
+            }).catch(this.decorateError);
     }
 
     doTicketAction(alarmId, action) {
@@ -120,35 +154,35 @@ export class ClientDelegate {
         return this.backendSrv.datasourceRequest({
             url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
             method: 'POST',
-        });
+        }).catch(this.decorateError);
     }
 
     saveSticky(alarmId, sticky, user) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
           return alarmDao.saveStickyMemo(alarmId, sticky, user);
-        });
+        }).catch(this.decorateError);
     }
 
     deleteSticky(alarmId) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
           return alarmDao.deleteStickyMemo(alarmId);
-        });
+        }).catch(this.decorateError);
     }
 
     saveJournal(alarmId, journal, user) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
           return alarmDao.saveJournalMemo(alarmId, journal, user);
-        });
+        }).catch(this.decorateError);
     }
 
     deleteJournal(alarmId) {
       return this.getAlarmDao()
         .then(function(alarmDao) {
           return alarmDao.deleteJournalMemo(alarmId);
-        });
+        }).catch(this.decorateError);
     }
 
     findOperators() {
@@ -165,7 +199,7 @@ export class ClientDelegate {
         return this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.searchProperties();
-            });
+            }).catch(this.decorateError);
     }
 
     findProperty(propertyId) {
@@ -174,7 +208,7 @@ export class ClientDelegate {
                 return _.find(properties, function(property) {
                     return property.id === propertyId;
                 });
-            })
+            });
     }
 
     getPropertyComparators(propertyId) {
@@ -190,7 +224,7 @@ export class ClientDelegate {
                 // This may be the case when the user entered a property, which does not exist
                 // therefore fallback to EQ
                 return [ API.Comparators.EQ ];
-            });
+            }).catch(this.decorateError);
     }
 
     // Flow related functions
@@ -198,48 +232,48 @@ export class ClientDelegate {
     getFlowDao() {
         return this.getClientWithMetadata().then(function(c) {
             return c.flows();
-        });
+        }).catch(this.decorateError);
     }
 
     getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId);
-            });
+            }).catch(this.decorateError);
     }
 
     getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId);
-            });
+            }).catch(this.decorateError);
     }
 
     getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId);
-            });
+            }).catch(this.decorateError);
     }
 
     getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId);
-            });
+            }).catch(this.decorateError);
     }
 
     getExporters() {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getExporters(10);
-            });
+            }).catch(this.decorateError);
     }
 
     getExporter(nodeCriteria) {
         return this.getFlowDao()
             .then(function(flowDao) {
                 return flowDao.getExporter(nodeCriteria, 10);
-            });
+            }).catch(this.decorateError);
     }
 }
