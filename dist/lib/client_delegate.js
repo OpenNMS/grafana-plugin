@@ -3,7 +3,7 @@
 System.register(['../opennms', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var API, Client, Rest, DAO, _, _createClass, ClientDelegate;
+    var API, Client, Rest, DAO, _, _createClass, Q, ClientDelegate;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -39,6 +39,8 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                 };
             }();
 
+            Q = void 0;
+
             _export('ClientDelegate', ClientDelegate = function () {
                 function ClientDelegate(settings, backendSrv, $q) {
                     _classCallCheck(this, ClientDelegate);
@@ -49,6 +51,9 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     this.backendSrv = backendSrv;
                     this.searchLimit = 1000;
                     this.$q = $q;
+                    if (!Q) {
+                        Q = $q;
+                    }
 
                     if (settings.jsonData && settings.jsonData.timeout) {
                         this.timeout = parseInt(settings.jsonData.timeout, 10) * 1000;
@@ -74,6 +79,36 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                 }
 
                 _createClass(ClientDelegate, [{
+                    key: 'decorateError',
+                    value: function decorateError(err) {
+                        var ret = err;
+                        if (err.err) {
+                            ret = err.err;
+                        }
+                        if (err.data.err) {
+                            ret = err.data.err;
+                        }
+                        var statusText = 'Request failed.';
+
+                        // cancelled property causes the UI to never complete on failure
+                        if (err.cancelled) {
+                            statusText = 'Request timed out.';
+                            delete err.cancelled;
+                        }
+                        if (err.data && err.data.cancelled) {
+                            statusText = 'Request timed out.';
+                            delete err.data.cancelled;
+                        }
+
+                        if (!ret.message) {
+                            ret.message = ret.statusText || statusText;
+                        }
+                        if (!ret.status) {
+                            ret.status = 'error';
+                        }
+                        return Q.reject(ret);
+                    }
+                }, {
                     key: 'getClientWithMetadata',
                     value: function getClientWithMetadata() {
                         if (!this.clientWithMetadata) {
@@ -116,42 +151,42 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     value: function findAlarms(filter) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.find(filter);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getAlarm',
                     value: function getAlarm(alarmId) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.get(alarmId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'doEscalate',
                     value: function doEscalate(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.escalate(alarmId, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'doClear',
                     value: function doClear(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.clear(alarmId, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'doUnack',
                     value: function doUnack(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.unacknowledge(alarmId, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'doAck',
                     value: function doAck(alarmId, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.acknowledge(alarmId, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'doTicketAction',
@@ -164,35 +199,35 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                         return this.backendSrv.datasourceRequest({
                             url: self.url + '/api/v2/alarms/' + alarmId + "/ticket/" + action,
                             method: 'POST'
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'saveSticky',
                     value: function saveSticky(alarmId, sticky, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.saveStickyMemo(alarmId, sticky, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'deleteSticky',
                     value: function deleteSticky(alarmId) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.deleteStickyMemo(alarmId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'saveJournal',
                     value: function saveJournal(alarmId, journal, user) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.saveJournalMemo(alarmId, journal, user);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'deleteJournal',
                     value: function deleteJournal(alarmId) {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.deleteJournalMemo(alarmId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'findOperators',
@@ -210,7 +245,7 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     value: function getProperties() {
                         return this.getAlarmDao().then(function (alarmDao) {
                             return alarmDao.searchProperties();
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'findProperty',
@@ -235,56 +270,56 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                             // This may be the case when the user entered a property, which does not exist
                             // therefore fallback to EQ
                             return [API.Comparators.EQ];
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getFlowDao',
                     value: function getFlowDao() {
                         return this.getClientWithMetadata().then(function (c) {
                             return c.flows();
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getSeriesForTopNApplications',
                     value: function getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId) {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getSeriesForTopNConversations',
                     value: function getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId) {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getSeriesForTopNConversations(N, start, end, step, nodeCriteria, interfaceId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getSummaryForTopNApplications',
                     value: function getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId) {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getSummaryForTopNConversations',
                     value: function getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId) {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getSummaryForTopNConversations(N, start, end, nodeCriteria, interfaceId);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getExporters',
                     value: function getExporters() {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getExporters(10);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getExporter',
                     value: function getExporter(nodeCriteria) {
                         return this.getFlowDao().then(function (flowDao) {
                             return flowDao.getExporter(nodeCriteria, 10);
-                        });
+                        }).catch(this.decorateError);
                     }
                 }]);
 

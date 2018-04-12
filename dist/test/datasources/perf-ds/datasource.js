@@ -66,12 +66,20 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       if (err.err) {
         ret = err.err;
       }
+      var statusText = ret.statusText || 'Request failed.';
+
       // cancelled property causes the UI to never complete on failure
-      if (ret.hasOwnProperty('cancelled')) {
+      if (ret.cancelled) {
         delete ret.cancelled;
+        statusText = 'Request timed out.';
       }
+      if (err.cancelled) {
+        delete err.cancelled;
+        statusText = 'Request timed out.';
+      }
+
       if (!ret.message) {
-        ret.message = ret.statusText || 'Request failed.';
+        ret.message = statusText;
       }
       if (!ret.status) {
         ret.status = 'error';
