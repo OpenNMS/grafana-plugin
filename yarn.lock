@@ -2562,9 +2562,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@^1.2.1-snapshot.develop.111:
-  version "1.2.1-snapshot.develop.111"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.1-snapshot.develop.111.tgz#59818c89dab9413b9135e8d8d373e26a0dbe1635"
+opennms@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.1.tgz#0c1b408f2a9878286feda3747cbe987a6a870692"
   dependencies:
     axios "^0.16.1"
     cli-table "^0.3.1"
