@@ -21,6 +21,15 @@ export class AlarmDetailsCtrl {
     if ($scope.ticketingEnabled) {
       $scope.tabs.push('Ticketing');
     }
+    if ($scope.alarm.impacts && $scope.alarm.impacts.length > 0) {
+      $scope.tabs.push('Impacts');
+    }
+    if ($scope.alarm.causes && $scope.alarm.causes.length > 0) {
+      $scope.tabs.push('Caused By');
+    }
+
+    // Raw global details link
+    $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
   }
 
 }

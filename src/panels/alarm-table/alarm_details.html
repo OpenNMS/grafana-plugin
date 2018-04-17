@@ -77,7 +77,7 @@
             </div>
         </div>
 
-        <div ng-if="editor.index == 2">
+        <div ng-if="editor.index == 2 && scope.ticketingEnabled">
             <table class="filter-table gf-form-group">
                 <tr>
                     <td>Ticket ID</td>
@@ -90,5 +90,55 @@
                 </tr>
             </table>
         </div>
+
+        <div ng-if="editor.index == 2 && alarm.impacts && alarm.impacts.length > 0">
+            <table class="filter-table gf-form-group">
+                <thead>
+                    <th> </th>
+                    <th>ID</th>
+                    <th>ReducktionKey</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Description</th>
+                </thead>
+                <tr ng-repeat="i in alarm.impacts">
+                    <td>
+                        <a href="{{detailsLink}}={{i.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                    </td>
+                    <td>{{i.id}}</td>
+                    <td>{{i.reductionKey}}</td>
+                    <td>{{i.type}}</td>
+                    <td>{{i.severity}}</td>
+                    <td>{{i.description}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div ng-if="editor.index == 2 && alarm.causes && alarm.causes.length > 0">
+            <table class="table-panel-table dense-table-panel-table alarm-table">
+                <thead>
+                    <th> </th>
+                    <th>ID</th>
+                    <th>ReducktionKey</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Description</th>
+                </thead>
+                <tbody class="severity">
+                    <tr ng-repeat="c in alarm.causes" class="{{c.severity.toLowerCase()}} next-selected">
+                        <td style>
+                            <a href="{{detailsLink}}={{c.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                        </td>
+                        <td style>{{c.id}}</td>
+                        <td style>{{c.reductionKey}}</td>
+                        <td style>{{c.type}}</td>
+                        <td style>{{c.severity}}</td>
+                        <td style>{{c.description}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
     </div>
 </div>
