@@ -104,7 +104,7 @@
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
                         </td>
                         <td severity>{{summary.reductionKey}}</td>
-                        <td severity>{{summary.description}}</td>
+                        <td severity ng-bind-html="summary.description"></td>
                     </tr>
                 </tbody>
             </table>
@@ -123,7 +123,7 @@
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
                         </td>
                         <td style>{{summary.reductionKey}}</td>
-                        <td style>{{summary.description}}</td>
+                        <td severity ng-bind-html="summary.description"></td>
                     </tr>
                 </tbody>
             </table>
