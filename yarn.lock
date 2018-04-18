@@ -2393,8 +2393,8 @@ mocha@^3.4.1:
     supports-color "3.1.2"
 
 moment@^2.19.3:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.0.tgz#7921ade01017dd45186e7fee5f424f0b8663a730"
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
 
 ms@0.7.1:
   version "0.7.1"
@@ -2562,9 +2562,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.1.tgz#0c1b408f2a9878286feda3747cbe987a6a870692"
+opennms@1.2.2-snapshot.features.correlation.poc.1:
+  version "1.2.2-snapshot.features.correlation.poc.1"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.2-snapshot.features.correlation.poc.1.tgz#ea0ce0292622bfdcc33c9822bce13c1631cb9435"
   dependencies:
     axios "^0.16.1"
     cli-table "^0.3.1"
