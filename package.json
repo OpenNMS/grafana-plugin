@@ -29,7 +29,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-execute": "~0.2.2",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-sass": "^2.0.0",
+    "grunt-sass": "^2.1.0",
     "grunt-systemjs-builder": "^1.0.0",
     "jsdom": "^11.6.2",
     "load-grunt-tasks": "~3.5.2",
