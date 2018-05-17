@@ -32,7 +32,8 @@
     {"type": "panel", "name": "Alarm Histogram"},
     {"type": "datasource", "name": "OpenNMS Faults"},
     {"type": "datasource", "name": "OpenNMS Performance"},
-    {"type": "datasource", "name": "OpenNMS Flows"}
+    {"type": "datasource", "name": "OpenNMS Flows"},
+    {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
   ],
   "dependencies": {
     "grafanaVersion": "4.x.x",
