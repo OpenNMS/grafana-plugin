@@ -130,7 +130,12 @@ export class FlowDatasource {
   }
 
   metricFindExporterNodes(query) {
-    return this.client.getExporters().then(exporters => {
+    const defaultRangeMs = 14400000;
+    let range = defaultRangeMs;
+    if (query != null && query.length > 0) {
+      range = parseInt(query) || defaultRangeMs;
+    }
+    return this.client.getExporters(-range, 0).then(exporters => {
       let results = [];
       _.each(exporters, function (exporter) {
         results.push({text: exporter.label, value: exporter.id, expandable: true});
