@@ -2,7 +2,7 @@
 
 == General
 
-The Flow Datasource can be used to retrieved application and conversation related metrics derived from flow data stored by OpenNMS.
+The _Flow Datasource_ can be used to retrieve application and conversation related metrics derived from flow data stored by OpenNMS.
 
 The query editor supports the following functions:
 
@@ -27,18 +27,11 @@ The query editor supports the following functions:
 The `exporterNodesWithFlows()` query will return a list of nodes which have exported flow data to OpenNMS.
 The value of the template variable is the `Node ID` and the display text is the `Node Label`.
 
-The available arguments are as follows:
-[options="header, autowidth"]
-|===
-| Name                 | Default       | Description
-| exportedWithinMillis | `14400000`    | Range of time in which a exporter must have a sent a flow to be included.
-                                           Template queries are not tied to the time range currently applied to the dashboard, so this value is relative to the current time.
-                                           Defaults to 4 hours.
-|===
+NOTE: The exporters must be part of the node inventory in OpenNMS in order to be returned by this query.
 
-For example, to query the exporters that have sent flows in the last 24 hours you can use the following expression:
+For example, to query the exporters that have sent flows you can use the following expression:
 ```
-exporterNodesWithFlows(86400000)
+exporterNodesWithFlows()
 ```
 
 === interfacesOnExporterNodeWithFlows
@@ -50,12 +43,22 @@ The available arguments are as follows:
 [options="header, autowidth"]
 |===
 | Name                 | Default     | Description
-| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node of which to  enumerate the interfaces.
+| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node on which to enumerate the interfaces.
 |===
 
 Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query, you can use the following expression:
 ```
 interfacesOnExporterNodeWithFlows($node)
+```
+
+To query a specific node by id, you can use an expression similar to:
+```
+interfacesOnExporterNodeWithFlows(123)
+```
+
+To query a specific node by foreign source and foreign id, you can use an expression similar to:
+```
+interfacesOnExporterNodeWithFlows(FS:FID)
 ```
 
 == Limitations
