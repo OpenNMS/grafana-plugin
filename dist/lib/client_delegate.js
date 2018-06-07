@@ -309,16 +309,16 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                     }
                 }, {
                     key: 'getExporters',
-                    value: function getExporters() {
+                    value: function getExporters(start, end) {
                         return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getExporters(10);
+                            return flowDao.getExporters(this.searchLimit, start, end);
                         }).catch(this.decorateError);
                     }
                 }, {
                     key: 'getExporter',
-                    value: function getExporter(nodeCriteria) {
+                    value: function getExporter(nodeCriteria, limit) {
                         return this.getFlowDao().then(function (flowDao) {
-                            return flowDao.getExporter(nodeCriteria, 10);
+                            return flowDao.getExporter(nodeCriteria, this.searchLimit);
                         }).catch(this.decorateError);
                     }
                 }]);

@@ -153,7 +153,12 @@ var FlowDatasource = exports.FlowDatasource = function () {
   }, {
     key: 'metricFindExporterNodes',
     value: function metricFindExporterNodes(query) {
-      return this.client.getExporters().then(function (exporters) {
+      var defaultRangeMs = 14400000;
+      var range = defaultRangeMs;
+      if (query != null && query.length > 0) {
+        range = parseInt(query) || defaultRangeMs;
+      }
+      return this.client.getExporters(-range, 0).then(function (exporters) {
         var results = [];
         _lodash2.default.each(exporters, function (exporter) {
           results.push({ text: exporter.label, value: exporter.id, expandable: true });

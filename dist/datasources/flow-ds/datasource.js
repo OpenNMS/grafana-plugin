@@ -169,7 +169,12 @@ System.register(['lodash', '../../lib/client_delegate'], function (_export, _con
         }, {
           key: 'metricFindExporterNodes',
           value: function metricFindExporterNodes(query) {
-            return this.client.getExporters().then(function (exporters) {
+            var defaultRangeMs = 14400000;
+            var range = defaultRangeMs;
+            if (query != null && query.length > 0) {
+              range = parseInt(query) || defaultRangeMs;
+            }
+            return this.client.getExporters(-range, 0).then(function (exporters) {
               var results = [];
               _.each(exporters, function (exporter) {
                 results.push({ text: exporter.label, value: exporter.id, expandable: true });
