@@ -263,17 +263,17 @@ export class ClientDelegate {
             }).catch(this.decorateError);
     }
 
-    getExporters() {
+    getExporters(start, end) {
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporters(10);
+                return flowDao.getExporters(this.searchLimit, start, end);
             }).catch(this.decorateError);
     }
 
-    getExporter(nodeCriteria) {
+    getExporter(nodeCriteria, limit) {
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporter(nodeCriteria, 10);
+                return flowDao.getExporter(nodeCriteria, this.searchLimit);
             }).catch(this.decorateError);
     }
 }

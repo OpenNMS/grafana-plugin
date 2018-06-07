@@ -1,0 +1,66 @@
+= Flow Datasource
+
+== General
+
+The _Flow Datasource_ can be used to retrieve application and conversation related metrics derived from flow data stored by OpenNMS.
+
+The query editor supports the following functions:
+
+[options="header, autowidth"]
+|===
+| Category  | Name                    | Description
+| Combine   | `topN`                  | Limit the results to the Top N conversations/applications when sorted by total bytes.
+| Combine   | `includeOther`          | Combine and include other conversations/applications that fall outside of the Top N.
+| Filter    | `withExporterNode`      | Filter for flows related to the given exporter node.
+| Filter    | `withIfIndex`           | Filter for flows related to the given interface index.
+| Transform | `perSecond`             | Convert the values to a per/second rate.
+| Transform | `negativeEgress`        | Make the egress values negative.
+| Transform | `negativeIngress`       | Make the ingress values negative.
+| Transform | `asTableSummary`        | Generate a tabular summary instead of time series data.
+| Transform | `combineIngressEgress`  | Sum ingress and egress values together.
+|===
+
+== Template Queries
+
+=== exporterNodesWithFlows
+
+The `exporterNodesWithFlows()` query will return a list of nodes which have exported flow data to OpenNMS.
+The value of the template variable is the `Node ID` and the display text is the `Node Label`.
+
+NOTE: The exporters must be part of the node inventory in OpenNMS in order to be returned by this query.
+
+For example, to query the exporters that have sent flows you can use the following expression:
+```
+exporterNodesWithFlows()
+```
+
+=== interfacesOnExporterNodeWithFlows
+
+The `interfacesOnExporterNodeWithFlows()` query will return a list of interface indexes which are associated with one or more flows on the given node.
+The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
+
+The available arguments are as follows:
+[options="header, autowidth"]
+|===
+| Name                 | Default     | Description
+| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node on which to enumerate the interfaces.
+|===
+
+Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query, you can use the following expression:
+```
+interfacesOnExporterNodeWithFlows($node)
+```
+
+To query a specific node by id, you can use an expression similar to:
+```
+interfacesOnExporterNodeWithFlows(123)
+```
+
+To query a specific node by foreign source and foreign id, you can use an expression similar to:
+```
+interfacesOnExporterNodeWithFlows(FS:FID)
+```
+
+== Limitations
+
+The Flow Datasource only supports a single query per panel.
