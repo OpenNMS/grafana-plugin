@@ -63,7 +63,7 @@ var ClientDelegate = exports.ClientDelegate = function () {
             if (err.err) {
                 ret = err.err;
             }
-            if (err.data.err) {
+            if (err.data && err.data.err) {
                 ret = err.data.err;
             }
             var statusText = 'Request failed.';
@@ -293,16 +293,18 @@ var ClientDelegate = exports.ClientDelegate = function () {
         }
     }, {
         key: 'getExporters',
-        value: function getExporters(start, end) {
+        value: function getExporters() {
+            var searchLimit = this.searchLimit;
             return this.getFlowDao().then(function (flowDao) {
-                return flowDao.getExporters(this.searchLimit, start, end);
+                return flowDao.getExporters(searchLimit);
             }).catch(this.decorateError);
         }
     }, {
         key: 'getExporter',
-        value: function getExporter(nodeCriteria, limit) {
+        value: function getExporter(nodeCriteria) {
+            var searchLimit = this.searchLimit;
             return this.getFlowDao().then(function (flowDao) {
-                return flowDao.getExporter(nodeCriteria, this.searchLimit);
+                return flowDao.getExporter(nodeCriteria, searchLimit);
             }).catch(this.decorateError);
         }
     }]);
