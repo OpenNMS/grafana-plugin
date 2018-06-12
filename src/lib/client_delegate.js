@@ -44,7 +44,7 @@ export class ClientDelegate {
         if (err.err) {
             ret = err.err;
         }
-        if (err.data.err) {
+        if (err.data && err.data.err) {
             ret = err.data.err;
         }
         let statusText = 'Request failed.';
@@ -263,17 +263,19 @@ export class ClientDelegate {
             }).catch(this.decorateError);
     }
 
-    getExporters(start, end) {
+    getExporters() {
+        let searchLimit = this.searchLimit;
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporters(this.searchLimit, start, end);
+                return flowDao.getExporters(searchLimit);
             }).catch(this.decorateError);
     }
 
-    getExporter(nodeCriteria, limit) {
+    getExporter(nodeCriteria) {
+        let searchLimit = this.searchLimit;
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporter(nodeCriteria, this.searchLimit);
+                return flowDao.getExporter(nodeCriteria, searchLimit);
             }).catch(this.decorateError);
     }
 }
