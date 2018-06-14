@@ -21,11 +21,8 @@ export class AlarmDetailsCtrl {
     if ($scope.ticketingEnabled) {
       $scope.tabs.push('Ticketing');
     }
-    if ($scope.alarm.impacts && $scope.alarm.impacts.length > 0) {
-      $scope.tabs.push('Impacts');
-    }
-    if ($scope.alarm.causes && $scope.alarm.causes.length > 0) {
-      $scope.tabs.push('Caused By');
+    if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
+      $scope.tabs.push('Related Alarms');
     }
 
     // Raw global details link

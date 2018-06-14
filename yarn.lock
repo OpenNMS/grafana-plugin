@@ -2562,9 +2562,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@1.2.2-snapshot.features.correlation.poc.1:
-  version "1.2.2-snapshot.features.correlation.poc.1"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.2-snapshot.features.correlation.poc.1.tgz#ea0ce0292622bfdcc33c9822bce13c1631cb9435"
+opennms@1.2.3-snapshot.features.correlation.poc.3:
+  version "1.2.3-snapshot.features.correlation.poc.3"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.3-snapshot.features.correlation.poc.3.tgz#ccb7239035cd715bf30bb950e297be2e6205d34e"
   dependencies:
     axios "^0.16.1"
     cli-table "^0.3.1"

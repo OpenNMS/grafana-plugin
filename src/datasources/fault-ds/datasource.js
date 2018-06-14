@@ -192,7 +192,7 @@ export class OpenNMSFMDatasource {
             "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
             "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
-            "Impacts", "Causes",
+            "RelatedAlarms",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
             "Data Source"
@@ -252,8 +252,7 @@ export class OpenNMSFMDatasource {
                 alarm.lastEvent ? alarm.lastEvent.label : undefined,
                 alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
-                alarm.impacts,
-                alarm.causes,
+                alarm.relatedAlarms,
 
                 // Sticky Note
                 alarm.sticky ? alarm.sticky.id : undefined,
