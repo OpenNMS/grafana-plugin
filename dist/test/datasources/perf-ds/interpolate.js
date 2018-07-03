@@ -72,7 +72,8 @@ function defaultReplace(value, variables) {
   }
   var interpolatedValue = value;
   _lodash2.default.each(variables, function (variable) {
-    interpolatedValue = interpolatedValue.replace("$" + variable.name, variable.value);
+    var regexVarName = "\\$" + variable.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    interpolatedValue = interpolatedValue.replace(new RegExp(regexVarName, "g"), variable.value);
   });
   return interpolatedValue;
 }

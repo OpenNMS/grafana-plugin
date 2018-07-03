@@ -47,6 +47,12 @@ System.register(['../datasources/perf-ds/interpolate'], function (_export, _cont
 
           expect(interpolated).to.deep.equal([{ 'resource': 'node', 'metric': 'x1.y1', 'label': 'idx0' }, { 'resource': 'node', 'metric': 'x1.y2', 'label': 'idx1' }, { 'resource': 'node', 'metric': 'x2.y1', 'label': 'idx2' }, { 'resource': 'node', 'metric': 'x2.y2', 'label': 'idx3' }]);
         });
+
+        it('should be able to interpolate multiple variables with the same name in a single attribute', function () {
+          var queryWithMultipleVariables = { 'resource': '$node', 'metric': '$x-var + $x-var' };
+          var interpolated = interpolate(queryWithMultipleVariables, ['resource', 'metric'], [{ name: 'x-var', value: ['x1', 'x2'] }]);
+          expect(interpolated).to.deep.equal([{ 'resource': '$node', 'metric': 'x1 + x1' }, { 'resource': '$node', 'metric': 'x2 + x2' }]);
+        });
       });
     }
   };
