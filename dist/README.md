@@ -54,6 +54,13 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v2.0.0
+
+- Added a new datasource for querying flow data from OpenNMS
+- Added support for "fallback" attributes to the performance datasource
+- Added the ability to configure query timeouts for all of the datasources
+- Require Grafana 5.x or greater
+
 ### v1.1.0
 
 - Added support for custom actions in the Alarm Table panel
