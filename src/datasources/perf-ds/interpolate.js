@@ -60,7 +60,7 @@ function defaultReplace(value, variables) {
   }
   var interpolatedValue = value;
   _.each(variables, function (variable) {
-    interpolatedValue = interpolatedValue.replace("$" + variable.name, variable.value);
+    interpolatedValue = interpolatedValue.replace(new RegExp("\\$" + variable.name, "g"), variable.value);
   });
   return interpolatedValue;
 }
