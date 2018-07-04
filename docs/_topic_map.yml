@@ -55,6 +55,12 @@ Topics:
     - Name: Migrating from the OpenNMS Data Source plugin
       File: migrating_from_opennms_datasource
 ---
+Name: Datasources
+Dir: datasources
+Topics:
+    - Name: Flow Datasource
+      File: flow_datasource
+---
 Name: Contributing
 Dir: contributing
 Topics:

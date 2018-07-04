@@ -69,4 +69,15 @@ describe('OpenNMSPMDatasource :: interpolate', function () {
       {'resource': 'node', 'metric': 'x2.y2', 'label': 'idx3'}
     ]);
   });
+
+  it('should be able to interpolate multiple variables with the same name in a single attribute', function () {
+    let queryWithMultipleVariables = {'resource': '$node', 'metric': '$x-var + $x-var'};
+    let interpolated = interpolate(queryWithMultipleVariables, ['resource', 'metric'], [
+      {name: 'x-var', value: ['x1', 'x2']},
+    ]);
+    expect(interpolated).to.deep.equal([
+      {'resource': '$node', 'metric': 'x1 + x1'},
+      {'resource': '$node', 'metric': 'x2 + x2'}
+    ]);
+  });
 });

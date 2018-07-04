@@ -3,7 +3,7 @@
   "id": "opennms-helm-app",
   "type": "app",
   "info": {
-    "description": "Helm is a Grafana plugin that allows you to create flexible dashboards using both using both fault management (FM) and performance management (PM) data from OpenNMS® Horizon™ and/or OpenNMS® Meridian™.",
+    "description": "Create flexible dashboards using data from OpenNMS® Horizon™ and/or OpenNMS® Meridian™.",
     "author": {
       "name": "The OpenNMS Group Inc.",
       "url": "https://www.opennms.com"
@@ -24,18 +24,19 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "2.0.0-SNAPSHOT",
-    "updated": "2018-03-28"
+    "version": "2.0.1-SNAPSHOT",
+    "updated": "2018-07-03"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
     {"type": "datasource", "name": "OpenNMS Faults"},
     {"type": "datasource", "name": "OpenNMS Performance"},
-    {"type": "datasource", "name": "OpenNMS Flows"}
+    {"type": "datasource", "name": "OpenNMS Flows"},
+    {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaVersion": "4.x.x",
+    "grafanaVersion": "5.x.x",
     "plugins": []
   }
 }
