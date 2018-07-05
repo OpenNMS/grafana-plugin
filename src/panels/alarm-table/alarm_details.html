@@ -77,7 +77,7 @@
             </div>
         </div>
 
-        <div ng-if="editor.index == 2">
+        <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
             <table class="filter-table gf-form-group">
                 <tr>
                     <td>Ticket ID</td>
@@ -90,5 +90,25 @@
                 </tr>
             </table>
         </div>
+
+        <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
+            <table  class="table-panel-table dense-table-panel-table alarm-table">
+                <thead>
+                    <th> </th>
+                    <th>Reduction Key</th>
+                    <th>Description</th>
+                </thead>
+                <tbody class="severity">
+                    <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
+                        <td style>
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                        </td>
+                        <td severity>{{summary.reductionKey}}</td>
+                        <td severity ng-bind-html="summary.description"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
