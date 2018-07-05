@@ -21,6 +21,12 @@ export class AlarmDetailsCtrl {
     if ($scope.ticketingEnabled) {
       $scope.tabs.push('Ticketing');
     }
+    if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
+      $scope.tabs.push('Related Alarms');
+    }
+
+    // Raw global details link
+    $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
   }
 
 }
