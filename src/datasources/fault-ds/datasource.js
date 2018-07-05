@@ -194,8 +194,7 @@ export class OpenNMSFMDatasource {
             "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "RelatedAlarms",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
-            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
-            "Data Source"
+            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time"
         ];
 
         // Build a sorted list of (unique) event parameter names
