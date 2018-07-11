@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 const FeaturedAttributes = [
     "alarmAckTime", "category", "ipAddress",
-    "location", "node.label", "reductionKey",
+    "isSituation", "location", "node.label", "reductionKey",
     "service", "severity", "uei"
 ];
 
@@ -156,6 +156,9 @@ export class OpenNMSFMDatasource {
       let attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
       if (attribute === 'ipAddr') {
           attribute = 'ipInterface.ipAddress';
+      }
+      if (attribute === 'isSituation') {
+        return this.q.when([{ id: 'false', label: 'false'}, {id: 'true', label: 'true'}]);
       }
       return this.alarmClient.findProperty(attribute)
           .then(property => {
