@@ -10,6 +10,11 @@
   "metrics": true,
   "annotations": false,
 
+  "queryOptions": {
+    "minInterval": true,
+    "maxDataPoints": true
+  },
+
   "info": {
     "logos": {
       "small": "img/pm-ds.svg",
