@@ -10,6 +10,8 @@ export class OpenNMSDatasource {
     this.name = instanceSettings.name;
     this.basicAuth = instanceSettings.basicAuth;
     this.withCredentials = instanceSettings.withCredentials;
+    // This variable is referenced by the calculateInterval() method in metrics_panel_ctrl.ts
+    this.interval = (instanceSettings.jsonData || {}).timeInterval;
 
     if (instanceSettings.jsonData && instanceSettings.jsonData.timeout) {
         this.timeout = parseInt(instanceSettings.jsonData.timeout,10) * 1000;
@@ -191,6 +193,7 @@ export class OpenNMSDatasource {
       start = options.range.from.valueOf(),
       end = options.range.to.valueOf(),
       step = Math.floor((end - start) / options.maxDataPoints);
+      step = (step < options.intervalMs) ? options.intervalMs : step;
 
     var query = {
       "start": start,
