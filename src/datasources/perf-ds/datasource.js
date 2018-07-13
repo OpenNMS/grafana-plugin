@@ -10,6 +10,7 @@ export class OpenNMSDatasource {
     this.name = instanceSettings.name;
     this.basicAuth = instanceSettings.basicAuth;
     this.withCredentials = instanceSettings.withCredentials;
+    // This variable is referenced by the calculateInterval() method in metrics_panel_ctrl.ts
     this.interval = (instanceSettings.jsonData || {}).timeInterval;
 
     if (instanceSettings.jsonData && instanceSettings.jsonData.timeout) {
