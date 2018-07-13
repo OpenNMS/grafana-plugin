@@ -23,7 +23,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "location", "node.label", "reductionKey", "service", "severity", "uei"];
+var FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "isSituation", "location", "node.label", "reductionKey", "service", "severity", "uei"];
 
 var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
     function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -182,6 +182,9 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
             var attribute = new _Mapping.Mapping.AttributeMapping().getApiAttribute(query.attribute);
             if (attribute === 'ipAddr') {
                 attribute = 'ipInterface.ipAddress';
+            }
+            if (attribute === 'isSituation') {
+                return this.q.when([{ id: 'false', label: 'false' }, { id: 'true', label: 'true' }]);
             }
             return this.alarmClient.findProperty(attribute).then(function (property) {
                 if (!property) {

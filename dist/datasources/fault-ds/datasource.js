@@ -43,7 +43,7 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                 };
             }();
 
-            FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "location", "node.label", "reductionKey", "service", "severity", "uei"];
+            FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "isSituation", "location", "node.label", "reductionKey", "service", "severity", "uei"];
 
             _export('OpenNMSFMDatasource', OpenNMSFMDatasource = function () {
                 function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -197,6 +197,9 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                         var attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
                         if (attribute === 'ipAddr') {
                             attribute = 'ipInterface.ipAddress';
+                        }
+                        if (attribute === 'isSituation') {
+                            return this.q.when([{ id: 'false', label: 'false' }, { id: 'true', label: 'true' }]);
                         }
                         return this.alarmClient.findProperty(attribute).then(function (property) {
                             if (!property) {
