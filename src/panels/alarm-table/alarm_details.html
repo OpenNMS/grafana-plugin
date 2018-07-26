@@ -92,11 +92,12 @@
         </div>
 
         <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
-            <table  class="table-panel-table dense-table-panel-table alarm-table">
+            <table class="table-panel-table dense-table-panel-table alarm-table">
                 <thead>
                     <th> </th>
                     <th>Reduction Key</th>
                     <th>Description</th>
+                    <th ng-if="editFeedback" colspan="2">Correlation Feedback</th>
                 </thead>
                 <tbody class="severity">
                     <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
@@ -105,9 +106,21 @@
                         </td>
                         <td severity>{{summary.reductionKey}}</td>
                         <td severity ng-bind-html="summary.description"></td>
+                        <td ng-if="editFeedback" severity>
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsup"></i></a>
+                        </td>
+                        <tdng-if="editFeedback" severity>
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsdown"></i></a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+            <br/>
+            <div>
+                *** placeholder -- User X submitted Correlation Feedback --- ***
+                <button ng-click="ctrl.submitPositiveFeedback()"<i class="icon ion-thumbsup"></i></button>
+                <button (click)="{{editFeedback}}=true"><i class="icon ion-thumbsup"></i></button>
+            </div>
         </div>
 
     </div>
