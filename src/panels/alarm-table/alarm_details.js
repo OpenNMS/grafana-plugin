@@ -7,7 +7,7 @@ export class AlarmDetailsCtrl {
     this.$scope = $scope;
     this.backendSrv = backendSrv;
     this.contextSrv = contextSrv;
-    this.editFeedback = true;
+    this.editFeedback = false;
     $scope.editor = { index: 0 };
 
     // Save the alarm
@@ -65,6 +65,18 @@ export class AlarmDetailsCtrl {
         // TODO - test return value. on 204, display confirmation to the user.
         self.$scope.situationFeedback = response.data;
       });
+  }
+
+  editSituationFeedback() {
+    this.$scope.editFeedback=true;
+  }
+
+  submitEditedFeedback() {
+    console.log("TODO - submit Edited Feedback");
+  }
+
+  cancelEditedFeedback() {
+    console.log("TODO - cancel Edited Feedback.");
   }
 
   fingerPrint(situation) {
