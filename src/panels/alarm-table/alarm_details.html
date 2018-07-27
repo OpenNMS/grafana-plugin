@@ -109,7 +109,7 @@
                         <td ng-if="editFeedback" severity>
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsup"></i></a>
                         </td>
-                        <tdng-if="editFeedback" severity>
+                        <td ng-if="editFeedback" severity>
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsdown"></i></a>
                         </td>
                     </tr>
@@ -118,8 +118,8 @@
             <br/>
             <div>
                 *** placeholder -- User X submitted Correlation Feedback --- ***
-                <button ng-click="ctrl.submitPositiveFeedback()"<i class="icon ion-thumbsup"></i></button>
-                <button (click)="{{editFeedback}}=true"><i class="icon ion-thumbsup"></i></button>
+                <button ng-click="ctrl.submitAllPositiveFeedback()"<i class="icon ion-thumbsup"></i></button>
+                <button (click)="{{editFeedback}}=true"><i class="icon ion-thumbsdown"></i></button>
             </div>
         </div>
 

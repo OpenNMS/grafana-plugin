@@ -24,13 +24,12 @@ export class AlarmDetailsCtrl {
     if ($scope.ticketingEnabled) {
       $scope.tabs.push('Ticketing');
     }
+    // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
       $scope.tabs.push('Related Alarms');
       console.log($q);
       let request = this.doOpenNMSRequest({
-        //        url: '/rest/situation-feedback/' + encodeURIComponent($scope.alarm.reductionKey),
-        url: '/rest/situation-feedback/' + encodeURIComponent('dasd'),
-        // data: query,
+        url: '/rest/situation-feedback/' + encodeURIComponent($scope.alarm.reductionKey),
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -45,25 +44,41 @@ export class AlarmDetailsCtrl {
     $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
   }
 
-  submitPositiveFeedback() {
+  submitAllPositiveFeedback() {
     let self = this;
-    let query = "[{\"situationKey\": \"" + this.$scope.alarm.reductionKey + "\","
-      + "\"situationFingerprint\": \"" + "mehPrint" + "\","
-      + "\"alarmKey\": \"" + this.$scope.alarm.relatedAlarms[0].reductionKey + "\","
-      + "\"feedbackType\": \"CORRECT\"," 
-      + "\"reason\" : \"because\","
-      + "\"user\" : \"" + this.contextSrv.user.login + "\"}]";
+    let feedback = "[";
+    for (let alarm of this.$scope.alarm.relatedAlarms) {
+      feedback += this.alarmFeedback(this.$scope.alarm.reductionKey, this.fingerPrint(this.$scope.alarm), alarm, "CORRECT", "ALL_CORRECT", this.contextSrv.user.login);
+      feedback += ", ";
+    }
+    feedback = feedback.replace(/,\s*$/, "");
+    feedback += "]";
     let request = this.doOpenNMSRequest({
       url: '/rest/situation-feedback/' + encodeURIComponent(this.$scope.alarm.reductionKey),
-      data: query,
+      data: feedback,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
     request.then(
       function (response) {
         console.log("Got POST response: ", response);
+        // TODO - test return value. on 204, display confirmation to the user.
         self.$scope.situationFeedback = response.data;
       });
+  }
+
+  fingerPrint(situation) {
+    return "FIXME - implement fingerprint hash";
+//    return this.md5.creatHash(situation.relatedAlarms);
+  }
+
+  alarmFeedback(situationKey, fingerprint, alarm, feedbackType, reason, user) {
+    return "{\"situationKey\": \"" + situationKey + "\","
+    + "\"situationFingerprint\": \"" + fingerprint + "\","
+    + "\"alarmKey\": \"" + alarm.reductionKey + "\","
+    + "\"feedbackType\": \"" + feedbackType + "\","
+    + "\"reason\" : \"" + reason + "\","
+    + "\"user\" : \"" + user + "\"}";
   }
 
   doOpenNMSRequest(options) {
