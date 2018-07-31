@@ -157,3 +157,11 @@ $critical-color: #DB4345;
   font-size: .875rem !important;
 }
 
+.feedback-button {
+  background-color: black;
+  background-repeat:no-repeat;
+  border: none;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+}

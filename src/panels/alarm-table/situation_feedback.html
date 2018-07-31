@@ -1,0 +1,18 @@
+<div class="gf-form">
+    <textarea rows="2" class="gf-form-input width-35" name="situationFeedbackReason" ng-model="situationFeedbackReason" ng-disabled="actionInProgress"></textarea>
+</div>
+<div class="btn-group btn-group-sm" style="padding-top: 5px">
+    <a type="button" class="btn gf-form-button btn-success" ng-click="submitFeedback()" ng-disabled="actionInProgress"><i class="fa fa-plus"></i>  Submit</a>
+    <a type="button" class="btn gf-form-button btn-danger" ng-hide="alarm === null" ng-click="Cancel()" ng-disabled="actionInProgress"><i class="fa fa-minus"></i>&nbsp;&nbsp;Cancel</a>
+</div>
+<div class="row" style="padding-top: 5px" ng-hide="alarm === null">
+    <div class="col-md-2"><strong>Id:</strong><br/>
+        {{ alarm.id }}
+    </div>
+    <div class="col-md-5"><strong>ReductionKey:</strong><br/>
+        {{ alarm.reductionKey }}
+    </div>
+    <div class="col-md-5"><strong>Meh:</strong><br/>
+        {{ alarm.meh }}
+    </div>
+</div>

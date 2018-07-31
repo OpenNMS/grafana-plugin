@@ -97,41 +97,56 @@
                     <th> </th>
                     <th>Reduction Key</th>
                     <th>Description</th>
-                    <th ng-if="editFeedback" colspan="2">Correlation Feedback</th>
+                    <th ng-if="editFeedback" colspan="2"> &nbsp; Correlation &nbsp; &nbsp;Feedback</th>
                 </thead>
                 <tbody class="severity">
                     <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
                         <td style>
-                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank">
+                                <i class="fa fa-external-link"></i>
+                            </a>
                         </td>
                         <td severity>{{summary.reductionKey}}</td>
                         <td severity ng-bind-html="summary.description"></td>
-                        <td ng-if="editFeedback" severity>
-                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsup"></i></a>
+                        <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.positiveFeedback(summary.reductionKey)">
+                            <button ng-click="ctrl.positiveFeedback(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                                <img src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="ThumbsUp" height="20" width="20" />
+                            </button>
                         </td>
-                        <td ng-if="editFeedback" severity>
-                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="icon ion-thumbsdown"></i></a>
+                        <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.negativeFeedback(summary.reductionKey)">
+                            <button ng-click="ctrl.negativeFeedback(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                                <img src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="ThumbsDown" height="20" width="20" />
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <br/>
+            <div ng-if="submittedFeedback">
+                Feedback Submitted.
+            </div>
             <div ng-if="editFeedback">
-                <table>
+                <table class="table-panel-table dense-table-panel-table alarm-table">
                     <tr>
                         <td>
-                    <input type="text" name="reason" value="Please enter a reason correlation is incorrect.">
-                </td>
-                <td><button ng-click="ctrl.submitEditedFeedback()">SUBMIT</button></td>
-                <td><button ng-click="ctrl.cancelEditedFeedback()">CANCEL</i></button></td>
-                </tr>
+                            <input type="text" name="reason" size="75" value="Please enter a reason correlation is incorrect.">
+                        </td>
+                        <td>
+                            <button ng-click="ctrl.submitEditedFeedback()" style="border:1px solid black; background-color: transparent;">SUBMIT</button>
+                        </td>
+                        <td>
+                            <button ng-click="ctrl.cancelEditedFeedback()" style="border:1px solid black; background-color: transparent;">CANCEL</button>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div ng-if="!editFeedback">
-                *** placeholder -- User X submitted Correlation Feedback --- ***
-                
-                <button ng-click="ctrl.submitAllPositiveFeedback()"<i class="icon ion-thumbsup"></i></button>
-                <button ng-click="ctrl.editSituationFeedback()"><i class="icon ion-thumbsdown"></i></button>
+                <button ng-click="ctrl.submitAllPositiveFeedback()" style="border:1px solid black; background-color: transparent;">
+                        <img src={{ctrl.situationFeedbackOkayButton()}} alt="ThumbsUp" height="30" width="30" />
+                </button>
+                <button ng-click="ctrl.editSituationFeedback()"  style="border:1px solid black; background-color: transparent;">
+                    <img src="/public/plugins/opennms-helm-app/img/thumbs-down.png" alt="ThumbsDown" height="30" width="30">
+                </button>
             </div>
         </div>
 
