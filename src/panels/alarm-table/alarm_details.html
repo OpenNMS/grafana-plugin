@@ -109,13 +109,13 @@
                         <td severity>{{summary.reductionKey}}</td>
                         <td severity ng-bind-html="summary.description"></td>
                         <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.positiveFeedback(summary.reductionKey)">
-                            <button ng-click="ctrl.positiveFeedback(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
-                                <img src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="ThumbsUp" height="20" width="20" />
+                            <button ng-click="ctrl.markCorrect(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                                <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="ThumbsUp" height="20" width="20" />
                             </button>
                         </td>
                         <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.negativeFeedback(summary.reductionKey)">
-                            <button ng-click="ctrl.negativeFeedback(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
-                                <img src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="ThumbsDown" height="20" width="20" />
+                            <button ng-click="ctrl.markIncorrect(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                                <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="ThumbsDown" height="20" width="20" />
                             </button>
                         </td>
                     </tr>
@@ -125,7 +125,7 @@
             <div ng-if="submittedFeedback">
                 Feedback Submitted.
             </div>
-            <div ng-if="editFeedback">
+            <div ng-if="editFeedback" style="text-align:right">
                 <table class="table-panel-table dense-table-panel-table alarm-table">
                     <tr>
                         <td>
@@ -140,9 +140,9 @@
                     </tr>
                 </table>
             </div>
-            <div ng-if="!editFeedback">
+            <div ng-if="!editFeedback" style="text-align:right">
                 <button ng-click="ctrl.submitAllPositiveFeedback()" style="border:1px solid black; background-color: transparent;">
-                        <img src={{ctrl.situationFeedbackOkayButton()}} alt="ThumbsUp" height="30" width="30" />
+                        <img ng-src="{{ctrl.situationFeedbackOkayButton()}}" alt="ThumbsUp" height="30" width="30" />
                 </button>
                 <button ng-click="ctrl.editSituationFeedback()"  style="border:1px solid black; background-color: transparent;">
                     <img src="/public/plugins/opennms-helm-app/img/thumbs-down.png" alt="ThumbsDown" height="30" width="30">

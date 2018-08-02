@@ -1,4 +1,5 @@
 import { TableRenderer } from "./renderer"
+import md5 from '../../crypto-js/md5';
 
 export class AlarmDetailsCtrl {
 
@@ -34,39 +35,38 @@ export class AlarmDetailsCtrl {
         headers: { 'Content-Type': 'application/json' }
       });
       let self = this;
-      request.then(
+      request
+      .then(
         function (response) {
           console.log("Got response: ", response);
-          // FIXME - if no data - initialize - but don't fill the AllThumbsUp.
           if (response.data && response.data.length > 0) {
             $scope.situationFeedback = response.data;
+            $scope.hasSituationFeedback = true;
           } else {
             $scope.situationFeedback = self.initalizeFeeback();
           }
           $scope.situationFeedbackOkayButton = self.situationFeedbackOkayButton();
-        });
+        })
+        .catch(
+          function (reason) {
+            console.log("Got error: ", reason);
+            $scope.situationFeedback = self.initalizeFeeback();
+            $scope.situationFeedbackOkayButton = self.situationFeedbackOkayButton();
+          });
     }
 
     // Raw global details link
     $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
   }
 
-  buttonFor(reductionKey) {
-    let feedback = this.$scope.situationFeedback;
-    if (feedback == null) {
-      return "[meh]";
-    }
-    for (let alarmFeedback of feedback) {
-      // TODO - see if this alarm is in the Feedback list with current fingerprint.
-    }
-  }
-
   detailFeedbackIncorrectButton(reductionKey) {
     let button = "/public/plugins/opennms-helm-app/img/thumbs-down";
-    for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
-        button += "-fill";
-        break;
+    if (this.$scope.situationFeedback && this.$scope.hasSituationFeedback) {
+      for (let feedback of this.$scope.situationFeedback) {
+        if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
+          button += "-fill";
+          break;
+        }
       }
     }
     button += ".png";
@@ -75,10 +75,12 @@ export class AlarmDetailsCtrl {
 
   detailFeedbackOkayButton(reductionKey) {
     let button = "/public/plugins/opennms-helm-app/img/thumb-up-filled";
-    for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
-        button = "/public/plugins/opennms-helm-app/img/thumb-up";
-        break;
+    if (this.$scope.situationFeedback) {
+      for (let feedback of this.$scope.situationFeedback) {
+        if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
+          button = "/public/plugins/opennms-helm-app/img/thumb-up";
+          break;
+        }
       }
     }
     button += ".png";
@@ -86,18 +88,14 @@ export class AlarmDetailsCtrl {
   }
 
   initalizeFeeback() {
-    let feedback = "[";
+    let feedback = [];
     for (let alarm of this.$scope.alarm.relatedAlarms) {
-      feedback += this.alarmFeedback(this.$scope.alarm.reductionKey, this.fingerPrint(this.$scope.alarm), alarm, "CORRECT", "ALL_CORRECT", this.contextSrv.user.login);
-      feedback += ", ";
+      feedback.push(this.alarmFeedback(this.$scope.alarm.reductionKey, this.fingerPrint(this.$scope.alarm), alarm, "CORRECT", "ALL_CORRECT", this.contextSrv.user.login));
     }
-    feedback = feedback.replace(/,\s*$/, "");
-    feedback += "]";
     return feedback;
   }
 
-  negativeFeedback(reductionKey) {
-    // Set FEEDBACK type on this.
+  markIncorrect(reductionKey) {
     console.log("Negative Feedback for  " + reductionKey)
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
@@ -108,9 +106,8 @@ export class AlarmDetailsCtrl {
     }
   }
 
-  positiveFeedback(reductionKey) {
+  markCorrect(reductionKey) {
     console.log("Positive Feedback for  " + reductionKey)
-    // Set FEEDBACK type on this.
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
         feedback.feedbackType = "CORRECT";
@@ -120,12 +117,9 @@ export class AlarmDetailsCtrl {
     }
   }
 
-
   submitAllPositiveFeedback() {
-    let self = this;
-    let feedback = this.initalizeFeeback();
     console.log("submit all positive Feedback");
-    this.submitFeedback(feedback);
+    this.submitFeedback(this.$scope.situationFeedback);
   }
 
   submitEditedFeedback() {
@@ -134,7 +128,7 @@ export class AlarmDetailsCtrl {
   }
 
   submitFeedback(feedback) {
-    console.log("Submitting Feedback: " + feedback);
+    console.log("Submitting Feedback: ", feedback);
     let self = this;
     let request = this.doOpenNMSRequest({
       url: '/rest/situation-feedback/' + encodeURIComponent(this.$scope.alarm.reductionKey),
@@ -142,14 +136,19 @@ export class AlarmDetailsCtrl {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
-    request.then(
-      function (response) {
-        console.log("Got POST response: ", response);
-        // TODO - test return value. on 204, display confirmation to the user.
-        self.$scope.editFeedback = false;
-        self.$scope.submittedFeedback = true;
-      });
-  
+    request
+      .then(
+        function (response) {
+          console.log("Got POST response: ", response);
+          self.$scope.editFeedback = false;
+          self.$scope.submittedFeedback = true;
+          $scope.hasSituationFeedback = true;
+        })
+      .catch(
+        function (reason) {
+          console.log("Got POST error: ", reason);
+          self.$scope.editFeedback = false;
+        });
   }
 
   editSituationFeedback() {
@@ -160,10 +159,12 @@ export class AlarmDetailsCtrl {
   situationFeedbackOkayButton() {
     let button = "/public/plugins/opennms-helm-app/img/thumb-up";
     let fingerprint = this.fingerPrint(this.$scope.alarm);
-    for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.situationFingerprint == fingerprint) {
-        button += "-filled";
-        break;
+    if (this.$scope.situationFeedback) {
+      for (let feedback of this.$scope.situationFeedback) {
+        if (feedback.situationFingerprint == fingerprint && this.$scope.hasSituationFeedback) {
+          button += "-filled";
+          break;
+        }
       }
     }
     button += ".png";
@@ -176,28 +177,18 @@ export class AlarmDetailsCtrl {
   }
 
   fingerPrint(situation) {
-    return "FIXME - implement fingerprint hash";
-    //    return this.md5.creatHash(situation.relatedAlarms);
+    return btoa(md5(situation.relatedAlarms));
   }
 
-  newFeedback(situationKey, fingerprint, alarmKey, feedbackType, reason, user) {
-    let feedback;
+  alarmFeedback(situationKey, fingerprint, alarm, feedbackType, reason, user) {
+    let feedback = {};
     feedback.situationKey = situationKey;
-    feedback.fingerprint = fingerprint;
-    feedback.alarmKey = alarmKey;
+    feedback.situationFingerprint = fingerprint;
+    feedback.alarmKey = alarm.reductionKey;
     feedback.feedbackType = feedbackType;
     feedback.reason = reason;
     feedback.user = user;
     return feedback;
-  }
-
-  alarmFeedback(situationKey, fingerprint, alarm, feedbackType, reason, user) {
-    return "{\"situationKey\": \"" + situationKey + "\","
-    + "\"situationFingerprint\": \"" + fingerprint + "\","
-    + "\"alarmKey\": \"" + alarm.reductionKey + "\","
-    + "\"feedbackType\": \"" + feedbackType + "\","
-    + "\"reason\" : \"" + reason + "\","
-    + "\"user\" : \"" + user + "\"}";
   }
 
   doOpenNMSRequest(options) {
