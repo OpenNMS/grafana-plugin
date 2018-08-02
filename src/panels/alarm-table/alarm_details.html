@@ -126,19 +126,21 @@
                 Feedback Submitted.
             </div>
             <div ng-if="editFeedback" style="text-align:right">
-                <table class="table-panel-table dense-table-panel-table alarm-table">
-                    <tr>
-                        <td>
-                            <input type="text" name="reason" size="75" value="Please enter a reason correlation is incorrect.">
-                        </td>
-                        <td>
-                            <button ng-click="ctrl.submitEditedFeedback()" style="border:1px solid black; background-color: transparent;">SUBMIT</button>
-                        </td>
-                        <td>
-                            <button ng-click="ctrl.cancelEditedFeedback()" style="border:1px solid black; background-color: transparent;">CANCEL</button>
-                        </td>
-                    </tr>
-                </table>
+                <form name="feedbackForm">
+                    <table class="table-panel-table dense-table-panel-table alarm-table">
+                        <tr>
+                            <td>
+                                <input type="text" ng-model="feedbackForm.reason" size="75" placeholder="Please enter a reason correlation is incorrect.">
+                            </td>
+                            <td>
+                                <button ng-click="ctrl.submitEditedFeedback(feedbackForm)" style="border:1px solid black; background-color: transparent;">SUBMIT</button>
+                            </td>
+                            <td>
+                                <button ng-click="ctrl.cancelEditedFeedback()" style="border:1px solid black; background-color: transparent;">CANCEL</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
             </div>
             <div ng-if="!editFeedback" style="text-align:right">
                 <button ng-click="ctrl.submitAllPositiveFeedback()" style="border:1px solid black; background-color: transparent;">

@@ -122,8 +122,13 @@ export class AlarmDetailsCtrl {
     this.submitFeedback(this.$scope.situationFeedback);
   }
 
-  submitEditedFeedback() {
-    console.log("submit Edited Feedback");
+  submitEditedFeedback(form) {
+    console.log("submit Edited Feedback: ", form.reason);
+    if(form.reason) {
+      for (let feedback of this.$scope.situationFeedback) {
+        feedback.reason = form.reason;
+      }
+    }
     this.submitFeedback(this.$scope.situationFeedback);
   }
 
@@ -142,7 +147,7 @@ export class AlarmDetailsCtrl {
           console.log("Got POST response: ", response);
           self.$scope.editFeedback = false;
           self.$scope.submittedFeedback = true;
-          $scope.hasSituationFeedback = true;
+          self.$scope.hasSituationFeedback = true;
         })
       .catch(
         function (reason) {
@@ -172,6 +177,7 @@ export class AlarmDetailsCtrl {
   }
 
   cancelEditedFeedback() {
+    this.$scope.situationFeedback = this.initalizeFeeback();
     this.$scope.editFeedback = false;
     this.$scope.submittedFeedback = false;
   }
