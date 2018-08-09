@@ -142,7 +142,7 @@
                     </table>
                 </form>
             </div>
-            <div ng-if="!editFeedback" style="text-align:right">
+            <div ng-if="situationFeebackEnabled && !editFeedback" style="text-align:right">
                 <button ng-click="ctrl.submitAllPositiveFeedback()" style="border:1px solid black; background-color: transparent;">
                         <img ng-src="{{ctrl.situationFeedbackOkayButton()}}" alt="ThumbsUp" height="30" width="30" />
                 </button>

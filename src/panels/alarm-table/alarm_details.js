@@ -19,6 +19,9 @@ export class AlarmDetailsCtrl {
     let severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
 
+    // Situation Feedback
+    $scope.situationFeebackEnabled = false;
+
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
     $scope.ticketingEnabled = $scope.$parent.ticketerConfig && $scope.$parent.ticketerConfig.enabled;
@@ -40,12 +43,13 @@ export class AlarmDetailsCtrl {
         function (response) {
           console.log("Got response: ", response);
           if (response.data && response.data.length > 0) {
-            $scope.situationFeedback = response.data;
+            $scope.situationFeedback = self.parseResponse(response.data);
             $scope.hasSituationFeedback = true;
           } else {
             $scope.situationFeedback = self.initalizeFeeback();
           }
           $scope.situationFeedbackOkayButton = self.situationFeedbackOkayButton();
+          $scope.situationFeebackEnabled = true;
         })
         .catch(
           function (reason) {
@@ -117,6 +121,17 @@ export class AlarmDetailsCtrl {
     }
   }
 
+  parseResponse(data) {
+    let feedback = [];
+    let fingerprint = this.fingerPrint(this.$scope.alarm);
+    for (let fb of data) {
+      if (fb.situationFingerprint == fingerprint) {
+        feedback.push(fb);
+      }
+    }
+    return feedback;
+  }
+
   submitAllPositiveFeedback() {
     console.log("submit all positive Feedback");
     this.submitFeedback(this.$scope.situationFeedback);
@@ -124,10 +139,8 @@ export class AlarmDetailsCtrl {
 
   submitEditedFeedback(form) {
     console.log("submit Edited Feedback: ", form.reason);
-    if(form.reason) {
-      for (let feedback of this.$scope.situationFeedback) {
-        feedback.reason = form.reason;
-      }
+    for (let feedback of this.$scope.situationFeedback) {
+      feedback.reason = form.reason;
     }
     this.submitFeedback(this.$scope.situationFeedback);
   }
