@@ -358,4 +358,14 @@ export class OpenNMSFMDatasource {
     deleteJournal(alarmId) {
         return this.alarmClient.deleteJournal(alarmId);
     }
+
+    // Situation Feedback
+
+    getSituationFeedback(situationKey) {
+        return this.alarmClient.getSituationfeedback(situationKey);
+    }
+
+    submitSituationFeedback(situationKey, feedback) {
+        return this.alarmClient.submitSituationFeedback(situationKey, feedback);
+    }
 }

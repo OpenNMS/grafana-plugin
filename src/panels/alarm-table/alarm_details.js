@@ -4,10 +4,11 @@ import md5 from '../../crypto-js/md5';
 export class AlarmDetailsCtrl {
 
   /** @ngInject */
-  constructor($scope, backendSrv, contextSrv, $q) {
+  constructor($scope, backendSrv, contextSrv, datasourceSrv, $q) {
     this.$scope = $scope;
     this.backendSrv = backendSrv;
     this.contextSrv = contextSrv;
+    this.datasourceSrv = datasourceSrv;
     this.editFeedback = false;
     $scope.editor = { index: 0 };
 
@@ -21,6 +22,7 @@ export class AlarmDetailsCtrl {
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
+    $scope.feebackButton = 'ion-checkmark-circled';
 
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
@@ -31,31 +33,25 @@ export class AlarmDetailsCtrl {
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
       $scope.tabs.push('Related Alarms');
-      console.log($q);
-      let request = this.doOpenNMSRequest({
-        url: '/rest/situation-feedback/' + encodeURIComponent($scope.alarm.reductionKey),
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
+      console.log("retrieving Feedback...");
       let self = this;
-      request
+      this.getDatasource().then(ds => {return ds.getSituationFeedback(self.$scope.alarm.reductionKey)})
+      // this.getDatasource().then(ds => {return ds.getSituationFeedback(':ab/cd:')})
       .then(
-        function (response) {
-          console.log("Got response: ", response);
-          if (response.data && response.data.length > 0) {
-            $scope.situationFeedback = self.parseResponse(response.data);
+        function (feedback) {
+          console.log("Got response: ", feedback);
+          if (feedback && feedback.length > 0) {
+            $scope.situationFeedback = self.parseResponse(feedback);
             $scope.hasSituationFeedback = true;
           } else {
             $scope.situationFeedback = self.initalizeFeeback();
           }
-          $scope.situationFeedbackOkayButton = self.situationFeedbackOkayButton();
+          $scope.situationFeedbackButton = self.situationFeedbackButton();
           $scope.situationFeebackEnabled = true;
         })
         .catch(
           function (reason) {
-            console.log("Got error: ", reason);
-            $scope.situationFeedback = self.initalizeFeeback();
-            $scope.situationFeedbackOkayButton = self.situationFeedbackOkayButton();
+            console.log("Situation Feedback not supported error: ", reason);
           });
     }
 
@@ -174,18 +170,17 @@ export class AlarmDetailsCtrl {
     this.$scope.submittedFeedback = false;
   }
 
-  situationFeedbackOkayButton() {
-    let button = "/public/plugins/opennms-helm-app/img/thumb-up";
+  situationFeedbackButton() {
+    let button = "ion-checkmark-circle-outline";
     let fingerprint = this.fingerPrint(this.$scope.alarm);
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
         if (feedback.situationFingerprint == fingerprint && this.$scope.hasSituationFeedback) {
-          button += "-filled";
+          button = "ion-checkmark-circle";
           break;
         }
       }
     }
-    button += ".png";
     return button;
   }
 
@@ -210,12 +205,14 @@ export class AlarmDetailsCtrl {
     return feedback;
   }
 
-  doOpenNMSRequest(options) {
-    options.withCredentials = true;
-    options.headers = options.headers || {};
-    options.headers.Authorization = 'Basic YWRtaW46YWRtaW4=';
-    options.url = 'http://localhost:8980/opennms' + options.url;
-    return this.backendSrv.datasourceRequest(options);
+  getDatasource() {
+    return this.datasourceSrv.get(this.$scope.source).then(ds => {
+      if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
+        throw { message: 'Only OpenNMS datasources are supported' };
+      } else {
+        return ds;
+      }
+    });
   };
 
 }
