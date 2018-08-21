@@ -35,20 +35,19 @@ export class AlarmDetailsCtrl {
       $scope.tabs.push('Related Alarms');
       console.log("retrieving Feedback...");
       let self = this;
-      this.getDatasource().then(ds => {return ds.getSituationFeedback(self.$scope.alarm.reductionKey)})
-      // this.getDatasource().then(ds => {return ds.getSituationFeedback(':ab/cd:')})
-      .then(
-        function (feedback) {
-          console.log("Got response: ", feedback);
-          if (feedback && feedback.length > 0) {
-            $scope.situationFeedback = self.parseResponse(feedback);
-            $scope.hasSituationFeedback = true;
-          } else {
-            $scope.situationFeedback = self.initalizeFeeback();
-          }
-          $scope.situationFeedbackButton = self.situationFeedbackButton();
-          $scope.situationFeebackEnabled = true;
-        })
+      this.getDatasource().then(ds => { return ds.getSituationFeedback(self.$scope.alarm.id) })
+        .then(
+          function (feedback) {
+            console.log("Got response: ", feedback);
+            if (feedback && feedback.length > 0) {
+              $scope.situationFeedback = self.parseResponse(feedback);
+              $scope.hasSituationFeedback = true;
+            } else {
+              $scope.situationFeedback = self.initalizeFeeback();
+            }
+            $scope.situationFeedbackButton = self.situationFeedbackButton();
+            $scope.situationFeebackEnabled = true;
+          })
         .catch(
           function (reason) {
             console.log("Situation Feedback not supported error: ", reason);
