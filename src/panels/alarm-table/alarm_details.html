@@ -109,12 +109,12 @@
                         <td severity>{{summary.reductionKey}}</td>
                         <td severity ng-bind-html="summary.description"></td>
                         <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.positiveFeedback(summary.reductionKey)">
-                            <button ng-click="ctrl.markCorrect(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                            <button ng-click="ctrl.markCorrect(summary.reductionKey)" style="background-color: transparent;">
                                 <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="20" width="20" />
                             </button>
                         </td>
                         <td ng-if="editFeedback" class="feedback-button" [(ngModel)]="summary.reductionKey" (click)="ctrl.negativeFeedback(summary.reductionKey)">
-                            <button ng-click="ctrl.markIncorrect(summary.reductionKey)" style="border:1px solid black; background-color: transparent;">
+                            <button ng-click="ctrl.markIncorrect(summary.reductionKey)" style="background-color: transparent;">
                                 <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="20" width="20" />
                             </button>
                         </td>
@@ -133,17 +133,17 @@
                                 <input type="text" ng-model="feedbackForm.reason" size="75" placeholder="Please enter a reason correlation is incorrect.">
                             </td>
                             <td>
-                                <button ng-click="ctrl.submitEditedFeedback(feedbackForm)" style="border:1px solid black; background-color: transparent;">SUBMIT</button>
+                                <button ng-click="ctrl.submitEditedFeedback(feedbackForm)" style="background-color: transparent;">SUBMIT</button>
                             </td>
                             <td>
-                                <button ng-click="ctrl.cancelEditedFeedback()" style="border:1px solid black; background-color: transparent;">CANCEL</button>
+                                <button ng-click="ctrl.cancelEditedFeedback()" style="background-color: transparent;">CANCEL</button>
                             </td>
                         </tr>
                     </table>
                 </form>
             </div>
             <div ng-if="situationFeebackEnabled && !editFeedback" style="text-align:right">
-                <button ng-click="ctrl.editSituationFeedback()" style="border:1px solid black; background-color: transparent;">
+                <button ng-click="ctrl.editSituationFeedback()" style="background-color: transparent;">
                         <img ng-src="{{ctrl.situationFeedbackButton()}}" height="20" width="20" />
                 </button>
             </div>
