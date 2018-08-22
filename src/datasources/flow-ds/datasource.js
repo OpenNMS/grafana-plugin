@@ -164,10 +164,13 @@ export class FlowDatasource {
   }
 
   static toSeries(target, flowSeries) {
+    let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
     let perSecond = FlowDatasource.isFunctionPresent(target, 'perSecond');
     let negativeEgress = FlowDatasource.isFunctionPresent(target, 'negativeEgress');
     let negativeIngress = FlowDatasource.isFunctionPresent(target, 'negativeIngress');
     let combineIngressEgress = FlowDatasource.isFunctionPresent(target, 'combineIngressEgress');
+    let onlyIngress = FlowDatasource.isFunctionPresent(target, 'onlyIngress');
+    let onlyEgress = FlowDatasource.isFunctionPresent(target, 'onlyEgress');
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
@@ -184,6 +187,14 @@ export class FlowDatasource {
       nCols = columns.length;
 
       for (i = 0; i < nCols; i++) {
+        // Optionally skip egress or ingress columns
+        if (onlyIngress && !columns[i].ingress) {
+          continue;
+        }
+        if (onlyEgress && columns[i].ingress) {
+          continue;
+        }
+
         let multiplier = negativeIngress ? -1 : 1;
         let suffix = " (In)";
         if (!columns[i].ingress) {
@@ -196,6 +207,10 @@ export class FlowDatasource {
         }
         if (perSecond) {
           multiplier /= step / 1000;
+        }
+        if (toBits) {
+          // Convert from bytes to bits
+          multiplier *= 8;
         }
 
         datapoints = [];
