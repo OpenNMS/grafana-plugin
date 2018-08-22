@@ -13,11 +13,14 @@ The query editor supports the following functions:
 | Combine   | `includeOther`          | Combine and include other conversations/applications that fall outside of the Top N.
 | Filter    | `withExporterNode`      | Filter for flows related to the given exporter node.
 | Filter    | `withIfIndex`           | Filter for flows related to the given interface index.
+| Transform | `toBits`                | Convert the values from bytes to bits.
 | Transform | `perSecond`             | Convert the values to a per/second rate.
 | Transform | `negativeEgress`        | Make the egress values negative.
 | Transform | `negativeIngress`       | Make the ingress values negative.
 | Transform | `asTableSummary`        | Generate a tabular summary instead of time series data.
 | Transform | `combineIngressEgress`  | Sum ingress and egress values together.
+| Transform | `onlyIngress`           | Only display ingress traffic.
+| Transform | `onlyEgress`            | Only display egress traffic.
 |===
 
 == Template Queries

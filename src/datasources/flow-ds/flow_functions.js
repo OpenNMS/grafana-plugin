@@ -54,6 +54,11 @@ addFuncDef({
 });
 
 addFuncDef({
+  name: 'toBits',
+  category: categories.Transform
+});
+
+addFuncDef({
   name: 'negativeEgress',
   category: categories.Transform
 });
@@ -70,6 +75,16 @@ addFuncDef({
 
 addFuncDef({
   name: 'combineIngressEgress',
+  category: categories.Transform
+});
+
+addFuncDef({
+  name: 'onlyIngress',
+  category: categories.Transform
+});
+
+addFuncDef({
+  name: 'onlyEgress',
   category: categories.Transform
 });
 

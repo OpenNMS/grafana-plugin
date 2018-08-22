@@ -81,6 +81,90 @@ describe("OpenNMS_Flow_Datasource", function () {
       expect(expectedResponse).to.eql(actualResponse);
       done();
     });
+
+    it("should convert bytes to bits when set", function (done) {
+      let target = {
+        'functions': [
+          {
+            'name': 'toBits'
+          }
+        ]
+      };
+      let actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              8,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              16,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).to.eql(actualResponse);
+      done();
+    });
+
+    it("should only show ingress when set", function (done) {
+      let target = {
+        'functions': [
+          {
+            'name': 'onlyIngress'
+          }
+        ]
+      };
+      let actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              1,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        }
+      ];
+
+      expect(expectedResponse).to.eql(actualResponse);
+      done();
+    });
+
+    it("should only show egress when set", function (done) {
+      let target = {
+        'functions': [
+          {
+            'name': 'onlyEgress'
+          }
+        ]
+      };
+      let actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).to.eql(actualResponse);
+      done();
+    });
   });
 
 });
