@@ -199,10 +199,13 @@ var FlowDatasource = exports.FlowDatasource = function () {
   }, {
     key: 'toSeries',
     value: function toSeries(target, flowSeries) {
+      var toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
       var perSecond = FlowDatasource.isFunctionPresent(target, 'perSecond');
       var negativeEgress = FlowDatasource.isFunctionPresent(target, 'negativeEgress');
       var negativeIngress = FlowDatasource.isFunctionPresent(target, 'negativeIngress');
       var combineIngressEgress = FlowDatasource.isFunctionPresent(target, 'combineIngressEgress');
+      var onlyIngress = FlowDatasource.isFunctionPresent(target, 'onlyIngress');
+      var onlyEgress = FlowDatasource.isFunctionPresent(target, 'onlyEgress');
 
       var start = flowSeries.start.valueOf();
       var end = flowSeries.end.valueOf();
@@ -223,6 +226,14 @@ var FlowDatasource = exports.FlowDatasource = function () {
         nCols = columns.length;
 
         for (i = 0; i < nCols; i++) {
+          // Optionally skip egress or ingress columns
+          if (onlyIngress && !columns[i].ingress) {
+            continue;
+          }
+          if (onlyEgress && columns[i].ingress) {
+            continue;
+          }
+
           var multiplier = negativeIngress ? -1 : 1;
           var suffix = " (In)";
           if (!columns[i].ingress) {
@@ -235,6 +246,10 @@ var FlowDatasource = exports.FlowDatasource = function () {
           }
           if (perSecond) {
             multiplier /= step / 1000;
+          }
+          if (toBits) {
+            // Convert from bytes to bits
+            multiplier *= 8;
           }
 
           datapoints = [];

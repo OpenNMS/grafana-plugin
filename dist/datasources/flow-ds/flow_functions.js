@@ -98,6 +98,11 @@ System.register(['lodash'], function (_export, _context) {
       });
 
       addFuncDef({
+        name: 'toBits',
+        category: categories.Transform
+      });
+
+      addFuncDef({
         name: 'negativeEgress',
         category: categories.Transform
       });
@@ -114,6 +119,16 @@ System.register(['lodash'], function (_export, _context) {
 
       addFuncDef({
         name: 'combineIngressEgress',
+        category: categories.Transform
+      });
+
+      addFuncDef({
+        name: 'onlyIngress',
+        category: categories.Transform
+      });
+
+      addFuncDef({
+        name: 'onlyEgress',
         category: categories.Transform
       });
 

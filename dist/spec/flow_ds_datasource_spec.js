@@ -56,6 +56,57 @@ System.register(["../datasources/flow-ds/datasource"], function (_export, _conte
             expect(expectedResponse).to.eql(actualResponse);
             done();
           });
+
+          it("should convert bytes to bits when set", function (done) {
+            var target = {
+              'functions': [{
+                'name': 'toBits'
+              }]
+            };
+            var actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+            var expectedResponse = [{
+              "datapoints": [[8, 1516358909932]],
+              "target": "domain (In)"
+            }, {
+              "datapoints": [[16, 1516358909932]],
+              "target": "domain (Out)"
+            }];
+
+            expect(expectedResponse).to.eql(actualResponse);
+            done();
+          });
+
+          it("should only show ingress when set", function (done) {
+            var target = {
+              'functions': [{
+                'name': 'onlyIngress'
+              }]
+            };
+            var actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+            var expectedResponse = [{
+              "datapoints": [[1, 1516358909932]],
+              "target": "domain (In)"
+            }];
+
+            expect(expectedResponse).to.eql(actualResponse);
+            done();
+          });
+
+          it("should only show egress when set", function (done) {
+            var target = {
+              'functions': [{
+                'name': 'onlyEgress'
+              }]
+            };
+            var actualResponse = FlowDatasource.toSeries(target, flowSeriesExample);
+            var expectedResponse = [{
+              "datapoints": [[2, 1516358909932]],
+              "target": "domain (Out)"
+            }];
+
+            expect(expectedResponse).to.eql(actualResponse);
+            done();
+          });
         });
       });
     }
