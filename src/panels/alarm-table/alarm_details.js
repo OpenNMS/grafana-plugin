@@ -12,6 +12,12 @@ export class AlarmDetailsCtrl {
     this.editFeedback = false;
     $scope.editor = { index: 0 };
 
+    this.CORRECT_OUTLINED = "/public/plugins/opennms-helm-app/img/if_icon-ios7-checkmark-outline_211714.png";
+    this.CORRECT_FILLED = "/public/plugins/opennms-helm-app/img/if_icon-ios7-checkmark_211715.png";
+
+    this.INCORRECT_OUTLINED = "/public/plugins/opennms-helm-app/img/if_icon-close_211652.png";
+    this.INCORRECT_FILLED = "/public/plugins/opennms-helm-app/img/if_icon-close-circled_211650.png";
+
     // Save the alarm
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
@@ -22,7 +28,7 @@ export class AlarmDetailsCtrl {
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
-    $scope.feebackButton = 'ion-checkmark-circled';
+    $scope.feebackButton = this.CORRECT_OUTLINED;
 
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
@@ -33,17 +39,14 @@ export class AlarmDetailsCtrl {
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
       $scope.tabs.push('Related Alarms');
-      console.log("retrieving Feedback...");
       let self = this;
       this.getDatasource().then(ds => { return ds.getSituationFeedback(self.$scope.alarm.id) })
         .then(
           function (feedback) {
-            console.log("Got response: ", feedback);
+            $scope.situationFeedback = self.initalizeFeeback();
             if (feedback && feedback.length > 0) {
-              $scope.situationFeedback = self.parseResponse(feedback);
+              self.updateFeedback(feedback);
               $scope.hasSituationFeedback = true;
-            } else {
-              $scope.situationFeedback = self.initalizeFeeback();
             }
             $scope.situationFeedbackButton = self.situationFeedbackButton();
             $scope.situationFeebackEnabled = true;
@@ -59,30 +62,28 @@ export class AlarmDetailsCtrl {
   }
 
   detailFeedbackIncorrectButton(reductionKey) {
-    let button = "/public/plugins/opennms-helm-app/img/thumbs-down";
+    let button = this.INCORRECT_OUTLINED;
     if (this.$scope.situationFeedback && this.$scope.hasSituationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
         if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
-          button += "-fill";
+          button = this.INCORRECT_FILLED;
           break;
         }
       }
     }
-    button += ".png";
     return button;
   }
 
   detailFeedbackOkayButton(reductionKey) {
-    let button = "/public/plugins/opennms-helm-app/img/thumb-up-filled";
+    let button = this.CORRECT_FILLED;
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
         if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
-          button = "/public/plugins/opennms-helm-app/img/thumb-up";
+          button = this.CORRECT_OUTLINED;
           break;
         }
       }
     }
-    button += ".png";
     return button;
   }
 
@@ -95,45 +96,24 @@ export class AlarmDetailsCtrl {
   }
 
   markIncorrect(reductionKey) {
-    console.log("Negative Feedback for  " + reductionKey)
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
         feedback.feedbackType = "FALSE_POSITVE";
-        console.log("Marked " + reductionKey + "as incorrect.")
         break;
       }
     }
   }
 
   markCorrect(reductionKey) {
-    console.log("Positive Feedback for  " + reductionKey)
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
         feedback.feedbackType = "CORRECT";
-        console.log("Marked " + reductionKey + "as correct.")
         break;
       }
     }
   }
 
-  parseResponse(data) {
-    let feedback = [];
-    let fingerprint = this.fingerPrint(this.$scope.alarm);
-    for (let fb of data) {
-      if (fb.situationFingerprint == fingerprint) {
-        feedback.push(fb);
-      }
-    }
-    return feedback;
-  }
-
-  submitAllPositiveFeedback() {
-    console.log("submit all positive Feedback");
-    this.submitFeedback(this.$scope.situationFeedback);
-  }
-
   submitEditedFeedback(form) {
-    console.log("submit Edited Feedback: ", form.reason);
     for (let feedback of this.$scope.situationFeedback) {
       feedback.reason = form.reason;
     }
@@ -141,18 +121,10 @@ export class AlarmDetailsCtrl {
   }
 
   submitFeedback(feedback) {
-    console.log("Submitting Feedback: ", feedback);
     let self = this;
-    let request = this.doOpenNMSRequest({
-      url: '/rest/situation-feedback/' + encodeURIComponent(this.$scope.alarm.reductionKey),
-      data: feedback,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    request
+    this.getDatasource().then(ds => { return ds.submitSituationFeedback(self.$scope.alarm.id, feedback) })
       .then(
         function (response) {
-          console.log("Got POST response: ", response);
           self.$scope.editFeedback = false;
           self.$scope.submittedFeedback = true;
           self.$scope.hasSituationFeedback = true;
@@ -164,33 +136,33 @@ export class AlarmDetailsCtrl {
         });
   }
 
+  updateFeedback(feedback) {
+    for (let fb of feedback) {
+      for (let ifb of this.$scope.situationFeedback) {
+        if (fb.alarmKey === ifb.alarmKey)
+          ifb = fb;
+          console.log("updated", ifb);
+      }
+    }
+  }
+
   editSituationFeedback() {
     this.$scope.editFeedback = true;
     this.$scope.submittedFeedback = false;
   }
 
   situationFeedbackButton() {
-    let button = "ion-checkmark-circle-outline";
+    let button = this.CORRECT_OUTLINED;
     let fingerprint = this.fingerPrint(this.$scope.alarm);
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
         if (feedback.situationFingerprint == fingerprint && this.$scope.hasSituationFeedback) {
-          button = "ion-checkmark-circle";
+          button = this.CORRECT_FILLED;
           break;
         }
       }
     }
     return button;
-  }
-
-  cancelEditedFeedback() {
-    this.$scope.situationFeedback = this.initalizeFeeback();
-    this.$scope.editFeedback = false;
-    this.$scope.submittedFeedback = false;
-  }
-
-  fingerPrint(situation) {
-    return btoa(md5(situation.relatedAlarms));
   }
 
   alarmFeedback(situationKey, fingerprint, alarm, feedbackType, reason, user) {
@@ -204,6 +176,16 @@ export class AlarmDetailsCtrl {
     return feedback;
   }
 
+  cancelEditedFeedback() {
+    this.$scope.situationFeedback = this.initalizeFeeback();
+    this.$scope.editFeedback = false;
+    this.$scope.submittedFeedback = false;
+  }
+
+  fingerPrint(situation) {
+    return btoa(md5(situation.relatedAlarms));
+  }
+
   getDatasource() {
     return this.datasourceSrv.get(this.$scope.source).then(ds => {
       if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
@@ -213,7 +195,6 @@ export class AlarmDetailsCtrl {
       }
     });
   };
-
 }
 
 /** @ngInject */

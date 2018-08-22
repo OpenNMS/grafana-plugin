@@ -236,17 +236,17 @@ export class ClientDelegate {
         }).catch(this.decorateError);
     }
 
-    getSituationfeedback(situationKey) {
+    getSituationfeedback(situationId) {
         return this.getSituationfeedbackDao()
         .then(function(feedbackDao) {
-            return feedbackDao.getFeedback(situationKey);
+            return feedbackDao.getFeedback(situationId);
         }).catch(this.decorateError);
     }
 
-    submitSituationFeedback(situationKey, feedback) {
+    submitSituationFeedback(situationId, feedback) {
         return this.getSituationfeedbackDao()
         .then(function(feedbackDao) {
-          return feedbackDao.saveFeedback(feedback, situationKey);
+          return feedbackDao.saveFeedback(feedback, situationId);
         }).catch(this.decorateError);
     }
 

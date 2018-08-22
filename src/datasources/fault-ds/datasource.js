@@ -361,11 +361,11 @@ export class OpenNMSFMDatasource {
 
     // Situation Feedback
 
-    getSituationFeedback(situationKey) {
-        return this.alarmClient.getSituationfeedback(situationKey);
+    getSituationFeedback(situationId) {
+        return this.alarmClient.getSituationfeedback(situationId);
     }
 
-    submitSituationFeedback(situationKey, feedback) {
-        return this.alarmClient.submitSituationFeedback(situationKey, feedback);
+    submitSituationFeedback(situationId, feedback) {
+        return this.alarmClient.submitSituationFeedback(situationId, feedback);
     }
 }
