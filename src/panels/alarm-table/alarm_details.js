@@ -22,6 +22,10 @@ export class AlarmDetailsCtrl {
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
 
+    // Feedback Counts
+    $scope.feedbackCorrectCount = 0;
+    $scope.feedbackIncorrectCount = 0;
+
     // Compute the icon
     let severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
@@ -88,9 +92,12 @@ export class AlarmDetailsCtrl {
   }
 
   initalizeFeeback() {
+    this.$scope.feedbackCorrectCount = 0;
+    this.$scope.feedbackIncorrectCount = 0;
     let feedback = [];
     for (let alarm of this.$scope.alarm.relatedAlarms) {
       feedback.push(this.alarmFeedback(this.$scope.alarm.reductionKey, this.fingerPrint(this.$scope.alarm), alarm, "CORRECT", "ALL_CORRECT", this.contextSrv.user.login));
+      this.$scope.feedbackCorrectCount++;
     }
     return feedback;
   }
@@ -99,6 +106,8 @@ export class AlarmDetailsCtrl {
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
         feedback.feedbackType = "FALSE_POSITVE";
+        this.$scope.feedbackCorrectCount--;
+        this.$scope.feedbackIncorrectCount++;
         break;
       }
     }
@@ -108,6 +117,8 @@ export class AlarmDetailsCtrl {
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey == reductionKey) {
         feedback.feedbackType = "CORRECT";
+        this.$scope.feedbackCorrectCount++;
+        this.$scope.feedbackIncorrectCount--;
         break;
       }
     }

@@ -2629,9 +2629,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@^1.2.3-snapshot.develop:
-  version "1.2.3-snapshot.master.132"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.3-snapshot.master.132.tgz#b69bf5064dacac5079f46f0517980e6688981ac9"
+opennms@^1.2.3-snapshot.develop.122:
+  version "1.2.3-snapshot.smith.HZN.1357.5"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.3-snapshot.smith.HZN.1357.5.tgz#10b8334d4c33693084337734bd85849265000eaa"
   dependencies:
     axios "^0.16.1"
     cli-table2 "^0.2.0"

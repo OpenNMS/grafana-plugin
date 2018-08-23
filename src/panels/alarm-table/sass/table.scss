@@ -158,10 +158,8 @@ $critical-color: #DB4345;
 }
 
 .feedback-button {
-  background-color: transparent;
-  background-repeat:no-repeat;
-  border: none;
-  cursor:pointer;
-  overflow: hidden;
-  outline:none;
+  text-align: center;
+  // Remove the padding adding by the dense table class. Works well for text, but not for images
+  padding-left: 0em !important;
 }
+  
