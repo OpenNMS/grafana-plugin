@@ -273,6 +273,27 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
                         }).catch(this.decorateError);
                     }
                 }, {
+                    key: 'getSituationfeedbackDao',
+                    value: function getSituationfeedbackDao() {
+                        return this.getClientWithMetadata().then(function (c) {
+                            return c.situationfeedback();
+                        }).catch(this.decorateError);
+                    }
+                }, {
+                    key: 'getSituationfeedback',
+                    value: function getSituationfeedback(situationId) {
+                        return this.getSituationfeedbackDao().then(function (feedbackDao) {
+                            return feedbackDao.getFeedback(situationId);
+                        }).catch(this.decorateError);
+                    }
+                }, {
+                    key: 'submitSituationFeedback',
+                    value: function submitSituationFeedback(situationId, feedback) {
+                        return this.getSituationfeedbackDao().then(function (feedbackDao) {
+                            return feedbackDao.saveFeedback(feedback, situationId);
+                        }).catch(this.decorateError);
+                    }
+                }, {
                     key: 'getFlowDao',
                     value: function getFlowDao() {
                         return this.getClientWithMetadata().then(function (c) {

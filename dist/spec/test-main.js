@@ -23,6 +23,9 @@ System.register(['prunk', 'jsdom', 'chai'], function (_export, _context) {
         QueryCtrl: null,
         loadPluginCss: function loadPluginCss() {}
       });
+      prunk.mock('app/core/app_events', {
+        appEvents: null
+      });
 
       // Setup jsdom
       // Required for loading angularjs

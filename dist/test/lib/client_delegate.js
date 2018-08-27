@@ -254,6 +254,30 @@ var ClientDelegate = exports.ClientDelegate = function () {
             }).catch(this.decorateError);
         }
 
+        // Situation Feedback functions
+
+    }, {
+        key: 'getSituationfeedbackDao',
+        value: function getSituationfeedbackDao() {
+            return this.getClientWithMetadata().then(function (c) {
+                return c.situationfeedback();
+            }).catch(this.decorateError);
+        }
+    }, {
+        key: 'getSituationfeedback',
+        value: function getSituationfeedback(situationId) {
+            return this.getSituationfeedbackDao().then(function (feedbackDao) {
+                return feedbackDao.getFeedback(situationId);
+            }).catch(this.decorateError);
+        }
+    }, {
+        key: 'submitSituationFeedback',
+        value: function submitSituationFeedback(situationId, feedback) {
+            return this.getSituationfeedbackDao().then(function (feedbackDao) {
+                return feedbackDao.saveFeedback(feedback, situationId);
+            }).catch(this.decorateError);
+        }
+
         // Flow related functions
 
     }, {

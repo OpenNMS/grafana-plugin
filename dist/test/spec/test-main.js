@@ -23,6 +23,9 @@ _prunk2.default.mock('app/plugins/sdk', {
   QueryCtrl: null,
   loadPluginCss: function loadPluginCss() {}
 });
+_prunk2.default.mock('app/core/app_events', {
+  appEvents: null
+});
 
 // Setup jsdom
 // Required for loading angularjs

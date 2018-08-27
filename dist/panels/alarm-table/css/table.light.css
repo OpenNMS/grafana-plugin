@@ -2345,4 +2345,8 @@
 .dropdown-menu-with-smaller-form-label {
   font-size: .875rem !important; }
 
+.feedback-button {
+  text-align: center;
+  padding-left: 0em !important; }
+
 /*# sourceMappingURL=table.light.css.map */

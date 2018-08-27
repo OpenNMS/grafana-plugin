@@ -13,6 +13,10 @@ var _constants = require('./constants');
 
 var _sdk = require('app/plugins/sdk');
 
+var _app_events = require('app/core/app_events');
+
+var _app_events2 = _interopRequireDefault(_app_events);
+
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -67,7 +71,7 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
           // Fallback to node id
           self.target.nodeId = node.id;
         }
-        self.targetBlur();
+        self.targetBlur('nodeId');
       });
     }
   }, {
@@ -123,7 +127,7 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
         var re = /node(Source)?\[.*?]\.(.*)$/;
         var match = re.exec(resource.id);
         self.target.resourceId = match[2];
-        self.targetBlur();
+        self.targetBlur('resourceId');
       });
     }
   }, {
@@ -152,7 +156,7 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
         });
       }, function (attribute) {
         self.target[prop] = attribute.name;
-        self.targetBlur();
+        self.targetBlur(prop);
       });
     }
   }, {
@@ -173,7 +177,7 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
         });
       }, function (filter) {
         self.target.filter = filter;
-        self.targetBlur();
+        self.targetBlur('filter');
       });
     }
   }, {
@@ -201,36 +205,44 @@ var OpenNMSQueryCtrl = exports.OpenNMSQueryCtrl = function (_QueryCtrl) {
     }
   }, {
     key: 'targetBlur',
-    value: function targetBlur() {
-      this.error = this.validateTarget();
-      this.refresh();
+    value: function targetBlur(targetId, required) {
+      if (required === undefined) {
+        required = true;
+      }
+      var errorMessage = this.validateTarget(targetId, required);
+      if (errorMessage) {
+        _app_events2.default.emit('alert-error', ['Error', errorMessage]);
+        this.error = errorMessage;
+      } else {
+        // Only send valid requests to the API
+        this.refresh();
+      }
     }
   }, {
     key: 'validateTarget',
-    value: function validateTarget() {
-      if (this.target.type === _constants.QueryType.Attribute) {
-        if (!this.target.nodeId) {
-          return "You must supply a node id.";
-        } else if (!this.target.resourceId) {
-          return "You must supply a resource id.";
-        } else if (!this.target.attribute) {
-          return "You must supply an attribute.";
-        }
-      } else if (this.target.type === _constants.QueryType.Expression) {
-        if (!this.target.label) {
-          return "You must supply a label.";
-        } else if (!this.target.expression) {
-          return "You must supply an expression.";
+    value: function validateTarget(targetId, required) {
+      if (this.target.type === _constants.QueryType.Attribute || this.target.type === _constants.QueryType.Expression) {
+        var messages = {
+          'nodeId': "You must supply a node id.",
+          'resourceId': "You must supply a resource id.",
+          'attribute': "You must supply an attribute.",
+          'expression': "You must supply an expression.",
+          'label': "You must supply a label."
+        };
+        if (required && targetId in messages && !this.target[targetId]) {
+          return messages[targetId];
+        } else if (required && !this.target[targetId]) {
+          // Fallback error message if the targetId doesn't have a specific message defined
+          return targetId + ' is a required field.';
         }
       } else if (this.target.type === _constants.QueryType.Filter) {
-        if (!this.target.filter) {
+        if (targetId == 'filterName' && (!this.target.filter || !this.target.filter.name)) {
           return "You must select a filter.";
+        } else if (required && (!this.target.filterParameters || !targetId in this.target.filterParameters || !this.target.filterParameters[targetId])) {
+          return targetId + ' is a required field.';
         }
-      } else {
-        return "Invalid type.";
       }
-
-      return undefined;
+      return null;
     }
   }, {
     key: 'getCollapsedText',

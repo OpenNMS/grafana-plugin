@@ -365,6 +365,16 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                     value: function deleteJournal(alarmId) {
                         return this.alarmClient.deleteJournal(alarmId);
                     }
+                }, {
+                    key: 'getSituationFeedback',
+                    value: function getSituationFeedback(situationId) {
+                        return this.alarmClient.getSituationfeedback(situationId);
+                    }
+                }, {
+                    key: 'submitSituationFeedback',
+                    value: function submitSituationFeedback(situationId, feedback) {
+                        return this.alarmClient.submitSituationFeedback(situationId, feedback);
+                    }
                 }]);
 
                 return OpenNMSFMDatasource;

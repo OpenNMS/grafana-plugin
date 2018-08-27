@@ -353,6 +353,19 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         value: function deleteJournal(alarmId) {
             return this.alarmClient.deleteJournal(alarmId);
         }
+
+        // Situation Feedback
+
+    }, {
+        key: 'getSituationFeedback',
+        value: function getSituationFeedback(situationId) {
+            return this.alarmClient.getSituationfeedback(situationId);
+        }
+    }, {
+        key: 'submitSituationFeedback',
+        value: function submitSituationFeedback(situationId, feedback) {
+            return this.alarmClient.submitSituationFeedback(situationId, feedback);
+        }
     }]);
 
     return OpenNMSFMDatasource;
