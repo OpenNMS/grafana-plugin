@@ -157,3 +157,9 @@ $critical-color: #DB4345;
   font-size: .875rem !important;
 }
 
+.feedback-button {
+  text-align: center;
+  // Remove the padding adding by the dense table class. Works well for text, but not for images
+  padding-left: 0em !important;
+}
+  

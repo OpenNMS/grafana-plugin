@@ -92,23 +92,54 @@
         </div>
 
         <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
-            <table  class="table-panel-table dense-table-panel-table alarm-table">
+            <table class="table-panel-table dense-table-panel-table alarm-table">
                 <thead>
                     <th> </th>
                     <th>Reduction Key</th>
                     <th>Description</th>
+                    <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody class="severity">
                     <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
                         <td style>
-                            <a href="{{detailsLink}}={{summary.id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank">
+                                <i class="fa fa-external-link"></i>
+                            </a>
                         </td>
                         <td severity>{{summary.reductionKey}}</td>
                         <td severity ng-bind-html="summary.description"></td>
+                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
+                            <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
+                        </td>
+                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
+                            <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="22" width="22" />
+                        </td>
+                    </tr>
+                    <tr ng-if="editFeedback">
+                        <td colspan="3" class="text-right">Tally</td>
+                        <td class="text-center feedback-button">{{feedbackCorrectCount}}</td>
+                        <td class="text-center feedback-button">{{feedbackIncorrectCount}}</td>
                     </tr>
                 </tbody>
             </table>
-        </div>
-
+            <br/>
+            <div ng-if="submittedFeedback">
+                Feedback Submitted.
+            </div>
+            <div ng-if="editFeedback">
+                <div class="gf-from-group">
+                    <div class="gf-form">
+                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.reason" placeholder="Enter an optional comment">
+                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback(feedbackForm)">Save</button>
+                        <button class="btn btn-inverse" ng-click="ctrl.cancelEditedFeedback()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="situationFeebackEnabled && !editFeedback && hasSituationFeedback" class="text-right">
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Re-submit Feedback...</a>
+            </div>
+            <div ng-if="situationFeebackEnabled && !editFeedback && !hasSituationFeedback" class="text-right">
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Submit Feedback...</a>
+            </div>
     </div>
 </div>

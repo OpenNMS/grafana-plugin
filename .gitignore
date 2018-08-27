@@ -9,6 +9,7 @@ awsconfig
 /tmp
 vendor/phantomjs/phantomjs
 vendor/opennms*.js*
+vendor/crypto-js
 
 docs/AWS_S3_BUCKET
 docs/GIT_BRANCH

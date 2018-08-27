@@ -44,8 +44,9 @@
   "dependencies": {
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
+    "crypto-js": "^3.1.9-1",
     "lodash": "~4.17.4",
-    "opennms": "^1.2.3-snapshot.develop",
+    "opennms": "https://github.com/OpenNMS/opennms-js.git#a90803b0b8d29ef48c52159a1b7f8137aa67014e",
     "q": "^1.5.0"
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
