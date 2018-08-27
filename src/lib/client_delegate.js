@@ -227,6 +227,29 @@ export class ClientDelegate {
             }).catch(this.decorateError);
     }
 
+
+    // Situation Feedback functions
+
+    getSituationfeedbackDao() {
+        return this.getClientWithMetadata().then(function (c) {
+            return c.situationfeedback();
+        }).catch(this.decorateError);
+    }
+
+    getSituationfeedback(situationId) {
+        return this.getSituationfeedbackDao()
+        .then(function(feedbackDao) {
+            return feedbackDao.getFeedback(situationId);
+        }).catch(this.decorateError);
+    }
+
+    submitSituationFeedback(situationId, feedback) {
+        return this.getSituationfeedbackDao()
+        .then(function(feedbackDao) {
+          return feedbackDao.saveFeedback(feedback, situationId);
+        }).catch(this.decorateError);
+    }
+
     // Flow related functions
 
     getFlowDao() {

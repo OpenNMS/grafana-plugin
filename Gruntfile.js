@@ -24,6 +24,14 @@ module.exports = function(grunt) {
         src: 'node_modules/opennms/dist/opennms.min.js.map',
         dest: 'vendor/opennms.js.map'
       },
+      crypto_js_core_to_vendor: {
+        src: 'node_modules/crypto-js/core.js',
+        dest: 'vendor/crypto-js/core.js'
+      },
+      crypto_js_md5_to_vendor: {
+        src: 'node_modules/crypto-js/md5.js',
+        dest: 'vendor/crypto-js/md5.js'
+      },
       vendor_to_dist: {
         cwd: 'vendor',
         expand: true,
