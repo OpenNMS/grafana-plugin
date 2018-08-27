@@ -873,8 +873,8 @@ coffee-script@~1.10.0:
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.10.0.tgz#12938bcf9be1948fa006f92e0c4c9e81705108c0"
 
 colors@^1.1.2:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/colors/-/colors-1.3.0.tgz#5f20c9fef6945cb1134260aab33bfbdc8295e04e"
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.3.2.tgz#2df8ff573dfbf255af562f8ce7181d6b971a359b"
 
 colors@~1.1.2:
   version "1.1.2"
@@ -903,8 +903,8 @@ commander@^2.11.0, commander@^2.8.1:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
 commander@^2.9.0:
-  version "2.15.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -1319,8 +1319,8 @@ findup-sync@~0.3.0:
     glob "~5.0.0"
 
 follow-redirects@^1.2.3:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.4.1.tgz#d8120f4518190f55aac65bb6fc7b85fcd666d6aa"
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.7.tgz#a39e4804dacb90202bca76a9e2ac10433ca6a69a"
   dependencies:
     debug "^3.1.0"
 
@@ -2455,8 +2455,8 @@ mocha@^3.4.1:
     supports-color "3.1.2"
 
 moment@^2.19.3:
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 ms@0.7.1:
   version "0.7.1"
@@ -2629,9 +2629,9 @@ onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
-opennms@^1.2.3-snapshot.develop.122:
-  version "1.2.3-snapshot.smith.HZN.1357.5"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-1.2.3-snapshot.smith.HZN.1357.5.tgz#10b8334d4c33693084337734bd85849265000eaa"
+"opennms@https://github.com/OpenNMS/opennms-js.git#a90803b0b8d29ef48c52159a1b7f8137aa67014e":
+  version "1.2.3-SNAPSHOT"
+  resolved "https://github.com/OpenNMS/opennms-js.git#a90803b0b8d29ef48c52159a1b7f8137aa67014e"
   dependencies:
     axios "^0.16.1"
     cli-table2 "^0.2.0"
@@ -2844,9 +2844,9 @@ qs@5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-5.2.0.tgz#a9f31142af468cb72b25b30136ba2456834916be"
 
-qs@^6.5.0, qs@~6.5.1:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
+qs@^6.5.0:
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
 
 qs@~5.1.0:
   version "5.1.0"
@@ -2859,6 +2859,10 @@ qs@~6.3.0:
 qs@~6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.4.0.tgz#13e26d28ad6b0ffaa91312cd3bf708ed351e7233"
+
+qs@~6.5.1:
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
 
 randomatic@^1.1.3:
   version "1.1.6"

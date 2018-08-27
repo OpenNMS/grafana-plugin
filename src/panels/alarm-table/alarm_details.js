@@ -1,5 +1,6 @@
 import { TableRenderer } from "./renderer"
 import md5 from '../../crypto-js/md5';
+import {Model} from '../../opennms';
 
 export class AlarmDetailsCtrl {
 
@@ -69,7 +70,7 @@ export class AlarmDetailsCtrl {
     let button = this.INCORRECT_OUTLINED;
     if (this.$scope.situationFeedback && this.$scope.hasSituationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
-        if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
+        if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
           button = this.INCORRECT_FILLED;
           break;
         }
@@ -82,7 +83,7 @@ export class AlarmDetailsCtrl {
     let button = this.CORRECT_FILLED;
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
-        if (feedback.alarmKey == reductionKey && feedback.feedbackType == "FALSE_POSITVE") {
+        if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
           button = this.CORRECT_OUTLINED;
           break;
         }
@@ -96,7 +97,14 @@ export class AlarmDetailsCtrl {
     this.$scope.feedbackIncorrectCount = 0;
     let feedback = [];
     for (let alarm of this.$scope.alarm.relatedAlarms) {
-      feedback.push(this.alarmFeedback(this.$scope.alarm.reductionKey, this.fingerPrint(this.$scope.alarm), alarm, "CORRECT", "ALL_CORRECT", this.contextSrv.user.login));
+      let alarmFeedback = new Model.OnmsSituationFeedback();
+      alarmFeedback.situationKey = this.$scope.alarm.reductionKey;
+      alarmFeedback.situationFingerprint = this.fingerPrint(this.$scope.alarm);
+      alarmFeedback.alarmKey = alarm.reductionKey;
+      alarmFeedback.feedbackType = Model.FeedbackTypes.CORRECT;
+      alarmFeedback.reason = "ALL_CORRECT";
+      alarmFeedback.user = this.contextSrv.user.login;
+      feedback.push(alarmFeedback);
       this.$scope.feedbackCorrectCount++;
     }
     return feedback;
@@ -104,8 +112,8 @@ export class AlarmDetailsCtrl {
 
   markIncorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey == reductionKey) {
-        feedback.feedbackType = "FALSE_POSITVE";
+      if (feedback.alarmKey === reductionKey) {
+        feedback.feedbackType = Model.FeedbackTypes.FALSE_POSITIVE;
         this.$scope.feedbackCorrectCount--;
         this.$scope.feedbackIncorrectCount++;
         break;
@@ -115,8 +123,8 @@ export class AlarmDetailsCtrl {
 
   markCorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey == reductionKey) {
-        feedback.feedbackType = "CORRECT";
+      if (feedback.alarmKey === reductionKey) {
+        feedback.feedbackType = Model.FeedbackTypes.CORRECT;
         this.$scope.feedbackCorrectCount++;
         this.$scope.feedbackIncorrectCount--;
         break;
@@ -126,7 +134,9 @@ export class AlarmDetailsCtrl {
 
   submitEditedFeedback(form) {
     for (let feedback of this.$scope.situationFeedback) {
-      feedback.reason = form.reason;
+      if (form) {
+        feedback.reason = form.reason;
+      }
     }
     this.submitFeedback(this.$scope.situationFeedback);
   }
@@ -152,7 +162,6 @@ export class AlarmDetailsCtrl {
       for (let ifb of this.$scope.situationFeedback) {
         if (fb.alarmKey === ifb.alarmKey)
           ifb = fb;
-          console.log("updated", ifb);
       }
     }
   }
@@ -174,17 +183,6 @@ export class AlarmDetailsCtrl {
       }
     }
     return button;
-  }
-
-  alarmFeedback(situationKey, fingerprint, alarm, feedbackType, reason, user) {
-    let feedback = {};
-    feedback.situationKey = situationKey;
-    feedback.situationFingerprint = fingerprint;
-    feedback.alarmKey = alarm.reductionKey;
-    feedback.feedbackType = feedbackType;
-    feedback.reason = reason;
-    feedback.user = user;
-    return feedback;
   }
 
   cancelEditedFeedback() {
