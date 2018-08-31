@@ -95,8 +95,8 @@
             <table class="table-panel-table dense-table-panel-table alarm-table">
                 <thead>
                     <th> </th>
-                    <th>Reduction Key</th>
-                    <th>Description</th>
+                    <th>Label</th>
+                    <th>Log Message</th>
                     <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody class="severity">
@@ -106,7 +106,7 @@
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
-                        <td severity>{{summary.reductionKey}}</td>
+                        <td severity>{{summary.label}}</td>
                         <td severity ng-bind-html="summary.description"></td>
                         <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />

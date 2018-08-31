@@ -112,7 +112,7 @@ export class AlarmDetailsCtrl {
 
   markIncorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey === reductionKey) {
+      if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.CORRECT) {
         feedback.feedbackType = Model.FeedbackTypes.FALSE_POSITIVE;
         this.$scope.feedbackCorrectCount--;
         this.$scope.feedbackIncorrectCount++;
@@ -123,7 +123,7 @@ export class AlarmDetailsCtrl {
 
   markCorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey === reductionKey) {
+      if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
         feedback.feedbackType = Model.FeedbackTypes.CORRECT;
         this.$scope.feedbackCorrectCount++;
         this.$scope.feedbackIncorrectCount--;
