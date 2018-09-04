@@ -31,7 +31,7 @@ export class FlowDatasource {
     }
 
     // Combine
-    let N = this.getFunctionParameterOrDefault(target, 'topN', 10);
+    let N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
     let includeOther = FlowDatasource.isFunctionPresent(target, 'includeOther');
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
