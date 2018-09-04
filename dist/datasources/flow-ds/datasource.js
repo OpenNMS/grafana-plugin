@@ -69,7 +69,7 @@ System.register(['lodash', '../../lib/client_delegate'], function (_export, _con
             }
 
             // Combine
-            var N = this.getFunctionParameterOrDefault(target, 'topN', 10);
+            var N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
             var includeOther = FlowDatasource.isFunctionPresent(target, 'includeOther');
             // Filter
             var exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
