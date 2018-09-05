@@ -271,7 +271,6 @@ export class OpenNMSFMDatasource {
 
                 // Situation Data
                 alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N',
-                alarm.inSituation ? 'Y' : 'N',
                 alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined,
                 alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
 
