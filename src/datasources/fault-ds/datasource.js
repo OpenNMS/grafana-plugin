@@ -197,7 +197,7 @@ export class OpenNMSFMDatasource {
             "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
-            "Is Situation", "Is in Situation", "Situation Alarm Count", "Affected Node Count",
+            "Is Situation", "Situation Alarm Count", "Affected Node Count",
             "Data Source"
         ];
 
