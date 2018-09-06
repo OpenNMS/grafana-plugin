@@ -5,7 +5,7 @@ import {Mapping} from './Mapping';
 import _ from 'lodash';
 
 const FeaturedAttributes = [
-    "affectednodeCount", "alarmAckTime", "category", "ipAddress",
+    "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
     "isSituation", "isInSituation", "location", "node.label", "reductionKey",
     "service", "severity", "situtationAlarmCount", "uei"
 ];

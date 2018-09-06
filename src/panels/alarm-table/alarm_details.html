@@ -107,7 +107,7 @@
                             </a>
                         </td>
                         <td severity>{{summary.label}}</td>
-                        <td severity ng-bind-html="summary.description"></td>
+                        <td severity ng-bind-html="summary.logMessage"></td>
                         <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
                         </td>
