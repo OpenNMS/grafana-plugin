@@ -5,9 +5,9 @@ import {Mapping} from './Mapping';
 import _ from 'lodash';
 
 const FeaturedAttributes = [
-    "alarmAckTime", "category", "ipAddress",
-    "isSituation", "location", "node.label", "reductionKey",
-    "service", "severity", "uei"
+    "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
+    "isSituation", "isInSituation", "location", "node.label", "reductionKey",
+    "service", "severity", "situtationAlarmCount", "uei"
 ];
 
 export class OpenNMSFMDatasource {
@@ -157,7 +157,7 @@ export class OpenNMSFMDatasource {
       if (attribute === 'ipAddr') {
           attribute = 'ipInterface.ipAddress';
       }
-      if (attribute === 'isSituation') {
+      if (attribute === 'isSituation' || attribute === 'isInSituation') {
         return this.q.when([{ id: 'false', label: 'false'}, {id: 'true', label: 'true'}]);
       }
       return this.alarmClient.findProperty(attribute)
@@ -197,6 +197,7 @@ export class OpenNMSFMDatasource {
             "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
+            "Is Situation", "Situation Alarm Count", "Affected Node Count",
             "Data Source"
         ];
 
@@ -267,6 +268,11 @@ export class OpenNMSFMDatasource {
                 alarm.journal ? alarm.journal.author : undefined,
                 alarm.journal ? alarm.journal.updated : undefined,
                 alarm.journal ? alarm.journal.created : undefined,
+
+                // Situation Data
+                alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N',
+                alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined,
+                alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
 
                 // Data Source
                 self.name

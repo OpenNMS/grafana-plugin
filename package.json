@@ -46,7 +46,7 @@
     "babel-preset-es2015": "^6.24.1",
     "crypto-js": "^3.1.9-1",
     "lodash": "~4.17.4",
-    "opennms": "https://github.com/OpenNMS/opennms-js.git#a90803b0b8d29ef48c52159a1b7f8137aa67014e",
+    "opennms": "https://github.com/OpenNMS/opennms-js.git#3c5edf0a7ac3b69a0105d4c11c5852a027fd9442",
     "q": "^1.5.0"
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
