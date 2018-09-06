@@ -43,7 +43,7 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                 };
             }();
 
-            FeaturedAttributes = ["alarmAckTime", "category", "ipAddress", "isSituation", "location", "node.label", "reductionKey", "service", "severity", "uei"];
+            FeaturedAttributes = ["affectedNodeCount", "alarmAckTime", "category", "ipAddress", "isSituation", "isInSituation", "location", "node.label", "reductionKey", "service", "severity", "situtationAlarmCount", "uei"];
 
             _export('OpenNMSFMDatasource', OpenNMSFMDatasource = function () {
                 function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -198,7 +198,7 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                         if (attribute === 'ipAddr') {
                             attribute = 'ipInterface.ipAddress';
                         }
-                        if (attribute === 'isSituation') {
+                        if (attribute === 'isSituation' || attribute === 'isInSituation') {
                             return this.q.when([{ id: 'false', label: 'false' }, { id: 'true', label: 'true' }]);
                         }
                         return this.alarmClient.findProperty(attribute).then(function (property) {
@@ -230,7 +230,7 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                     value: function toTable(alarms, metadata) {
                         var _this3 = this;
 
-                        var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Location", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Data Source"];
+                        var columnNames = ["ID", "Count", "Acked By", "Ack Time", "UEI", "Severity", "Type", "Description", "Location", "Log Message", "Reduction Key", "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service", "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source", "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location", "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time", "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time", "Is Situation", "Situation Alarm Count", "Affected Node Count", "Data Source"];
 
                         // Build a sorted list of (unique) event parameter names
                         var parameterNames = _.uniq(_.sortBy(_.flatten(_.map(alarms, function (alarm) {
@@ -265,6 +265,9 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
 
                             // Journal Note
                             alarm.journal ? alarm.journal.id : undefined, alarm.journal ? alarm.journal.body : undefined, alarm.journal ? alarm.journal.author : undefined, alarm.journal ? alarm.journal.updated : undefined, alarm.journal ? alarm.journal.created : undefined,
+
+                            // Situation Data
+                            alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N', alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined, alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
 
                             // Data Source
                             self.name];

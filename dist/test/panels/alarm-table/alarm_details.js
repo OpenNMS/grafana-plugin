@@ -207,7 +207,7 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
         for (var _iterator4 = this.$scope.situationFeedback[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
           var feedback = _step4.value;
 
-          if (feedback.alarmKey === reductionKey) {
+          if (feedback.alarmKey === reductionKey && feedback.feedbackType === _opennms.Model.FeedbackTypes.CORRECT) {
             feedback.feedbackType = _opennms.Model.FeedbackTypes.FALSE_POSITIVE;
             this.$scope.feedbackCorrectCount--;
             this.$scope.feedbackIncorrectCount++;
@@ -240,7 +240,7 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
         for (var _iterator5 = this.$scope.situationFeedback[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
           var feedback = _step5.value;
 
-          if (feedback.alarmKey === reductionKey) {
+          if (feedback.alarmKey === reductionKey && feedback.feedbackType === _opennms.Model.FeedbackTypes.FALSE_POSITIVE) {
             feedback.feedbackType = _opennms.Model.FeedbackTypes.CORRECT;
             this.$scope.feedbackCorrectCount++;
             this.$scope.feedbackIncorrectCount--;
