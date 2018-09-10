@@ -1,4 +1,4 @@
-FROM grafana/grafana:4.4.1
+FROM grafana/grafana:5.2.4
 
 ARG NODEJS_SETUP_SCRIPT_URL=https://deb.nodesource.com/setup_6.x
 ARG YARN_KEY_URL=https://dl.yarnpkg.com/debian/pubkey.gpg
@@ -8,8 +8,9 @@ ARG OPENNMS_HELM_APP_DIR=opennms-helm-app
 ENV GF_PATHS_PLUGINS /opt/grafana/plugins
 ENV OPENNMS_HELM_HOME=${GF_PATHS_PLUGINS}/${OPENNMS_HELM_APP_DIR}
 
+USER root
 RUN apt-get update && \
-    apt-get -y --no-install-recommends install apt-transport-https && \
+    apt-get -y --no-install-recommends install apt-transport-https gnupg && \
     curl -sS ${YARN_KEY_URL} | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     curl -sL ${NODEJS_SETUP_SCRIPT_URL} | bash - && \
@@ -34,10 +35,11 @@ VOLUME ["/opt/grafana/plugins", "/var/lib/grafana", "/var/log/grafana", "/etc/gr
 EXPOSE 3000
 
 LABEL maintainer="ronny@opennms.org" \
-      grafana.version="4.4.1" \
+      grafana.version="5.2.4" \
       opennms.helm.git.url=${OPENNMS_HELM_GIT_URL} \
       opennms.helm.git.branch.ref=${OPENNMS_HELM_GIT_BRANCH_REF} \
       opennms.helm.license=MIT \
       opennms.helm.home=${OPENNMS_HELM_HOME}
 
+USER grafana
 ENTRYPOINT ["/run.sh"]
