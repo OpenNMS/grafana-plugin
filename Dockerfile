@@ -1,4 +1,4 @@
-FROM grafana/grafana:4.6.0
+FROM grafana/grafana:5.2.4
 
 ARG NODEJS_SETUP_SCRIPT_URL=https://deb.nodesource.com/setup_6.x
 ARG YARN_KEY_URL=https://dl.yarnpkg.com/debian/pubkey.gpg
