@@ -122,7 +122,7 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
           key: 'detailFeedbackIncorrectButton',
           value: function detailFeedbackIncorrectButton(reductionKey) {
             var button = this.INCORRECT_OUTLINED;
-            if (this.$scope.situationFeedback && this.$scope.hasSituationFeedback) {
+            if (this.$scope.situationFeedback) {
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
               var _iteratorError = undefined;
