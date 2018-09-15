@@ -68,7 +68,7 @@ export class AlarmDetailsCtrl {
 
   detailFeedbackIncorrectButton(reductionKey) {
     let button = this.INCORRECT_OUTLINED;
-    if (this.$scope.situationFeedback && this.$scope.hasSituationFeedback) {
+    if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
         if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
           button = this.INCORRECT_FILLED;
