@@ -1,10 +1,41 @@
-version: 2
-jobs:
-  build:
+version: 2.0
+defaults: &defaults
+
+  working_directory: &working_directory
+    /home/circleci/opennms-helm
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *working_directory
+
+references:
+  centos_container_config: &centos_container_config
+    docker:
+      - image: opennmsbamboo/node-centos
+
+  node_container_config: &node_container_config
     docker:
       - image: circleci/node
+
+  docker_container_config: &docker_container_config
+    docker:
+      - image: docker:18.06.0-ce-git
+
+  dockerhub_login: &dockerhub_login
+    run:
+      name: DockerHub Login
+      command: |
+        docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+jobs:
+  build:
+    <<: *defaults
+    <<: *node_container_config
     steps:
+      - *attach_workspace
       - checkout
+      - run:
+          name: Get version number
+          command: ./get-version.sh
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
@@ -12,7 +43,7 @@ jobs:
             - yarn-packages-{{ .Branch }}
             - yarn-packages-
       - run:
-          name: Install Dependencies
+          name: Install Yarn Dependencies
           command: yarn install --pure-lockfile
       - save_cache:
           name: Save Yarn Package Cache
@@ -20,5 +51,171 @@ jobs:
           paths:
             - node_modules/
       - run:
-          name: Run tests
+          name: Run Build
+          command: yarn build
+      - run:
+          name: Run Tests
           command: yarn test
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - ./
+
+  make-tarball:
+      <<: *defaults
+      <<: *centos_container_config
+      steps:
+        - *attach_workspace
+        - run:
+            name: Create tarball
+            command: mkdir -p ./dist/packages && tar --exclude='.circleci' --exclude='.git' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
+        - store_artifacts:
+            path: ./dist/packages
+        - persist_to_workspace:
+            root: *working_directory
+            paths:
+              - ./dist/packages
+  
+  make-docker-image:
+    <<: *defaults
+    <<: *docker_container_config
+    steps:
+      - setup_remote_docker
+      - *attach_workspace
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build \
+              --build-arg OPENNMS_HELM_PKG=opennms-helm_$(cat version.tag).tar.gz \
+              --build-arg GRAFANA_VERSION=$(cat grafana.version) \
+              -t helm:$(cat version.tag) .
+      - run:
+          name: Export Docker Image as artefact
+          command: docker image save helm:$(cat version.tag) -o helm-docker-image
+      - store_artifacts:
+          path: ./helm-docker-image
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - ./helm-docker-image
+
+  publish-docker-image-latest:
+    <<: *defaults
+    <<: *docker_container_config
+    steps:
+      - setup_remote_docker
+      - *dockerhub_login
+      - *attach_workspace
+      - run:
+          name: Load Docker Container Image file
+          command: |
+            docker image load -i ./helm-docker-image
+      - run:
+          name: Set DockerHub organization and ensure lower case
+          command: |
+            if [ -z ${DOCKERHUB_PROJECT_USER+x} ]; then
+                DOCKERHUB_PROJECT_USER=$(echo "${CIRCLE_PROJECT_USERNAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_USER=${DOCKERHUB_PROJECT_USER}" >> ${BASH_ENV}
+                echo "Use CIRCLE_PROJECT_USERNAME instead which is set to ${DOCKERHUB_PROJECT_USER}."
+            else
+                DOCKERHUB_PROJECT_USER=$(echo "${DOCKERHUB_PROJECT_USER}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_USER=${DOCKERHUB_PROJECT_USER}" >> ${BASH_ENV}
+                echo "Overwrite DOCKERHUB_PROJECT_USER with ${DOCKERHUB_PROJECT_USER}."
+            fi
+      - run:
+          name: Set DockerHub project name and ensure lower case
+          command: |
+            if [ -z ${DOCKERHUB_PROJECT_NAME+x} ]; then
+                DOCKERHUB_PROJECT_NAME=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
+                echo "Use CIRCLE_PROJECT_REPONAME instead which is set to ${DOCKERHUB_PROJECT_NAME}."
+            else
+                DOCKERHUB_PROJECT_NAME=$(echo "${DOCKERHUB_PROJECT_NAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
+                echo "Overwrite DOCKERHUB_PROJECT_NAME with ${DOCKERHUB_PROJECT_NAME}."
+            fi            
+      - run:
+          name: Tag Docker Container Images for release and publish to DockerHub
+          command: |
+            docker tag helm:$(cat version.tag) ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(cat version.tag)
+            docker tag helm:$(cat version.tag) ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
+            docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(cat version.tag)
+            docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
+
+  publish-docker-image-bleeding:
+    <<: *defaults
+    <<: *docker_container_config
+    steps:
+      - setup_remote_docker
+      - *dockerhub_login
+      - *attach_workspace
+      - run:
+          name: Load Docker Container Image file
+          command: |
+            docker image load -i ./helm-docker-image
+      - run:
+          name: Set DockerHub organization and ensure lower case
+          command: |
+            if [ -z ${DOCKERHUB_PROJECT_USER+x} ]; then
+                DOCKERHUB_PROJECT_USER=$(echo "${CIRCLE_PROJECT_USERNAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_USER=${DOCKERHUB_PROJECT_USER}" >> ${BASH_ENV}
+                echo "Use CIRCLE_PROJECT_USERNAME instead which is set to ${DOCKERHUB_PROJECT_USER}."
+            else
+                DOCKERHUB_PROJECT_USER=$(echo "${DOCKERHUB_PROJECT_USER}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_USER=${DOCKERHUB_PROJECT_USER}" >> ${BASH_ENV}
+                echo "Overwrite DOCKERHUB_PROJECT_USER with ${DOCKERHUB_PROJECT_USER}."
+            fi
+      - run:
+          name: Set DockerHub project name and ensure lower case
+          command: |
+            if [ -z ${DOCKERHUB_PROJECT_NAME+x} ]; then
+                DOCKERHUB_PROJECT_NAME=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
+                echo "Use CIRCLE_PROJECT_REPONAME instead which is set to ${DOCKERHUB_PROJECT_NAME}."
+            else
+                DOCKERHUB_PROJECT_NAME=$(echo "${DOCKERHUB_PROJECT_NAME}" | tr '[:upper:]' '[:lower:]')
+                echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
+                echo "Overwrite DOCKERHUB_PROJECT_NAME with ${DOCKERHUB_PROJECT_NAME}."
+            fi            
+      - run:
+          name: Tag Docker Container Images for bleeding and publish to DockerHub
+          command: |
+            docker tag helm:$(cat version.tag) ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
+            docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
+
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - make-tarball:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+      - make-docker-image:
+          requires:
+            - make-tarball
+          filters:
+            tags:
+              only: /^v.*/
+      - publish-docker-image-latest:
+          requires:
+            - make-docker-image
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - publish-docker-image-bleeding:
+          requires:
+            - make-docker-image
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /^v.*/
