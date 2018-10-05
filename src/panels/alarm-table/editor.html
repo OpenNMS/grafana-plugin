@@ -47,6 +47,18 @@
 
     <div class="section gf-form-group">
         <h5 class="section-heading">Alarms</h5>
-        <gf-form-switch class="gf-form" label-class="width-10" switch-class="max-width-6" label="Style with severity" checked="editor.panel.severity" on-change="editor.render()"></gf-form-switch>
+        <!-- <gf-form-switch class="gf-form" label-class="width-10" switch-class="max-width-6" label="Style with severity" checked="editor.panel.severity" on-change="editor.render()"></gf-form-switch> -->
+        <div class="gf-form max-width-20">
+            <label class="gf-form-label width-10">Style with severity</label>
+            <div class="gf-form-select-wrapper width-8">
+                <select class="gf-form-input"
+                        ng-model="editor.panel.severity"
+                        ng-change="editor.render()">
+                    <option value="row">Row</option>
+                    <option value="column">Column</option>
+                    <option value="off">Off</option>
+                </select>
+            </div>
+        </div>
     </div>
 </div>
