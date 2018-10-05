@@ -26,7 +26,7 @@ export class TableModel {
     this.rows.sort(function(a, b) {
       const colInfo = self.columns[options.col];
 
-      if (colInfo.style.type === 'severity') {
+      if (colInfo && colInfo.style && colInfo.style.type === 'severity') {
         a = self.severityForLabel(a[options.col]);
         b = self.severityForLabel(b[options.col]);
       } else {
