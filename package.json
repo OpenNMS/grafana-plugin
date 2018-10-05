@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "2.0.1-SNAPSHOT",
+  "version": "3.0.0-SNAPSHOT",
   "description": "A PM/FM console for Grafana",
   "scripts": {
     "build": "grunt",

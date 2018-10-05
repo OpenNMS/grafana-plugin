@@ -1,3 +1,4 @@
+import {Model} from '../../opennms';
 
 export class TableModel {
   constructor() {
@@ -6,14 +7,33 @@ export class TableModel {
     this.type = 'table';
   }
 
+  severityForLabel(label) {
+    const sev = Model.Severities[label];
+    if (sev) {
+      return sev.id;
+    } else {
+      console.warn('Unable to determine severity for "' + label + '".');
+      return -1;
+    }
+  }
+
   sort(options) {
     if (options.col === null || this.columns.length <= options.col) {
       return;
     }
 
+    var self = this;
     this.rows.sort(function(a, b) {
-      a = a[options.col];
-      b = b[options.col];
+      const colInfo = self.columns[options.col];
+
+      if (colInfo.style.type === 'severity') {
+        a = self.severityForLabel(a[options.col]);
+        b = self.severityForLabel(b[options.col]);
+      } else {
+        a = a[options.col];
+        b = b[options.col];
+      }
+
       if (a < b) {
         return -1;
       }
