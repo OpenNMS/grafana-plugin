@@ -71,7 +71,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', 'app/core/utils/kbn'],
           this.panel = this.panelCtrl.panel;
           this.unitFormats = kbn.getUnitFormats();
           this.colorModes = [{ text: 'Disabled', value: null }, { text: 'Cell', value: 'cell' }, { text: 'Value', value: 'value' }, { text: 'Row', value: 'row' }];
-          this.columnTypes = [{ text: 'Number', value: 'number' }, { text: 'String', value: 'string' }, { text: 'Date', value: 'date' }, { text: 'Hidden', value: 'hidden' }];
+          this.columnTypes = [{ text: 'Number', value: 'number' }, { text: 'String', value: 'string' }, { text: 'Date', value: 'date' }, { text: 'Severity', value: 'severity' }, { text: 'Hidden', value: 'hidden' }];
           this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
           this.dateFormats = [{ text: 'DD MMM HH:mm:ss', value: 'DD MMM HH:mm:ss' }, { text: 'YYYY-MM-DD HH:mm:ss', value: 'YYYY-MM-DD HH:mm:ss' }, { text: 'MM/DD/YY h:mm:ss a', value: 'MM/DD/YY h:mm:ss a' }, { text: 'MMMM D, YYYY LT', value: 'MMMM D, YYYY LT' }];
 

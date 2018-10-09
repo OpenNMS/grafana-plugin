@@ -1,9 +1,9 @@
 'use strict';
 
-System.register([], function (_export, _context) {
+System.register(['../../opennms'], function (_export, _context) {
   "use strict";
 
-  var _createClass, TableModel;
+  var Model, _createClass, TableModel;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -12,7 +12,9 @@ System.register([], function (_export, _context) {
   }
 
   return {
-    setters: [],
+    setters: [function (_opennms) {
+      Model = _opennms.Model;
+    }],
     execute: function () {
       _createClass = function () {
         function defineProperties(target, props) {
@@ -42,15 +44,35 @@ System.register([], function (_export, _context) {
         }
 
         _createClass(TableModel, [{
+          key: 'severityForLabel',
+          value: function severityForLabel(label) {
+            var sev = Model.Severities[label];
+            if (sev) {
+              return sev.id;
+            } else {
+              console.warn('Unable to determine severity for "' + label + '".');
+              return -1;
+            }
+          }
+        }, {
           key: 'sort',
           value: function sort(options) {
             if (options.col === null || this.columns.length <= options.col) {
               return;
             }
 
+            var self = this;
             this.rows.sort(function (a, b) {
-              a = a[options.col];
-              b = b[options.col];
+              var colInfo = self.columns[options.col];
+
+              if (colInfo && colInfo.style && colInfo.style.type === 'severity') {
+                a = self.severityForLabel(a[options.col]);
+                b = self.severityForLabel(b[options.col]);
+              } else {
+                a = a[options.col];
+                b = b[options.col];
+              }
+
               if (a < b) {
                 return -1;
               }

@@ -19,6 +19,8 @@ var _kbn = require('app/core/utils/kbn');
 
 var _kbn2 = _interopRequireDefault(_kbn);
 
+var _opennms = require('../../opennms');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -140,6 +142,23 @@ var TableRenderer = exports.TableRenderer = function () {
         };
       }
 
+      if (column.style.type === 'severity') {
+        return function (v) {
+          if (v === null || v === void 0) {
+            return '-';
+          }
+
+          if (column.style.displayAs === 'label') {
+            return _opennms.Model.Severities[v].toDisplayString();
+          } else if (column.style.displayAs === 'labelCaps') {
+            return v;
+          } else {
+            var icon = TableRenderer.getIconForSeverity(v.toLowerCase());
+            return '<i class="icon severity-icon ' + icon + '" title="' + v + '"></i>';
+          }
+        };
+      }
+
       return function (value) {
         return _this.defaultCellFormatter(value, column.style);
       };
@@ -157,7 +176,7 @@ var TableRenderer = exports.TableRenderer = function () {
       value = this.formatColumnValue(columnIndex, value);
       var column = this.table.columns[columnIndex];
       var styles = {};
-      var classes = [];
+      var classes = column.classes || [];
 
       if (this.colorState.cell) {
         styles['background-color'] = this.colorState.cell;
@@ -196,17 +215,29 @@ var TableRenderer = exports.TableRenderer = function () {
         styles['text-overflow'] = 'ellipsis';
       }
 
-      var stylesAsString = 'style="' + _lodash2.default.reduce(_lodash2.default.map(styles, function (val, key) {
-        return key + ':' + val;
-      }), function (memo, style) {
-        if (memo.length > 0) {
-          return memo + '; ' + style;
-        } else {
-          return style;
-        }
-      }, '') + '"';
+      var stylesAsString = '';
+      if (styles.length > 0) {
+        stylesAsString = 'style="' + _lodash2.default.reduce(_lodash2.default.map(styles, function (val, key) {
+          return key + ':' + val;
+        }), function (memo, style) {
+          if (memo.length > 0) {
+            return memo + '; ' + style;
+          } else {
+            return style;
+          }
+        }, '') + '"';
+      }
 
-      return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
+      if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
+        classes.push('text-center');
+      }
+
+      var classesAsString = '';
+      if (classes.length > 0) {
+        classesAsString = 'class="' + classes.join(' ') + '"';
+      }
+
+      return '<td ' + stylesAsString + ' ' + classesAsString + '>' + value + widthHack + '</td>';
     }
   }, {
     key: 'isRowSelected',
@@ -238,11 +269,6 @@ var TableRenderer = exports.TableRenderer = function () {
         var source = row.meta.source.replace(/'/g, '\\\'');
         var alarm = row.meta.alarm;
         var severity = alarm.severity.label.toLowerCase();
-
-        if (this.panel.severityIcons) {
-          var icon = TableRenderer.getIconForSeverity(severity);
-          cellHtml += '<td class="severity-icon text-center"><i class="icon ' + icon + '"></i></td>';
-        }
 
         for (var i = 0; i < this.table.columns.length; i++) {
           cellHtml += this.renderCell(i, row[i], y === startPos);

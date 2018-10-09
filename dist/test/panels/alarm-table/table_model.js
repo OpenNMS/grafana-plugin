@@ -3,8 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.TableModel = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _opennms = require('../../opennms');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -18,15 +21,35 @@ var TableModel = exports.TableModel = function () {
   }
 
   _createClass(TableModel, [{
+    key: 'severityForLabel',
+    value: function severityForLabel(label) {
+      var sev = _opennms.Model.Severities[label];
+      if (sev) {
+        return sev.id;
+      } else {
+        console.warn('Unable to determine severity for "' + label + '".');
+        return -1;
+      }
+    }
+  }, {
     key: 'sort',
     value: function sort(options) {
       if (options.col === null || this.columns.length <= options.col) {
         return;
       }
 
+      var self = this;
       this.rows.sort(function (a, b) {
-        a = a[options.col];
-        b = b[options.col];
+        var colInfo = self.columns[options.col];
+
+        if (colInfo && colInfo.style && colInfo.style.type === 'severity') {
+          a = self.severityForLabel(a[options.col]);
+          b = self.severityForLabel(b[options.col]);
+        } else {
+          a = a[options.col];
+          b = b[options.col];
+        }
+
         if (a < b) {
           return -1;
         }

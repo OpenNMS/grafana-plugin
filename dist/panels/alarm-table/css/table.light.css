@@ -2229,8 +2229,20 @@
 .ion-xbox:before {
   content: "\f30c"; }
 
+.table-panel-table td:first-child.text-center {
+  padding-left: .225em;
+  padding-right: .225em; }
+
+.dense-table-panel-table td:first-child {
+  padding-left: .75em; }
+  .dense-table-panel-table td:first-child.text-center {
+    padding-left: .375em;
+    padding-right: .375em; }
+
 .dense-table-panel-table td {
   padding: .25em 0 .25em 0.75em; }
+  .dense-table-panel-table td .text-center {
+    padding: .25em 0 .25em 0; }
 
 .dense-table-panel-table td p {
   margin-top: 0em;
@@ -2241,8 +2253,10 @@
   margin-bottom: 0.25em; }
 
 .severity-icon {
-  padding-left: 5px !important;
-  padding-right: 5px !important; }
+  padding-left: 10px;
+  margin-left: -5px;
+  padding-right: 10px;
+  margin-right: -5px; }
 
 .severity .indeterminate {
   background-color: #990000;

@@ -47,6 +47,19 @@
                 <gf-form-switch class="gf-form" label-class="width-8" ng-if="style.type === 'string'" label="Sanitize HTML" checked="style.sanitize" change="editor.render()"></gf-form-switch>
             </div>
 
+            <div ng-if="style.type === 'severity'">
+                <div class="gf-form">
+                    <label class="gf-form-label width-8">Display As</label>
+                    <div class="gf-form-select-wrapper width-10">
+                        <select class="gf-form-input" ng-model="style.displayAs" ng-change="editor.render()">
+                            <option value="icon">Icon</option>
+                            <option value="label">Label</option>
+                            <option value="labelCaps">Label (UC)</option>
+                        </select>
+                        </div>
+                </div>
+            </div>
+
             <div ng-if="style.type === 'number'">
                 <div class="gf-form">
                     <label class="gf-form-label width-8">Unit</label>

@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _context) {
+System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], function (_export, _context) {
   "use strict";
 
-  var _, moment, kbn, _createClass, TableRenderer;
+  var _, moment, kbn, Model, _createClass, TableRenderer;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -18,6 +18,8 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
       moment = _moment.default;
     }, function (_appCoreUtilsKbn) {
       kbn = _appCoreUtilsKbn.default;
+    }, function (_opennms) {
+      Model = _opennms.Model;
     }],
     execute: function () {
       _createClass = function () {
@@ -155,6 +157,23 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               };
             }
 
+            if (column.style.type === 'severity') {
+              return function (v) {
+                if (v === null || v === void 0) {
+                  return '-';
+                }
+
+                if (column.style.displayAs === 'label') {
+                  return Model.Severities[v].toDisplayString();
+                } else if (column.style.displayAs === 'labelCaps') {
+                  return v;
+                } else {
+                  var icon = TableRenderer.getIconForSeverity(v.toLowerCase());
+                  return '<i class="icon severity-icon ' + icon + '" title="' + v + '"></i>';
+                }
+              };
+            }
+
             return function (value) {
               return _this.defaultCellFormatter(value, column.style);
             };
@@ -172,7 +191,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
             value = this.formatColumnValue(columnIndex, value);
             var column = this.table.columns[columnIndex];
             var styles = {};
-            var classes = [];
+            var classes = column.classes || [];
 
             if (this.colorState.cell) {
               styles['background-color'] = this.colorState.cell;
@@ -211,17 +230,29 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               styles['text-overflow'] = 'ellipsis';
             }
 
-            var stylesAsString = 'style="' + _.reduce(_.map(styles, function (val, key) {
-              return key + ':' + val;
-            }), function (memo, style) {
-              if (memo.length > 0) {
-                return memo + '; ' + style;
-              } else {
-                return style;
-              }
-            }, '') + '"';
+            var stylesAsString = '';
+            if (styles.length > 0) {
+              stylesAsString = 'style="' + _.reduce(_.map(styles, function (val, key) {
+                return key + ':' + val;
+              }), function (memo, style) {
+                if (memo.length > 0) {
+                  return memo + '; ' + style;
+                } else {
+                  return style;
+                }
+              }, '') + '"';
+            }
 
-            return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
+            if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
+              classes.push('text-center');
+            }
+
+            var classesAsString = '';
+            if (classes.length > 0) {
+              classesAsString = 'class="' + classes.join(' ') + '"';
+            }
+
+            return '<td ' + stylesAsString + ' ' + classesAsString + '>' + value + widthHack + '</td>';
           }
         }, {
           key: 'isRowSelected',
@@ -253,11 +284,6 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn'], function (_export, _
               var source = row.meta.source.replace(/'/g, '\\\'');
               var alarm = row.meta.alarm;
               var severity = alarm.severity.label.toLowerCase();
-
-              if (this.panel.severityIcons) {
-                var icon = TableRenderer.getIconForSeverity(severity);
-                cellHtml += '<td class="severity-icon text-center"><i class="icon ' + icon + '"></i></td>';
-              }
 
               for (var i = 0; i < this.table.columns.length; i++) {
                 cellHtml += this.renderCell(i, row[i], y === startPos);
