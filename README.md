@@ -54,6 +54,16 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v3.0.0
+
+- BREAKING CHANGE: "Severity" in the Alarm Table is now a normal column, rather than a "Severity icons"
+  check box in the config options; when upgrading, you will need to add the column with type `severity`
+  into existing alarm table panels
+- Added support for Situations (correlated alarms), including sending feedback on alarm correlations
+- Added support for overriding time intervals and max datapoints
+- Improved error messages for incomplete or invalid queries
+- Added additional transforms for flow data (`toBits`, `onlyIngress`, `onlyEgress`)
+
 ### v2.0.0
 
 - Added a new datasource for querying flow data from OpenNMS

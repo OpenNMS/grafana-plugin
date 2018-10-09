@@ -2,6 +2,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
 
+import {Model} from '../../opennms';
+
 export class TableRenderer {
 
   constructor(panel, table, isUtc, sanitize, selectionMgr) {
@@ -124,6 +126,23 @@ export class TableRenderer {
       };
     }
 
+    if (column.style.type === 'severity') {
+      return v => {
+        if (v === null || v === void 0) {
+          return '-';
+        }
+
+        if (column.style.displayAs === 'label') {
+          return Model.Severities[v].toDisplayString();
+        } else if (column.style.displayAs === 'labelCaps') {
+          return v;
+        } else {
+          var icon = TableRenderer.getIconForSeverity(v.toLowerCase());
+          return `<i class="icon severity-icon ${icon}" title="${v}"></i>`;
+        }
+      };
+    }
+
     return (value) => {
       return this.defaultCellFormatter(value, column.style);
     };
@@ -137,7 +156,7 @@ export class TableRenderer {
     value = this.formatColumnValue(columnIndex, value);
     let column = this.table.columns[columnIndex];
     let styles = {};
-    let classes = [];
+    let classes = column.classes || [];
 
     if (this.colorState.cell) {
       styles['background-color'] = this.colorState.cell;
@@ -176,7 +195,9 @@ export class TableRenderer {
       styles['text-overflow'] = 'ellipsis';
     }
 
-    let stylesAsString = 'style="' + _.reduce(_.map(styles, function(val, key){ return key + ':' + val; }),
+    let stylesAsString = '';
+    if (styles.length > 0) {
+      stylesAsString = 'style="' + _.reduce(_.map(styles, function(val, key){ return key + ':' + val; }),
       (memo, style) => {
         if (memo.length > 0) {
           return memo + '; ' + style;
@@ -184,8 +205,18 @@ export class TableRenderer {
           return style;
         }
       }, '') + '"';
+    }
 
-    return '<td ' + stylesAsString + '>' + value + widthHack + '</td>';
+    if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
+      classes.push('text-center');
+    }
+
+    let classesAsString = '';
+    if (classes.length > 0) {
+      classesAsString = 'class="' + classes.join(' ') + '"';
+    }
+
+    return '<td ' + stylesAsString + ' ' + classesAsString + '>' + value + widthHack + '</td>';
   }
 
   static getIconForSeverity(severity) {
@@ -243,11 +274,6 @@ export class TableRenderer {
       let source = row.meta.source.replace(/'/g, '\\\'');
       let alarm = row.meta.alarm;
       let severity = alarm.severity.label.toLowerCase();
-
-      if (this.panel.severityIcons) {
-        let icon = TableRenderer.getIconForSeverity(severity);
-        cellHtml += `<td class="severity-icon text-center"><i class="icon ${icon}"></i></td>`;
-      }
 
       for (let i = 0; i < this.table.columns.length; i++) {
         cellHtml += this.renderCell(i, row[i], y === startPos);

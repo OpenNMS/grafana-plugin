@@ -3,7 +3,7 @@ ARG GRAFANA_VERSION="latest"
 FROM grafana/grafana:${GRAFANA_VERSION}
 
 ARG OPENNMS_HELM_VERSION="bleeding"
-ARG OPENNMS_HELM_PKG="opennms-helm_2.0.1-SNAPSHOT.tar.gz"
+ARG OPENNMS_HELM_PKG="opennms-helm_3.0.0-SNAPSHOT.tar.gz"
 
 LABEL maintainer "Ronny Trommer <ronny@opennms.org>"
 
