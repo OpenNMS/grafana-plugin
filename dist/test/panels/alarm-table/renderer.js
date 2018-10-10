@@ -170,13 +170,12 @@ var TableRenderer = exports.TableRenderer = function () {
     }
   }, {
     key: 'renderCell',
-    value: function renderCell(columnIndex, value) {
-      var addWidthHack = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
+    value: function renderCell(columnIndex, value, addWidthHack, columnClasses) {
       value = this.formatColumnValue(columnIndex, value);
       var column = this.table.columns[columnIndex];
       var styles = {};
       var classes = column.classes || [];
+      classes = classes.concat(columnClasses);
 
       if (this.colorState.cell) {
         styles['background-color'] = this.colorState.cell;
@@ -271,7 +270,14 @@ var TableRenderer = exports.TableRenderer = function () {
         var severity = alarm.severity.label.toLowerCase();
 
         for (var i = 0; i < this.table.columns.length; i++) {
-          cellHtml += this.renderCell(i, row[i], y === startPos);
+          var columnClasses = [];
+          if (this.panel.severity === 'column') {
+            var col = this.table.columns[i];
+            if (col && col.style && col.style.type === 'severity') {
+              columnClasses.push(severity);
+            }
+          }
+          cellHtml += this.renderCell(i, row[i], y === startPos, columnClasses);
         }
 
         if (this.colorState.row) {
@@ -279,7 +285,7 @@ var TableRenderer = exports.TableRenderer = function () {
           this.colorState.row = null;
         }
 
-        if (this.panel.severity) {
+        if (this.panel.severity === true || this.panel.severity === 'row') {
           rowClasses.push(severity);
         }
 

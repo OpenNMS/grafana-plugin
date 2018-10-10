@@ -71,6 +71,10 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
           this.transformers = transformers;
           this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
 
+          if (this.panel.severity === true) {
+            this.panel.severity = 'row';
+          }
+
           this.addColumnSegment = uiSegmentSrv.newPlusButton();
         }
 
