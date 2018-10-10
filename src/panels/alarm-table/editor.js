@@ -98,6 +98,7 @@ export class TablePanelEditorCtrl {
         if (this.srcIndex !== undefined && this.destIndex !== undefined) {
           this.$scope.$apply(() => {
             this.panel.columns.splice(this.destIndex, 0, this.panel.columns.splice(this.srcIndex, 1)[0]);
+            this.panelCtrl.render();
           });
           console.log('dropped "' + this.panel.columns[this.srcIndex].text + '" onto "' + this.panel.columns[this.destIndex].text + '"');
         } else {
