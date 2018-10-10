@@ -152,11 +152,12 @@ export class TableRenderer {
     return this.formatters[colIndex] ? this.formatters[colIndex](value) : value;
   }
 
-  renderCell(columnIndex, value, addWidthHack = false) {
+  renderCell(columnIndex, value, addWidthHack, columnClasses) {
     value = this.formatColumnValue(columnIndex, value);
     let column = this.table.columns[columnIndex];
     let styles = {};
     let classes = column.classes || [];
+    classes = classes.concat(columnClasses);
 
     if (this.colorState.cell) {
       styles['background-color'] = this.colorState.cell;
@@ -276,7 +277,14 @@ export class TableRenderer {
       let severity = alarm.severity.label.toLowerCase();
 
       for (let i = 0; i < this.table.columns.length; i++) {
-        cellHtml += this.renderCell(i, row[i], y === startPos);
+        let columnClasses = [];
+        if (this.panel.severity === 'column') {
+          const col = this.table.columns[i];
+          if (col && col.style && col.style.type === 'severity') {
+            columnClasses.push(severity);
+          }
+        }
+        cellHtml += this.renderCell(i, row[i], y === startPos, columnClasses);
       }
 
       if (this.colorState.row) {
@@ -284,7 +292,7 @@ export class TableRenderer {
         this.colorState.row = null;
       }
 
-      if (this.panel.severity) {
+      if (this.panel.severity === true || this.panel.severity === 'row') {
         rowClasses.push(severity);
       }
 
