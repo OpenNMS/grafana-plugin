@@ -11,7 +11,7 @@
             <div class="gf-form">
                 <label class="gf-form-label width-10">Columns</label>
             </div>
-            <div class="gf-form" ng-repeat="column in editor.panel.columns">
+            <div class="gf-form column-reorder" ng-repeat="column in editor.panel.columns" id="column-{{$index}}" draggable="true">
                 <label class="gf-form-label">
                     <i class="pointer fa fa-remove" ng-click="editor.removeColumn(column)"></i>
                     <span>{{column.text}}</span>
