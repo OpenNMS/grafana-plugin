@@ -216,6 +216,10 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], fun
               column.hidden = false;
             }
 
+            if (column.style.center) {
+              classes.push('text-center');
+            }
+
             if (column.style.width) {
               styles['width'] = column.style.width;
               if (column.style.clip) {

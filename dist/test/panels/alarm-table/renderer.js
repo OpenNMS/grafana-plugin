@@ -201,6 +201,10 @@ var TableRenderer = exports.TableRenderer = function () {
         column.hidden = false;
       }
 
+      if (column.style.center) {
+        classes.push('text-center');
+      }
+
       if (column.style.width) {
         styles['width'] = column.style.width;
         if (column.style.clip) {

@@ -2363,4 +2363,11 @@
   text-align: center;
   padding-left: 0em !important; }
 
+.picked-up {
+  opacity: 0.3; }
+
+.over {
+  outline: 1px dotted red;
+  outline-offset: 5px; }
+
 /*# sourceMappingURL=table.dark.css.map */
