@@ -905,6 +905,17 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('FS');
                 expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('FID');
             });
+
+            it ('should turn a node criteria ID restriction into a node.id clause', () => {
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction('node', API.Comparators.EQ, '1'), API.Operators.AND));
+
+                const actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.attribute).to.equal('node.id');
+                expect(actualFilter.clauses[0].restriction.value).to.equal('1');
+            });
         });
     });
 

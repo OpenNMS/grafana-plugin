@@ -6,9 +6,13 @@ import _ from 'lodash';
 
 const FeaturedAttributes = [
     "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
-    "isSituation", "isInSituation", "location", "node.label", "reductionKey",
+    "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
     "service", "severity", "situtationAlarmCount", "uei"
 ];
+
+const isNumber = function isNumber(num) {
+    return ((parseInt(num,10) + '') === (num + ''));
+};
 
 export class OpenNMSFMDatasource {
 
@@ -86,18 +90,24 @@ export class OpenNMSFMDatasource {
                 } else {
                     restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
                 }
-                // Turn node criteria fs:fid into separate clauses
-                if (restriction.attribute === 'node' && restriction.value.indexOf(':') > 0) {
-                    if (restriction.comparator.id !== API.Comparators.EQ.id) {
-                        console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+                // Handle "node" as a special case, updating restrictions to either foreignSource+foreignId or node.id
+                if (restriction.attribute === 'node') {
+                    if (restriction.value.indexOf(':') > 0) {
+                        if (restriction.comparator.id !== API.Comparators.EQ.id) {
+                            console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+                        }
+                        const nodeCriteria = restriction.value.split(':');
+                        const replacement = new API.NestedRestriction(
+                            new API.Clause(new API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), API.Operators.AND),
+                            new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
+                        );
+                        clause.restriction = replacement;
+                    } else if (isNumber(restriction.value)) {
+                        clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value);
+                    } else {
+                        console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
                     }
-                    const nodeCriteria = restriction.value.split(':');
-                    const replacement = new API.NestedRestriction(
-                        new API.Clause(new API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), API.Operators.AND),
-                        new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
-                    );
-                    clause.restriction = replacement;
-                }
+                } 
             }
         }
       });
