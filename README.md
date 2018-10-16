@@ -56,9 +56,8 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ### v3.0.0
 
-- BREAKING CHANGE: "Severity" in the Alarm Table is now a normal column, rather than a "Severity icons"
-  check box in the config options; when upgrading, you will need to add the column with type `severity`
-  into existing alarm table panels
+- "Severity" in the Alarm Table is now a normal column, rather than a "Severity icons" check box in
+  the config options -- existing configs should be automatically upgraded
 - Added support for reordering columns in the alarm table
 - Added support for Situations (correlated alarms), including sending feedback on alarm correlations
 - Added support for overriding time intervals and max datapoints

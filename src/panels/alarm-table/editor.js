@@ -21,10 +21,6 @@ export class TablePanelEditorCtrl {
     this.srcIndex = undefined;
     this.destIndex = undefined;
 
-    if (this.panel.severity === true) {
-      this.panel.severity = 'row';
-    }
-
     this.addColumnSegment = uiSegmentSrv.newPlusButton();
     let editor = document.querySelectorAll('.editor-row')[0];
     for (const e of [ 'dragstart', 'dragover', 'dragleave', 'drop']) {

@@ -109,6 +109,38 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
+    if (this.panel.severity === true) {
+      this.panel.severity = 'row';
+    }
+
+    if (this.panel.severityIcons === true) {
+      delete this.panel.severityIcons;
+      if (this.panel.sort && this.panel.sort.col !== undefined) {
+        this.panel.sort.col++;
+      }
+      this.panel.styles.unshift({
+        type: 'severity',
+        pattern: 'Severity',
+        displayAs: 'icon'
+      });
+      this.panel.columns.unshift({
+        hidden: false,
+        text: 'Severity',
+        title: 'Severity',
+        style: {
+          type: 'severity',
+          pattern: 'Severity',
+          displayAs: 'icon'
+        }
+      });
+      if (this.table && this.table.rows) {
+        // put a placeholder value in until data refreshes
+        this.table.rows = this.table.rows.map((row) => {
+          row.unshift(undefined);
+        });
+      }
+    }
+
     self.refreshAppConfig();
   }
 
