@@ -137,6 +137,38 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
     _this.events.on('data-snapshot-load', _this.onDataReceived.bind(_this));
     _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
 
+    if (_this.panel.severity === true) {
+      _this.panel.severity = 'row';
+    }
+
+    if (_this.panel.severityIcons === true) {
+      delete _this.panel.severityIcons;
+      if (_this.panel.sort && _this.panel.sort.col !== undefined) {
+        _this.panel.sort.col++;
+      }
+      _this.panel.styles.unshift({
+        type: 'severity',
+        pattern: 'Severity',
+        displayAs: 'icon'
+      });
+      _this.panel.columns.unshift({
+        hidden: false,
+        text: 'Severity',
+        title: 'Severity',
+        style: {
+          type: 'severity',
+          pattern: 'Severity',
+          displayAs: 'icon'
+        }
+      });
+      if (_this.table && _this.table.rows) {
+        // put a placeholder value in until data refreshes
+        _this.table.rows = _this.table.rows.map(function (row) {
+          row.unshift(undefined);
+        });
+      }
+    }
+
     self.refreshAppConfig();
     return _this;
   }

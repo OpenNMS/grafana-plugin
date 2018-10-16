@@ -54,10 +54,6 @@ var TablePanelEditorCtrl = exports.TablePanelEditorCtrl = function () {
     this.srcIndex = undefined;
     this.destIndex = undefined;
 
-    if (this.panel.severity === true) {
-      this.panel.severity = 'row';
-    }
-
     this.addColumnSegment = uiSegmentSrv.newPlusButton();
     var editor = document.querySelectorAll('.editor-row')[0];
     var _arr = ['dragstart', 'dragover', 'dragleave', 'drop'];
