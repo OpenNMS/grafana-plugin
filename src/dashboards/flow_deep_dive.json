@@ -63,7 +63,7 @@
       "id": 9,
       "panels": [],
       "repeat": null,
-      "title": "Traffic (Flows)",
+      "title": "Flow Interface Statistics",
       "type": "row"
     },
     {
@@ -142,7 +142,7 @@
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Traffic by Application",
+      "title": "Throughput by Application",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -159,7 +159,7 @@
       "yaxes": [
         {
           "format": "Bps",
-          "label": null,
+          "label": "bytes/sec",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -340,7 +340,7 @@
           "refId": "A"
         }
       ],
-      "title": "Traffic by Application",
+      "title": "Data Usage by Application",
       "transform": "table",
       "type": "table"
     },
@@ -417,7 +417,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "MIB-2 Traffic",
+          "title": "Interface Throughput",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -434,7 +434,7 @@
           "yaxes": [
             {
               "format": "Bps",
-              "label": null,
+              "label": "bytes/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -526,7 +526,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "MIB-2 Errors and Discards",
+          "title": "Errors and Discards",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -542,8 +542,8 @@
           },
           "yaxes": [
             {
-              "format": "Bps",
-              "label": null,
+              "format": "none",
+              "label": "packets/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -561,7 +561,7 @@
         }
       ],
       "repeat": null,
-      "title": "Traffic (SNMP via MIB-2)",
+      "title": "SNMP Interface Statistics",
       "type": "row"
     },
     {
@@ -642,7 +642,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Traffic by Conversation (Top N)",
+          "title": "Throughput by Conversation (Top N)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -659,7 +659,7 @@
           "yaxes": [
             {
               "format": "Bps",
-              "label": null,
+              "label": "bytes/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -836,7 +836,7 @@
               "refId": "A"
             }
           ],
-          "title": "Traffic by Conversation (Top N)",
+          "title": "Data Usage by Conversation (Top N)",
           "transform": "table",
           "type": "table"
         }
