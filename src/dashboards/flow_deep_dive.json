@@ -81,13 +81,16 @@
       },
       "id": 3,
       "legend": {
-        "avg": false,
+        "alignAsTable": true,
+        "avg": true,
         "current": false,
-        "max": false,
-        "min": false,
+        "max": true,
+        "min": true,
         "show": true,
+        "sort": "avg",
+        "sortDesc": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -369,13 +372,16 @@
           },
           "id": 2,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": true,
           "linewidth": 1,
@@ -465,13 +471,16 @@
           },
           "id": 8,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": true,
           "linewidth": 1,
@@ -589,13 +598,16 @@
           },
           "id": 5,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": false,
           "linewidth": 1,
