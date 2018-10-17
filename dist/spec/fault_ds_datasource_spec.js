@@ -877,6 +877,26 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                             expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal(ctx.range_from);
                             expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal(ctx.range_to);
                         });
+
+                        it('should turn a node criteria fs:fid restriction into 2 separate clauses', function () {
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction('node', API.Comparators.EQ, 'FS:FID'), API.Operators.AND));
+
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('FS');
+                            expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('FID');
+                        });
+
+                        it('should turn a node criteria ID restriction into a node.id clause', function () {
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction('node', API.Comparators.EQ, '1'), API.Operators.AND));
+
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.attribute).to.equal('node.id');
+                            expect(actualFilter.clauses[0].restriction.value).to.equal('1');
+                        });
                     });
                 });
             });

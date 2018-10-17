@@ -23,7 +23,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FeaturedAttributes = ["affectedNodeCount", "alarmAckTime", "category", "ipAddress", "isSituation", "isInSituation", "location", "node.label", "reductionKey", "service", "severity", "situtationAlarmCount", "uei"];
+var FeaturedAttributes = ["affectedNodeCount", "alarmAckTime", "category", "ipAddress", "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey", "service", "severity", "situtationAlarmCount", "uei"];
+
+var isNumber = function isNumber(num) {
+    return parseInt(num, 10) + '' === num + '';
+};
 
 var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
     function OpenNMSFMDatasource(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
@@ -96,16 +100,32 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
             var self = this;
             _lodash2.default.each(clauses, function (clause) {
                 if (clause.restriction) {
-                    if (clause.restriction instanceof _opennms.API.NestedRestriction) {
-                        self.substitute(clause.restriction.clauses, options);
-                    } else if (clause.restriction.value) {
+                    var restriction = clause.restriction;
+                    if (restriction instanceof _opennms.API.NestedRestriction) {
+                        self.substitute(restriction.clauses, options);
+                    } else if (restriction.value) {
                         // Range must be of type date, otherwise it is not parseable by the OpenNMS client
-                        if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
-                            clause.restriction.value = options.range.from;
-                        } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
-                            clause.restriction.value = options.range.to;
+                        if (restriction.value === '$range_from' || restriction.value === "[[range_from]]") {
+                            restriction.value = options.range.from;
+                        } else if (restriction.value === '$range_to' || restriction.value === "[[range_to]]") {
+                            restriction.value = options.range.to;
                         } else {
-                            clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                            restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
+                        }
+                        // Handle "node" as a special case, updating restrictions to either foreignSource+foreignId or node.id
+                        if (restriction.attribute === 'node') {
+                            if (restriction.value.indexOf(':') > 0) {
+                                if (restriction.comparator.id !== _opennms.API.Comparators.EQ.id) {
+                                    console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+                                }
+                                var nodeCriteria = restriction.value.split(':');
+                                var replacement = new _opennms.API.NestedRestriction(new _opennms.API.Clause(new _opennms.API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), _opennms.API.Operators.AND), new _opennms.API.Clause(new _opennms.API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), _opennms.API.Operators.AND));
+                                clause.restriction = replacement;
+                            } else if (isNumber(restriction.value)) {
+                                clause.restriction = new _opennms.API.Restriction('node.id', restriction.comparator, restriction.value);
+                            } else {
+                                console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.', restriction);
+                            }
                         }
                     }
                 }
