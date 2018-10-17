@@ -6,9 +6,13 @@ import _ from 'lodash';
 
 const FeaturedAttributes = [
     "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
-    "isSituation", "isInSituation", "location", "node.label", "reductionKey",
+    "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
     "service", "severity", "situtationAlarmCount", "uei"
 ];
+
+const isNumber = function isNumber(num) {
+    return ((parseInt(num,10) + '') === (num + ''));
+};
 
 export class OpenNMSFMDatasource {
 
@@ -74,17 +78,36 @@ export class OpenNMSFMDatasource {
       const self = this;
       _.each(clauses, clause => {
         if (clause.restriction) {
-            if (clause.restriction instanceof API.NestedRestriction) {
-                self.substitute(clause.restriction.clauses, options);
-            } else if (clause.restriction.value) {
+            const restriction = clause.restriction;
+            if (restriction instanceof API.NestedRestriction) {
+                self.substitute(restriction.clauses, options);
+            } else if (restriction.value) {
                 // Range must be of type date, otherwise it is not parseable by the OpenNMS client
-                if (clause.restriction.value === '$range_from' || clause.restriction.value === "[[range_from]]") {
-                    clause.restriction.value = options.range.from;
-                } else if (clause.restriction.value === '$range_to' || clause.restriction.value === "[[range_to]]") {
-                    clause.restriction.value = options.range.to;
+                if (restriction.value === '$range_from' || restriction.value === "[[range_from]]") {
+                    restriction.value = options.range.from;
+                } else if (restriction.value === '$range_to' || restriction.value === "[[range_to]]") {
+                    restriction.value = options.range.to;
                 } else {
-                    clause.restriction.value = self.templateSrv.replace(clause.restriction.value, options.scopedVars);
+                    restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
                 }
+                // Handle "node" as a special case, updating restrictions to either foreignSource+foreignId or node.id
+                if (restriction.attribute === 'node') {
+                    if (restriction.value.indexOf(':') > 0) {
+                        if (restriction.comparator.id !== API.Comparators.EQ.id) {
+                            console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+                        }
+                        const nodeCriteria = restriction.value.split(':');
+                        const replacement = new API.NestedRestriction(
+                            new API.Clause(new API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), API.Operators.AND),
+                            new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
+                        );
+                        clause.restriction = replacement;
+                    } else if (isNumber(restriction.value)) {
+                        clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value);
+                    } else {
+                        console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
+                    }
+                } 
             }
         }
       });
