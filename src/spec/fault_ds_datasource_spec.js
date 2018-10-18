@@ -912,6 +912,65 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(actualFilter.clauses[0].restriction.attribute).to.equal('node.id');
                 expect(actualFilter.clauses[0].restriction.value).to.equal('1');
             });
+
+            it ('should handle multi-select with 0 values selected', () => {
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: []
+                    }
+                }]);
+
+                const actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(0);
+            });
+
+            it ('should handle multi-select with 1 value selected', () => {
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: ['NORMAL']
+                    }
+                }]);
+
+                const actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.attribute).to.equal('severity');
+                expect(actualFilter.clauses[0].restriction.value).to.equal('NORMAL');
+            });
+
+            it ('should handle multi-select with 2 values selected', () => {
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: ['NORMAL', 'WARNING']
+                    }
+                }]);
+
+                const actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(2);
+                expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('NORMAL');
+                expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('WARNING');
+            });
         });
     });
 
