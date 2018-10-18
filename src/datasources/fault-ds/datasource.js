@@ -74,44 +74,108 @@ export class OpenNMSFMDatasource {
       return clonedFilter;
   }
 
+  _getTemplateVariable(name) {
+    if (this.templateSrv.variables && this.templateSrv.variables.length > 0) {
+        return this.templateSrv.variables.filter((v) => {
+            return v.name === name;
+        })[0];
+    }
+    return undefined;
+  }
+
+  subtituteNodeRestriction(clause) {
+    const restriction = clause.restriction;
+    // Handle "node" as a special case, updating restrictions to either foreignSource+foreignId or node.id
+    if (restriction.attribute === 'node') {
+        if (restriction.value.indexOf(':') > 0) {
+            if (restriction.comparator.id !== API.Comparators.EQ.id) {
+                console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+            }
+            const nodeCriteria = restriction.value.split(':');
+            const replacement = new API.NestedRestriction(
+                new API.Clause(new API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), API.Operators.AND),
+                new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
+            );
+            clause.restriction = replacement;
+        } else if (isNumber(restriction.value)) {
+            clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value);
+        } else {
+            console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
+        }
+    } 
+  }
+
   substitute(clauses, options) {
       const self = this;
+      const remove = [];
       _.each(clauses, clause => {
         if (clause.restriction) {
             const restriction = clause.restriction;
             if (restriction instanceof API.NestedRestriction) {
                 self.substitute(restriction.clauses, options);
             } else if (restriction.value) {
+                const variableName = self.templateSrv.getVariableName(restriction.value);
+                const templateVariable = self._getTemplateVariable(variableName);
+
+                // Process multi-selects
+                if (templateVariable && templateVariable.multi) {
+                    if (templateVariable.current.value && self.templateSrv.isAllValue(templateVariable.current.value)) {
+                        // if we're querying "all" we just dump the clause altogether
+                        remove.push(clause);
+                    } else {
+                        // annoyingly, depending on how you interact with the UI, if one value is selected it will
+                        // *either* be an array with 1 entry, or just the raw value >:|
+                        // so we normalize it back to just the raw value here if necessary
+                        if (_.isArray(templateVariable.current.value) && templateVariable.current.value.length === 1) {
+                            templateVariable.current.value = templateVariable.current.value[0];
+                        }
+
+                        // now if it's *still* an array, we chop it up into nested restrictions
+                        if (_.isArray(templateVariable.current.value)) {
+                            const replacement = new API.NestedRestriction();
+                            let values = templateVariable.current.value;
+                            if (!_.isArray(values)) {
+                                values = [values];
+                            }
+                            for (const value of values) {
+                                if (restriction.comparator.id === API.Comparators.EQ.id) {
+                                    replacement.withOrRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value));
+                                } else if (restriction.comparator.id === API.Comparators.NE.id) {
+                                    replacement.withAndRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value));
+                                } else {
+                                    throw new Error('Unable to query "' + restriction.attribute + '": multi-select values with variable substitution must be either "=" or "!="');
+                                }
+                            }
+
+                            // we've turned a single restriction into a nested one, so re-process it as a
+                            // collection and skip the simple replacement below
+                            clause.restriction = replacement;
+                            self.substitute(clause.restriction.clauses, options);
+                            return;
+                        }
+                    }
+                }
+
                 // Range must be of type date, otherwise it is not parseable by the OpenNMS client
-                if (restriction.value === '$range_from' || restriction.value === "[[range_from]]") {
+                if (variableName === 'range_from') {
                     restriction.value = options.range.from;
-                } else if (restriction.value === '$range_to' || restriction.value === "[[range_to]]") {
+                } else if (variableName === 'range_to') {
                     restriction.value = options.range.to;
                 } else {
                     restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
                 }
-                // Handle "node" as a special case, updating restrictions to either foreignSource+foreignId or node.id
-                if (restriction.attribute === 'node') {
-                    if (restriction.value.indexOf(':') > 0) {
-                        if (restriction.comparator.id !== API.Comparators.EQ.id) {
-                            console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
-                        }
-                        const nodeCriteria = restriction.value.split(':');
-                        const replacement = new API.NestedRestriction(
-                            new API.Clause(new API.Restriction('node.foreignSource', restriction.comparator, nodeCriteria[0]), API.Operators.AND),
-                            new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
-                        );
-                        clause.restriction = replacement;
-                    } else if (isNumber(restriction.value)) {
-                        clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value);
-                    } else {
-                        console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
-                    }
-                } 
+
+                self.subtituteNodeRestriction(clause);
             }
         }
       });
-  }
+      for (const r of remove) {
+        const i = clauses.indexOf(r);
+        if (i >= 0) {
+            clauses.splice(i, 1);
+        }
+      }
+    }
 
   testDatasource() {
       return this.alarmClient.getClientWithMetadata()
