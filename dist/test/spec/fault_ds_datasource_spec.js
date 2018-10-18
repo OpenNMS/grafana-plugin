@@ -24,6 +24,8 @@ var _datasource = require('../datasources/fault-ds/datasource');
 
 var _client_delegate = require('../lib/client_delegate');
 
+var _template_srv = require('./template_srv');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 describe("OpenNMS_FaultManagement_Datasource", function () {
@@ -741,9 +743,7 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
             // Context initialization
             ctx.$q = _q2.default;
             ctx.backendSrv = {};
-            ctx.templateSrv = { replace: function replace(value, scopedVars) {
-                    return value;
-                } };
+            ctx.templateSrv = new _template_srv.TemplateSrv();
             ctx.uiSegmentSrv = uiSegmentSrv;
             ctx.contextSrv = { user: { login: "admin", email: "admin@opennms.org", name: "The Administrator" } };
             ctx.range_from = (0, _moment2.default)();
@@ -813,11 +813,6 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
 
         describe('buildQuery', function () {
             it('should substitute scoped variables', function () {
-                // Mock the replace function
-                ctx.templateSrv.replace = function (value, scopedVars) {
-                    return value.replace(/\$variable1/g, scopedVars['variable1'].value).replace(/\[\[variable1\]\]/g, scopedVars['variable1'].value);
-                };
-
                 // The filter with variables
                 var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key", _opennms.API.Comparators.EQ, "$variable1"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key2", _opennms.API.Comparators.EQ, "Hello this is my [[variable1]]"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.EQ, "value3"), _opennms.API.Operators.AND));
 
@@ -895,6 +890,62 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                 expect(actualFilter.clauses.length).to.equal(1);
                 expect(actualFilter.clauses[0].restriction.attribute).to.equal('node.id');
                 expect(actualFilter.clauses[0].restriction.value).to.equal('1');
+            });
+
+            it('should handle multi-select with 0 values selected', function () {
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction('severity', _opennms.API.Comparators.EQ, '$severity'), _opennms.API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: []
+                    }
+                }]);
+
+                var actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(0);
+            });
+
+            it('should handle multi-select with 1 value selected', function () {
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction('severity', _opennms.API.Comparators.EQ, '$severity'), _opennms.API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: ['NORMAL']
+                    }
+                }]);
+
+                var actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.attribute).to.equal('severity');
+                expect(actualFilter.clauses[0].restriction.value).to.equal('NORMAL');
+            });
+
+            it('should handle multi-select with 2 values selected', function () {
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction('severity', _opennms.API.Comparators.EQ, '$severity'), _opennms.API.Operators.AND));
+
+                ctx.templateSrv.init([{
+                    name: 'severity',
+                    multi: true,
+                    current: {
+                        value: ['NORMAL', 'WARNING']
+                    }
+                }]);
+
+                var actualFilter = ctx.datasource.buildQuery(filter, {});
+                expect(filter).not.to.equal(actualFilter);
+                expect(actualFilter.clauses.length).to.equal(1);
+                expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(2);
+                expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('NORMAL');
+                expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('WARNING');
             });
         });
     });

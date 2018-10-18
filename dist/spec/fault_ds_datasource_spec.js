@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource', '../lib/client_delegate'], function (_export, _context) {
+System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../opennms', '../datasources/fault-ds/Mapping', '../datasources/fault-ds/FilterCloner', '../datasources/fault-ds/datasource', '../lib/client_delegate', './template_srv'], function (_export, _context) {
     "use strict";
 
-    var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource, ClientDelegate;
+    var Q, _, moment, UI, API, Mapping, FilterCloner, Datasource, ClientDelegate, TemplateSrv;
 
     return {
         setters: [function (_q) {
@@ -24,6 +24,8 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
             Datasource = _datasourcesFaultDsDatasource.OpenNMSFMDatasource;
         }, function (_libClient_delegate) {
             ClientDelegate = _libClient_delegate.ClientDelegate;
+        }, function (_template_srv) {
+            TemplateSrv = _template_srv.TemplateSrv;
         }],
         execute: function () {
 
@@ -742,9 +744,7 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                         // Context initialization
                         ctx.$q = Q;
                         ctx.backendSrv = {};
-                        ctx.templateSrv = { replace: function replace(value, scopedVars) {
-                                return value;
-                            } };
+                        ctx.templateSrv = new TemplateSrv();
                         ctx.uiSegmentSrv = uiSegmentSrv;
                         ctx.contextSrv = { user: { login: "admin", email: "admin@opennms.org", name: "The Administrator" } };
                         ctx.range_from = moment();
@@ -814,11 +814,6 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
 
                     describe('buildQuery', function () {
                         it('should substitute scoped variables', function () {
-                            // Mock the replace function
-                            ctx.templateSrv.replace = function (value, scopedVars) {
-                                return value.replace(/\$variable1/g, scopedVars['variable1'].value).replace(/\[\[variable1\]\]/g, scopedVars['variable1'].value);
-                            };
-
                             // The filter with variables
                             var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$variable1"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "Hello this is my [[variable1]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "value3"), API.Operators.AND));
 
@@ -896,6 +891,62 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                             expect(actualFilter.clauses.length).to.equal(1);
                             expect(actualFilter.clauses[0].restriction.attribute).to.equal('node.id');
                             expect(actualFilter.clauses[0].restriction.value).to.equal('1');
+                        });
+
+                        it('should handle multi-select with 0 values selected', function () {
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                            ctx.templateSrv.init([{
+                                name: 'severity',
+                                multi: true,
+                                current: {
+                                    value: []
+                                }
+                            }]);
+
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                            expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(0);
+                        });
+
+                        it('should handle multi-select with 1 value selected', function () {
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                            ctx.templateSrv.init([{
+                                name: 'severity',
+                                multi: true,
+                                current: {
+                                    value: ['NORMAL']
+                                }
+                            }]);
+
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.attribute).to.equal('severity');
+                            expect(actualFilter.clauses[0].restriction.value).to.equal('NORMAL');
+                        });
+
+                        it('should handle multi-select with 2 values selected', function () {
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction('severity', API.Comparators.EQ, '$severity'), API.Operators.AND));
+
+                            ctx.templateSrv.init([{
+                                name: 'severity',
+                                multi: true,
+                                current: {
+                                    value: ['NORMAL', 'WARNING']
+                                }
+                            }]);
+
+                            var actualFilter = ctx.datasource.buildQuery(filter, {});
+                            expect(filter).not.to.equal(actualFilter);
+                            expect(actualFilter.clauses.length).to.equal(1);
+                            expect(actualFilter.clauses[0].restriction.clauses).not.to.equal(null);
+                            expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(2);
+                            expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('NORMAL');
+                            expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('WARNING');
                         });
                     });
                 });
