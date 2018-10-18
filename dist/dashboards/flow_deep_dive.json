@@ -63,7 +63,7 @@
       "id": 9,
       "panels": [],
       "repeat": null,
-      "title": "Traffic (Flows)",
+      "title": "Flow Interface Statistics",
       "type": "row"
     },
     {
@@ -81,13 +81,16 @@
       },
       "id": 3,
       "legend": {
-        "avg": false,
+        "alignAsTable": true,
+        "avg": true,
         "current": false,
-        "max": false,
-        "min": false,
+        "max": true,
+        "min": true,
         "show": true,
+        "sort": "avg",
+        "sortDesc": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -142,7 +145,7 @@
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Traffic by Application",
+      "title": "Throughput by Application",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -159,7 +162,7 @@
       "yaxes": [
         {
           "format": "Bps",
-          "label": null,
+          "label": "bytes/sec",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -340,7 +343,7 @@
           "refId": "A"
         }
       ],
-      "title": "Traffic by Application",
+      "title": "Data Usage by Application",
       "transform": "table",
       "type": "table"
     },
@@ -369,13 +372,16 @@
           },
           "id": 2,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": true,
           "linewidth": 1,
@@ -417,7 +423,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "MIB-2 Traffic",
+          "title": "Interface Throughput",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -434,7 +440,7 @@
           "yaxes": [
             {
               "format": "Bps",
-              "label": null,
+              "label": "bytes/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -465,13 +471,16 @@
           },
           "id": 8,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": true,
           "linewidth": 1,
@@ -526,7 +535,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "MIB-2 Errors and Discards",
+          "title": "Errors and Discards",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -542,8 +551,8 @@
           },
           "yaxes": [
             {
-              "format": "Bps",
-              "label": null,
+              "format": "none",
+              "label": "packets/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -561,7 +570,7 @@
         }
       ],
       "repeat": null,
-      "title": "Traffic (SNMP via MIB-2)",
+      "title": "SNMP Interface Statistics",
       "type": "row"
     },
     {
@@ -589,13 +598,16 @@
           },
           "id": 5,
           "legend": {
-            "avg": false,
+            "alignAsTable": true,
+            "avg": true,
             "current": false,
-            "max": false,
-            "min": false,
+            "max": true,
+            "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": false,
           "linewidth": 1,
@@ -642,7 +654,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Traffic by Conversation (Top N)",
+          "title": "Throughput by Conversation (Top N)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -659,7 +671,7 @@
           "yaxes": [
             {
               "format": "Bps",
-              "label": null,
+              "label": "bytes/sec",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -836,7 +848,7 @@
               "refId": "A"
             }
           ],
-          "title": "Traffic by Conversation (Top N)",
+          "title": "Data Usage by Conversation (Top N)",
           "transform": "table",
           "type": "table"
         }
