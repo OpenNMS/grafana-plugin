@@ -56,13 +56,15 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ### v3.0.0
 
-- "Severity" in the Alarm Table is now a normal column, rather than a "Severity icons" check box in
-  the config options -- existing configs should be automatically upgraded
-- Added support for reordering columns in the alarm table
+- "Severity" in the Alarm Table panel is now a normal column, rather than a "Severity icons" check
+  box in the config options -- existing configs should be automatically upgraded
+- Added support for reordering columns in the Alarm Table panel
 - Added support for Situations (correlated alarms), including sending feedback on alarm correlations
 - Added support for overriding time intervals and max datapoints
 - Improved error messages for incomplete or invalid queries
 - Added additional transforms for flow data (`toBits`, `onlyIngress`, `onlyEgress`)
+- Added support for multi-select dashboard variables in the Alarm Table panel
+- Added a custom `node` attribute in the Alarm Table panel that supports node criteria
 
 ### v2.0.0
 
