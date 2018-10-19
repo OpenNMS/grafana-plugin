@@ -7,7 +7,7 @@ import _ from 'lodash';
 const FeaturedAttributes = [
     "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
     "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
-    "service", "severity", "situtationAlarmCount", "uei"
+    "service", "severity", "situationAlarmCount", "uei"
 ];
 
 const isNumber = function isNumber(num) {
