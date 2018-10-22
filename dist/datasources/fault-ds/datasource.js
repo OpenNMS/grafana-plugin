@@ -43,7 +43,7 @@ System.register(['../../lib/client_delegate', '../../opennms', './FilterCloner',
                 };
             }();
 
-            FeaturedAttributes = ["affectedNodeCount", "alarmAckTime", "category", "ipAddress", "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey", "service", "severity", "situtationAlarmCount", "uei"];
+            FeaturedAttributes = ["affectedNodeCount", "alarmAckTime", "category", "ipAddress", "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey", "service", "severity", "situationAlarmCount", "uei"];
 
             isNumber = function isNumber(num) {
                 return parseInt(num, 10) + '' === num + '';
