@@ -34,8 +34,8 @@
                     <td ng-bind-html="alarm.logMessage"></td>
                 </tr>
                 <tr>
-                    <td>Description</td>
-                    <td ng-bind-html="alarm.description"></td>
+                    <td style="vertical-align: text-top">Description</td>
+                    <td style="white-space: normal" ng-bind-html="alarm.description"></td>
                 </tr>
                 <tr ng-if="alarm.operatorInstructions">
                     <td>Operator Instructions</td>
@@ -58,6 +58,14 @@
                 <tr>
                     <td>Reduction Key</td>
                     <td>{{alarm.reductionKey}}</td>
+                </tr>
+                <tr ng-if="alarm.managedObjectInstance">
+                    <td>Managed Object Instance</td>
+                    <td>{{alarm.managedObjectInstance}}</td>
+                </tr>
+                <tr ng-if="alarm.managedObjectType">
+                    <td>Managed Object Type</td>
+                    <td>{{alarm.managedObjectType}}</td>
                 </tr>
             </table>
         </div>
