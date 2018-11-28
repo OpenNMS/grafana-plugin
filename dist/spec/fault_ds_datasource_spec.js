@@ -824,12 +824,12 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                                 }
                             };
 
-                            var substituedFilter = ctx.datasource.buildQuery(filter, options);
+                            var substitutedFilter = ctx.datasource.buildQuery(filter, options);
 
                             // Verify
-                            expect(substituedFilter.clauses[0].restriction.value).to.equal("dummy-value");
-                            expect(substituedFilter.clauses[1].restriction.value).to.equal("Hello this is my dummy-value");
-                            expect(substituedFilter.clauses[2].restriction.value).to.equal("value3");
+                            expect(substitutedFilter.clauses[0].restriction.value).to.equal("dummy-value");
+                            expect(substitutedFilter.clauses[1].restriction.value).to.equal("Hello this is my dummy-value");
+                            expect(substitutedFilter.clauses[2].restriction.value).to.equal("value3");
                         });
 
                         it('should substitude $range_from and $range_to accordingly', function () {
@@ -847,11 +847,11 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                             var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
 
                             // Build query and verify
-                            var substituedFilter = ctx.datasource.buildQuery(filter, options);
-                            expect(substituedFilter.clauses[0].restriction.value).to.equal(ctx.range_from);
-                            expect(substituedFilter.clauses[1].restriction.value).to.equal(ctx.range_to);
-                            expect(substituedFilter.clauses[2].restriction.value).to.equal(ctx.range_from);
-                            expect(substituedFilter.clauses[3].restriction.value).to.equal(ctx.range_to);
+                            var substitutedFilter = ctx.datasource.buildQuery(filter, options);
+                            expect(substitutedFilter.clauses[0].restriction.value).to.equal(ctx.range_from);
+                            expect(substitutedFilter.clauses[1].restriction.value).to.equal(ctx.range_to);
+                            expect(substitutedFilter.clauses[2].restriction.value).to.equal(ctx.range_from);
+                            expect(substitutedFilter.clauses[3].restriction.value).to.equal(ctx.range_to);
                         });
 
                         it('should include $range_from and $range_to when building the query', function () {
