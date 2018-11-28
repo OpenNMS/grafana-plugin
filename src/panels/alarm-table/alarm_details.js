@@ -30,6 +30,7 @@ export class AlarmDetailsCtrl {
     // Compute the icon
     let severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
+    $scope.severity = $scope.$parent.severity;
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;

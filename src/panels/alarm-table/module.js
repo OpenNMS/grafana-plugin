@@ -378,6 +378,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     let newScope = this.$rootScope.$new();
+    newScope.severity = this.panel.severity;
     newScope.source = source;
     newScope.alarm = row.meta.alarm;
     newScope.ticketerConfig = row.meta.ticketerConfig;

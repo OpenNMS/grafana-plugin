@@ -108,8 +108,8 @@
                     <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody class="severity">
-                    <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
-                        <td style>
+                    <tr ng-repeat="summary in alarm.relatedAlarms" ng-class="(severity === true || severity === 'row')? summary.severity.toLowerCase() : ''">
+                        <td ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank">
                                 <i class="fa fa-external-link"></i>
                             </a>
