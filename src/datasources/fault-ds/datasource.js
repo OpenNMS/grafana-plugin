@@ -285,6 +285,7 @@ export class OpenNMSFMDatasource {
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
             "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
             "Is Situation", "Situation Alarm Count", "Affected Node Count",
+            "Managed Object Instance", "Managed Object Type",
             "Data Source"
         ];
 
@@ -360,6 +361,8 @@ export class OpenNMSFMDatasource {
                 alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N',
                 alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined,
                 alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
+                alarm.managedObjectInstance ? alarm.managedObjectInstance : undefined,
+                alarm.managedObjectType ? alarm.managedObjectType : undefined,
 
                 // Data Source
                 self.name
