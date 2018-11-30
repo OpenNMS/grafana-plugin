@@ -195,3 +195,37 @@ $critical-color: #DB4345;
   outline: 1px dotted red;
   outline-offset: 5px;
 }
+
+$details-header-font-weight: 500;
+
+.alarm-details {
+  .modal-header-title {
+    font-weight: $details-header-font-weight;
+  }
+}
+
+.alarm-details-table {
+  th {
+    font-size: 1.125rem;
+    font-weight: $details-header-font-weight;
+  }
+
+  .alarm-details-spacer {
+    padding: 1rem 0 0 0 !important;
+    border: 0;
+  }
+
+  .alarm-details-header {
+    font-size: 1.125rem;
+    font-weight: $details-header-font-weight;
+    padding: .125rem;
+    margin: 0;
+    background: linear-gradient(135deg,#2f2f32,#262628);
+    border-top: 2px solid #171819;
+    border-bottom:2px solid #171819;
+
+    &.node-header, th {
+      padding-left: .75em !important;
+    }
+  }
+}
