@@ -43,6 +43,7 @@ export class TableModel {
       return 0;
     });
 
+    this.columns.forEach(col => col.sort = false);
     this.columns[options.col].sort = true;
 
     if (options.desc) {
