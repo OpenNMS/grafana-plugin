@@ -126,14 +126,8 @@ $critical-color: #DB4345;
   background-color: lighten($critical-color, 35%);
 }
 
-.alarm-table tr.next-selected, .alarm-table tr.next-selected td {
-  border-bottom: 2px dashed $selected-cell-border-color;
-}
-
-.alarm-table tr.selected, .alarm-table tr.selected td {
-  border: 2px dashed $selected-cell-border-color;
-  border-top: 2px dashed $selected-cell-border-color;
-  border-bottom: 2px dashed $selected-cell-border-color;
+.alarm-table tr.selected {
+  outline: 2px dashed $selected-cell-border-color;
 }
 
 .alarm-table tr:hover {
@@ -213,6 +207,7 @@ $details-header-font-weight: 500;
   .alarm-details-spacer {
     padding: 1rem 0 0 0 !important;
     border: 0;
+    outline: 0;
   }
 
   .alarm-details-header {
