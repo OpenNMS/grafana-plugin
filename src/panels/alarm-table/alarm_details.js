@@ -85,6 +85,11 @@ export class AlarmDetailsCtrl {
           });
     }
 
+    $scope.tabs.push('JSON');
+    $scope.getAlarmString = () => {
+      return JSON.stringify($scope.alarm, undefined, 2);
+    }
+
     // Raw global details link
     $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
   }

@@ -85,6 +85,10 @@
             </div>
         </div>
 
+        <div ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow: auto; overflow-wrap: normal">
+            <pre style="white-space: pre">{{ getAlarmString() }}</pre>
+        </div>
+
         <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
             <table class="filter-table gf-form-group">
                 <tr>
