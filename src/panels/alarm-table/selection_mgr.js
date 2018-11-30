@@ -15,7 +15,9 @@ export class SelectionMgr {
 
   handleRowClick(row, exclusiveModifier, rangeModifier) {
     let selectedRows;
-    if (!rangeModifier || this._lastSelectedRow === undefined) {
+    if (!rangeModifier && this._selectedRows.size === 1 && this._lastSelectedRow && _.isEqual(this._lastSelectedRow, row)) {
+      selectedRows = new Set();
+    } else if (!rangeModifier || this._lastSelectedRow === undefined) {
       // No other row was previously selected, use the row that was clicked on
       selectedRows = [row];
     } else {

@@ -309,7 +309,7 @@ export class TableRenderer {
       }
 
       let rowClass = 'class="' + rowClasses.join(' ') + '"';
-      html += '<tr ' + rowStyle + rowClass + ` ng-click="ctrl.onRowClick($event, '${source}', ${alarm.id})"  ng-dblclick="ctrl.onRowDoubleClick($event, '${source}', ${alarm.id})" context-menu="ctrl.getContextMenu($event, '${source}', ${alarm.id})">` + cellHtml + '</tr>';
+      html += '<tr ' + rowStyle + rowClass + ` ng-click="ctrl.onRowClick($event, '${source}', ${alarm.id})"  context-menu="ctrl.getContextMenu($event, '${source}', ${alarm.id})">` + cellHtml + '</tr>';
     }
 
     return html;
