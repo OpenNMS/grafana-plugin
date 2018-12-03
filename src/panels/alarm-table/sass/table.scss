@@ -1,4 +1,5 @@
 @import "ionicons";
+@import "colors";
 
 .table-panel-table {
   td:first-child {
@@ -43,7 +44,7 @@
   margin-right: -5px;
 }
 
-$cell-font-weight: normal;
+$severity-font-weight: normal;
 $indeterminate-color: #990000;
 $cleared-color: #EEE000;
 $normal-color: #86B15B;
@@ -52,46 +53,59 @@ $minor-color: #EE901C;
 $major-color: #E3692F;
 $critical-color: #DB4345;
 
-.severity .indeterminate {
-  background-color: $indeterminate-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+.severity {
+  .indeterminate {
+    background-color: $indeterminate-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .cleared {
-  background-color: $cleared-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+  .cleared {
+    background-color: $cleared-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .normal {
-  background-color: $normal-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+  .normal {
+    background-color: $normal-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .warning {
-  background-color: $warning-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+  .warning {
+    background-color: $warning-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .minor {
-  background-color: $minor-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+  .minor {
+    background-color: $minor-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .major {
-  background-color: $major-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
-}
+  .major {
+    background-color: $major-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
 
-.severity .critical {
-  background-color: $critical-color;
-  color: $cell-text-color;
-  font-weight: $cell-font-weight;
+  .critical {
+    background-color: $critical-color;
+    color: $cell-text-color;
+    font-weight: $severity-font-weight;
+  }
+
+  // for whole-row highlighting, always use dark text
+  tr.indeterminate,
+  tr.cleared,
+  tr.normal,
+  tr.warning,
+  tr.minor,
+  tr.major,
+  tr.critical {
+    color: $cell-dark-color;
+  }
 }
 
 .alarm-table .selected {

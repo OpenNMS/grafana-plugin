@@ -1,4 +1,6 @@
-$cell-text-color: #ffffff;
+@import "colors";
+
+$cell-text-color: $cell-light-color;
 $selected-cell-no-severity-background-color: darkblue;
 $selected-cell-border-color: lightblue;
 
