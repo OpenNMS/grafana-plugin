@@ -201,7 +201,7 @@ export class TableRenderer {
     }
 
     let stylesAsString = '';
-    if (styles.length > 0) {
+    if (Object.keys(styles).length > 0) {
       stylesAsString = 'style="' + _.reduce(_.map(styles, function(val, key){ return key + ':' + val; }),
       (memo, style) => {
         if (memo.length > 0) {

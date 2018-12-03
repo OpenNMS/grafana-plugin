@@ -237,6 +237,14 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     let pageCount = 0;
     let formaters = [];
 
+    scope.getColumnStyle = (col) => {
+      const ret = {};
+      if (col && col.style && col.style.width !== undefined) {
+        ret.width = col.style.width;
+      }
+      return ret;
+    };
+
     function getTableHeight() {
       let panelHeight = ctrl.height;
 
