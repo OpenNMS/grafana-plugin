@@ -136,34 +136,13 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
         }, {
           key: 'getTarget',
           value: function getTarget(evt) {
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-              for (var _iterator2 = evt.path[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var el = _step2.value;
-
-                if (el && el.classList && el.classList.contains('column-reorder')) {
-                  return el;
-                }
-              }
-              // dragleave is only fired for the label and not the parent container
-            } catch (err) {
-              _didIteratorError2 = true;
-              _iteratorError2 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-              } finally {
-                if (_didIteratorError2) {
-                  throw _iteratorError2;
-                }
+            if (evt.srcElement && evt.srcElement.offsetParent) {
+              var target = evt.srcElement.offsetParent;
+              if (target && target.id && target.classList && target.classList.contains('column-reorder')) {
+                return target;
               }
             }
-
+            // dragleave is only fired for the label and not the parent container
             if (evt.target && evt.target.parent && evt.target.parent.classList && evt.target.parent.classList.contains('column-reorder')) {
               return evt.target.parent;
             }
@@ -180,7 +159,13 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
               case 'dragstart':
                 evt.srcElement.classList.add('picked-up');
                 evt.dataTransfer.effectAllowed = 'move';
-                evt.dataTransfer.setData('text/html', evt.srcElement.innerHTML);
+                // Internet Explorer doesn't support "text/html":
+                // https://stackoverflow.com/a/28740710
+                try {
+                  evt.dataTransfer.setData('text/html', evt.srcElement.innerHTML);
+                } catch (error) {
+                  evt.dataTransfer.setData('text', evt.srcElement.innerHTML);
+                }
                 if (id) {
                   this.srcIndex = parseInt(id.replace(/^column-/, ''), 10);
                   console.log('picking up "' + this.panel.columns[this.srcIndex].text + '"');
@@ -202,7 +187,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
                 }
                 break;
               case 'dragleave':
-                if (target && evt.screenX !== 0 && event.screenY !== 0) {
+                if (target && evt.screenX !== 0 && evt.screenY !== 0) {
                   var _columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
                   //console.log('leaving ' + this.panel.columns[columnIndex].text);
                   this.destIndex = undefined;
@@ -220,7 +205,8 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
                   });
                   console.log('dropped "' + this.panel.columns[this.srcIndex].text + '" onto "' + this.panel.columns[this.destIndex].text + '"');
                 } else {
-                  console.log('WARNING: drop event received but source or destination was unset.');
+                  var targetIndex = this.srcIndex == undefined ? 'source' : 'destination';
+                  console.log('WARNING: drop event received but ' + targetIndex + ' was unset.');
                 }
                 this.removeClasses('over', 'picked-up');
                 return false;
