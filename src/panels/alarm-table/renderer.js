@@ -225,6 +225,7 @@ export class TableRenderer {
     if (column.style.clip) {
       styles['overflow'] = 'hidden';
       styles['text-overflow'] = 'ellipsis';
+      styles['white-space'] = 'nowrap';
     }
 
     let stylesAsString = '';
