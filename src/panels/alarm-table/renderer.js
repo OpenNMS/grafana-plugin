@@ -4,6 +4,26 @@ import kbn from 'app/core/utils/kbn';
 
 import {Model} from '../../opennms';
 
+moment.updateLocale('en-short', {
+  parentLocale: 'en',
+  relativeTime: {
+    future: "+%s",
+    past:   "%s",
+    s  : "1s",
+    ss : "%ds",
+    m:  "1m",
+    mm: "%dm",
+    h:  "1h",
+    hh: "%dh",
+    d:  "1d",
+    dd: "%dd",
+    M:  "1m",
+    MM: "%dm",
+    y:  "1y",
+    yy: "%dy"
+  }
+});
+
 export class TableRenderer {
 
   constructor(panel, table, isUtc, sanitize, selectionMgr) {
@@ -102,7 +122,14 @@ export class TableRenderer {
         if (this.isUtc) {
           date = date.utc();
         }
-        return date.format(column.style.dateFormat);
+        if (column.style.dateFormat === 'relative') {
+          return date.fromNow();
+        } else if (column.style.dateFormat === 'relative-short') {
+          const dur = moment.duration(moment().diff(date));
+          return dur.locale('en-short').humanize();
+        } else {
+          return date.format(column.style.dateFormat);
+        }
       };
     }
 

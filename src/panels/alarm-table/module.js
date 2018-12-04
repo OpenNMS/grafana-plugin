@@ -239,8 +239,19 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     scope.getColumnStyle = (col) => {
       const ret = {};
-      if (col && col.style && col.style.width !== undefined) {
-        ret.width = col.style.width;
+      if (col && col.style) {
+        if (col.style.width !== undefined) {
+          ret.width = col.style.width;
+          if (col.style.clip) {
+            ret['max-width'] = col.style.width;
+            ret['white-space'] = 'nowrap';
+          }
+        }
+        if (col.style.clip) {
+          ret['overflow'] = 'hidden';
+          ret['text-overflow'] = 'ellipsis';
+          ret['white-space'] = 'nowrap';
+        }
       }
       return ret;
     };
