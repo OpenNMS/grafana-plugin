@@ -63,6 +63,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           sanitize: true
         },
         {
+          type: 'string',
+          pattern: 'Log Message',
+          sanitize: true
+        },
+        {
           unit: 'short',
           type: 'number',
           decimals: 0,
