@@ -40,7 +40,7 @@ export class OpenNMSFMDatasource {
   query(options) {
       // Initialize filter
       var filter = options.targets[0].filter || new API.Filter();
-      filter.limit = 0; // no limit
+      filter.limit = options.targets[0].limit || 0; // 0 = no limit
 
       options.enforceTimeRange = true;
       const clonedFilter = this.buildQuery(filter, options);
