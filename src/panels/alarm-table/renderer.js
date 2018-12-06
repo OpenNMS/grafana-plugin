@@ -295,7 +295,10 @@ export class TableRenderer {
 
     for (let y = startPos; y < endPos; y++) {
       let row = this.table.rows[y];
-      let nextRow;
+      let prevRow, nextRow;
+      if (y-1 >= 0) {
+        prevRow = this.table.rows[y-1];
+      }
       if (y+1 < endPos) {
         nextRow = this.table.rows[y+1];
       }
@@ -330,6 +333,10 @@ export class TableRenderer {
 
       if (this.isRowSelected(row)) {
         rowClasses.push("selected");
+      }
+
+      if (prevRow && this.isRowSelected(prevRow)) {
+        rowClasses.push("prev-selected");
       }
 
       if (nextRow && this.isRowSelected(nextRow)) {

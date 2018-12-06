@@ -182,8 +182,39 @@ $critical-color: #DB4345;
   background-color: lighten($critical-color, 35%);
 }
 
+.alarm-table tr.next-selected td {
+  border-bottom: 2px dashed $selected-cell-border-color;
+}
+
+.alarm-table tr.prev-selected td {
+  border-top: 2px dashed $selected-cell-border-color;
+}
+
+.alarm-table tr {
+  border-left: 2px solid $cell-border-color;
+  border-right: 2px solid $cell-border-color;
+
+  td {
+    border: 2px solid $cell-border-color;
+
+    &:not(:first-child):not(:last-child) {
+      border-left: 2px solid $cell-border-color;
+      border-right: 2px solid $cell-border-color;
+    }
+  }
+}
+
 .alarm-table tr.selected {
-  outline: 2px dashed $selected-cell-border-color;
+  border: 2px dashed $selected-cell-border-color;
+
+  td {
+    border: 2px dashed $selected-cell-border-color;
+
+    &:not(:first-child):not(:last-child) {
+      border-left: 2px solid $cell-border-color;
+      border-right: 2px solid $cell-border-color;
+    }
+  }
 }
 
 .alarm-table tr:hover {
