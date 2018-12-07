@@ -61,7 +61,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
 
             // Initialize filter
             var filter = options.targets[0].filter || new _opennms.API.Filter();
-            filter.limit = 0; // no limit
+            filter.limit = options.targets[0].limit || 0; // 0 = no limit
 
             options.enforceTimeRange = true;
             var clonedFilter = this.buildQuery(filter, options);
@@ -119,10 +119,13 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                     clause.restriction = replacement;
                 } else if (isNumber(restriction.value)) {
                     clause.restriction = new _opennms.API.Restriction('node.id', restriction.comparator, restriction.value);
+                } else if (restriction.value === '{}') {
+                    return true;
                 } else {
                     console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.', restriction);
                 }
             }
+            return false;
         }
     }, {
         key: 'substitute',
@@ -208,7 +211,10 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                             restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
                         }
 
-                        self.subtituteNodeRestriction(clause);
+                        var shouldRemove = self.subtituteNodeRestriction(clause);
+                        if (shouldRemove) {
+                            remove.push(clause);
+                        }
                     }
                 }
             });

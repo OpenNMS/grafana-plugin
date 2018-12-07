@@ -81,6 +81,9 @@ System.register(['app/plugins/sdk', './css/query-editor.css!', 'lodash', '../../
           _this.uiSegmentSrv = uiSegmentSrv;
           _this.featuredAttributes = true; // limits the selection to the featured attributes
           _this.filterMapping = new Mapping.FilterMapping(_this.uiSegmentSrv);
+          if (_this.target.limit === undefined) {
+            _this.target.limit = 0;
+          }
 
           // The target filter may be de-serialized from persistence.
           // In order to re-initialize it properly, the filter is cloned.

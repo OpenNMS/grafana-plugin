@@ -50,7 +50,7 @@ var ColumnOptionsCtrl = exports.ColumnOptionsCtrl = function () {
     this.colorModes = [{ text: 'Disabled', value: null }, { text: 'Cell', value: 'cell' }, { text: 'Value', value: 'value' }, { text: 'Row', value: 'row' }];
     this.columnTypes = [{ text: 'Number', value: 'number' }, { text: 'String', value: 'string' }, { text: 'Date', value: 'date' }, { text: 'Severity', value: 'severity' }, { text: 'Hidden', value: 'hidden' }];
     this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
-    this.dateFormats = [{ text: 'DD MMM HH:mm:ss', value: 'DD MMM HH:mm:ss' }, { text: 'YYYY-MM-DD HH:mm:ss', value: 'YYYY-MM-DD HH:mm:ss' }, { text: 'MM/DD/YY h:mm:ss a', value: 'MM/DD/YY h:mm:ss a' }, { text: 'MMMM D, YYYY LT', value: 'MMMM D, YYYY LT' }];
+    this.dateFormats = [{ text: 'DD MMM HH:mm:ss', value: 'DD MMM HH:mm:ss' }, { text: 'YYYY-MM-DD HH:mm:ss', value: 'YYYY-MM-DD HH:mm:ss' }, { text: 'MM/DD/YY h:mm:ss a', value: 'MM/DD/YY h:mm:ss a' }, { text: 'MMMM D, YYYY LT', value: 'MMMM D, YYYY LT' }, { text: 'relative', value: 'relative' }, { text: 'relative (short)', value: 'relative-short' }];
 
     this.getColumnNames = function () {
       if (!_this.panelCtrl.table) {

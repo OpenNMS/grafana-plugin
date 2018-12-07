@@ -34,7 +34,9 @@ var SelectionMgr = exports.SelectionMgr = function () {
     key: 'handleRowClick',
     value: function handleRowClick(row, exclusiveModifier, rangeModifier) {
       var selectedRows = void 0;
-      if (!rangeModifier || this._lastSelectedRow === undefined) {
+      if (!rangeModifier && !exclusiveModifier && this._selectedRows.size === 1 && this._lastSelectedRow && _lodash2.default.isEqual(this._lastSelectedRow, row)) {
+        selectedRows = new Set();
+      } else if (!rangeModifier || this._lastSelectedRow === undefined) {
         // No other row was previously selected, use the row that was clicked on
         selectedRows = [row];
       } else {
@@ -88,6 +90,14 @@ var SelectionMgr = exports.SelectionMgr = function () {
       this._lastSelectedRow = row;
     }
   }, {
+    key: 'removeRowFromSelection',
+    value: function removeRowFromSelection(row) {
+      this._selectedRows = new Set(Array.from(this._selectedRows).filter(function (r) {
+        return r.alarmId !== row.alarmId;
+      }));
+      this._lastSelectedRow = this._selectedRows[0];
+    }
+  }, {
     key: 'handleSelection',
     value: function handleSelection(selectionRows, exclusiveModifier) {
       var _this = this;
@@ -121,9 +131,13 @@ var SelectionMgr = exports.SelectionMgr = function () {
           didSelectionChange = true;
         }
       } else {
+        var selected = this.isRowSelected(selectionRows[selectionRows.length - 1]);
         // Add the rows to the current selection
         _lodash2.default.each(selectionRows, function (selectionRow) {
-          if (!_this.isRowSelected(selectionRow)) {
+          if (selected) {
+            _this.removeRowFromSelection(selectionRow);
+            didSelectionChange = true;
+          } else {
             _this.addRowToSelection(selectionRow);
             didSelectionChange = true;
           }

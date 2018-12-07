@@ -54,6 +54,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
 });
 
+var doubleClickDelay = 250;
+
 var AlarmTableCtrl = function (_MetricsPanelCtrl) {
   _inherits(AlarmTableCtrl, _MetricsPanelCtrl);
 
@@ -92,6 +94,10 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
         pattern: '/.*ID/' }, {
         type: 'string',
         pattern: 'Description',
+        sanitize: true
+      }, {
+        type: 'string',
+        pattern: 'Log Message',
         sanitize: true
       }, {
         unit: 'short',
@@ -272,6 +278,25 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
       var pageCount = 0;
       var formaters = [];
 
+      scope.getColumnStyle = function (col) {
+        var ret = {};
+        if (col && col.style) {
+          if (col.style.width !== undefined) {
+            ret.width = col.style.width;
+            if (col.style.clip) {
+              ret['max-width'] = col.style.width;
+              ret['white-space'] = 'nowrap';
+            }
+          }
+          if (col.style.clip) {
+            ret['overflow'] = 'hidden';
+            ret['text-overflow'] = 'ellipsis';
+            ret['white-space'] = 'nowrap';
+          }
+        }
+        return ret;
+      };
+
       function getTableHeight() {
         var panelHeight = ctrl.height;
 
@@ -374,7 +399,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
         source: source,
         alarmId: alarmId
       })) {
-        this.onRowClick($event, source, alarmId);
+        this.onSingleClick($event, source, alarmId);
       }
 
       // Grab the current selection
@@ -401,15 +426,78 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
       return new _action_mgr.ActionMgr(this, selectedRows, this.appConfig).getContextMenu();
     }
   }, {
+    key: 'scheduleClickCheck',
+    value: function scheduleClickCheck($event, source, alarmId, clickTime) {
+      var self = this;
+      if (!self.clicks) {
+        self.clicks = {};
+      }
+
+      var thisEvent = $event;
+      var alarmClick = self.clicks[alarmId] || {};
+
+      // always handle left-click, because if we're double-clicking, it's OK to deselect everything anyways
+      if (thisEvent.button !== 2) {
+        self.onSingleClick(thisEvent, source, alarmId);
+      }
+
+      clearTimeout(alarmClick.timeout);
+      alarmClick.timeout = setTimeout(function () {
+        if (self.clicks[alarmId].lastClick === clickTime) {
+          if (thisEvent.button === 2) {
+            // right click
+            self.getContextMenu(thisEvent, source, alarmId);
+          } else {
+            // left click was already handled
+          }
+        } else {
+            // pre-scheduled click time does not match last click; assuming double-click'
+          }
+      }, doubleClickDelay);
+    }
+  }, {
     key: 'onRowClick',
     value: function onRowClick($event, source, alarmId) {
-      var exclusiveModifier = $event.ctrlKey;
+      var self = this;
+      if (!self.clicks) {
+        self.clicks = {};
+      }
+
+      var now = Date.now();
+      var thisEvent = $event;
+
+      if (self.clicks[alarmId]) {
+        var delay = now - self.clicks[alarmId].lastClick;
+
+        if (delay < doubleClickDelay) {
+          // on a double click, delete previous record and trigger the double-click action
+          delete self.clicks[alarmId];
+          self.onDoubleClick(thisEvent, source, alarmId);
+        } else {
+          // delay is too long, this is a single click now
+          self.scheduleClickCheck(thisEvent, source, alarmId, now);
+        }
+      } else {
+        // no previous click record, create a fresh one and schedule a click check
+        self.clicks[alarmId] = {
+          timeout: undefined
+        };
+        self.scheduleClickCheck(thisEvent, source, alarmId, now);
+      }
+      self.clicks[alarmId].lastClick = now;
+    }
+  }, {
+    key: 'onSingleClick',
+    value: function onSingleClick($event, source, alarmId) {
+      var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      var exclusiveModifier = isMac ? $event.metaKey : $event.ctrlKey;
       var rangeModifier = $event.shiftKey;
       this.selectionMgr.handleRowClick({ source: source, alarmId: alarmId }, exclusiveModifier, rangeModifier);
     }
   }, {
-    key: 'onRowDoubleClick',
-    value: function onRowDoubleClick($event, source, alarmId) {
+    key: 'onDoubleClick',
+    value: function onDoubleClick($event, source, alarmId) {
+      this.selectionMgr.handleSelection([], false);
       // Show the alarm details pane
       this.alarmDetails(source, alarmId);
     }
@@ -423,6 +511,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
       }
 
       var newScope = this.$rootScope.$new();
+      newScope.severity = this.panel.severity;
       newScope.source = source;
       newScope.alarm = row.meta.alarm;
       newScope.ticketerConfig = row.meta.ticketerConfig;

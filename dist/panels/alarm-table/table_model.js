@@ -65,12 +65,22 @@ System.register(['../../opennms'], function (_export, _context) {
             this.rows.sort(function (a, b) {
               var colInfo = self.columns[options.col];
 
-              if (colInfo && colInfo.style && colInfo.style.type === 'severity') {
-                a = self.severityForLabel(a[options.col]);
-                b = self.severityForLabel(b[options.col]);
-              } else {
-                a = a[options.col];
-                b = b[options.col];
+              // by default just use the column as-is (a string)
+              a = '' + a[options.col];
+              b = '' + b[options.col];
+
+              if (colInfo && colInfo.style) {
+                var type = colInfo.style.type;
+
+                if (type === 'number') {
+                  // if it's a number type, cast it
+                  a = Number(a);
+                  b = Number(b);
+                } else if (type === 'severity') {
+                  // if it's a severity, get the numeric value
+                  a = self.severityForLabel(a);
+                  b = self.severityForLabel(b);
+                }
               }
 
               if (a < b) {
@@ -82,6 +92,9 @@ System.register(['../../opennms'], function (_export, _context) {
               return 0;
             });
 
+            this.columns.forEach(function (col) {
+              return col.sort = false;
+            });
             this.columns[options.col].sort = true;
 
             if (options.desc) {

@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* $gray-7 in Grafana's _variables.light.scss */
 /*!
   Ionicons, v2.0.0
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -2229,24 +2230,49 @@
 .ion-xbox:before {
   content: "\f30c"; }
 
-.table-panel-table td:first-child.text-center {
-  padding-left: .225em;
-  padding-right: .225em; }
+.table-panel-container {
+  padding-top: 2.45em; }
 
-.dense-table-panel-table td:first-child {
-  padding-left: .75em; }
-  .dense-table-panel-table td:first-child.text-center {
-    padding-left: .375em;
-    padding-right: .375em; }
+.table-panel-header-bg {
+  height: 2.25em; }
+
+.table-panel-table td:first-child.text-center, .table-panel-table td:last-child.text-center {
+  padding-left: 0.25em;
+  padding-right: 0.25em; }
+
+.dense-table-panel-table td:first-child.text-center, .dense-table-panel-table td:last-child.text-center {
+  padding-left: 0.25em;
+  padding-right: 0.25em; }
 
 .dense-table-panel-table td {
-  padding: .25em 0 .25em 0.75em; }
-  .dense-table-panel-table td .text-center {
-    padding: .25em 0 .25em 0; }
+  padding: 0.25em 0.25em; }
+  .dense-table-panel-table td.text-center {
+    padding: 0.25em 0.5em; }
 
 .dense-table-panel-table td p {
   margin-top: 0em;
   margin-bottom: 0em; }
+
+.table-panel-table td:first-child {
+  padding-left: 0.5em; }
+
+.table-panel-table th:first-child .table-panel-table-header-inner {
+  padding: 0.5em 0 0.5em 0.5em; }
+
+.table-panel-table th:last-child {
+  padding-right: 0.5em; }
+
+.table-panel-table th:last-child .table-panel-table-header-inner {
+  padding: 0.5em 0.5em; }
+
+.table-panel-table-header-inner {
+  padding: 0.5em 0 0.5em 0.5em; }
+
+.dense-table-panel-table .table-panel-width-hack {
+  padding: 0 0.25em; }
+
+.table-panel-width-hack {
+  padding: 0 0.5em; }
 
 .alarm-details-table td p {
   margin-top: 0.25em;
@@ -2260,38 +2286,50 @@
 
 .severity .indeterminate {
   background-color: #990000;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .cleared {
   background-color: #EEE000;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .normal {
   background-color: #86B15B;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .warning {
   background-color: #FCCC3B;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .minor {
   background-color: #EE901C;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .major {
   background-color: #E3692F;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
 
 .severity .critical {
   background-color: #DB4345;
-  color: #000000;
-  font-weight: 600; }
+  color: #000;
+  font-weight: normal; }
+
+.severity tr.indeterminate,
+.severity tr.cleared,
+.severity tr.normal,
+.severity tr.warning,
+.severity tr.minor,
+.severity tr.major,
+.severity tr.critical {
+  color: #000; }
+
+.alarm-table td {
+  vertical-align: top; }
 
 .alarm-table .selected {
   background-color: lightblue; }
@@ -2317,13 +2355,28 @@
 .alarm-table > .severity > .selected.critical {
   background-color: #f8d9d9; }
 
-.alarm-table tr.next-selected, .alarm-table tr.next-selected td {
+.alarm-table tr.next-selected td {
   border-bottom: 2px dashed darkblue; }
 
-.alarm-table tr.selected, .alarm-table tr.selected td {
-  border: 2px dashed darkblue;
-  border-top: 2px dashed darkblue;
-  border-bottom: 2px dashed darkblue; }
+.alarm-table tr.prev-selected td {
+  border-top: 2px dashed darkblue; }
+
+.alarm-table tr {
+  border-left: 2px solid #f7f8fa;
+  border-right: 2px solid #f7f8fa; }
+  .alarm-table tr td {
+    border: 2px solid #f7f8fa; }
+    .alarm-table tr td:not(:first-child):not(:last-child) {
+      border-left: 2px solid #f7f8fa;
+      border-right: 2px solid #f7f8fa; }
+
+.alarm-table tr.selected {
+  border: 2px dashed darkblue; }
+  .alarm-table tr.selected td {
+    border: 2px dashed darkblue; }
+    .alarm-table tr.selected td:not(:first-child):not(:last-child) {
+      border-left: 2px solid #f7f8fa;
+      border-right: 2px solid #f7f8fa; }
 
 .alarm-table tr:hover {
   background-color: lightblue; }
@@ -2369,5 +2422,28 @@
 .over {
   outline: 1px dotted red;
   outline-offset: 5px; }
+
+.alarm-details .modal-header-title {
+  font-weight: 500; }
+
+.alarm-details-table th {
+  font-size: 1.125rem;
+  font-weight: 500; }
+
+.alarm-details-table .alarm-details-spacer {
+  padding: 1rem 0 0 0 !important;
+  border: 0;
+  outline: 0; }
+
+.alarm-details-table .alarm-details-header {
+  font-size: 1.125rem;
+  font-weight: 500;
+  padding: .125rem;
+  margin: 0;
+  background: linear-gradient(135deg, #2f2f32, #262628);
+  border-top: 2px solid #171819;
+  border-bottom: 2px solid #171819; }
+  .alarm-details-table .alarm-details-header.node-header, .alarm-details-table .alarm-details-header th {
+    padding-left: .75em !important; }
 
 /*# sourceMappingURL=table.light.css.map */

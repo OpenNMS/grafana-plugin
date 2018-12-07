@@ -53,7 +53,9 @@ System.register(['lodash'], function (_export, _context) {
           key: 'handleRowClick',
           value: function handleRowClick(row, exclusiveModifier, rangeModifier) {
             var selectedRows = void 0;
-            if (!rangeModifier || this._lastSelectedRow === undefined) {
+            if (!rangeModifier && !exclusiveModifier && this._selectedRows.size === 1 && this._lastSelectedRow && _.isEqual(this._lastSelectedRow, row)) {
+              selectedRows = new Set();
+            } else if (!rangeModifier || this._lastSelectedRow === undefined) {
               // No other row was previously selected, use the row that was clicked on
               selectedRows = [row];
             } else {
@@ -107,6 +109,14 @@ System.register(['lodash'], function (_export, _context) {
             this._lastSelectedRow = row;
           }
         }, {
+          key: 'removeRowFromSelection',
+          value: function removeRowFromSelection(row) {
+            this._selectedRows = new Set(Array.from(this._selectedRows).filter(function (r) {
+              return r.alarmId !== row.alarmId;
+            }));
+            this._lastSelectedRow = this._selectedRows[0];
+          }
+        }, {
           key: 'handleSelection',
           value: function handleSelection(selectionRows, exclusiveModifier) {
             var _this = this;
@@ -140,9 +150,13 @@ System.register(['lodash'], function (_export, _context) {
                 didSelectionChange = true;
               }
             } else {
+              var selected = this.isRowSelected(selectionRows[selectionRows.length - 1]);
               // Add the rows to the current selection
               _.each(selectionRows, function (selectionRow) {
-                if (!_this.isRowSelected(selectionRow)) {
+                if (selected) {
+                  _this.removeRowFromSelection(selectionRow);
+                  didSelectionChange = true;
+                } else {
                   _this.addRowToSelection(selectionRow);
                   didSelectionChange = true;
                 }

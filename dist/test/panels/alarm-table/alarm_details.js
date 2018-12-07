@@ -21,6 +21,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var compareStrings = function compareStrings(a, b) {
+  return a || b ? !a ? -1 : !b ? 1 : a.localeCompare(b) : 0;
+};
+
 var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
 
   /** @ngInject */
@@ -44,6 +48,24 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
 
+    if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
+      $scope.relatedAlarms = angular.copy($scope.alarm.relatedAlarms).sort(function (a, b) {
+        return compareStrings(a.nodeLabel, b.nodeLabel);
+      }).reduce(function (acc, cur, idx, src) {
+        var ret = acc;
+        var current = cur.nodeLabel;
+        var prev = idx === 0 ? undefined : src[idx - 1].nodeLabel;
+        if (current !== prev) {
+          ret.push({
+            nodeLabel: current,
+            isHeader: true
+          });
+        }
+        ret.push(src[idx]);
+        return ret;
+      }, []);
+    }
+
     // Feedback Counts
     $scope.feedbackCorrectCount = 0;
     $scope.feedbackIncorrectCount = 0;
@@ -51,6 +73,7 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
     // Compute the icon
     var severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = _renderer.TableRenderer.getIconForSeverity(severity);
+    $scope.severity = $scope.$parent.severity;
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
@@ -80,6 +103,11 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
         console.log("Situation Feedback not supported error: ", reason);
       });
     }
+
+    $scope.tabs.push('JSON');
+    $scope.getAlarmString = function () {
+      return JSON.stringify($scope.alarm, undefined, 2);
+    };
 
     // Raw global details link
     $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));

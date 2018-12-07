@@ -25,6 +25,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+_moment2.default.updateLocale('en-short', {
+  parentLocale: 'en',
+  relativeTime: {
+    future: "+%s",
+    past: "%s",
+    s: "1s",
+    ss: "%ds",
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
+    hh: "%dh",
+    d: "1d",
+    dd: "%dd",
+    M: "1m",
+    MM: "%dm",
+    y: "1y",
+    yy: "%dy"
+  }
+});
+
 var TableRenderer = exports.TableRenderer = function () {
   function TableRenderer(panel, table, isUtc, sanitize, selectionMgr) {
     _classCallCheck(this, TableRenderer);
@@ -118,7 +138,14 @@ var TableRenderer = exports.TableRenderer = function () {
           if (_this.isUtc) {
             date = date.utc();
           }
-          return date.format(column.style.dateFormat);
+          if (column.style.dateFormat === 'relative') {
+            return date.fromNow();
+          } else if (column.style.dateFormat === 'relative-short') {
+            var dur = _moment2.default.duration((0, _moment2.default)().diff(date));
+            return dur.locale('en-short').humanize();
+          } else {
+            return date.format(column.style.dateFormat);
+          }
         };
       }
 
@@ -216,10 +243,11 @@ var TableRenderer = exports.TableRenderer = function () {
       if (column.style.clip) {
         styles['overflow'] = 'hidden';
         styles['text-overflow'] = 'ellipsis';
+        styles['white-space'] = 'nowrap';
       }
 
       var stylesAsString = '';
-      if (styles.length > 0) {
+      if (Object.keys(styles).length > 0) {
         stylesAsString = 'style="' + _lodash2.default.reduce(_lodash2.default.map(styles, function (val, key) {
           return key + ':' + val;
         }), function (memo, style) {
@@ -260,7 +288,11 @@ var TableRenderer = exports.TableRenderer = function () {
 
       for (var y = startPos; y < endPos; y++) {
         var row = this.table.rows[y];
-        var nextRow = void 0;
+        var prevRow = void 0,
+            nextRow = void 0;
+        if (y - 1 >= 0) {
+          prevRow = this.table.rows[y - 1];
+        }
         if (y + 1 < endPos) {
           nextRow = this.table.rows[y + 1];
         }
@@ -297,12 +329,16 @@ var TableRenderer = exports.TableRenderer = function () {
           rowClasses.push("selected");
         }
 
+        if (prevRow && this.isRowSelected(prevRow)) {
+          rowClasses.push("prev-selected");
+        }
+
         if (nextRow && this.isRowSelected(nextRow)) {
           rowClasses.push("next-selected");
         }
 
         var rowClass = 'class="' + rowClasses.join(' ') + '"';
-        html += '<tr ' + rowStyle + rowClass + (' ng-click="ctrl.onRowClick($event, \'' + source + '\', ' + alarm.id + ')"  ng-dblclick="ctrl.onRowDoubleClick($event, \'' + source + '\', ' + alarm.id + ')" context-menu="ctrl.getContextMenu($event, \'' + source + '\', ' + alarm.id + ')">') + cellHtml + '</tr>';
+        html += '<tr ' + rowStyle + rowClass + (' ng-click="ctrl.onRowClick($event, \'' + source + '\', ' + alarm.id + ')"  context-menu="ctrl.getContextMenu($event, \'' + source + '\', ' + alarm.id + ')">') + cellHtml + '</tr>';
       }
 
       return html;

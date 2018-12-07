@@ -3,7 +3,7 @@
 System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function (_export, _context) {
   "use strict";
 
-  var TableRenderer, md5, Model, _createClass, AlarmDetailsCtrl;
+  var TableRenderer, md5, Model, _createClass, compareStrings, AlarmDetailsCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -54,6 +54,10 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
         };
       }();
 
+      compareStrings = function compareStrings(a, b) {
+        return a || b ? !a ? -1 : !b ? 1 : a.localeCompare(b) : 0;
+      };
+
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl = function () {
 
         /** @ngInject */
@@ -77,6 +81,24 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
           $scope.alarm = $scope.$parent.alarm;
           $scope.source = $scope.$parent.source;
 
+          if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
+            $scope.relatedAlarms = angular.copy($scope.alarm.relatedAlarms).sort(function (a, b) {
+              return compareStrings(a.nodeLabel, b.nodeLabel);
+            }).reduce(function (acc, cur, idx, src) {
+              var ret = acc;
+              var current = cur.nodeLabel;
+              var prev = idx === 0 ? undefined : src[idx - 1].nodeLabel;
+              if (current !== prev) {
+                ret.push({
+                  nodeLabel: current,
+                  isHeader: true
+                });
+              }
+              ret.push(src[idx]);
+              return ret;
+            }, []);
+          }
+
           // Feedback Counts
           $scope.feedbackCorrectCount = 0;
           $scope.feedbackIncorrectCount = 0;
@@ -84,6 +106,7 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
           // Compute the icon
           var severity = $scope.alarm.severity.label.toLowerCase();
           $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
+          $scope.severity = $scope.$parent.severity;
 
           // Situation Feedback
           $scope.situationFeebackEnabled = false;
@@ -113,6 +136,11 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
               console.log("Situation Feedback not supported error: ", reason);
             });
           }
+
+          $scope.tabs.push('JSON');
+          $scope.getAlarmString = function () {
+            return JSON.stringify($scope.alarm, undefined, 2);
+          };
 
           // Raw global details link
           $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
