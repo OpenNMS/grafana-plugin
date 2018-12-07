@@ -18,6 +18,8 @@ loadPluginCss({
   light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
 });
 
+const doubleClickDelay = 250;
+
 class AlarmTableCtrl extends MetricsPanelCtrl {
 
   constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, timeSrv) {
@@ -58,6 +60,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         {
           type: 'string',
           pattern: 'Description',
+          sanitize: true
+        },
+        {
+          type: 'string',
+          pattern: 'Log Message',
           sanitize: true
         },
         {
@@ -235,6 +242,25 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     let pageCount = 0;
     let formaters = [];
 
+    scope.getColumnStyle = (col) => {
+      const ret = {};
+      if (col && col.style) {
+        if (col.style.width !== undefined) {
+          ret.width = col.style.width;
+          if (col.style.clip) {
+            ret['max-width'] = col.style.width;
+            ret['white-space'] = 'nowrap';
+          }
+        }
+        if (col.style.clip) {
+          ret['overflow'] = 'hidden';
+          ret['text-overflow'] = 'ellipsis';
+          ret['white-space'] = 'nowrap';
+        }
+      }
+      return ret;
+    };
+
     function getTableHeight() {
       let panelHeight = ctrl.height;
 
@@ -334,7 +360,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         source: source,
         alarmId: alarmId
       })) {
-      this.onRowClick($event, source, alarmId);
+      this.onSingleClick($event, source, alarmId);
     }
 
     // Grab the current selection
@@ -359,13 +385,74 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     return new ActionMgr(this, selectedRows, this.appConfig).getContextMenu();
   }
 
+  scheduleClickCheck($event, source, alarmId, clickTime) {
+    const self = this;
+    if (!self.clicks) {
+      self.clicks = {};
+    }
+
+    const thisEvent = $event;
+    const alarmClick = self.clicks[alarmId] || {};
+
+    // always handle left-click, because if we're double-clicking, it's OK to deselect everything anyways
+    if (thisEvent.button !== 2) {
+      self.onSingleClick(thisEvent, source, alarmId);
+    }
+
+    clearTimeout(alarmClick.timeout);
+    alarmClick.timeout = setTimeout(() => {
+      if (self.clicks[alarmId].lastClick === clickTime) {
+        if (thisEvent.button === 2) {
+          // right click
+          self.getContextMenu(thisEvent, source, alarmId);
+        } else {
+          // left click was already handled
+        }
+      } else {
+        // pre-scheduled click time does not match last click; assuming double-click'
+      }
+    }, doubleClickDelay);
+  }
+
   onRowClick($event, source, alarmId) {
-    let exclusiveModifier = $event.ctrlKey;
-    let rangeModifier = $event.shiftKey;
+    const self = this;
+    if (!self.clicks) {
+      self.clicks = {};
+    }
+
+    const now = Date.now();
+    const thisEvent = $event;
+
+    if (self.clicks[alarmId]) {
+      const delay = now - self.clicks[alarmId].lastClick;
+
+      if (delay < doubleClickDelay) {
+        // on a double click, delete previous record and trigger the double-click action
+        delete self.clicks[alarmId];
+        self.onDoubleClick(thisEvent, source, alarmId);
+      } else {
+        // delay is too long, this is a single click now
+        self.scheduleClickCheck(thisEvent, source, alarmId, now);
+      }
+    } else {
+      // no previous click record, create a fresh one and schedule a click check
+      self.clicks[alarmId] = {
+        timeout: undefined
+      };
+      self.scheduleClickCheck(thisEvent, source, alarmId, now);
+    }
+    self.clicks[alarmId].lastClick = now;
+  }
+
+  onSingleClick($event, source, alarmId) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+    const exclusiveModifier = isMac? $event.metaKey : $event.ctrlKey;
+    const rangeModifier = $event.shiftKey;
     this.selectionMgr.handleRowClick({source: source, alarmId: alarmId}, exclusiveModifier, rangeModifier);
   }
 
-  onRowDoubleClick($event, source, alarmId) {
+  onDoubleClick($event, source, alarmId) {
+    this.selectionMgr.handleSelection([], false);
     // Show the alarm details pane
     this.alarmDetails(source, alarmId);
   }
@@ -378,6 +465,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     let newScope = this.$rootScope.$new();
+    newScope.severity = this.panel.severity;
     newScope.source = source;
     newScope.alarm = row.meta.alarm;
     newScope.ticketerConfig = row.meta.ticketerConfig;

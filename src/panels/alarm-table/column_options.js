@@ -34,6 +34,8 @@ export class ColumnOptionsCtrl {
       {text: 'YYYY-MM-DD HH:mm:ss', value: 'YYYY-MM-DD HH:mm:ss'},
       {text: 'MM/DD/YY h:mm:ss a', value: 'MM/DD/YY h:mm:ss a'},
       {text: 'MMMM D, YYYY LT', value: 'MMMM D, YYYY LT'},
+      {text: 'relative', value: 'relative'},
+      {text: 'relative (short)', value: 'relative-short'}
     ];
 
     this.getColumnNames = () => {

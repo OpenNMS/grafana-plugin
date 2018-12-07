@@ -2,6 +2,10 @@ import { TableRenderer } from "./renderer"
 import md5 from '../../crypto-js/md5';
 import {Model} from '../../opennms';
 
+const compareStrings = (a, b) => {
+  return (a || b) ? (!a ? -1 : !b ? 1 : a.localeCompare(b)) : 0;
+};
+
 export class AlarmDetailsCtrl {
 
   /** @ngInject */
@@ -23,6 +27,24 @@ export class AlarmDetailsCtrl {
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
 
+    if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
+      $scope.relatedAlarms = angular.copy($scope.alarm.relatedAlarms)
+        .sort((a, b) => compareStrings(a.nodeLabel, b.nodeLabel))
+        .reduce((acc, cur, idx, src) => {
+          const ret = acc;
+          const current = cur.nodeLabel;
+          const prev = idx === 0? undefined : src[idx-1].nodeLabel;
+          if (current !== prev) {
+            ret.push({
+              nodeLabel: current,
+              isHeader: true
+            });
+          }
+          ret.push(src[idx]);
+          return ret;
+        }, []);
+    }
+
     // Feedback Counts
     $scope.feedbackCorrectCount = 0;
     $scope.feedbackIncorrectCount = 0;
@@ -30,6 +52,7 @@ export class AlarmDetailsCtrl {
     // Compute the icon
     let severity = $scope.alarm.severity.label.toLowerCase();
     $scope.severityIcon = TableRenderer.getIconForSeverity(severity);
+    $scope.severity = $scope.$parent.severity;
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
@@ -60,6 +83,11 @@ export class AlarmDetailsCtrl {
           function (reason) {
             console.log("Situation Feedback not supported error: ", reason);
           });
+    }
+
+    $scope.tabs.push('JSON');
+    $scope.getAlarmString = () => {
+      return JSON.stringify($scope.alarm, undefined, 2);
     }
 
     // Raw global details link

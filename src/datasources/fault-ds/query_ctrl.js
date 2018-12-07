@@ -16,6 +16,9 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
     this.featuredAttributes = true; // limits the selection to the featured attributes
     this.filterMapping = new Mapping.FilterMapping(this.uiSegmentSrv);
+    if (this.target.limit === undefined) {
+      this.target.limit = 0;
+    }
 
     // The target filter may be de-serialized from persistence.
     // In order to re-initialize it properly, the filter is cloned.

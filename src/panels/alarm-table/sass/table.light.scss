@@ -1,4 +1,8 @@
-$cell-text-color: #000000;
+@import "colors";
+
+$cell-text-color: $cell-dark-color;
+$cell-border-color: #f7f8fa; /* $gray-7 in Grafana's _variables.light.scss */
+
 $selected-cell-no-severity-background-color: lightblue;
 $selected-cell-border-color: darkblue;
 

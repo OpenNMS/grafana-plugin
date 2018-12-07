@@ -40,7 +40,7 @@ export class OpenNMSFMDatasource {
   query(options) {
       // Initialize filter
       var filter = options.targets[0].filter || new API.Filter();
-      filter.limit = 0; // no limit
+      filter.limit = options.targets[0].limit || 0; // 0 = no limit
 
       options.enforceTimeRange = true;
       const clonedFilter = this.buildQuery(filter, options);
@@ -99,10 +99,13 @@ export class OpenNMSFMDatasource {
             clause.restriction = replacement;
         } else if (isNumber(restriction.value)) {
             clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value);
+        } else if (restriction.value === '{}') {
+            return true;
         } else {
             console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
         }
     } 
+    return false;
   }
 
   substitute(clauses, options) {
@@ -165,7 +168,10 @@ export class OpenNMSFMDatasource {
                     restriction.value = self.templateSrv.replace(restriction.value, options.scopedVars);
                 }
 
-                self.subtituteNodeRestriction(clause);
+                const shouldRemove = self.subtituteNodeRestriction(clause);
+                if (shouldRemove) {
+                    remove.push(clause);
+                }
             }
         }
       });
