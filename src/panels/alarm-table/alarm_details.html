@@ -1,4 +1,4 @@
-<div class="modal-body" style="overflow: scroll;" dynamic-height>
+<div class="modal-body alarm-details" style="overflow: auto;" dynamic-height>
     <div class="modal-header">
         <h2 class="modal-header-title">
             <a href="{{ alarm.detailsPage }}" target="_blank"><i class="fa fa-external-link"></i></a>
@@ -85,6 +85,10 @@
             </div>
         </div>
 
+        <div ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow: auto; overflow-wrap: normal">
+            <pre style="white-space: pre">{{ getAlarmString() }}</pre>
+        </div>
+
         <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
             <table class="filter-table gf-form-group">
                 <tr>
@@ -100,26 +104,30 @@
         </div>
 
         <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
-            <table class="table-panel-table dense-table-panel-table alarm-table">
-                <thead>
-                    <th> </th>
-                    <th>Label</th>
+            <table class="table-panel-table dense-table-panel-table alarm-table alarm-details-table">
+                <thead class="alarm-details-header">
+                    <th colspan="2">Label</th>
                     <th>Log Message</th>
                     <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody class="severity">
-                    <tr ng-repeat="summary in alarm.relatedAlarms" class="{{summary.severity.toLowerCase()}}">
-                        <td style>
+                    <tr ng-repeat="summary in relatedAlarms" ng-class="!summary.isHeader &amp;&amp; (severity === true || severity === 'row')? summary.severity.toLowerCase() : ''">
+                        <td colspan="{{editFeedback? 5 : 3}}" ng-if="summary.isHeader" class="alarm-details-spacer">
+                            <div class="alarm-details-header node-header">
+                                {{summary.nodeLabel}}
+                            </div>
+                        </td>
+                        <td ng-if="!summary.isHeader" ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank">
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
-                        <td severity>{{summary.label}}</td>
-                        <td severity ng-bind-html="summary.logMessage"></td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
+                        <td ng-if="!summary.isHeader" severity>{{summary.label}}</td>
+                        <td ng-if="!summary.isHeader" severity ng-bind-html="summary.logMessage"></td>
+                        <td ng-if="!summary.isHeader &amp;&amp; editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
                         </td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
+                        <td ng-if="!summary.isHeader &amp;&amp; editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="22" width="22" />
                         </td>
                     </tr>

@@ -15,7 +15,9 @@ export class SelectionMgr {
 
   handleRowClick(row, exclusiveModifier, rangeModifier) {
     let selectedRows;
-    if (!rangeModifier || this._lastSelectedRow === undefined) {
+    if (!rangeModifier && !exclusiveModifier && this._selectedRows.size === 1 && this._lastSelectedRow && _.isEqual(this._lastSelectedRow, row)) {
+      selectedRows = new Set();
+    } else if (!rangeModifier || this._lastSelectedRow === undefined) {
       // No other row was previously selected, use the row that was clicked on
       selectedRows = [row];
     } else {
@@ -44,6 +46,11 @@ export class SelectionMgr {
     this._lastSelectedRow = row;
   }
 
+  removeRowFromSelection(row) {
+    this._selectedRows = new Set(Array.from(this._selectedRows).filter((r) => r.alarmId !== row.alarmId ));
+    this._lastSelectedRow = this._selectedRows[0];
+  }
+
   handleSelection(selectionRows, exclusiveModifier) {
     let didSelectionChange = false;
     if (!exclusiveModifier) {
@@ -66,9 +73,13 @@ export class SelectionMgr {
         didSelectionChange = true;
       }
     } else {
+      const selected = this.isRowSelected(selectionRows[selectionRows.length - 1]);
       // Add the rows to the current selection
       _.each(selectionRows, selectionRow => {
-        if (!this.isRowSelected(selectionRow)) {
+        if (selected) {
+          this.removeRowFromSelection(selectionRow);
+          didSelectionChange = true;
+        } else {
           this.addRowToSelection(selectionRow);
           didSelectionChange = true;
         }
