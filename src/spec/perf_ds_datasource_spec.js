@@ -87,7 +87,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg1");
@@ -114,7 +114,7 @@ describe('OpenNMSPMDatasource', function () {
           }
         }
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg5");
@@ -137,7 +137,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(2);
       expect(query.source[0].resourceId).to.equal("node[1].nodeSnmp[]");
@@ -161,7 +161,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("1-x");
@@ -196,7 +196,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("a");
@@ -233,7 +233,7 @@ describe('OpenNMSPMDatasource', function () {
         ],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let query = ctx.ds.buildQuery(options).query;
 
       expect(query.filter.length).to.equal(2);
       expect(query.filter[0].name).to.equal("some-filter");
