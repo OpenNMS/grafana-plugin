@@ -291,10 +291,39 @@ $details-header-font-weight: 500;
     font-weight: $details-header-font-weight;
   }
 
-  .alarm-details-spacer {
-    padding: 1rem 0 0 0 !important;
-    border: 0;
-    outline: 0;
+  tbody {
+    &.alarm-details-node-group {
+      border: 0 !important;
+      border-image-width: 0 !important;
+      background-color: $alarm-node-group-bg;
+      outline: 1px solid $alarm-node-group-border-color !important;
+      box-shadow: $alarm-node-group-shadow !important;
+    }
+    .alarm-details-node-header {
+      border: 0 !important;
+      border-image-width: 0 !important;
+      pointer-events: none;
+    }
+    .alarm-details-node-spacer {
+      border: 0 !important;
+      border-image-width: 0 !important;
+      pointer-events: none;
+      height: 1rem;
+    }
+  }
+
+  tr {
+    border-left: 2px solid $alarm-details-border-color;
+    border-right: 2px solid $alarm-details-border-color;
+
+    td {
+      border: 2px solid $alarm-details-border-color;
+
+      &:not(:first-child):not(:last-child) {
+        border-left: 2px solid $alarm-details-border-color;
+        border-right: 2px solid $alarm-details-border-color;
+      }
+    }
   }
 
   .alarm-details-header {
@@ -302,12 +331,13 @@ $details-header-font-weight: 500;
     font-weight: $details-header-font-weight;
     padding: .125rem;
     margin: 0;
-    background: linear-gradient(135deg,#2f2f32,#262628);
-    border-top: 2px solid #171819;
-    border-bottom:2px solid #171819;
+    background: $alarm-details-header;
+    border-top: 2px solid $cell-border-color;
+    border-bottom:2px solid $cell-border-color;
 
     &.node-header, th {
       padding-left: .75em !important;
     }
   }
+
 }
