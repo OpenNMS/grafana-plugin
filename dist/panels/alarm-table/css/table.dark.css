@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* taken from grafana _variables.scss */
 /*!
   Ionicons, v2.0.0
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -2229,6 +2230,7 @@
 .ion-xbox:before {
   content: "\f30c"; }
 
+/* taken from grafana _variables.scss */
 .table-panel-container {
   padding-top: 2.45em; }
 
@@ -2361,21 +2363,21 @@
   border-top: 2px dashed lightblue; }
 
 .alarm-table tr {
-  border-left: 2px solid #171819;
-  border-right: 2px solid #171819; }
+  border-left: 2px solid #1f1f20;
+  border-right: 2px solid #1f1f20; }
   .alarm-table tr td {
-    border: 2px solid #171819; }
+    border: 2px solid #1f1f20; }
     .alarm-table tr td:not(:first-child):not(:last-child) {
-      border-left: 2px solid #171819;
-      border-right: 2px solid #171819; }
+      border-left: 2px solid #1f1f20;
+      border-right: 2px solid #1f1f20; }
 
 .alarm-table tr.selected {
   border: 2px dashed lightblue; }
   .alarm-table tr.selected td {
     border: 2px dashed lightblue; }
     .alarm-table tr.selected td:not(:first-child):not(:last-child) {
-      border-left: 2px solid #171819;
-      border-right: 2px solid #171819; }
+      border-left: 2px solid #1f1f20;
+      border-right: 2px solid #1f1f20; }
 
 .alarm-table tr:hover {
   background-color: darkblue; }
@@ -2429,10 +2431,32 @@
   font-size: 1.125rem;
   font-weight: 500; }
 
-.alarm-details-table .alarm-details-spacer {
-  padding: 1rem 0 0 0 !important;
-  border: 0;
-  outline: 0; }
+.alarm-details-table tbody.alarm-details-node-group {
+  border: 0 !important;
+  border-image-width: 0 !important;
+  background-color: #161719;
+  outline: 1px solid #333333 !important;
+  box-shadow: inset 0px -4px 14px #1f1f20 !important; }
+
+.alarm-details-table tbody .alarm-details-node-header {
+  border: 0 !important;
+  border-image-width: 0 !important;
+  pointer-events: none; }
+
+.alarm-details-table tbody .alarm-details-node-spacer {
+  border: 0 !important;
+  border-image-width: 0 !important;
+  pointer-events: none;
+  height: 1rem; }
+
+.alarm-details-table tr {
+  border-left: 2px solid #141414;
+  border-right: 2px solid #141414; }
+  .alarm-details-table tr td {
+    border: 2px solid #141414; }
+    .alarm-details-table tr td:not(:first-child):not(:last-child) {
+      border-left: 2px solid #141414;
+      border-right: 2px solid #141414; }
 
 .alarm-details-table .alarm-details-header {
   font-size: 1.125rem;
@@ -2440,8 +2464,8 @@
   padding: .125rem;
   margin: 0;
   background: linear-gradient(135deg, #2f2f32, #262628);
-  border-top: 2px solid #171819;
-  border-bottom: 2px solid #171819; }
+  border-top: 2px solid #1f1f20;
+  border-bottom: 2px solid #1f1f20; }
   .alarm-details-table .alarm-details-header.node-header, .alarm-details-table .alarm-details-header th {
     padding-left: .75em !important; }
 

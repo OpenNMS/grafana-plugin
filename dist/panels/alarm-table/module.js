@@ -499,7 +499,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
 
             clearTimeout(alarmClick.timeout);
             alarmClick.timeout = setTimeout(function () {
-              if (self.clicks[alarmId].lastClick === clickTime) {
+              if (self.clicks[alarmId] && self.clicks[alarmId].lastClick === clickTime) {
                 if (thisEvent.button === 2) {
                   // right click
                   self.getContextMenu(thisEvent, source, alarmId);
@@ -540,7 +540,9 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
               };
               self.scheduleClickCheck(thisEvent, source, alarmId, now);
             }
-            self.clicks[alarmId].lastClick = now;
+            if (self.clicks[alarmId]) {
+              self.clicks[alarmId].lastClick = now;
+            }
           }
         }, {
           key: 'onSingleClick',

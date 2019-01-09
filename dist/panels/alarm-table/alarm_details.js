@@ -82,21 +82,20 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
           $scope.source = $scope.$parent.source;
 
           if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
-            $scope.relatedAlarms = angular.copy($scope.alarm.relatedAlarms).sort(function (a, b) {
-              return compareStrings(a.nodeLabel, b.nodeLabel);
-            }).reduce(function (acc, cur, idx, src) {
-              var ret = acc;
-              var current = cur.nodeLabel;
-              var prev = idx === 0 ? undefined : src[idx - 1].nodeLabel;
-              if (current !== prev) {
-                ret.push({
-                  nodeLabel: current,
-                  isHeader: true
-                });
+            var related = {};
+            $scope.alarm.relatedAlarms.forEach(function (alarm) {
+              var label = alarm.nodeLabel === undefined || alarm.nodeLabel === null ? '' : alarm.nodeLabel;
+              if (!related[label]) {
+                related[label] = [];
               }
-              ret.push(src[idx]);
-              return ret;
-            }, []);
+              related[label].push(alarm);
+            });
+            $scope.relatedAlarms = Object.keys(related).sort(compareStrings).map(function (label) {
+              return {
+                label: label,
+                alarms: related[label]
+              };
+            });
           }
 
           // Feedback Counts
