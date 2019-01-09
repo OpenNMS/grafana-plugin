@@ -1,9 +1,17 @@
 @import "colors";
 
 $cell-text-color: $cell-light-color;
-$cell-border-color: #171819;
+$cell-border-color: $dark-2;
 
 $selected-cell-no-severity-background-color: darkblue;
 $selected-cell-border-color: lightblue;
+
+$alarm-node-group-bg: rgb(22, 23, 25); // grafana $page-bg
+$alarm-node-group-border-color: $dark-4; // grafana $page-header-border-color
+$alarm-node-group-shadow: inset 0px -4px 14px $dark-2; // grafana $page-header-shadow
+
+$alarm-details-border-color: $dark-1;
+
+$alarm-details-header: linear-gradient(135deg, #2f2f32, #262628); // from grafana _variables.dark.scss
 
 @import "table";

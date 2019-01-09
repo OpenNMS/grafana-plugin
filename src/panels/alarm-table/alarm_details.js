@@ -28,21 +28,20 @@ export class AlarmDetailsCtrl {
     $scope.source = $scope.$parent.source;
 
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
-      $scope.relatedAlarms = angular.copy($scope.alarm.relatedAlarms)
-        .sort((a, b) => compareStrings(a.nodeLabel, b.nodeLabel))
-        .reduce((acc, cur, idx, src) => {
-          const ret = acc;
-          const current = cur.nodeLabel;
-          const prev = idx === 0? undefined : src[idx-1].nodeLabel;
-          if (current !== prev) {
-            ret.push({
-              nodeLabel: current,
-              isHeader: true
-            });
-          }
-          ret.push(src[idx]);
-          return ret;
-        }, []);
+      const related = {};
+      $scope.alarm.relatedAlarms.forEach(alarm => {
+        const label = (alarm.nodeLabel === undefined || alarm.nodeLabel === null)? '' : alarm.nodeLabel;
+        if (!related[label]) {
+          related[label] = [];
+        }
+        related[label].push(alarm);
+      });
+      $scope.relatedAlarms = Object.keys(related).sort(compareStrings).map((label) => {
+        return {
+          label: label,
+          alarms: related[label]
+        };
+      });
     }
 
     // Feedback Counts
