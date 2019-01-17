@@ -94,7 +94,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg1");
@@ -119,7 +119,7 @@ describe('OpenNMSPMDatasource', function () {
           }
         }
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg5");
@@ -140,7 +140,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(2);
       expect(query.source[0].resourceId).to.equal("node[1].nodeSnmp[]");
@@ -161,7 +161,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("1-x");
@@ -188,7 +188,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("a");
@@ -220,7 +220,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      var query = ctx.ds.buildQuery(options);
+      var query = ctx.ds.buildQuery(options).query;
 
       expect(query.filter.length).to.equal(2);
       expect(query.filter[0].name).to.equal("some-filter");
@@ -236,6 +236,101 @@ describe('OpenNMSPMDatasource', function () {
       expect(query.filter[1].parameter[0].value).to.equal(1);
       expect(query.filter[1].parameter[1].key).to.equal("param2");
       expect(query.filter[1].parameter[1].value).to.equal("y");
+    });
+  });
+
+  describe('preserving order', function () {
+    it('should preserve a single label', function () {
+      var options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [{
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: 'loadavg1',
+          aggregation: 'AVERAGE'
+        }],
+        interval: '1s'
+      };
+
+      var labels = ctx.ds.buildQuery(options).labels;
+
+      expect(labels.length).to.equal(1);
+      expect(labels[0]).to.equal("loadavg1");
+    });
+
+    it('should preserve multiple labels', function () {
+      var options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [{
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: 'loadavg1',
+          aggregation: 'AVERAGE'
+        }, {
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: 'loadavg5',
+          aggregation: 'AVERAGE'
+        }],
+        interval: '1s'
+      };
+
+      var labels = ctx.ds.buildQuery(options).labels;
+
+      expect(labels.length).to.equal(2);
+      expect(labels[0]).to.equal("loadavg1");
+      expect(labels[1]).to.equal("loadavg5");
+    });
+
+    it('should preserve multiple labels (reverse)', function () {
+      var options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [{
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: 'loadavg5',
+          aggregation: 'AVERAGE'
+        }, {
+          type: "attribute",
+          nodeId: '1',
+          resourceId: 'nodeSnmp[]',
+          attribute: 'loadavg1',
+          aggregation: 'AVERAGE'
+        }],
+        interval: '1s'
+      };
+
+      var labels = ctx.ds.buildQuery(options).labels;
+
+      expect(labels.length).to.equal(2);
+      expect(labels[0]).to.equal("loadavg5");
+      expect(labels[1]).to.equal("loadavg1");
+    });
+
+    it('should reorder the series', function () {
+      var response = {
+        'data': {
+          'labels': ['a', 'b'],
+          'timestamps': [0, 5, 10],
+          'columns': [{ 'values': [1, 2, 3] }, { 'values': [3, 2, 1] }],
+          'step': 5,
+          'start': 0,
+          'end': 10
+        }
+      };
+      var labels = ['b', 'a'];
+
+      var processed = _module.Datasource.processMeasurementsResponse(response, labels);
+
+      expect(processed.data.length).to.equal(2);
+      expect(processed.data[0].target).to.equal('b');
+      expect(processed.data[0].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
+      expect(processed.data[1].target).to.equal('a');
+      expect(processed.data[1].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
     });
   });
 });

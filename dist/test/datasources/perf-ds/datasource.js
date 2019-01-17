@@ -94,7 +94,9 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       var self = this;
 
       // Generate the query
-      var query = this.buildQuery(options);
+      var build = this.buildQuery(options);
+      var query = build.query;
+      var labels = build.labels;
 
       // Issue the request
       var request;
@@ -116,7 +118,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           console.warn('Successful response had status != 200:', response);
           return self.$q.reject(response);
         }
-        return OpenNMSDatasource.processMeasurementsResponse(response);
+        return OpenNMSDatasource.processMeasurementsResponse(response, labels);
       }).catch(function (err) {
         return self.$q.reject(self.decorateError(err));
       });
@@ -228,6 +230,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           step = Math.floor((end - start) / options.maxDataPoints);
       step = step < options.intervalMs ? options.intervalMs : step;
 
+      var labels = [];
+
       var query = {
         "start": start,
         "end": end,
@@ -276,6 +280,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
             interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
             delete interpolatedSource.nodeId;
           }));
+
+          labels.push(label);
         } else if (target.type === _constants.QueryType.Expression) {
           if (!(target.label && target.expression)) {
             return;
@@ -290,6 +296,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
 
           // Perform variable substitution - may generate additional expressions
           query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
+
+          labels.push(target.label);
         } else if (target.type === _constants.QueryType.Filter) {
           if (!target.filter) {
             return;
@@ -329,7 +337,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
         }
       });
 
-      return query;
+      return { 'query': query, 'labels': labels };
     }
   }, {
     key: 'interpolateSourceVariables',
@@ -457,7 +465,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
     }
   }], [{
     key: 'processMeasurementsResponse',
-    value: function processMeasurementsResponse(response) {
+    value: function processMeasurementsResponse(response, order) {
       var labels = response.data.labels;
       var columns = response.data.columns;
       var timestamps = response.data.timestamps;
@@ -479,10 +487,12 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
             datapoints.push([columns[i].values[j], timestamps[j]]);
           }
 
-          series.push({
+          // Get the insertion index defined by the order and insert series right there
+          var index = order.indexOf(labels[i]);
+          series[index] = {
             target: labels[i],
             datapoints: datapoints
-          });
+          };
         }
       }
 
