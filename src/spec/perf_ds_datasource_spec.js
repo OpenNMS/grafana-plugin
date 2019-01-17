@@ -251,4 +251,79 @@ describe('OpenNMSPMDatasource', function () {
       expect(query.filter[1].parameter[1].value).to.equal("y");
     });
   });
+
+  describe('preserving order', function () {
+    it('should preserve a single label', function () {
+        let options = {
+            range: {from: 'now-1h', to: 'now'},
+            targets: [{
+                type: "attribute",
+                nodeId: '1',
+                resourceId: 'nodeSnmp[]',
+                attribute: 'loadavg1',
+                aggregation: 'AVERAGE'
+            }],
+            interval: '1s'
+        };
+
+        let labels = ctx.ds.buildQuery(options).labels;
+
+        expect(labels.length).to.equal(1);
+        expect(labels[0]).to.equal("loadavg1");
+    });
+
+    it('should preserve multiple labels', function () {
+        let options = {
+            range: {from: 'now-1h', to: 'now'},
+            targets: [{
+                type: "attribute",
+                nodeId: '1',
+                resourceId: 'nodeSnmp[]',
+                attribute: 'loadavg1',
+                aggregation: 'AVERAGE'
+            },
+            {
+                type: "attribute",
+                nodeId: '1',
+                resourceId: 'nodeSnmp[]',
+                attribute: 'loadavg5',
+                aggregation: 'AVERAGE'
+            }],
+            interval: '1s'
+        };
+
+        let labels = ctx.ds.buildQuery(options).labels;
+
+        expect(labels.length).to.equal(2);
+        expect(labels[0]).to.equal("loadavg1");
+        expect(labels[1]).to.equal("loadavg5");
+    });
+
+    it('should preserve multiple labels (reverse)', function () {
+        let options = {
+            range: {from: 'now-1h', to: 'now'},
+            targets: [{
+                type: "attribute",
+                nodeId: '1',
+                resourceId: 'nodeSnmp[]',
+                attribute: 'loadavg5',
+                aggregation: 'AVERAGE'
+            },
+            {
+                type: "attribute",
+                nodeId: '1',
+                resourceId: 'nodeSnmp[]',
+                attribute: 'loadavg1',
+                aggregation: 'AVERAGE'
+            }],
+            interval: '1s'
+        };
+
+        let labels = ctx.ds.buildQuery(options).labels;
+
+        expect(labels.length).to.equal(2);
+        expect(labels[0]).to.equal("loadavg5");
+        expect(labels[1]).to.equal("loadavg1");
+    });
+  });
 });
