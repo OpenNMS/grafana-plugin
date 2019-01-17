@@ -110,27 +110,30 @@
                     <th>Log Message</th>
                     <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
                 </thead>
-                <tbody class="severity">
-                    <tr ng-repeat="summary in relatedAlarms" ng-class="!summary.isHeader &amp;&amp; (severity === true || severity === 'row')? summary.severity.toLowerCase() : ''">
-                        <td colspan="{{editFeedback? 5 : 3}}" ng-if="summary.isHeader" class="alarm-details-spacer">
-                            <div class="alarm-details-header node-header">
-                                {{summary.nodeLabel}}
-                            </div>
-                        </td>
-                        <td ng-if="!summary.isHeader" ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
+                <tbody ng-repeat-start="node in relatedAlarms">
+                    <tr class="alarm-details-node-spacer"><td colspan="{{editFeedback? 5 : 3 }}"><!-- {{node.label + ' / ' + node.$index}} --></td></tr>
+                </tbody>
+                <tbody ng-repeat-end class="severity" ng-class="node.label !== ''? 'alarm-details-node-group' : ''">
+                    <tr class="alarm-details-node-header">
+                        <td colspan="{{editFeedback? 5 : 3 }}"><span class="alarm-details-node-label">{{node.label}}</span></td>
+                    </tr>
+                    <tr ng-repeat="summary in node.alarms" ng-class="(severity === true || severity === 'row') ? summary.severity.toLowerCase() : ''">
+                        <td ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
                             <a href="{{detailsLink}}={{summary.id}}" target="_blank">
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
-                        <td ng-if="!summary.isHeader" severity>{{summary.label}}</td>
-                        <td ng-if="!summary.isHeader" severity ng-bind-html="summary.logMessage"></td>
-                        <td ng-if="!summary.isHeader &amp;&amp; editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
+                        <td severity>{{summary.label}}</td>
+                        <td severity ng-bind-html="summary.logMessage"></td>
+                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
                         </td>
-                        <td ng-if="!summary.isHeader &amp;&amp; editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
+                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
                             <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="22" width="22" />
                         </td>
                     </tr>
+                </tbody>
+                <tbody class="severity">
                     <tr ng-if="editFeedback">
                         <td colspan="3" class="text-right">Tally</td>
                         <td class="text-center feedback-button">{{feedbackCorrectCount}}</td>
