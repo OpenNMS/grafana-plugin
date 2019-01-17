@@ -302,20 +302,22 @@ describe('OpenNMSPMDatasource', function () {
     it('should preserve multiple labels (reverse)', function () {
         let options = {
             range: {from: 'now-1h', to: 'now'},
-            targets: [{
-                type: "attribute",
-                nodeId: '1',
-                resourceId: 'nodeSnmp[]',
-                attribute: 'loadavg5',
-                aggregation: 'AVERAGE'
-            },
-            {
-                type: "attribute",
-                nodeId: '1',
-                resourceId: 'nodeSnmp[]',
-                attribute: 'loadavg1',
-                aggregation: 'AVERAGE'
-            }],
+            targets: [
+                {
+                    type: "attribute",
+                    nodeId: '1',
+                    resourceId: 'nodeSnmp[]',
+                    attribute: 'loadavg5',
+                    aggregation: 'AVERAGE'
+                },
+                {
+                    type: "attribute",
+                    nodeId: '1',
+                    resourceId: 'nodeSnmp[]',
+                    attribute: 'loadavg1',
+                    aggregation: 'AVERAGE'
+                }
+            ],
             interval: '1s'
         };
 
@@ -324,6 +326,31 @@ describe('OpenNMSPMDatasource', function () {
         expect(labels.length).to.equal(2);
         expect(labels[0]).to.equal("loadavg5");
         expect(labels[1]).to.equal("loadavg1");
+    });
+
+    it('should reorder the series', function () {
+        let response = {
+            'data': {
+                'labels': ['a', 'b'],
+                'timestamps': [0, 5, 10],
+                'columns': [
+                    {'values': [1, 2, 3]},
+                    {'values': [3, 2, 1]},
+                ],
+                'step': 5,
+                'start': 0,
+                'end': 10,
+            }
+        };
+      let labels = ['b', 'a'];
+
+      let processed = Datasource.processMeasurementsResponse(response, labels);
+
+      expect(processed.data.length).to.equal(2);
+      expect(processed.data[0].target).to.equal('b');
+      expect(processed.data[0].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
+      expect(processed.data[1].target).to.equal('a');
+      expect(processed.data[1].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
     });
   });
 });
