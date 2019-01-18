@@ -113,9 +113,7 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             var self = this;
 
             // Generate the query
-            var build = this.buildQuery(options);
-            var query = build.query;
-            var labels = build.labels;
+            var query = this.buildQuery(options);
 
             // Issue the request
             var request;
@@ -137,7 +135,7 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                 console.warn('Successful response had status != 200:', response);
                 return self.$q.reject(response);
               }
-              return OpenNMSDatasource.processMeasurementsResponse(response, labels);
+              return OpenNMSDatasource.processMeasurementsResponse(response);
             }).catch(function (err) {
               return self.$q.reject(self.decorateError(err));
             });
@@ -243,8 +241,6 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                 step = Math.floor((end - start) / options.maxDataPoints);
             step = step < options.intervalMs ? options.intervalMs : step;
 
-            var labels = [];
-
             var query = {
               "start": start,
               "end": end,
@@ -293,8 +289,6 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                   interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
                   delete interpolatedSource.nodeId;
                 }));
-
-                labels.push(label);
               } else if (target.type === QueryType.Expression) {
                 if (!(target.label && target.expression)) {
                   return;
@@ -309,8 +303,6 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
 
                 // Perform variable substitution - may generate additional expressions
                 query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
-
-                labels.push(target.label);
               } else if (target.type === QueryType.Filter) {
                 if (!target.filter) {
                   return;
@@ -350,7 +342,7 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
               }
             });
 
-            return { 'query': query, 'labels': labels };
+            return query;
           }
         }, {
           key: 'interpolateSourceVariables',
@@ -478,7 +470,7 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
           }
         }], [{
           key: 'processMeasurementsResponse',
-          value: function processMeasurementsResponse(response, order) {
+          value: function processMeasurementsResponse(response) {
             var labels = response.data.labels;
             var columns = response.data.columns;
             var timestamps = response.data.timestamps;
@@ -500,12 +492,10 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                   datapoints.push([columns[i].values[j], timestamps[j]]);
                 }
 
-                // Get the insertion index defined by the order and insert series right there
-                var index = order.indexOf(labels[i]);
-                series[index] = {
+                series.push({
                   target: labels[i],
                   datapoints: datapoints
-                };
+                });
               }
             }
 
