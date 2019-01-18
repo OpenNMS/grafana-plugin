@@ -197,7 +197,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         'attribute': "You must supply an attribute.",
         'expression': "You must supply an expression.",
         'label': "You must supply a label."
-      };
+      }
       if (required && targetId in messages && !this.target[targetId]) {
         return messages[targetId];
       } else if (required && !this.target[targetId]) {
