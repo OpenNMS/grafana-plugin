@@ -72,9 +72,7 @@ export class OpenNMSDatasource {
     const self = this;
 
     // Generate the query
-    var build = this.buildQuery(options);
-    var query = build.query;
-    var labels = build.labels;
+    var query = this.buildQuery(options);
 
     // Issue the request
     var request;
@@ -96,7 +94,7 @@ export class OpenNMSDatasource {
         console.warn('Successful response had status != 200:',response);
         return self.$q.reject(response);
       }
-      return OpenNMSDatasource.processMeasurementsResponse(response, labels);
+      return OpenNMSDatasource.processMeasurementsResponse(response);
     }).catch(err => {
       return self.$q.reject(self.decorateError(err));
     });
@@ -197,8 +195,6 @@ export class OpenNMSDatasource {
       step = Math.floor((end - start) / options.maxDataPoints);
       step = (step < options.intervalMs) ? options.intervalMs : step;
 
-    var labels = [];
-
     var query = {
       "start": start,
       "end": end,
@@ -247,9 +243,6 @@ export class OpenNMSDatasource {
           interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
           delete interpolatedSource.nodeId;
         }));
-
-        labels.push(label);
-
       } else if (target.type === QueryType.Expression) {
         if (!((target.label && target.expression))) {
           return;
@@ -264,9 +257,6 @@ export class OpenNMSDatasource {
 
         // Perform variable substitution - may generate additional expressions
         query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
-
-        labels.push(target.label);
-
       } else if (target.type === QueryType.Filter) {
         if (!((target.filter))) {
           return;
@@ -306,7 +296,7 @@ export class OpenNMSDatasource {
       }
     });
 
-    return {'query': query, 'labels': labels};
+    return query;
   }
 
   interpolateSourceVariables(source, scopedVars, callback) {
@@ -360,7 +350,7 @@ export class OpenNMSDatasource {
     return interpolate(object, attributes, variables, callback);
   }
 
-  static processMeasurementsResponse(response, order) {
+  static processMeasurementsResponse(response) {
     var labels = response.data.labels;
     var columns = response.data.columns;
     var timestamps = response.data.timestamps;
@@ -382,12 +372,10 @@ export class OpenNMSDatasource {
           datapoints.push([columns[i].values[j], timestamps[j]]);
         }
 
-        // Get the insertion index defined by the order and insert series right there
-        let index = order.indexOf(labels[i]);
-        series[index] = {
+        series.push({
           target: labels[i],
           datapoints: datapoints
-        };
+        });
       }
     }
 
