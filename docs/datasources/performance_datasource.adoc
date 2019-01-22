@@ -1,0 +1,134 @@
+= Performance Datasource
+
+== General
+
+The _Performance Datasource_ can be used to retrieve performance metrics (i.e. data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
+
+The query editor provides the ability to build queries of the following types:
+
+=== Attribute Queries
+
+Used to extract data points from time series data that is collected and stored by OpenNMS.
+The query is used to identify which attribute (or series) is being queried.
+
+[options="header, autowidth"]
+|===
+| Name               | Description
+| Node               | Node ID, or FS:FID (foreign source and foreign id) of the node to query.
+| Resource           | Resource ID containing the requested attribute.
+| Attribute          | Name of the attribute to query.
+| Sub-Attribute      | Name of the sub-attribute to query.
+                       This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e. StrafePing).
+| Fallback Attribute | Name of the attribute to query if the requested attribute was not available.
+| Aggregation        | RRD aggregation to use when exporting the metrics.
+                       Possible values are `Average`, `Min`, `Max` or `Last`.
+
+| Label              | Name for the series.
+                       Must be unique for all attributes and expression results in the query.
+|===
+
+=== Expression Queries
+
+Used to combine or otherwise transform one or more series into a new series.
+Supports mathematical and conditional operators provided by JEXL.
+Consult the _Measurements API_ documentation of your _OpenNMS_ version for more details.
+
+[options="header, autowidth"]
+|===
+| Name               | Description
+| Expression         | JEXL expression
+| Label              | Name for the series resulting from the expression.
+|===
+
+=== Filter Queries
+
+Used to create new and/or alter existing series.
+
+The option provided depend on the selected filter.
+
+==== Outlier Filter
+
+Used to remove datapoints from the series that fall outside of the configured quantile, defaults to 95%.
+The datapoints are replaced with interpolated values.
+
+== Template Queries
+
+=== nodeFilter
+
+The `nodeFilter()` query will return a list of nodes which match the given filter expression.
+
+For example, to return the set of nodes that are in the `Production` and `Linux` categories, you can use:
+```
+nodeFilter(catincProduction & catincLinux)
+```
+
+=== nodeResources
+
+The `nodeResources()` query will return the list of resource IDs  which are available on the given node.
+Regular expressions in the template query can then be used to filter which resource IDs are used.
+
+To query a specific node by ID, you can use an expression similar to:
+```
+nodeResources(123)
+```
+
+To query a specific node by foreign source and foreign id, you can use an expression similar to:
+```
+nodeResources(FS:FID)
+```
+
+== Label Formatters
+
+Helm provides a number of formatting functions you can use to transform the labels shown in graph legends.
+
+You can use one or more of these to transform the displayed labels based on node or resource metadata returned from OpenNMS Horizon 24 or above.
+
+=== nodeToLabel(<nodeCriteria>)
+
+The `nodeToLabel()` function will be replaced with the label of the node specified.
+
+You can pass either a node ID or `foreign-source:foreign-id` tuple.
+It is also possible to use a template variable based on a custom list of node identifiers or the results of a `nodeFilter()` query.
+
+To use a template variable representing nodes, just pass it, like so:
+```
+nodeToLabel($node)
+```
+
+To manually specify by ID or node criteria, just pass them in raw:
+```
+nodeToLabel(123)
+nodeToLabel(FS:FID)
+```
+
+=== resourceToLabel(<resourceId or nodeCriteria>[, <partialResourceId>])
+
+The `resourceToLabel()` function converts an OpenNMS resource identifier or node criteria and partial identifier into the resource's label.  The format of the resource label depends on the resource, and can be anything from a node label, to a descriptive string for an IP interface.
+
+The 1-argument form of this call expects a complete resource ID. That resource ID must be the full resource identifier as queried to the measurements API.
+
+The 2-argument form of this call allows you to use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
+
+A partial resource ID is just the portion of the resource identifier that doesn't identify the node itself, like `nodeSnmp[]` or `responseTime[127.0.0.1]`.
+
+For example, both of these `resourceToLabel` calls would be translated into the same text:
+
+```
+resourceToLabel(node[FS:FID].nodeSnmp[])
+resourceToLabel(FS:FID, nodeSnmp[])
+```
+
+=== resourceToName(<resourceId or nodeCriteria>[, <partialResourceId>])
+
+The `resourceToName()` function behaves exactly like the `resourceToLabel()` function, only it returns the resource's name, rather than its label.  The resource name is usually the internal, machine-readable name of the resource, like a node criteria, or an interface name + MAC address.
+
+```
+resourceToName(node[FS:FID].nodeSnmp[])
+resourceToName(FS:FID, nodeSnmp[])
+```
+
+=== resourceToInterface(<resourceId or nodeCriteria>[, <partialResourceId>])
+
+Finally, just like `resourceToLabel()` and `resourceToName()`, `resourceToInterface()` transforms a resource ID or combination node criteria and partial resource ID into another value.
+
+It is a special case of the other more general methods that will take the label of the resource (assumed to be an `interface-MAC` formatted string) and just return the interface portion.
