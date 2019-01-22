@@ -35,8 +35,8 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
           };
         });
     }, function (node) {
-      if (!_.isUndefined(node.foreignId) && !_.isNull(node.foreignId)
-        && !_.isUndefined(node.foreignSource) && !_.isNull(node.foreignSource)) {
+      if (!_.isUndefined(node.foreignId) && !_.isNull(node.foreignId) &&
+        !_.isUndefined(node.foreignSource) && !_.isNull(node.foreignSource)) {
         // Prefer fs:fid
         self.target.nodeId = node.foreignSource + ":" + node.foreignId;
       } else {
@@ -207,7 +207,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     } else if (this.target.type === QueryType.Filter) {
       if (targetId == 'filterName' && (!this.target.filter || !this.target.filter.name)) {
         return "You must select a filter.";
-      } else if (required && (!this.target.filterParameters || !targetId in this.target.filterParameters || !this.target.filterParameters[targetId])) {
+      } else if (required && (!this.target.filterParameters || !(targetId in this.target.filterParameters) || !this.target.filterParameters[targetId])) {
         return targetId + ' is a required field.';
       }
     }
