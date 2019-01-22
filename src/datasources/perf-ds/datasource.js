@@ -1,6 +1,7 @@
 import {QueryType} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
+import {FunctionFormatter} from './function_formatter';
 
 export class OpenNMSDatasource {
 
@@ -40,7 +41,7 @@ export class OpenNMSDatasource {
     }
 
     return this.backendSrv.datasourceRequest(options);
-  };
+  }
 
   decorateError(err) {
     let ret = err;
@@ -66,7 +67,7 @@ export class OpenNMSDatasource {
       ret.status = 'error';
     }
     return ret;
-  };
+  }
 
   query(options) {
     const self = this;
@@ -113,7 +114,7 @@ export class OpenNMSDatasource {
           status: "danger",
           message: "OpenNMS provided a response, but no metadata was found.",
           title: "Unexpected Response " + response.status
-        }
+        };
       }
     }).catch(err => {
       return this.decorateError(err);
@@ -127,18 +128,18 @@ export class OpenNMSDatasource {
     }
 
     var interpolatedQuery = _.first(this.interpolateValue(query));
-    var nodeFilterRegex = /nodeFilter\((.*)\)/;
-    var nodeResourcesRegex = /nodeResources\((.*)\)/;
 
     if (interpolatedQuery !== undefined) {
-      var nodeFilterQuery = interpolatedQuery.match(nodeFilterRegex);
-      if (nodeFilterQuery) {
-        return this.metricFindNodeFilterQuery(nodeFilterQuery[1]);
-      }
+      const functions = FunctionFormatter.findFunctions(interpolatedQuery);
 
-      var nodeCriteria = interpolatedQuery.match(nodeResourcesRegex);
-      if (nodeCriteria) {
-        return this.metricFindNodeResourceQuery(nodeCriteria[1]);
+      for (const func of functions) {
+        if (func.name === 'nodeFilter') {
+          return this.metricFindNodeFilterQuery.apply(this, func.arguments);
+        } else if (func.name === 'nodeResources') {
+          return this.metricFindNodeResourceQuery.apply(this, func.arguments);
+        } else {
+          console.warn('Unknown function in interpolated query: ' + interpolatedQuery, func);
+        }
       }
     }
 
@@ -354,6 +355,7 @@ export class OpenNMSDatasource {
     var labels = response.data.labels;
     var columns = response.data.columns;
     var timestamps = response.data.timestamps;
+    var metadata = response.data.metadata;
     var series = [];
     var i, j, nRows, nCols, datapoints;
 
@@ -372,8 +374,13 @@ export class OpenNMSDatasource {
           datapoints.push([columns[i].values[j], timestamps[j]]);
         }
 
+        let label = labels[i];
+        if (metadata && metadata.resources) {
+          label = FunctionFormatter.format(label, metadata);
+        }
+
         series.push({
-          target: labels[i],
+          target: label,
           datapoints: datapoints
         });
       }
