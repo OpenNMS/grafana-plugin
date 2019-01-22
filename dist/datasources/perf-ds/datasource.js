@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['./constants', './interpolate', 'lodash'], function (_export, _context) {
+System.register(['./constants', './interpolate', 'lodash', './function_formatter'], function (_export, _context) {
   "use strict";
 
-  var QueryType, interpolate, _, _createClass, OpenNMSDatasource;
+  var QueryType, interpolate, _, FunctionFormatter, _createClass, OpenNMSDatasource;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -18,6 +18,8 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
       interpolate = _interpolate.interpolate;
     }, function (_lodash) {
       _ = _lodash.default;
+    }, function (_function_formatter) {
+      FunctionFormatter = _function_formatter.FunctionFormatter;
     }],
     execute: function () {
       _createClass = function () {
@@ -170,18 +172,39 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             }
 
             var interpolatedQuery = _.first(this.interpolateValue(query));
-            var nodeFilterRegex = /nodeFilter\((.*)\)/;
-            var nodeResourcesRegex = /nodeResources\((.*)\)/;
 
             if (interpolatedQuery !== undefined) {
-              var nodeFilterQuery = interpolatedQuery.match(nodeFilterRegex);
-              if (nodeFilterQuery) {
-                return this.metricFindNodeFilterQuery(nodeFilterQuery[1]);
-              }
+              var functions = FunctionFormatter.findFunctions(interpolatedQuery);
 
-              var nodeCriteria = interpolatedQuery.match(nodeResourcesRegex);
-              if (nodeCriteria) {
-                return this.metricFindNodeResourceQuery(nodeCriteria[1]);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                for (var _iterator = functions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  var func = _step.value;
+
+                  if (func.name === 'nodeFilter') {
+                    return this.metricFindNodeFilterQuery.apply(this, func.arguments);
+                  } else if (func.name === 'nodeResources') {
+                    return this.metricFindNodeResourceQuery.apply(this, func.arguments);
+                  } else {
+                    console.warn('Unknown function in interpolated query: ' + interpolatedQuery, func);
+                  }
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
               }
             }
 
@@ -474,6 +497,7 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
             var labels = response.data.labels;
             var columns = response.data.columns;
             var timestamps = response.data.timestamps;
+            var metadata = response.data.metadata;
             var series = [];
             var i, j, nRows, nCols, datapoints;
 
@@ -492,8 +516,13 @@ System.register(['./constants', './interpolate', 'lodash'], function (_export, _
                   datapoints.push([columns[i].values[j], timestamps[j]]);
                 }
 
+                var label = labels[i];
+                if (metadata && metadata.resources) {
+                  label = FunctionFormatter.format(label, metadata);
+                }
+
                 series.push({
-                  target: labels[i],
+                  target: label,
                   datapoints: datapoints
                 });
               }

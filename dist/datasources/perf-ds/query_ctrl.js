@@ -273,7 +273,7 @@ System.register(['./modal_ctrl', './constants', 'app/plugins/sdk', 'app/core/app
             } else if (this.target.type === QueryType.Filter) {
               if (targetId == 'filterName' && (!this.target.filter || !this.target.filter.name)) {
                 return "You must select a filter.";
-              } else if (required && (!this.target.filterParameters || !targetId in this.target.filterParameters || !this.target.filterParameters[targetId])) {
+              } else if (required && (!this.target.filterParameters || !(targetId in this.target.filterParameters) || !this.target.filterParameters[targetId])) {
                 return targetId + ' is a required field.';
               }
             }

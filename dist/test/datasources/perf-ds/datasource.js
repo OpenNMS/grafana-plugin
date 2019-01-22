@@ -15,6 +15,8 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _function_formatter = require('./function_formatter');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -157,18 +159,39 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       }
 
       var interpolatedQuery = _lodash2.default.first(this.interpolateValue(query));
-      var nodeFilterRegex = /nodeFilter\((.*)\)/;
-      var nodeResourcesRegex = /nodeResources\((.*)\)/;
 
       if (interpolatedQuery !== undefined) {
-        var nodeFilterQuery = interpolatedQuery.match(nodeFilterRegex);
-        if (nodeFilterQuery) {
-          return this.metricFindNodeFilterQuery(nodeFilterQuery[1]);
-        }
+        var functions = _function_formatter.FunctionFormatter.findFunctions(interpolatedQuery);
 
-        var nodeCriteria = interpolatedQuery.match(nodeResourcesRegex);
-        if (nodeCriteria) {
-          return this.metricFindNodeResourceQuery(nodeCriteria[1]);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = functions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var func = _step.value;
+
+            if (func.name === 'nodeFilter') {
+              return this.metricFindNodeFilterQuery.apply(this, func.arguments);
+            } else if (func.name === 'nodeResources') {
+              return this.metricFindNodeResourceQuery.apply(this, func.arguments);
+            } else {
+              console.warn('Unknown function in interpolated query: ' + interpolatedQuery, func);
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
         }
       }
 
@@ -461,6 +484,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       var labels = response.data.labels;
       var columns = response.data.columns;
       var timestamps = response.data.timestamps;
+      var metadata = response.data.metadata;
       var series = [];
       var i, j, nRows, nCols, datapoints;
 
@@ -479,8 +503,13 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
             datapoints.push([columns[i].values[j], timestamps[j]]);
           }
 
+          var label = labels[i];
+          if (metadata && metadata.resources) {
+            label = _function_formatter.FunctionFormatter.format(label, metadata);
+          }
+
           series.push({
-            target: labels[i],
+            target: label,
             datapoints: datapoints
           });
         }
