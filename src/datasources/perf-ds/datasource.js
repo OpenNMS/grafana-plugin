@@ -91,8 +91,8 @@ export class OpenNMSDatasource {
 
     // Convert the results to the expected format
     return request.then((response) => {
-      if (response.status !== 200) {
-        console.warn('Successful response had status != 200:',response);
+      if (response.status < 200 || response.start >= 300) {
+        console.warn('Response code:',response);
         return self.$q.reject(response);
       }
       return OpenNMSDatasource.processMeasurementsResponse(response);
@@ -200,6 +200,7 @@ export class OpenNMSDatasource {
       "start": start,
       "end": end,
       "step": step,
+      "relaxed": true, // enable relaxed mode, which allows for missing attributes
       "maxrows": options.maxDataPoints,
       "source": [],
       "expression": []
@@ -358,12 +359,14 @@ export class OpenNMSDatasource {
     var metadata = response.data.metadata;
     var series = [];
     var i, j, nRows, nCols, datapoints;
+    var value, atLeastOneNonNaNValue;
 
     if (timestamps !== undefined) {
       nRows = timestamps.length;
       nCols = columns.length;
 
       for (i = 0; i < nCols; i++) {
+        atLeastOneNonNaNValue = false;
         datapoints = [];
         for (j = 0; j < nRows; j++) {
           // Skip rows that are out-of-ranges - this can happen with RRD data in narrow time spans
@@ -371,6 +374,10 @@ export class OpenNMSDatasource {
             continue;
           }
 
+          value = columns[i].values[j];
+          if (!atLeastOneNonNaNValue && !isNaN(value)) {
+            atLeastOneNonNaNValue = true;
+          }
           datapoints.push([columns[i].values[j], timestamps[j]]);
         }
 
@@ -379,10 +386,15 @@ export class OpenNMSDatasource {
           label = FunctionFormatter.format(label, metadata);
         }
 
-        series.push({
-          target: label,
-          datapoints: datapoints
-        });
+        // Skip series that are all NaNs
+        // When querying in relaxed mode, expressions that operate against attribute that are missing may only contain
+        // NaNs. In this case, we don't want to show them at all.
+        if (atLeastOneNonNaNValue) {
+          series.push({
+            target: label,
+            datapoints: datapoints
+          });
+        }
       }
     }
 
