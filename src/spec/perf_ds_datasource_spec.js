@@ -328,7 +328,7 @@ describe('OpenNMSPMDatasource', function () {
           expect(labels[1]).to.equal("loadavg1");
       });
 
-      it('should reorder the series', function () {
+      it('should reorder the series', async function () {
           let query = {
               range: {from: 'now-1h', to: 'now'},
               targets: [
@@ -371,18 +371,22 @@ describe('OpenNMSPMDatasource', function () {
           };
 
           let response = {
-              "step": 300000,
-              "start": 1424211730000,
-              "end": 1424226130000,
-              "timestamps": [1424211730001],
+              "step": 5,
+              "start": 0,
+              "end": 10,
+              "timestamps": [0, 5, 10],
               'labels': ['a', 'c', 'b'],
               "columns": [
                   {'values': [1, 2, 3]},
                   {'values': [9, 9, 9]},
                   {'values': [3, 2, 1]},
-              ]
+              ],
           };
 
+          ctx.templateSrv.variables = [
+              {name: 'variable', current: {value: 'x'}},
+              {name: 'nodeId', current: {value: '1'}},
+          ];
           ctx.backendSrv.datasourceRequest = function (request) {
               return ctx.$q.when({
                   _request: request,
@@ -391,17 +395,14 @@ describe('OpenNMSPMDatasource', function () {
               });
           };
 
-          ctx.ds.query(query).then(function (result) {
-              expect(result.data.length).to.equal(3);
-              expect(result.data[0].target).to.equal('a');
-              expect(result.data[0].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
-              expect(result.data[1].target).to.equal('b');
-              expect(result.data[1].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
-              expect(result.data[2].target).to.equal('c');
-              expect(result.data[2].datapoints).to.deep.equal([[9, 0], [9, 5], [9, 10]]);
-
-              done();
-          });
+          var result = await ctx.ds.query(query);
+          expect(result.data.length).to.equal(3);
+          expect(result.data[0].target).to.equal('a');
+          expect(result.data[0].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
+          expect(result.data[1].target).to.equal('b');
+          expect(result.data[1].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
+          expect(result.data[2].target).to.equal('c');
+          expect(result.data[2].datapoints).to.deep.equal([[9, 0], [9, 5], [9, 10]]);
       });
 
   });

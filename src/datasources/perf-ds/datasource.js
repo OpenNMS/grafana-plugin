@@ -101,7 +101,7 @@ export class OpenNMSDatasource {
       })
       // Sort resulting series by labels
       .then((result) => {
-          result.data = _.sortBy(result.data, (s) => _.indexOf(labels, s.target));
+          result.data = _.sortBy(result.data, (s) => _.indexOf(labels, s.label));
           return result;
       })
       .catch(err => {
@@ -399,6 +399,7 @@ export class OpenNMSDatasource {
 
         series.push({
           target: label,
+          label: labels[i],
           datapoints: datapoints
         });
       }
