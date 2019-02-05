@@ -5,7 +5,7 @@ import {UI} from '../datasources/fault-ds/UI';
 import {API} from '../opennms';
 import {Mapping} from '../datasources/fault-ds/Mapping';
 import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
-import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource'
+import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource';
 import {ClientDelegate} from '../lib/client_delegate';
 
 import {TemplateSrv} from './template_srv';
@@ -21,7 +21,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         newOperator: function (operator) {
             return this.newSegment(operator, 'operator');
         },
-        newFake: function (text, type, cssClass) {
+        newFake: function (text, type /*, cssClass */) {
             let segment = this.newSegment(text, type);
             segment.fake = true;
             return segment;
@@ -88,7 +88,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(mapping.getApiOperator(UI.Operators.OR)).to.eql(API.Operators.OR);
 
                 done();
-            })
+            });
         });
 
         describe('RestrictionMapping', function () {
@@ -242,7 +242,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             restriction.setComparator("=");
             restriction.setValue("my value");
             expect(restriction.asRestrictionDTO()).not.to.eql(null);
-            expect(restriction.asRestrictionDTO()).to.eql(new UI.RestrictionDTO("my attribute", "=", "my value"))
+            expect(restriction.asRestrictionDTO()).to.eql(new UI.RestrictionDTO("my attribute", "=", "my value"));
         });
     });
 
@@ -291,7 +291,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                     expect(control.filter(uiFilter.query, new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.Query(uiSegmentSrv)))).to.eql(false);
 
                     done();
-                })
+                });
             });
 
             describe("action", function() {
@@ -424,7 +424,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
 
                     done();
-                })
+                });
             });
         });
     });
@@ -454,7 +454,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(() => uiFilter.addClause("string")).to.throw("Clause type is not supported");
 
                 done();
-            })
+            });
         });
 
         describe('removeClause', function() {
@@ -627,7 +627,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 expect(clause.controls.length).to.eql(controls.length); // add, add nested and remove
                 if (controls.length > 0) {
                     _.each(controls, (control, index) => {
-                       expect(clause.controls[index]).to.be.an.instanceof(control)
+                       expect(clause.controls[index]).to.be.an.instanceof(control);
                     });
                 }
             };
@@ -678,7 +678,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
                 done();
             });
-        })
+        });
     });
 
     describe('ClientDelegate', () => {
@@ -691,7 +691,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                 type: "opennms-fm",
                 name: "dummy-name",
                 url: "http://localhost:8980/opennms"
-            }
+            };
        });
 
        it('should not throw an exception when supported version is used', (done) => {
@@ -709,7 +709,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
            // Instantiate and try to do any operation on the delegate
            const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
-           delegate.getClientWithMetadata().then((metadata) => {
+           delegate.getClientWithMetadata().then(() => {
                done();
            });
        });
@@ -846,6 +846,13 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             });
 
             it('should substitude $range_from and $range_to accordingly', () => {
+                // The input filter
+                const filter = new API.Filter()
+                    .withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND))
+                    .withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
+
                 // Options
                 const options = {
                     targets: [filter],
@@ -855,13 +862,6 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                     },
                     scopedVars: {}
                 };
-
-                // The input filter
-                const filter = new API.Filter()
-                    .withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND))
-                    .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND))
-                    .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND))
-                    .withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
 
                 // Build query and verify
                 const substitutedFilter = ctx.datasource.buildQuery(filter, options);

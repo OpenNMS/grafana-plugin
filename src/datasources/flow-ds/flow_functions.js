@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import $ from 'angular';
 
 let index = [];
 let categories = {
@@ -103,7 +104,7 @@ function FuncInstance(funcDef, options) {
   this.updateText();
 }
 
-FuncInstance.prototype.render = function (metricExp) {
+FuncInstance.prototype.render = function (/* metricExp */) {
   return {
     name: this.def.name,
     parameters: _.map(this.params, function (value, index) {
@@ -172,9 +173,9 @@ export class Gfuncs {
 
   static getFuncDef(name) {
     return index[name];
-  };
+  }
 
-  static getCategories(graphiteVersion) {
+  static getCategories(/* graphiteVersion */) {
     let filteredCategories = {};
     _.each(categories, function (functions, category) {
       if (functions.length) {

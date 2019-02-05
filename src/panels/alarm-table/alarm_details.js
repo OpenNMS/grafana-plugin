@@ -9,7 +9,7 @@ const compareStrings = (a, b) => {
 export class AlarmDetailsCtrl {
 
   /** @ngInject */
-  constructor($scope, backendSrv, contextSrv, datasourceSrv, $q) {
+  constructor($scope, backendSrv, contextSrv, datasourceSrv) {
     this.$scope = $scope;
     this.backendSrv = backendSrv;
     this.contextSrv = contextSrv;
@@ -172,7 +172,7 @@ export class AlarmDetailsCtrl {
     let self = this;
     this.getDatasource().then(ds => { return ds.submitSituationFeedback(self.$scope.alarm.id, feedback) })
       .then(
-        function (response) {
+        function () {
           self.$scope.editFeedback = false;
           self.$scope.submittedFeedback = true;
           self.$scope.hasSituationFeedback = true;
@@ -230,7 +230,7 @@ export class AlarmDetailsCtrl {
         return ds;
       }
     });
-  };
+  }
 }
 
 /** @ngInject */

@@ -232,7 +232,7 @@ export class OpenNMSDatasource {
         }
 
         // Build the source
-        var source = {
+        let source = {
           "aggregation": target.aggregation,
           "attribute": target.attribute,
           "label": label,
@@ -249,7 +249,7 @@ export class OpenNMSDatasource {
         }
 
         // Perform variable substitution - may generate additional queries
-        var source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
+        source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
             // Calculate the effective resource id after the interpolation
             interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
             delete interpolatedSource.nodeId;
@@ -264,14 +264,14 @@ export class OpenNMSDatasource {
         }
 
         // Build the expression
-        var expression = {
+        let expression = {
           "label": target.label,
           "value": target.expression,
           "transient": transient
         };
 
         // Perform variable substitution - may generate additional expressions
-        var expression = self.interpolateExpressionVariables(expression, options.scopedVars);
+        expression = self.interpolateExpressionVariables(expression, options.scopedVars);
         query.expression = query.expression.concat(expression);
 
         labels = labels.concat(_.map(expression, 'label'));

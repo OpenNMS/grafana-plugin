@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-execute');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-eslint');
 
   grunt.initConfig({
 
@@ -49,6 +50,10 @@ module.exports = function(grunt) {
         src: ['README.md'],
         dest: 'dist',
       }
+    },
+
+    eslint: {
+      target: ['src']
     },
 
     watch: {
@@ -123,6 +128,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'clean',
     'copy',
+    'eslint',
     'babel',
     'sass',
     'mochaTest'

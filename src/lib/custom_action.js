@@ -1,8 +1,7 @@
 import _ from 'lodash';
-import {Model} from '../opennms';
 
 const failed = Symbol('failed');
-const escapeRE = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
+const escapeRE = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g; // eslint-disable-line no-useless-escape
 
 function makeVariableRE(variableName) {
   const reString = '\\$(' + variableName.replace(escapeRE, '\\$&') + ')\\b(\\[(.*?)\\])?';
