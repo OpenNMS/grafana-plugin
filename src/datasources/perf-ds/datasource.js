@@ -73,7 +73,7 @@ export class OpenNMSDatasource {
     const self = this;
 
     // Generate the query
-    var query = this.buildQuery(options);
+    var [query, labels] = this.buildQuery(options);
 
     // Issue the request
     var request;
@@ -89,16 +89,24 @@ export class OpenNMSDatasource {
       return {'data': []};
     }
 
-    // Convert the results to the expected format
-    return request.then((response) => {
-      if (response.status !== 200) {
-        console.warn('Successful response had status != 200:',response);
-        return self.$q.reject(response);
-      }
-      return OpenNMSDatasource.processMeasurementsResponse(response);
-    }).catch(err => {
-      return self.$q.reject(self.decorateError(err));
-    });
+    return request
+      // Convert the results to the expected format
+      .then((response) => {
+        if (response.status !== 200) {
+          console.warn('Successful response had status != 200:',response);
+          return self.$q.reject(response);
+        }
+
+        return OpenNMSDatasource.processMeasurementsResponse(response);
+      })
+      // Sort resulting series by labels
+      .then((result) => {
+          result.data = _.sortBy(result.data, (s) => _.indexOf(labels, s.label));
+          return result;
+      })
+      .catch(err => {
+        return self.$q.reject(self.decorateError(err));
+      });
   }
 
   // Used for testing the connection from the datasource configuration page
@@ -205,6 +213,8 @@ export class OpenNMSDatasource {
       "expression": []
     };
 
+    var labels = [];
+
     _.each(options.targets, function (target) {
       var transient = "false";
       if (target.hide) {
@@ -239,11 +249,15 @@ export class OpenNMSDatasource {
         }
 
         // Perform variable substitution - may generate additional queries
-        query.source = query.source.concat(self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
-          // Calculate the effective resource id after the interpolation
-          interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
-          delete interpolatedSource.nodeId;
-        }));
+        var source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
+            // Calculate the effective resource id after the interpolation
+            interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
+            delete interpolatedSource.nodeId;
+        });
+        query.source = query.source.concat(source);
+
+        labels = labels.concat(_.map(source, 'label'));
+
       } else if (target.type === QueryType.Expression) {
         if (!((target.label && target.expression))) {
           return;
@@ -257,7 +271,11 @@ export class OpenNMSDatasource {
         };
 
         // Perform variable substitution - may generate additional expressions
-        query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
+        var expression = self.interpolateExpressionVariables(expression, options.scopedVars);
+        query.expression = query.expression.concat(expression);
+
+        labels = labels.concat(_.map(expression, 'label'));
+
       } else if (target.type === QueryType.Filter) {
         if (!((target.filter))) {
           return;
@@ -297,7 +315,7 @@ export class OpenNMSDatasource {
       }
     });
 
-    return query;
+    return [query, labels];
   }
 
   interpolateSourceVariables(source, scopedVars, callback) {
@@ -381,6 +399,7 @@ export class OpenNMSDatasource {
 
         series.push({
           target: label,
+          label: labels[i],
           datapoints: datapoints
         });
       }
