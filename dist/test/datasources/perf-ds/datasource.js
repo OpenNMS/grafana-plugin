@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.OpenNMSDatasource = undefined;
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _constants = require('./constants');
@@ -96,9 +98,15 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       var self = this;
 
       // Generate the query
-      var query = this.buildQuery(options);
+
+      var _buildQuery = this.buildQuery(options),
+          _buildQuery2 = _slicedToArray(_buildQuery, 2),
+          query = _buildQuery2[0],
+          labels = _buildQuery2[1];
 
       // Issue the request
+
+
       var request;
       if (query.source.length > 0) {
         request = this.doOpenNMSRequest({
@@ -112,13 +120,22 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
         return { 'data': [] };
       }
 
+      return request
       // Convert the results to the expected format
-      return request.then(function (response) {
+      .then(function (response) {
         if (response.status !== 200) {
           console.warn('Successful response had status != 200:', response);
           return self.$q.reject(response);
         }
+
         return OpenNMSDatasource.processMeasurementsResponse(response);
+      })
+      // Sort resulting series by labels
+      .then(function (result) {
+        result.data = _lodash2.default.sortBy(result.data, function (s) {
+          return _lodash2.default.indexOf(labels, s.label);
+        });
+        return result;
       }).catch(function (err) {
         return self.$q.reject(self.decorateError(err));
       });
@@ -260,6 +277,8 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
         "expression": []
       };
 
+      var labels = [];
+
       _lodash2.default.each(options.targets, function (target) {
         var transient = "false";
         if (target.hide) {
@@ -294,11 +313,14 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           }
 
           // Perform variable substitution - may generate additional queries
-          query.source = query.source.concat(self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {
+          var source = self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {
             // Calculate the effective resource id after the interpolation
             interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
             delete interpolatedSource.nodeId;
-          }));
+          });
+          query.source = query.source.concat(source);
+
+          labels = labels.concat(_lodash2.default.map(source, 'label'));
         } else if (target.type === _constants.QueryType.Expression) {
           if (!(target.label && target.expression)) {
             return;
@@ -312,7 +334,10 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
           };
 
           // Perform variable substitution - may generate additional expressions
-          query.expression = query.expression.concat(self.interpolateExpressionVariables(expression, options.scopedVars));
+          var expression = self.interpolateExpressionVariables(expression, options.scopedVars);
+          query.expression = query.expression.concat(expression);
+
+          labels = labels.concat(_lodash2.default.map(expression, 'label'));
         } else if (target.type === _constants.QueryType.Filter) {
           if (!target.filter) {
             return;
@@ -352,7 +377,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
         }
       });
 
-      return query;
+      return [query, labels];
     }
   }, {
     key: 'interpolateSourceVariables',
@@ -510,6 +535,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
 
           series.push({
             target: label,
+            label: labels[i],
             datapoints: datapoints
           });
         }
