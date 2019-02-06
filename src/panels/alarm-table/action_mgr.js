@@ -73,7 +73,7 @@ export class ActionMgr {
     // We should only close tickets for alarms that an open ticket, or where a previous close failed
     let closeTicketRows = _.filter(this.rows, row => {
       return row.ticketerConfig && row.ticketerConfig.enabled
-        && row.alarm.troubleTicketState && (alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || row.alarm.troubleTicketState === Model.TroubleTicketStates.CLOSE_FAILED);
+        && row.alarm.troubleTicketState && (row.alarm.troubleTicketState === Model.TroubleTicketStates.OPEN || row.alarm.troubleTicketState === Model.TroubleTicketStates.CLOSE_FAILED);
     });
     this.addOptionToContextMenu('Ticketing', 'Close Ticket', closeTicketRows,
       (row) => self.ctrl.closeTicketForAlarm(row.source, row.alarmId));

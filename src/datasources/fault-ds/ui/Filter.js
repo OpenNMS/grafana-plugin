@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {API} from '../../../opennms';
 import {Mapping} from '../Mapping';
 import {UI} from '../UI';

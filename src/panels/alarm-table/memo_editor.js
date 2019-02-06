@@ -30,12 +30,13 @@ export class MemoEditorCtrl {
           return ds.saveJournal($scope.alarm.id, $scope.memoBody);
         }
       })
-      .then(res => {
+      .then(() => {
         $scope.actionInProgress = false;
         self.refresh();
       })
       .catch(err => {
         $scope.actionInProgress = false;
+        console.warn('Failed to save memo.', err);
         self.refresh();
       })
     };
@@ -49,12 +50,13 @@ export class MemoEditorCtrl {
           return ds.deleteJournal($scope.alarm.id);
         }
       })
-      .then(res => {
+      .then(() => {
         $scope.actionInProgress = false;
         self.refresh();
       })
       .catch(err => {
         $scope.actionInProgress = false;
+        console.warn('Failed to delete memo.', err);
         self.refresh();
       });
     };
@@ -68,7 +70,7 @@ export class MemoEditorCtrl {
         return ds;
       }
     });
-  };
+  }
 
   refresh() {
     let self = this;

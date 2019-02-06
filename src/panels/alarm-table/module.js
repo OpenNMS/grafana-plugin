@@ -181,7 +181,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     return super.issueQueries(datasource);
   }
 
-  onDataError(err) {
+  onDataError() {
     this.dataRaw = [];
     this.render();
   }
@@ -240,7 +240,6 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     let data;
     let panel = ctrl.panel;
     let pageCount = 0;
-    let formaters = [];
 
     scope.getColumnStyle = (col) => {
       const ret = {};
@@ -578,7 +577,7 @@ coreModule.directive('contextMenu', contextMenuAsDirective());
 coreModule.directive('dynamicHeight', function($window) {
   // Used to dynamically size the alarm details modal window
   return{
-    link: function(scope, element, attrs){
+    link: function(scope, element /*, attrs */) {
       element.css('max-height', $window.innerHeight * 0.8 + 'px');
     }
   }

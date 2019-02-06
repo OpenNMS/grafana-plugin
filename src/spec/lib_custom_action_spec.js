@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import {Model} from '../opennms';
 import {CustomAction, getMatch} from '../lib/custom_action';
 

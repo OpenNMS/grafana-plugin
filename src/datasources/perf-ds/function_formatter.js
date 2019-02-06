@@ -1,11 +1,10 @@
-const FUNCTION_MATCH = /(\w+)\(([^\)]*)\)/g;
+const FUNCTION_MATCH = /(\w+)\(([^\)]*)\)/g; // eslint-disable-line no-useless-escape
 const ARGUMENT_MATCH = /\s*,\s*/;
 
 export class FunctionFormatter {
     static findFunctions(label) {
         let match, ret = [];
         while ((match = FUNCTION_MATCH.exec(label)) !== null) {
-            const args = FunctionFormatter.getArguments(match[2]);
             ret.push({
                 name: match[1],
                 arguments: FunctionFormatter.getArguments(match[2])

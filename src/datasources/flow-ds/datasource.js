@@ -102,7 +102,7 @@ export class FlowDatasource {
       });
   }
 
-  annotationQuery(options) {
+  annotationQuery(/* options */) {
     return this.q.when([]);
   }
 
@@ -129,7 +129,7 @@ export class FlowDatasource {
     return this.$q.resolve([]);
   }
 
-  metricFindExporterNodes(query) {
+  metricFindExporterNodes(/* query */) {
     return this.client.getExporters().then(exporters => {
       let results = [];
       _.each(exporters, function (exporter) {

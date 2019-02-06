@@ -1,4 +1,6 @@
 import {QueryCtrl} from 'app/plugins/sdk';
+import _ from 'lodash';
+
 import './add_opennms_func';
 import './func_editor';
 import {Gfuncs} from "./flow_functions";

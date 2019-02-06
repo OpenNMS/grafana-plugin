@@ -1,5 +1,6 @@
 import {MetricsPanelCtrl} from "app/plugins/sdk";
 import _ from "lodash";
+import $ from "jquery";
 import "jquery.flot";
 import "jquery.flot.selection";
 import "jquery.flot.crosshair";

@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-
 /**
  * This function editor has been adapted from the Graphite query editor's functione editor.
  */
