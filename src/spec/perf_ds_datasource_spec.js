@@ -129,7 +129,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg1");
@@ -156,7 +156,7 @@ describe('OpenNMSPMDatasource', function () {
           }
         }
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.source.length).to.equal(1);
       expect(query.source[0].attribute).to.equal("loadavg5");
@@ -179,7 +179,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.source.length).to.equal(2);
       expect(query.source[0].resourceId).to.equal("node[1].nodeSnmp[]");
@@ -203,7 +203,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("1-x");
@@ -238,7 +238,7 @@ describe('OpenNMSPMDatasource', function () {
         }],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.source.length).to.equal(4);
       expect(query.source[0].attribute).to.equal("a");
@@ -275,7 +275,7 @@ describe('OpenNMSPMDatasource', function () {
         ],
         interval: '1s'
       };
-      let query = ctx.ds.buildQuery(options);
+      let [query,] = ctx.ds.buildQuery(options);
 
       expect(query.filter.length).to.equal(2);
       expect(query.filter[0].name).to.equal("some-filter");
@@ -292,5 +292,160 @@ describe('OpenNMSPMDatasource', function () {
       expect(query.filter[1].parameter[1].key).to.equal("param2");
       expect(query.filter[1].parameter[1].value).to.equal("y");
     });
+  });
+
+  describe('preserving order', function () {
+      it('should preserve a single label', function () {
+          let options = {
+              range: {from: 'now-1h', to: 'now'},
+              targets: [{
+                  type: "attribute",
+                  nodeId: '1',
+                  resourceId: 'nodeSnmp[]',
+                  attribute: 'loadavg1',
+                  aggregation: 'AVERAGE'
+              }],
+              interval: '1s'
+          };
+
+          let [,labels] = ctx.ds.buildQuery(options);
+
+          expect(labels.length).to.equal(1);
+          expect(labels[0]).to.equal("loadavg1");
+      });
+
+      it('should preserve multiple labels', function () {
+          let options = {
+              range: {from: 'now-1h', to: 'now'},
+              targets: [{
+                  type: "attribute",
+                  nodeId: '1',
+                  resourceId: 'nodeSnmp[]',
+                  attribute: 'loadavg1',
+                  aggregation: 'AVERAGE'
+              },
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'loadavg5',
+                      aggregation: 'AVERAGE'
+                  }],
+              interval: '1s'
+          };
+
+          let [,labels] = ctx.ds.buildQuery(options);
+
+          expect(labels.length).to.equal(2);
+          expect(labels[0]).to.equal("loadavg1");
+          expect(labels[1]).to.equal("loadavg5");
+      });
+
+      it('should preserve multiple labels (reverse)', function () {
+          let options = {
+              range: {from: 'now-1h', to: 'now'},
+              targets: [
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'loadavg5',
+                      aggregation: 'AVERAGE'
+                  },
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'loadavg1',
+                      aggregation: 'AVERAGE'
+                  }
+              ],
+              interval: '1s'
+          };
+
+          let [,labels] = ctx.ds.buildQuery(options);
+
+          expect(labels.length).to.equal(2);
+          expect(labels[0]).to.equal("loadavg5");
+          expect(labels[1]).to.equal("loadavg1");
+      });
+
+      it('should reorder the series', async function () {
+          let query = {
+              range: {from: 'now-1h', to: 'now'},
+              targets: [
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'a',
+                      aggregation: 'AVERAGE'
+                  },
+                  {
+                      label: "b",
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'woot',
+                      aggregation: 'AVERAGE'
+                  },
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: 'missing',
+                      aggregation: 'AVERAGE'
+                  },
+                  {
+                      type: "attribute",
+                      nodeId: '1',
+                      resourceId: 'nodeSnmp[]',
+                      attribute: '$variable',
+                      aggregation: 'AVERAGE'
+                  },
+              ],
+              scopedVars: {
+                  'variable': {
+                      value: 'c'
+                  }
+              },
+              interval: '1s'
+          };
+
+          let response = {
+              "step": 5,
+              "start": 0,
+              "end": 10,
+              "timestamps": [0, 5, 10],
+              'labels': ['a', 'c', 'b'],
+              "columns": [
+                  {'values': [1, 2, 3]},
+                  {'values': [9, 9, 9]},
+                  {'values': [3, 2, 1]},
+              ],
+          };
+
+          ctx.templateSrv.variables = [
+              {name: 'variable', current: {value: 'x'}},
+              {name: 'nodeId', current: {value: '1'}},
+          ];
+          ctx.backendSrv.datasourceRequest = function (request) {
+              return ctx.$q.when({
+                  _request: request,
+                  status: 200,
+                  data: response
+              });
+          };
+
+          var result = await ctx.ds.query(query);
+          expect(result.data.length).to.equal(3);
+          expect(result.data[0].target).to.equal('a');
+          expect(result.data[0].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
+          expect(result.data[1].target).to.equal('b');
+          expect(result.data[1].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
+          expect(result.data[2].target).to.equal('c');
+          expect(result.data[2].datapoints).to.deep.equal([[9, 0], [9, 5], [9, 10]]);
+      });
+
   });
 });
