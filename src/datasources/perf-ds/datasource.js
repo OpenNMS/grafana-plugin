@@ -92,8 +92,8 @@ export class OpenNMSDatasource {
     return request
       // Convert the results to the expected format
       .then((response) => {
-        if (response.status !== 200) {
-          console.warn('Successful response had status != 200:',response);
+        if (response.status < 200 || response.start >= 300) {
+          console.warn('Response code:',response);
           return self.$q.reject(response);
         }
 
@@ -208,6 +208,7 @@ export class OpenNMSDatasource {
       "start": start,
       "end": end,
       "step": step,
+      "relaxed": true, // enable relaxed mode, which allows for missing attributes
       "maxrows": options.maxDataPoints,
       "source": [],
       "expression": []
@@ -232,7 +233,7 @@ export class OpenNMSDatasource {
         }
 
         // Build the source
-        var source = {
+        let source = {
           "aggregation": target.aggregation,
           "attribute": target.attribute,
           "label": label,
@@ -249,7 +250,7 @@ export class OpenNMSDatasource {
         }
 
         // Perform variable substitution - may generate additional queries
-        var source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
+        source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource) => {
             // Calculate the effective resource id after the interpolation
             interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
             delete interpolatedSource.nodeId;
@@ -264,14 +265,14 @@ export class OpenNMSDatasource {
         }
 
         // Build the expression
-        var expression = {
+        let expression = {
           "label": target.label,
           "value": target.expression,
           "transient": transient
         };
 
         // Perform variable substitution - may generate additional expressions
-        var expression = self.interpolateExpressionVariables(expression, options.scopedVars);
+        expression = self.interpolateExpressionVariables(expression, options.scopedVars);
         query.expression = query.expression.concat(expression);
 
         labels = labels.concat(_.map(expression, 'label'));
@@ -376,12 +377,14 @@ export class OpenNMSDatasource {
     var metadata = response.data.metadata;
     var series = [];
     var i, j, nRows, nCols, datapoints;
+    var value, atLeastOneNonNaNValue;
 
     if (timestamps !== undefined) {
       nRows = timestamps.length;
       nCols = columns.length;
 
       for (i = 0; i < nCols; i++) {
+        atLeastOneNonNaNValue = false;
         datapoints = [];
         for (j = 0; j < nRows; j++) {
           // Skip rows that are out-of-ranges - this can happen with RRD data in narrow time spans
@@ -389,6 +392,10 @@ export class OpenNMSDatasource {
             continue;
           }
 
+          value = columns[i].values[j];
+          if (!atLeastOneNonNaNValue && !isNaN(value)) {
+            atLeastOneNonNaNValue = true;
+          }
           datapoints.push([columns[i].values[j], timestamps[j]]);
         }
 
@@ -397,11 +404,16 @@ export class OpenNMSDatasource {
           label = FunctionFormatter.format(label, metadata);
         }
 
-        series.push({
-          target: label,
-          label: labels[i],
-          datapoints: datapoints
-        });
+        // Skip series that are all NaNs
+        // When querying in relaxed mode, expressions that operate against attribute that are missing may only contain
+        // NaNs. In this case, we don't want to show them at all.
+        if (atLeastOneNonNaNValue) {
+          series.push({
+            target: label,
+            label: labels[i],
+            datapoints: datapoints
+          });
+        }
       }
     }
 

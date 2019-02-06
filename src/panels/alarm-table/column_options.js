@@ -1,7 +1,4 @@
 import _ from 'lodash';
-import $ from 'jquery';
-import moment from 'moment';
-import angular from 'angular';
 
 import kbn from 'app/core/utils/kbn';
 
@@ -102,7 +99,7 @@ export class ColumnOptionsCtrl {
 }
 
 /** @ngInject */
-export function columnOptionsTab($q, uiSegmentSrv) {
+export function columnOptionsTab($q, uiSegmentSrv) { // eslint-disable-line no-unused-vars
   'use strict';
   return {
     restrict: 'E',

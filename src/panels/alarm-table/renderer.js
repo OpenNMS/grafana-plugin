@@ -104,7 +104,7 @@ export class TableRenderer {
     }
 
     if (column.style.type === 'hidden') {
-      return v => {
+      return () => {
         return undefined;
       };
     }

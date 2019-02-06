@@ -1,4 +1,4 @@
-import {API, Client, Rest, DAO} from '../opennms';
+import {API, Client, Rest} from '../opennms';
 import _ from 'lodash';
 
 let Q;
@@ -66,7 +66,7 @@ export class ClientDelegate {
             ret.status = 'error';
         }
         return Q.reject(ret);
-    };
+    }
 
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {

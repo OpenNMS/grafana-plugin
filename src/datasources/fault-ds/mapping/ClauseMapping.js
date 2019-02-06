@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {OperatorMapping} from './OperatorMapping';
 import {RestrictionMapping} from './RestrictionMapping';
 import {UI} from '../UI';
@@ -10,7 +9,7 @@ export class ClauseMapping {
     }
 
     getUiClause(apiClause) {
-        if (!apiClause instanceof API.Clause) {
+        if (!(apiClause instanceof API.Clause)) {
             throw new TypeError("apiClause is not of type API.Clause");
         }
         const uiOperator = new OperatorMapping().getUiOperator(apiClause.operator);
@@ -19,7 +18,7 @@ export class ClauseMapping {
     }
 
     getApiClause(uiClause) {
-        if (!uiClause instanceof UI.Clause) {
+        if (!(uiClause instanceof UI.Clause)) {
             throw new TypeError("uiClause is not of type UI.Clause");
         }
         const apiOperator = new OperatorMapping().getApiOperator(uiClause.operator.value);

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import {Restriction} from './Restriction';
 import {Query} from './Query';
 
 
@@ -13,11 +12,11 @@ class Control {
         this.icon = icon;
     }
 
-    action(query, clause) {
+    action(/* query, clause */) {
         throw new Error("Method action(...) not implemented");
     }
 
-    filter(query, clause) {
+    filter(/* query, clause */) {
         throw new Error("Method filter(...) not implemented");
     }
 }

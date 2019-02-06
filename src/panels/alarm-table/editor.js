@@ -1,10 +1,6 @@
 import _ from 'lodash';
-import $ from 'jquery';
-import moment from 'moment';
-import angular from 'angular';
 
 import {transformers} from './transformers';
-import kbn from 'app/core/utils/kbn';
 
 export class TablePanelEditorCtrl {
   /** @ngInject */
@@ -88,7 +84,7 @@ export class TablePanelEditorCtrl {
         break;
       case 'dragleave':
         if (target && evt.screenX !== 0 && evt.screenY !== 0) {
-          const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
+          //const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
           //console.log('leaving ' + this.panel.columns[columnIndex].text);
           this.destIndex = undefined;
           this.removeClasses('over');
@@ -110,7 +106,6 @@ export class TablePanelEditorCtrl {
         }
         this.removeClasses('over', 'picked-up');
         return false;
-        break;
       default:
         console.log('WARNING: unhandled event type: ' + type);
     }
@@ -162,7 +157,7 @@ export class TablePanelEditorCtrl {
 }
 
 /** @ngInject */
-export function tablePanelEditor($q, uiSegmentSrv) {
+export function tablePanelEditor($q, uiSegmentSrv) { // eslint-disable-line no-unused-vars
   'use strict';
   return {
     restrict: 'E',

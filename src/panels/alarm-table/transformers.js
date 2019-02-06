@@ -3,7 +3,7 @@ import {TableModel} from './table_model';
 
 let transformers = {};
 
-transformers['table'] = {
+transformers.table = {
   description: 'Table',
   getColumns: function(data) {
     if (!data || data.length === 0) {
@@ -30,7 +30,7 @@ transformers['table'] = {
 
     // Convert the rows to columns
     let cellsByColumnIndex = [];
-    _.each(data.columns, col => cellsByColumnIndex.push([]));
+    _.each(data.columns, () => cellsByColumnIndex.push([]));
 
     // For every row
     _.each(data.rows, row => {

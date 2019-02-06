@@ -114,5 +114,5 @@ export class Query {
             return this.parentQuery.findParent();
         }
         return this;
-    };
+    }
 }

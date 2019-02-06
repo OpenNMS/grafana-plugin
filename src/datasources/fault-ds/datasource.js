@@ -213,7 +213,7 @@ export class OpenNMSFMDatasource {
           });
   }
 
-  annotationQuery(options) {
+  annotationQuery(/* options */) {
     return this.q.when([]);
   }
 
@@ -263,13 +263,12 @@ export class OpenNMSFMDatasource {
                   // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
                   // used, but that may not be ideal for the user
                   case 'severity':
-                      const severities = _.map(Model.Severities, severity => {
+                      return this.q.when(_.map(Model.Severities, severity => {
                           return {
                               id: severity.id,
                               label: severity.label
                           }
-                      });
-                      return this.q.when(severities);
+                      }));
               }
               return property.findValues({limit: 1000}).then(values => {
                   return values.map(value => {
