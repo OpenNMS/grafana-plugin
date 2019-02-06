@@ -11,6 +11,10 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _angular = require('angular');
+
+var _angular2 = _interopRequireDefault(_angular);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -118,14 +122,14 @@ function FuncInstance(funcDef, options) {
   this.updateText();
 }
 
-FuncInstance.prototype.render = function (metricExp) {
+FuncInstance.prototype.render = function () /* metricExp */{
   return {
     name: this.def.name,
     parameters: _lodash2.default.map(this.params, function (value, index) {
       var paramType = this.def.params[index].type;
       if (paramType === 'int' || paramType === 'value_or_series' || paramType === 'boolean') {
         return value;
-      } else if (paramType === 'int_or_interval' && $.isNumeric(value)) {
+      } else if (paramType === 'int_or_interval' && _angular2.default.isNumeric(value)) {
         return value;
       }
       return value;
@@ -195,7 +199,7 @@ var Gfuncs = exports.Gfuncs = function () {
     }
   }, {
     key: 'getCategories',
-    value: function getCategories(graphiteVersion) {
+    value: function getCategories() /* graphiteVersion */{
       var filteredCategories = {};
       _lodash2.default.each(categories, function (functions, category) {
         if (functions.length) {

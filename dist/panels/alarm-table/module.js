@@ -272,7 +272,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
           }
         }, {
           key: 'onDataError',
-          value: function onDataError(err) {
+          value: function onDataError() {
             this.dataRaw = [];
             this.render();
           }
@@ -335,7 +335,6 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
             var data = void 0;
             var panel = ctrl.panel;
             var pageCount = 0;
-            var formaters = [];
 
             scope.getColumnStyle = function (col) {
               var ret = {};
@@ -693,7 +692,7 @@ System.register(['lodash', 'jquery', 'app/plugins/sdk', './transformers', './edi
       coreModule.directive('dynamicHeight', function ($window) {
         // Used to dynamically size the alarm details modal window
         return {
-          link: function link(scope, element, attrs) {
+          link: function link(scope, element /*, attrs */) {
             element.css('max-height', $window.innerHeight * 0.8 + 'px');
           }
         };

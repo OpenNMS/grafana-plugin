@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "lodash", "jquery.flot", "jquery.flot.selection", "jquery.flot.crosshair", "../../jquery.flot.categories"], function (_export, _context) {
+System.register(["app/plugins/sdk", "lodash", "jquery", "jquery.flot", "jquery.flot.selection", "jquery.flot.crosshair", "../../jquery.flot.categories"], function (_export, _context) {
     "use strict";
 
-    var MetricsPanelCtrl, _, _createClass, AlarmHistogramCtrl;
+    var MetricsPanelCtrl, _, $, _createClass, AlarmHistogramCtrl;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -40,6 +40,8 @@ System.register(["app/plugins/sdk", "lodash", "jquery.flot", "jquery.flot.select
             MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
         }, function (_lodash) {
             _ = _lodash.default;
+        }, function (_jquery) {
+            $ = _jquery.default;
         }, function (_jqueryFlot) {}, function (_jqueryFlotSelection) {}, function (_jqueryFlotCrosshair) {}, function (_jqueryFlotCategories) {}],
         execute: function () {
             _createClass = function () {

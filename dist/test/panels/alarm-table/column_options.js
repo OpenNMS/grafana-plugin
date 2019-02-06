@@ -13,18 +13,6 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _jquery = require('jquery');
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _moment = require('moment');
-
-var _moment2 = _interopRequireDefault(_moment);
-
-var _angular = require('angular');
-
-var _angular2 = _interopRequireDefault(_angular);
-
 var _kbn = require('app/core/utils/kbn');
 
 var _kbn2 = _interopRequireDefault(_kbn);
@@ -128,6 +116,7 @@ var ColumnOptionsCtrl = exports.ColumnOptionsCtrl = function () {
 
 
 function columnOptionsTab($q, uiSegmentSrv) {
+  // eslint-disable-line no-unused-vars
   'use strict';
 
   return {

@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash'], function (_export, _context) {
+System.register(['lodash', 'angular'], function (_export, _context) {
   "use strict";
 
-  var _, _createClass, index, categories, Gfuncs;
+  var _, $, _createClass, index, categories, Gfuncs;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -38,6 +38,8 @@ System.register(['lodash'], function (_export, _context) {
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
+    }, function (_angular) {
+      $ = _angular.default;
     }],
     execute: function () {
       _createClass = function () {
@@ -134,7 +136,7 @@ System.register(['lodash'], function (_export, _context) {
 
       _.each(categories, function (funcList, catName) {
         categories[catName] = _.sortBy(funcList, 'name');
-      });FuncInstance.prototype.render = function (metricExp) {
+      });FuncInstance.prototype.render = function () /* metricExp */{
         return {
           name: this.def.name,
           parameters: _.map(this.params, function (value, index) {
@@ -211,7 +213,7 @@ System.register(['lodash'], function (_export, _context) {
           }
         }, {
           key: 'getCategories',
-          value: function getCategories(graphiteVersion) {
+          value: function getCategories() /* graphiteVersion */{
             var filteredCategories = {};
             _.each(categories, function (functions, category) {
               if (functions.length) {

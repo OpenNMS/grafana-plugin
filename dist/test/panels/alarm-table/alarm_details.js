@@ -28,7 +28,7 @@ var compareStrings = function compareStrings(a, b) {
 var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
 
   /** @ngInject */
-  function AlarmDetailsCtrl($scope, backendSrv, contextSrv, datasourceSrv, $q) {
+  function AlarmDetailsCtrl($scope, backendSrv, contextSrv, datasourceSrv) {
     _classCallCheck(this, AlarmDetailsCtrl);
 
     this.$scope = $scope;
@@ -327,7 +327,7 @@ var AlarmDetailsCtrl = exports.AlarmDetailsCtrl = function () {
       var self = this;
       this.getDatasource().then(function (ds) {
         return ds.submitSituationFeedback(self.$scope.alarm.id, feedback);
-      }).then(function (response) {
+      }).then(function () {
         self.$scope.editFeedback = false;
         self.$scope.submittedFeedback = true;
         self.$scope.hasSituationFeedback = true;

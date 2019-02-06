@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app/core/utils/kbn'], function (_export, _context) {
+System.register(['lodash', './transformers'], function (_export, _context) {
   "use strict";
 
-  var _, $, moment, angular, transformers, kbn, _createClass, TablePanelEditorCtrl;
+  var _, transformers, _createClass, TablePanelEditorCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -13,6 +13,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
 
   /** @ngInject */
   function tablePanelEditor($q, uiSegmentSrv) {
+    // eslint-disable-line no-unused-vars
     'use strict';
 
     return {
@@ -28,16 +29,8 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
-    }, function (_jquery) {
-      $ = _jquery.default;
-    }, function (_moment) {
-      moment = _moment.default;
-    }, function (_angular) {
-      angular = _angular.default;
     }, function (_transformers) {
       transformers = _transformers.transformers;
-    }, function (_appCoreUtilsKbn) {
-      kbn = _appCoreUtilsKbn.default;
     }],
     execute: function () {
       _createClass = function () {
@@ -188,7 +181,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
                 break;
               case 'dragleave':
                 if (target && evt.screenX !== 0 && evt.screenY !== 0) {
-                  var _columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
+                  //const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
                   //console.log('leaving ' + this.panel.columns[columnIndex].text);
                   this.destIndex = undefined;
                   this.removeClasses('over');
@@ -210,7 +203,6 @@ System.register(['lodash', 'jquery', 'moment', 'angular', './transformers', 'app
                 }
                 this.removeClasses('over', 'picked-up');
                 return false;
-                break;
               default:
                 console.log('WARNING: unhandled event type: ' + type);
             }

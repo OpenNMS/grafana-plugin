@@ -83,11 +83,12 @@ System.register([], function (_export, _context) {
               } else {
                 return ds.saveJournal($scope.alarm.id, $scope.memoBody);
               }
-            }).then(function (res) {
+            }).then(function () {
               $scope.actionInProgress = false;
               self.refresh();
             }).catch(function (err) {
               $scope.actionInProgress = false;
+              console.warn('Failed to save memo.', err);
               self.refresh();
             });
           };
@@ -100,11 +101,12 @@ System.register([], function (_export, _context) {
               } else {
                 return ds.deleteJournal($scope.alarm.id);
               }
-            }).then(function (res) {
+            }).then(function () {
               $scope.actionInProgress = false;
               self.refresh();
             }).catch(function (err) {
               $scope.actionInProgress = false;
+              console.warn('Failed to delete memo.', err);
               self.refresh();
             });
           };

@@ -213,7 +213,7 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
     }
   }, {
     key: 'onDataError',
-    value: function onDataError(err) {
+    value: function onDataError() {
       this.dataRaw = [];
       this.render();
     }
@@ -276,7 +276,6 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
       var data = void 0;
       var panel = ctrl.panel;
       var pageCount = 0;
-      var formaters = [];
 
       scope.getColumnStyle = function (col) {
         var ret = {};
@@ -642,7 +641,7 @@ _core_module2.default.directive('contextMenu', (0, _context_menu.contextMenuAsDi
 _core_module2.default.directive('dynamicHeight', function ($window) {
   // Used to dynamically size the alarm details modal window
   return {
-    link: function link(scope, element, attrs) {
+    link: function link(scope, element /*, attrs */) {
       element.css('max-height', $window.innerHeight * 0.8 + 'px');
     }
   };

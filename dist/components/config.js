@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash'], function (_export, _context) {
+System.register([], function (_export, _context) {
   "use strict";
 
-  var _, _createClass, OpenNMSHelmAppConfigCtrl;
+  var _createClass, OpenNMSHelmAppConfigCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -12,9 +12,7 @@ System.register(['lodash'], function (_export, _context) {
   }
 
   return {
-    setters: [function (_lodash) {
-      _ = _lodash.default;
-    }],
+    setters: [],
     execute: function () {
       _createClass = function () {
         function defineProperties(target, props) {

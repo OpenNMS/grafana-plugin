@@ -1,15 +1,17 @@
 'use strict';
 
-System.register(['lodash', '../opennms'], function (_export, _context) {
+System.register(['lodash'], function (_export, _context) {
   "use strict";
 
-  var _, Model, _createClass, failed, escapeRE, CustomAction;
+  var _, _createClass, failed, escapeRE, CustomAction;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   }
+
+  // eslint-disable-line no-useless-escape
 
   function makeVariableRE(variableName) {
     var reString = '\\$(' + variableName.replace(escapeRE, '\\$&') + ')\\b(\\[(.*?)\\])?';
@@ -101,8 +103,6 @@ System.register(['lodash', '../opennms'], function (_export, _context) {
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
-    }, function (_opennms) {
-      Model = _opennms.Model;
     }],
     execute: function () {
       _createClass = function () {

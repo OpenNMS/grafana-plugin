@@ -40,7 +40,7 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                     newOperator: function newOperator(operator) {
                         return this.newSegment(operator, 'operator');
                     },
-                    newFake: function newFake(text, type, cssClass) {
+                    newFake: function newFake(text, type /*, cssClass */) {
                         var segment = this.newSegment(text, type);
                         segment.fake = true;
                         return segment;
@@ -699,7 +699,7 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
 
                         // Instantiate and try to do any operation on the delegate
                         var delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
-                        delegate.getClientWithMetadata().then(function (metadata) {
+                        delegate.getClientWithMetadata().then(function () {
                             done();
                         });
                     });
@@ -833,6 +833,9 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                         });
 
                         it('should substitude $range_from and $range_to accordingly', function () {
+                            // The input filter
+                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
+
                             // Options
                             var options = {
                                 targets: [filter],
@@ -842,9 +845,6 @@ System.register(['q', 'lodash', 'moment', '../datasources/fault-ds/UI', '../open
                                 },
                                 scopedVars: {}
                             };
-
-                            // The input filter
-                            var filter = new API.Filter().withClause(new API.Clause(new API.Restriction("key", API.Comparators.EQ, "$range_from"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key2", API.Comparators.EQ, "$range_to"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key3", API.Comparators.EQ, "[[range_from]]"), API.Operators.AND)).withClause(new API.Clause(new API.Restriction("key4", API.Comparators.EQ, "[[range_to]]"), API.Operators.AND));
 
                             // Build query and verify
                             var substitutedFilter = ctx.datasource.buildQuery(filter, options);

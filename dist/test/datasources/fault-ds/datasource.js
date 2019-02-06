@@ -277,7 +277,7 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
         }
     }, {
         key: 'annotationQuery',
-        value: function annotationQuery(options) {
+        value: function annotationQuery() /* options */{
             return this.q.when([]);
         }
     }, {
@@ -330,13 +330,12 @@ var OpenNMSFMDatasource = exports.OpenNMSFMDatasource = function () {
                     // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
                     // used, but that may not be ideal for the user
                     case 'severity':
-                        var severities = _lodash2.default.map(_opennms.Model.Severities, function (severity) {
+                        return _this2.q.when(_lodash2.default.map(_opennms.Model.Severities, function (severity) {
                             return {
                                 id: severity.id,
                                 label: severity.label
                             };
-                        });
-                        return _this2.q.when(severities);
+                        }));
                 }
                 return property.findValues({ limit: 1000 }).then(function (values) {
                     return values.map(function (value) {

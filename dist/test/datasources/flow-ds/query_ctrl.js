@@ -9,6 +9,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _sdk = require('app/plugins/sdk');
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 require('./add_opennms_func');
 
 require('./func_editor');
@@ -16,6 +20,8 @@ require('./func_editor');
 var _flow_functions = require('./flow_functions');
 
 require('./css/query-editor.css!');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -50,7 +56,7 @@ var FlowDatasourceQueryCtrl = exports.FlowDatasourceQueryCtrl = function (_Query
         }
 
         if (this.target.functions) {
-          this.functions = _.map(this.target.functions, function (f) {
+          this.functions = _lodash2.default.map(this.target.functions, function (f) {
             var funcDef = _flow_functions.Gfuncs.getFuncDef(f.name);
             var func = _flow_functions.Gfuncs.createFuncInstance(funcDef);
             for (var i = 0; i < f.parameters.length; i++) {
@@ -69,7 +75,7 @@ var FlowDatasourceQueryCtrl = exports.FlowDatasourceQueryCtrl = function (_Query
     key: 'updateModelTarget',
     value: function updateModelTarget() {
       this.target.metric = this.segments.length > 0 ? this.segments[0].value : undefined;
-      this.target.functions = _.map(this.functions, function (f) {
+      this.target.functions = _lodash2.default.map(this.functions, function (f) {
         return f.render();
       });
     }
@@ -89,7 +95,7 @@ var FlowDatasourceQueryCtrl = exports.FlowDatasourceQueryCtrl = function (_Query
   }, {
     key: 'removeFunction',
     value: function removeFunction(func) {
-      this.functions = _.without(this.functions, func);
+      this.functions = _lodash2.default.without(this.functions, func);
       this.targetChanged();
     }
   }, {

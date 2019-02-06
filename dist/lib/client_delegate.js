@@ -3,7 +3,7 @@
 System.register(['../opennms', 'lodash'], function (_export, _context) {
     "use strict";
 
-    var API, Client, Rest, DAO, _, _createClass, Q, ClientDelegate;
+    var API, Client, Rest, _, _createClass, Q, ClientDelegate;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -16,7 +16,6 @@ System.register(['../opennms', 'lodash'], function (_export, _context) {
             API = _opennms.API;
             Client = _opennms.Client;
             Rest = _opennms.Rest;
-            DAO = _opennms.DAO;
         }, function (_lodash) {
             _ = _lodash.default;
         }],

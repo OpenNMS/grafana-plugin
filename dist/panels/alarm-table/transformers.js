@@ -30,7 +30,7 @@ System.register(['lodash', './table_model'], function (_export, _context) {
     execute: function () {
       _export('transformers', transformers = {});
 
-      transformers['table'] = {
+      transformers.table = {
         description: 'Table',
         getColumns: function getColumns(data) {
           if (!data || data.length === 0) {
@@ -57,7 +57,7 @@ System.register(['lodash', './table_model'], function (_export, _context) {
 
           // Convert the rows to columns
           var cellsByColumnIndex = [];
-          _.each(data.columns, function (col) {
+          _.each(data.columns, function () {
             return cellsByColumnIndex.push([]);
           });
 

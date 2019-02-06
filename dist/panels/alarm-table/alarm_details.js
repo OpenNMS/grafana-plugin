@@ -61,7 +61,7 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
       _export('AlarmDetailsCtrl', AlarmDetailsCtrl = function () {
 
         /** @ngInject */
-        function AlarmDetailsCtrl($scope, backendSrv, contextSrv, datasourceSrv, $q) {
+        function AlarmDetailsCtrl($scope, backendSrv, contextSrv, datasourceSrv) {
           _classCallCheck(this, AlarmDetailsCtrl);
 
           this.$scope = $scope;
@@ -360,7 +360,7 @@ System.register(['./renderer', '../../crypto-js/md5', '../../opennms'], function
             var self = this;
             this.getDatasource().then(function (ds) {
               return ds.submitSituationFeedback(self.$scope.alarm.id, feedback);
-            }).then(function (response) {
+            }).then(function () {
               self.$scope.editFeedback = false;
               self.$scope.submittedFeedback = true;
               self.$scope.hasSituationFeedback = true;

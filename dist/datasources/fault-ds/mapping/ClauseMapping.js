@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', './OperatorMapping', './RestrictionMapping', '../UI', '../../../opennms'], function (_export, _context) {
+System.register(['./OperatorMapping', './RestrictionMapping', '../UI', '../../../opennms'], function (_export, _context) {
     "use strict";
 
-    var _, OperatorMapping, RestrictionMapping, UI, API, _createClass, ClauseMapping;
+    var OperatorMapping, RestrictionMapping, UI, API, _createClass, ClauseMapping;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -12,9 +12,7 @@ System.register(['lodash', './OperatorMapping', './RestrictionMapping', '../UI',
     }
 
     return {
-        setters: [function (_lodash) {
-            _ = _lodash.default;
-        }, function (_OperatorMapping) {
+        setters: [function (_OperatorMapping) {
             OperatorMapping = _OperatorMapping.OperatorMapping;
         }, function (_RestrictionMapping) {
             RestrictionMapping = _RestrictionMapping.RestrictionMapping;
@@ -52,7 +50,7 @@ System.register(['lodash', './OperatorMapping', './RestrictionMapping', '../UI',
                 _createClass(ClauseMapping, [{
                     key: 'getUiClause',
                     value: function getUiClause(apiClause) {
-                        if (!apiClause instanceof API.Clause) {
+                        if (!(apiClause instanceof API.Clause)) {
                             throw new TypeError("apiClause is not of type API.Clause");
                         }
                         var uiOperator = new OperatorMapping().getUiOperator(apiClause.operator);
@@ -62,7 +60,7 @@ System.register(['lodash', './OperatorMapping', './RestrictionMapping', '../UI',
                 }, {
                     key: 'getApiClause',
                     value: function getApiClause(uiClause) {
-                        if (!uiClause instanceof UI.Clause) {
+                        if (!(uiClause instanceof UI.Clause)) {
                             throw new TypeError("uiClause is not of type UI.Clause");
                         }
                         var apiOperator = new OperatorMapping().getApiOperator(uiClause.operator.value);

@@ -11,8 +11,6 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _Restriction = require('./Restriction');
-
 var _Query = require('./Query');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -36,12 +34,12 @@ var Control = function () {
 
     _createClass(Control, [{
         key: 'action',
-        value: function action(query, clause) {
+        value: function action() /* query, clause */{
             throw new Error("Method action(...) not implemented");
         }
     }, {
         key: 'filter',
-        value: function filter(query, clause) {
+        value: function filter() /* query, clause */{
             throw new Error("Method filter(...) not implemented");
         }
     }]);

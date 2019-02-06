@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', './add_opennms_func', './func_editor', './flow_functions', './css/query-editor.css!'], function (_export, _context) {
+System.register(['app/plugins/sdk', 'lodash', './add_opennms_func', './func_editor', './flow_functions', './css/query-editor.css!'], function (_export, _context) {
   "use strict";
 
-  var QueryCtrl, Gfuncs, _createClass, FlowDatasourceQueryCtrl;
+  var QueryCtrl, _, Gfuncs, _createClass, FlowDatasourceQueryCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -38,6 +38,8 @@ System.register(['app/plugins/sdk', './add_opennms_func', './func_editor', './fl
   return {
     setters: [function (_appPluginsSdk) {
       QueryCtrl = _appPluginsSdk.QueryCtrl;
+    }, function (_lodash) {
+      _ = _lodash.default;
     }, function (_add_opennms_func) {}, function (_func_editor) {}, function (_flow_functions) {
       Gfuncs = _flow_functions.Gfuncs;
     }, function (_cssQueryEditorCss) {}],

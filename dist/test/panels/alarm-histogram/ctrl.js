@@ -13,6 +13,10 @@ var _lodash = require("lodash");
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _jquery = require("jquery");
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
 require("jquery.flot");
 
 require("jquery.flot.selection");
@@ -146,7 +150,7 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
             // Draw graph
             switch (this.panel.direction) {
                 case 'horizontal':
-                    $.plot(this.elem, _lodash2.default.map(this.series, function (serie) {
+                    _jquery2.default.plot(this.elem, _lodash2.default.map(this.series, function (serie) {
                         return {
                             data: [[serie.count, serie.name]],
                             color: serie.color
@@ -174,7 +178,7 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
                     break;
 
                 case 'vertical':
-                    $.plot(this.elem, _lodash2.default.map(this.series, function (serie) {
+                    _jquery2.default.plot(this.elem, _lodash2.default.map(this.series, function (serie) {
                         return {
                             data: [[serie.name, serie.count]],
                             color: serie.color

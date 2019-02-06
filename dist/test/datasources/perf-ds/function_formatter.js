@@ -10,7 +10,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FUNCTION_MATCH = /(\w+)\(([^\)]*)\)/g;
+var FUNCTION_MATCH = /(\w+)\(([^\)]*)\)/g; // eslint-disable-line no-useless-escape
 var ARGUMENT_MATCH = /\s*,\s*/;
 
 var FunctionFormatter = exports.FunctionFormatter = function () {
@@ -24,7 +24,6 @@ var FunctionFormatter = exports.FunctionFormatter = function () {
             var match = void 0,
                 ret = [];
             while ((match = FUNCTION_MATCH.exec(label)) !== null) {
-                var args = FunctionFormatter.getArguments(match[2]);
                 ret.push({
                     name: match[1],
                     arguments: FunctionFormatter.getArguments(match[2])

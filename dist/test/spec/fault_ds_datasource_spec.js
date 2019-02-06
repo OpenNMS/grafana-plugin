@@ -39,7 +39,7 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
         newOperator: function newOperator(operator) {
             return this.newSegment(operator, 'operator');
         },
-        newFake: function newFake(text, type, cssClass) {
+        newFake: function newFake(text, type /*, cssClass */) {
             var segment = this.newSegment(text, type);
             segment.fake = true;
             return segment;
@@ -698,7 +698,7 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
 
             // Instantiate and try to do any operation on the delegate
             var delegate = new _client_delegate.ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
-            delegate.getClientWithMetadata().then(function (metadata) {
+            delegate.getClientWithMetadata().then(function () {
                 done();
             });
         });
@@ -832,6 +832,9 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
             });
 
             it('should substitude $range_from and $range_to accordingly', function () {
+                // The input filter
+                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key", _opennms.API.Comparators.EQ, "$range_from"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key2", _opennms.API.Comparators.EQ, "$range_to"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.EQ, "[[range_from]]"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key4", _opennms.API.Comparators.EQ, "[[range_to]]"), _opennms.API.Operators.AND));
+
                 // Options
                 var options = {
                     targets: [filter],
@@ -841,9 +844,6 @@ describe("OpenNMS_FaultManagement_Datasource", function () {
                     },
                     scopedVars: {}
                 };
-
-                // The input filter
-                var filter = new _opennms.API.Filter().withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key", _opennms.API.Comparators.EQ, "$range_from"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key2", _opennms.API.Comparators.EQ, "$range_to"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key3", _opennms.API.Comparators.EQ, "[[range_from]]"), _opennms.API.Operators.AND)).withClause(new _opennms.API.Clause(new _opennms.API.Restriction("key4", _opennms.API.Comparators.EQ, "[[range_to]]"), _opennms.API.Operators.AND));
 
                 // Build query and verify
                 var substitutedFilter = ctx.datasource.buildQuery(filter, options);

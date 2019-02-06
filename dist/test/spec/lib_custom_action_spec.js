@@ -1,14 +1,8 @@
 'use strict';
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _opennms = require('../opennms');
 
 var _custom_action = require('../lib/custom_action');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 describe('CustomAction :: getMatch', function () {
   it('should find an exact match', function () {

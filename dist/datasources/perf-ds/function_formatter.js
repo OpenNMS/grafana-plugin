@@ -84,7 +84,6 @@ System.register([], function (_export, _context) {
                         var match = void 0,
                             ret = [];
                         while ((match = FUNCTION_MATCH.exec(label)) !== null) {
-                            var args = FunctionFormatter.getArguments(match[2]);
                             ret.push({
                                 name: match[1],
                                 arguments: FunctionFormatter.getArguments(match[2])

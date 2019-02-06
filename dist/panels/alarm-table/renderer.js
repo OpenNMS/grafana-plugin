@@ -135,7 +135,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], fun
             }
 
             if (column.style.type === 'hidden') {
-              return function (v) {
+              return function () {
                 return undefined;
               };
             }

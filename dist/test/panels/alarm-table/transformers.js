@@ -15,7 +15,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var transformers = {};
 
-transformers['table'] = {
+transformers.table = {
   description: 'Table',
   getColumns: function getColumns(data) {
     if (!data || data.length === 0) {
@@ -42,7 +42,7 @@ transformers['table'] = {
 
     // Convert the rows to columns
     var cellsByColumnIndex = [];
-    _lodash2.default.each(data.columns, function (col) {
+    _lodash2.default.each(data.columns, function () {
       return cellsByColumnIndex.push([]);
     });
 

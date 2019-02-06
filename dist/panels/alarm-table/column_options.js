@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'moment', 'angular', 'app/core/utils/kbn'], function (_export, _context) {
+System.register(['lodash', 'app/core/utils/kbn'], function (_export, _context) {
   "use strict";
 
-  var _, $, moment, angular, kbn, _createClass, ColumnOptionsCtrl;
+  var _, kbn, _createClass, ColumnOptionsCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -13,6 +13,7 @@ System.register(['lodash', 'jquery', 'moment', 'angular', 'app/core/utils/kbn'],
 
   /** @ngInject */
   function columnOptionsTab($q, uiSegmentSrv) {
+    // eslint-disable-line no-unused-vars
     'use strict';
 
     return {
@@ -28,12 +29,6 @@ System.register(['lodash', 'jquery', 'moment', 'angular', 'app/core/utils/kbn'],
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
-    }, function (_jquery) {
-      $ = _jquery.default;
-    }, function (_moment) {
-      moment = _moment.default;
-    }, function (_angular) {
-      angular = _angular.default;
     }, function (_appCoreUtilsKbn) {
       kbn = _appCoreUtilsKbn.default;
     }],

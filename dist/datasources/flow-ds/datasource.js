@@ -140,7 +140,7 @@ System.register(['lodash', '../../lib/client_delegate'], function (_export, _con
           }
         }, {
           key: 'annotationQuery',
-          value: function annotationQuery(options) {
+          value: function annotationQuery() /* options */{
             return this.q.when([]);
           }
         }, {
@@ -168,7 +168,7 @@ System.register(['lodash', '../../lib/client_delegate'], function (_export, _con
           }
         }, {
           key: 'metricFindExporterNodes',
-          value: function metricFindExporterNodes(query) {
+          value: function metricFindExporterNodes() /* query */{
             return this.client.getExporters().then(function (exporters) {
               var results = [];
               _.each(exporters, function (exporter) {

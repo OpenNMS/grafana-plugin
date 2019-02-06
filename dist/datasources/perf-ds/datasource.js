@@ -176,8 +176,8 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
             return request
             // Convert the results to the expected format
             .then(function (response) {
-              if (response.status !== 200) {
-                console.warn('Successful response had status != 200:', response);
+              if (response.status < 200 || response.start >= 300) {
+                console.warn('Response code:', response);
                 return self.$q.reject(response);
               }
 
@@ -319,6 +319,7 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
               "start": start,
               "end": end,
               "step": step,
+              "relaxed": true, // enable relaxed mode, which allows for missing attributes
               "maxrows": options.maxDataPoints,
               "source": [],
               "expression": []
@@ -360,7 +361,7 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
                 }
 
                 // Perform variable substitution - may generate additional queries
-                var source = self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {
+                source = self.interpolateSourceVariables(source, options.scopedVars, function (interpolatedSource) {
                   // Calculate the effective resource id after the interpolation
                   interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
                   delete interpolatedSource.nodeId;
@@ -381,7 +382,7 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
                 };
 
                 // Perform variable substitution - may generate additional expressions
-                var expression = self.interpolateExpressionVariables(expression, options.scopedVars);
+                expression = self.interpolateExpressionVariables(expression, options.scopedVars);
                 query.expression = query.expression.concat(expression);
 
                 labels = labels.concat(_.map(expression, 'label'));
@@ -559,12 +560,14 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
             var metadata = response.data.metadata;
             var series = [];
             var i, j, nRows, nCols, datapoints;
+            var value, atLeastOneNonNaNValue;
 
             if (timestamps !== undefined) {
               nRows = timestamps.length;
               nCols = columns.length;
 
               for (i = 0; i < nCols; i++) {
+                atLeastOneNonNaNValue = false;
                 datapoints = [];
                 for (j = 0; j < nRows; j++) {
                   // Skip rows that are out-of-ranges - this can happen with RRD data in narrow time spans
@@ -572,6 +575,10 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
                     continue;
                   }
 
+                  value = columns[i].values[j];
+                  if (!atLeastOneNonNaNValue && !isNaN(value)) {
+                    atLeastOneNonNaNValue = true;
+                  }
                   datapoints.push([columns[i].values[j], timestamps[j]]);
                 }
 
@@ -580,11 +587,16 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
                   label = FunctionFormatter.format(label, metadata);
                 }
 
-                series.push({
-                  target: label,
-                  label: labels[i],
-                  datapoints: datapoints
-                });
+                // Skip series that are all NaNs
+                // When querying in relaxed mode, expressions that operate against attribute that are missing may only contain
+                // NaNs. In this case, we don't want to show them at all.
+                if (atLeastOneNonNaNValue) {
+                  series.push({
+                    target: label,
+                    label: labels[i],
+                    datapoints: datapoints
+                  });
+                }
               }
             }
 

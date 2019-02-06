@@ -13,23 +13,7 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _jquery = require('jquery');
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _moment = require('moment');
-
-var _moment2 = _interopRequireDefault(_moment);
-
-var _angular = require('angular');
-
-var _angular2 = _interopRequireDefault(_angular);
-
 var _transformers = require('./transformers');
-
-var _kbn = require('app/core/utils/kbn');
-
-var _kbn2 = _interopRequireDefault(_kbn);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -165,7 +149,7 @@ var TablePanelEditorCtrl = exports.TablePanelEditorCtrl = function () {
           break;
         case 'dragleave':
           if (target && evt.screenX !== 0 && evt.screenY !== 0) {
-            var _columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
+            //const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
             //console.log('leaving ' + this.panel.columns[columnIndex].text);
             this.destIndex = undefined;
             this.removeClasses('over');
@@ -187,7 +171,6 @@ var TablePanelEditorCtrl = exports.TablePanelEditorCtrl = function () {
           }
           this.removeClasses('over', 'picked-up');
           return false;
-          break;
         default:
           console.log('WARNING: unhandled event type: ' + type);
       }
@@ -256,6 +239,7 @@ var TablePanelEditorCtrl = exports.TablePanelEditorCtrl = function () {
 
 
 function tablePanelEditor($q, uiSegmentSrv) {
+  // eslint-disable-line no-unused-vars
   'use strict';
 
   return {

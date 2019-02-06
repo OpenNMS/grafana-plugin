@@ -35,7 +35,7 @@ var FilterMapping = exports.FilterMapping = function () {
         key: 'getApiFilter',
         value: function getApiFilter(uiFilter) {
             // Ensure we can migrate
-            if (!uiFilter instanceof _UI.UI.Filter) {
+            if (!(uiFilter instanceof _UI.UI.Filter)) {
                 throw new TypeError("uiFilter is not of type UI.Filter.");
             }
 
@@ -54,7 +54,7 @@ var FilterMapping = exports.FilterMapping = function () {
     }, {
         key: 'getUiFilter',
         value: function getUiFilter(apiFilter) {
-            if (!apiFilter instanceof _opennms.API.Filter) {
+            if (!(apiFilter instanceof _opennms.API.Filter)) {
                 throw new TypeError("apiFilter is not of type API.Filter");
             }
 

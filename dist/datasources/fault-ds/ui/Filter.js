@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', '../../../opennms', '../Mapping', '../UI'], function (_export, _context) {
+System.register(['../../../opennms', '../Mapping', '../UI'], function (_export, _context) {
     "use strict";
 
-    var _, API, Mapping, UI, _createClass, Filter;
+    var API, Mapping, UI, _createClass, Filter;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -12,9 +12,7 @@ System.register(['lodash', '../../../opennms', '../Mapping', '../UI'], function 
     }
 
     return {
-        setters: [function (_lodash) {
-            _ = _lodash.default;
-        }, function (_opennms) {
+        setters: [function (_opennms) {
             API = _opennms.API;
         }, function (_Mapping) {
             Mapping = _Mapping.Mapping;

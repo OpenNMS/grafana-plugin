@@ -120,7 +120,7 @@ var TableRenderer = exports.TableRenderer = function () {
       }
 
       if (column.style.type === 'hidden') {
-        return function (v) {
+        return function () {
           return undefined;
         };
       }

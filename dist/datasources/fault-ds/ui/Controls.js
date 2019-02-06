@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', './Restriction', './Query'], function (_export, _context) {
+System.register(['lodash', './Query'], function (_export, _context) {
     "use strict";
 
-    var _, Restriction, Query, _createClass, Control, RemoveControl, AddControl, AddNestedControl;
+    var _, Query, _createClass, Control, RemoveControl, AddControl, AddNestedControl;
 
     function _possibleConstructorReturn(self, call) {
         if (!self) {
@@ -38,8 +38,6 @@ System.register(['lodash', './Restriction', './Query'], function (_export, _cont
     return {
         setters: [function (_lodash) {
             _ = _lodash.default;
-        }, function (_Restriction) {
-            Restriction = _Restriction.Restriction;
         }, function (_Query) {
             Query = _Query.Query;
         }],
@@ -72,12 +70,12 @@ System.register(['lodash', './Restriction', './Query'], function (_export, _cont
 
                 _createClass(Control, [{
                     key: 'action',
-                    value: function action(query, clause) {
+                    value: function action() /* query, clause */{
                         throw new Error("Method action(...) not implemented");
                     }
                 }, {
                     key: 'filter',
-                    value: function filter(query, clause) {
+                    value: function filter() /* query, clause */{
                         throw new Error("Method filter(...) not implemented");
                     }
                 }]);

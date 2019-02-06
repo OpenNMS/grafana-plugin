@@ -66,6 +66,46 @@ describe('OpenNMSPMDatasource', function () {
     });
   });
 
+  describe('relaxed mode', function () {
+    var query = {
+      range: { from: 'now-1h', to: 'now' },
+      targets: [{
+        type: "attribute",
+        nodeId: '1',
+        resourceId: 'nodeSnmp[]',
+        attribute: 'does-not-exist',
+        aggregation: 'AVERAGE'
+      }],
+      interval: '1s'
+    };
+
+    var response = {
+      "step": 300000,
+      "start": 1424211730000,
+      "end": 1424226130000,
+      "timestamps": [1424211730001],
+      "labels": ["loadavg1"],
+      "columns": [{
+        "values": [NaN]
+      }]
+    };
+
+    it('should filter series that contain only NaNs', function (done) {
+      ctx.backendSrv.datasourceRequest = function (request) {
+        return ctx.$q.when({
+          _request: request,
+          status: 200,
+          data: response
+        });
+      };
+
+      ctx.ds.query(query).then(function (result) {
+        expect(result.data).to.have.length(0);
+        done();
+      });
+    });
+  });
+
   describe('testing for connectivity', function () {
     it('should make a request to /rest/info', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {

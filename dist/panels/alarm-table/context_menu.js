@@ -36,7 +36,7 @@ System.register([], function (_export, _context) {
   function contextMenuAsDirective() {
     'use strict';
 
-    return ["$parse", "$q", "$sce", function ($parse, $q, $sce) {
+    return ["$parse", "$q", function ($parse, $q) {
 
       var _contextMenus = [];
       // Contains the element that was clicked to show the context menu
@@ -121,7 +121,7 @@ System.register([], function (_export, _context) {
         }
 
         $li.append(optionText);
-      };
+      }
 
       /**
        * Process each individual item
@@ -143,14 +143,13 @@ System.register([], function (_export, _context) {
         // if first item in the item array is a function then invoke .call()
         // if first item is a string, then text should be the string.
 
-        var text = DEFAULT_ITEM_TEXT;
         var currItemParam = angular.extend({}, params);
         currItemParam.nestedMenu = nestedMenu;
         currItemParam.enabled = isOptionEnabled(currItemParam);
         currItemParam.text = createAndAddOptionText(currItemParam);
 
         registerCurrentItemEvents(currItemParam);
-      };
+      }
 
       /*
        * Registers the appropriate mouse events for options if the item is enabled.
@@ -235,7 +234,7 @@ System.register([], function (_export, _context) {
           });
           $li.addClass('disabled');
         }
-      };
+      }
 
       /**
        * @param params - an object containing the `item` parameter
@@ -281,12 +280,14 @@ System.register([], function (_export, _context) {
         /// <summary>Render context menu recursively.</summary>
 
         // Destructuring:
+        var options = params.options;
+        /*
         var $scope = params.$scope;
         var event = params.event;
-        var options = params.options;
         var modelValue = params.modelValue;
         var level = params.level;
         var customClass = params.customClass;
+        */
 
         // Initialize the container. This will be passed around
         var $ul = initContextMenuContainer(params);
@@ -320,7 +321,7 @@ System.register([], function (_export, _context) {
         $(document).find('body').append($ul);
 
         doAfterAllPromises(params);
-      };
+      }
 
       /**
        * calculate if drop down menu would go out of screen at left or bottom
@@ -381,11 +382,11 @@ System.register([], function (_export, _context) {
             if (leftCoordinate > menuWidth && winWidth - leftCoordinate - padding < menuWidth) {
               leftCoordinate = winWidth - menuWidth - padding;
             } else if (winWidth - leftCoordinate < menuWidth) {
-              var reduceThresholdX = 5;
-              if (leftCoordinate < reduceThresholdX + padding) {
-                reduceThresholdX = leftCoordinate + padding;
+              var _reduceThresholdX = 5;
+              if (leftCoordinate < _reduceThresholdX + padding) {
+                _reduceThresholdX = leftCoordinate + padding;
               }
-              leftCoordinate = winWidth - menuWidth - reduceThresholdX - padding;
+              leftCoordinate = winWidth - menuWidth - _reduceThresholdX - padding;
             }
           }
 
@@ -396,7 +397,7 @@ System.register([], function (_export, _context) {
             top: topCoordinate + 'px'
           });
         });
-      };
+      }
 
       /**
        * Creates the container of the context menu (a <ul> element),
@@ -442,7 +443,7 @@ System.register([], function (_export, _context) {
         } else {
           return true;
         }
-      };
+      }
 
       function isTouchDevice() {
         return 'ontouchstart' in window || navigator.maxTouchPoints; // works on most browsers | works on IE10/11 and Surface
@@ -481,7 +482,7 @@ System.register([], function (_export, _context) {
         }
       }
 
-      function removeAllContextMenus(e) {
+      function removeAllContextMenus() {
         $(document.body).off('mousedown', removeOnOutsideClickEvent);
         $(document).off('scroll', removeOnScrollEvent);
         $(_clickedElement).removeClass('context');

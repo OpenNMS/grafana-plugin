@@ -121,7 +121,7 @@ var FlowDatasource = exports.FlowDatasource = function () {
     }
   }, {
     key: 'annotationQuery',
-    value: function annotationQuery(options) {
+    value: function annotationQuery() /* options */{
       return this.q.when([]);
     }
 
@@ -152,7 +152,7 @@ var FlowDatasource = exports.FlowDatasource = function () {
     }
   }, {
     key: 'metricFindExporterNodes',
-    value: function metricFindExporterNodes(query) {
+    value: function metricFindExporterNodes() /* query */{
       return this.client.getExporters().then(function (exporters) {
         var results = [];
         _lodash2.default.each(exporters, function (exporter) {

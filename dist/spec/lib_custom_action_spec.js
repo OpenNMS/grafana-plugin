@@ -1,14 +1,11 @@
 'use strict';
 
-System.register(['lodash', '../opennms', '../lib/custom_action'], function (_export, _context) {
+System.register(['../opennms', '../lib/custom_action'], function (_export, _context) {
   "use strict";
 
-  var _, Model, CustomAction, getMatch;
-
+  var Model, CustomAction, getMatch;
   return {
-    setters: [function (_lodash) {
-      _ = _lodash.default;
-    }, function (_opennms) {
+    setters: [function (_opennms) {
       Model = _opennms.Model;
     }, function (_libCustom_action) {
       CustomAction = _libCustom_action.CustomAction;

@@ -51,7 +51,7 @@ System.register(['lodash', '../../../opennms', '../UI', './ClauseMapping'], func
                     key: 'getApiFilter',
                     value: function getApiFilter(uiFilter) {
                         // Ensure we can migrate
-                        if (!uiFilter instanceof UI.Filter) {
+                        if (!(uiFilter instanceof UI.Filter)) {
                             throw new TypeError("uiFilter is not of type UI.Filter.");
                         }
 
@@ -70,7 +70,7 @@ System.register(['lodash', '../../../opennms', '../UI', './ClauseMapping'], func
                 }, {
                     key: 'getUiFilter',
                     value: function getUiFilter(apiFilter) {
-                        if (!apiFilter instanceof API.Filter) {
+                        if (!(apiFilter instanceof API.Filter)) {
                             throw new TypeError("apiFilter is not of type API.Filter");
                         }
 

@@ -43,11 +43,12 @@ var MemoEditorCtrl = exports.MemoEditorCtrl = function () {
         } else {
           return ds.saveJournal($scope.alarm.id, $scope.memoBody);
         }
-      }).then(function (res) {
+      }).then(function () {
         $scope.actionInProgress = false;
         self.refresh();
       }).catch(function (err) {
         $scope.actionInProgress = false;
+        console.warn('Failed to save memo.', err);
         self.refresh();
       });
     };
@@ -60,11 +61,12 @@ var MemoEditorCtrl = exports.MemoEditorCtrl = function () {
         } else {
           return ds.deleteJournal($scope.alarm.id);
         }
-      }).then(function (res) {
+      }).then(function () {
         $scope.actionInProgress = false;
         self.refresh();
       }).catch(function (err) {
         $scope.actionInProgress = false;
+        console.warn('Failed to delete memo.', err);
         self.refresh();
       });
     };
