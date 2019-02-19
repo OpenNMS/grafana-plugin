@@ -123,7 +123,7 @@ var OpenNMSDatasource = exports.OpenNMSDatasource = function () {
       return request
       // Convert the results to the expected format
       .then(function (response) {
-        if (response.status < 200 || response.start >= 300) {
+        if (response.status < 200 || response.status >= 300) {
           console.warn('Response code:', response);
           return self.$q.reject(response);
         }
