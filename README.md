@@ -66,6 +66,7 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 - Labels are now shown in the order they were queried
 - Labels can now be formatted using transformation functions like
   `nodeToLabel(<foreignSource:foreignId>)` and `resourceToName(<resourceId>)`
+  (Horizon 24 or greater)
 - Measurements API requests are now made in `relaxed` mode (if the server
   is missing a particular requested attribute, all others are still returned)
 
@@ -83,7 +84,7 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
   box in the config options -- existing configs should be automatically upgraded
 - Added support for reordering columns in the Alarm Table panel
 - Added support for Situations (correlated alarms), including sending feedback on
-  alarm correlations (requires Horizon 23 or greater)
+  alarm correlations (Horizon 23 or greater)
 - Added limited support for multi-select dashboard variables in the Alarm Table panel
 - Added a custom `node` attribute in the Alarm Table panel that supports node criteria
   (either passing a `nodeId` or `foreignSource:foreignId` tuple)
