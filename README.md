@@ -56,15 +56,40 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ### v3.0.0
 
+#### General
+
+- Improved error messages for incomplete or invalid queries
+
+#### Performance Data Source
+
+- Added support for overriding time intervals and max datapoints
+- Labels are now shown in the order they were queried
+- Labels can now be formatted using transformation functions like
+  `nodeToLabel(<foreignSource:foreignId>)` and `resourceToName(<resourceId>)`
+- Measurements API requests are now made in `relaxed` mode (if the server
+  is missing a particular requested attribute, all others are still returned)
+
+#### Flow Data Source
+
+- Added additional transforms for flow data (`toBits`, `onlyIngress`, `onlyEgress`)
+- The Flow Deep Dive dashboard axis labels have been updated to be more intuitive
+
+#### Fault Management Data Source
+
+- Sorting by numeric columns now works as expected
+- HTML alarm (event) log messages are now rendered properly
+- Alarm multi-select and deselect now works as expected
 - "Severity" in the Alarm Table panel is now a normal column, rather than a "Severity icons" check
   box in the config options -- existing configs should be automatically upgraded
 - Added support for reordering columns in the Alarm Table panel
-- Added support for Situations (correlated alarms), including sending feedback on alarm correlations
-- Added support for overriding time intervals and max datapoints
-- Improved error messages for incomplete or invalid queries
-- Added additional transforms for flow data (`toBits`, `onlyIngress`, `onlyEgress`)
-- Added support for multi-select dashboard variables in the Alarm Table panel
+- Added support for Situations (correlated alarms), including sending feedback on
+  alarm correlations (requires Horizon 23 or greater)
+- Added limited support for multi-select dashboard variables in the Alarm Table panel
 - Added a custom `node` attribute in the Alarm Table panel that supports node criteria
+  (either passing a `nodeId` or `foreignSource:foreignId` tuple)
+- Many enhancements were made to the Alarm Detail view
+  (full raw response viewing, related alarms, etc.)
+- It is now possible to display dates as a relative time in the Alarm Table panel
 
 ### v2.0.0
 
