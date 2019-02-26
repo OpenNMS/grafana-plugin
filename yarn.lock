@@ -3123,6 +3123,11 @@ parent-module@^1.0.0:
   dependencies:
     callsites "^3.0.0"
 
+parenthesis@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/parenthesis/-/parenthesis-3.1.5.tgz#077d0738bb6f65d951b9f9b7c438f2aabe965c6e"
+  integrity sha512-9KbfUp3+gD0MIl4AGfLBwVNvcPf1fokUJtYxql511chVNnS8DrYFazqBfZDqD4GV76XUhQbbxmZJPPOsV4GIbw==
+
 parse-glob@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/parse-glob/-/parse-glob-3.0.4.tgz#b2c376cfb11f35513badd173ef0bb6e3a388391c"
