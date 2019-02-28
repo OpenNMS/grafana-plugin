@@ -62,5 +62,5 @@ docker run -p 3000:3000 myhelm:snapshot
 To build the Docker image the following conventions for build arguments are set:
 
 * OPENNMS_HELM_PKG: the name of the tarball archive in dist/packages
-* GRAFANA_VERSION: The version number of Grafana, default is `latest``
+* GRAFANA_VERSION: The version number of Grafana, default is `latest`
 * OPENNMS_HELM_VERSION: Used as in label `org.opennms.helm.version` in the Docker image to identify the running version
