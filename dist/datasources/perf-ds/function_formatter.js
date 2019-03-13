@@ -1,9 +1,9 @@
 'use strict';
 
-System.register([], function (_export, _context) {
+System.register(['../../parenthesis/index'], function (_export, _context) {
     "use strict";
 
-    var _slicedToArray, _createClass, FUNCTION_MATCH, ARGUMENT_MATCH, FunctionFormatter;
+    var parse, _slicedToArray, _createClass, ARGUMENT_MATCH, isString, getLast, FunctionFormatter;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -12,7 +12,9 @@ System.register([], function (_export, _context) {
     }
 
     return {
-        setters: [],
+        setters: [function (_parenthesisIndex) {
+            parse = _parenthesisIndex.default;
+        }],
         execute: function () {
             _slicedToArray = function () {
                 function sliceIterator(arr, i) {
@@ -70,8 +72,20 @@ System.register([], function (_export, _context) {
                 };
             }();
 
-            FUNCTION_MATCH = /(\w+)\(([^\)]*)\)/g;
             ARGUMENT_MATCH = /\s*,\s*/;
+
+            isString = function isString(value) {
+                return typeof value === 'string' || value instanceof String;
+            };
+
+            getLast = function getLast(arr) {
+                if (arr) {
+                    if (Array.isArray(arr) && arr.length > 0) {
+                        return arr[arr.length - 1];
+                    }
+                }
+                return undefined;
+            };
 
             _export('FunctionFormatter', FunctionFormatter = function () {
                 function FunctionFormatter() {
@@ -79,22 +93,38 @@ System.register([], function (_export, _context) {
                 }
 
                 _createClass(FunctionFormatter, null, [{
+                    key: 'parenthesize',
+                    value: function parenthesize(label) {
+                        return FunctionFormatter._process(parse(label, {
+                            brackets: ['()']
+                        }));
+                    }
+                }, {
+                    key: 'parenthesizeWithArguments',
+                    value: function parenthesizeWithArguments(label) {
+                        var parenthesized = FunctionFormatter.parenthesize(label);
+                        return parenthesized.map(function (entry) {
+                            if (entry && entry.arguments) {
+                                if (entry.arguments.length < 2) {
+                                    entry.arguments = FunctionFormatter.getArguments(entry.arguments[0]);
+                                } else {
+                                    console.log('unexpected arguments, expected a single string:', entry);
+                                }
+                            }
+                            return entry;
+                        });
+                    }
+                }, {
                     key: 'findFunctions',
                     value: function findFunctions(label) {
-                        var match = void 0,
-                            ret = [];
-                        while ((match = FUNCTION_MATCH.exec(label)) !== null) {
-                            ret.push({
-                                name: match[1],
-                                arguments: FunctionFormatter.getArguments(match[2])
-                            });
-                        }
-                        return ret;
+                        return FunctionFormatter.parenthesizeWithArguments(label).filter(function (entry) {
+                            return entry && entry.name !== undefined;
+                        });
                     }
                 }, {
                     key: 'getArguments',
                     value: function getArguments(args) {
-                        var argsString = args === null ? '' : args.trim();
+                        var argsString = args === undefined || args === null ? '' : args;
                         if (argsString.length === 0) {
                             return [];
                         }
@@ -104,18 +134,29 @@ System.register([], function (_export, _context) {
                 }, {
                     key: 'replace',
                     value: function replace(label, replacements) {
-                        var match = void 0;
-                        var ret = label;
-                        while ((match = FUNCTION_MATCH.exec(label)) !== null) {
-                            var func = match[1],
-                                args = FunctionFormatter.getArguments(match[2]);
-                            if (replacements.hasOwnProperty(func)) {
-                                var result = replacements[func].apply(replacements[func], args);
-                                ret = ret.replace(match[0], result);
+                        var parenthesized = FunctionFormatter.parenthesizeWithArguments(label);
+
+                        var ret = '';
+                        parenthesized.forEach(function (token) {
+                            if (isString(token)) {
+                                // just a regular scalar
+                                ret += token;
+                            } else if (token.name) {
+                                // potential function, check against replacements
+                                if (replacements && replacements.hasOwnProperty(token.name)) {
+                                    ret += replacements[token.name].apply(replacements[token.name], token.arguments);
+                                } else {
+                                    // not a matching function, just put it back
+                                    ret += token.name + '(';
+                                    if (token.arguments) {
+                                        ret += token.arguments.join(', ');
+                                    }
+                                    ret += ')';
+                                }
                             } else {
-                                console.warn('LabelFormatter.replace: unhandled function ' + func);
+                                console.log('this should not happen... token=', token);
                             }
-                        }
+                        });
                         return ret;
                     }
                 }, {
@@ -157,6 +198,94 @@ System.register([], function (_export, _context) {
                                 return partialResourceId ? [criteriaOrResourceId, partialResourceId].join('.') : criteriaOrResourceId;
                             }
                         });
+                    }
+                }, {
+                    key: '_process',
+                    value: function _process(args) {
+                        var ret = [];
+                        var matcher = /^(.*?)(\w+?)\($/;
+                        var skip = false;
+                        args.forEach(function (arg, index) {
+                            if (skip) {
+                                skip = false;
+                                return;
+                            }
+                            var prev = ret.length ? ret[ret.length - 1] : undefined;
+                            var next = args[index + 1];
+
+                            var match = void 0;
+                            if (Array.isArray(arg)) {
+                                ret.push(FunctionFormatter._process(arg));
+                            } else if ((match = matcher.exec(arg)) !== null) {
+                                var prefix = match[1];
+                                if (prefix && prefix.length > 0) {
+                                    if (prefix.startsWith(')') && prev && prev.name) {
+                                        prefix = prefix.replace(/^\)/, '');
+                                    }
+                                    ret.push(prefix);
+                                }
+                                ret.push({
+                                    name: match[2],
+                                    arguments: FunctionFormatter._process(next)
+                                });
+                                skip = true;
+                            } else if (isString(arg) && arg.startsWith(')') && prev && prev.name) {
+                                var replacement = arg.replace(/^\)/, '');
+                                if (replacement.length > 0) {
+                                    ret.push(replacement);
+                                }
+                            } else {
+                                ret.push(arg);
+                            }
+                        });
+                        return FunctionFormatter._flatten(ret);
+                    }
+                }, {
+                    key: '_flatten',
+                    value: function _flatten(args) {
+                        var ret = [];
+                        args.forEach(function (arg) {
+                            if (isString(arg)) {
+                                if (arg.length === 0) {
+                                    return;
+                                }
+                                var prev = getLast(ret);
+                                // argument is a string-part of the parsed label
+                                if (isString(prev)) {
+                                    ret[ret.length - 1] += arg;
+                                } else {
+                                    ret.push(arg);
+                                }
+                            } else if (arg && arg.arguments) {
+                                // argument is a function, whose arguments may be flattenable as well
+                                arg.arguments = FunctionFormatter._flatten(arg.arguments);
+                                ret.push(arg);
+                            } else if (Array.isArray(arg)) {
+                                // argument is sub-parens that need further flattening
+                                var result = FunctionFormatter._flatten(arg);
+                                result.forEach(function (res) {
+                                    var prev = getLast(ret);
+                                    if (isString(res)) {
+                                        if (res.trim().length === 0) {
+                                            return;
+                                        }
+                                        if (isString(prev)) {
+                                            ret[ret.length - 1] += res;
+                                        } else {
+                                            ret.push(res);
+                                        }
+                                    } else if (res && res.arguments) {
+                                        // argument is a function
+                                        ret.push(res);
+                                    } else {
+                                        throw new Error('cannot reach here');
+                                    }
+                                });
+                            } else {
+                                throw new Error('cannot reach here');
+                            }
+                        });
+                        return ret;
                     }
                 }, {
                     key: '_getNodeFromCriteria',
