@@ -33,6 +33,10 @@ module.exports = function(grunt) {
         src: 'node_modules/crypto-js/md5.js',
         dest: 'vendor/crypto-js/md5.js'
       },
+      parenthesis_to_vendor: {
+        src: 'node_modules/parenthesis/index.js',
+        dest: 'vendor/parenthesis/index.js'
+      },
       vendor_to_dist: {
         cwd: 'vendor',
         expand: true,

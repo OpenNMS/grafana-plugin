@@ -10,6 +10,90 @@ const FUNCS = {
 };
 
 describe('OpenNMSPMDatasource :: LabelFormatter', () => {
+    describe('parenthesize', () => {
+        it('no parentheses', () => {
+            const parsed = FunctionFormatter.parenthesize('this is just a string');
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(1);
+            expect(parsed).to.deep.equal([
+                'this is just a string'
+            ]);
+        });
+        it('simple()', () => {
+            const parsed = FunctionFormatter.parenthesize('simple()');
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(1);
+            expect(parsed).to.deep.equal([
+                {
+                    name: 'simple',
+                    arguments: []
+                }
+            ]);
+        });
+        it('nestedParens((foo) or (bar))', () => {
+            const parsed = FunctionFormatter.parenthesize('nestedParens((foo) or (bar))');
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(1);
+            expect(parsed).to.deep.equal([
+                {
+                    name: 'nestedParens',
+                    arguments: ['(foo) or (bar)']
+                }
+            ]);
+        });
+        it('prefix nestedParens((yah)) and anotherNested((foo) or (bar)) or something', () => {
+            const parsed = FunctionFormatter.parenthesize('prefix nestedParens((yah)) and anotherNested((foo) or (bar), baz) or something');
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(5);
+            expect(parsed).to.deep.equal([
+                'prefix ',
+                {
+                    name: 'nestedParens',
+                    arguments: ['(yah)']
+                },
+                ' and ',
+                {
+                    name: 'anotherNested',
+                    arguments: ['(foo) or (bar), baz']
+                },
+                ' or something'
+            ]);
+        });
+        /*
+        it('outerFunction(nestedFunction(withArgs))', () => {
+            const parsed = FunctionFormatter.parenthesize('outerFunction(nestedFunction(withArgs))');
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(1);
+            expect(parsed).to.deep.equal([
+                {
+                    name: 'outerFunction',
+                    arguments: [{
+                        name: 'nestedFunction',
+                        arguments: ['withArgs']
+                    }]
+                }
+            ]);
+        });
+        it('outerFunction(nestedFunction(withArgs), (foo) (bar))', () => {
+            const parsed = FunctionFormatter.parenthesize('outerFunction(nestedFunction(withArgs), (foo) (bar))', true);
+            expect(parsed).to.exist;
+            expect(parsed.length).to.equal(1);
+            expect(parsed).to.deep.equal([
+                {
+                    name: 'outerFunction',
+                    arguments: [
+                        {
+                            name: 'nestedFunction',
+                            arguments: ['withArgs']
+                        },
+                        '(foo) (bar)'
+                    ]
+                }
+            ]);
+        });
+        */
+    });
+
     describe('findFunctions()', () => {
         it('find a simple function with no arguments', () => {
             const found = FunctionFormatter.findFunctions('simpleFunction()');
@@ -59,6 +143,61 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
                 }
             ]);
         });
+        it('find multiple functions with parens inside them', () => {
+            const found = FunctionFormatter.findFunctions('foo((bar) or (baz), uh-huh) yo(something)');
+            expect(found).to.exist;
+            expect(found.length).to.equal(2);
+            expect(found).to.deep.equal([
+                {
+                    name: 'foo',
+                    arguments: ['(bar) or (baz)', 'uh-huh'],
+                },
+                {
+                    name: 'yo',
+                    arguments: ['something'],
+                },
+            ]);
+        });
+        it('HELM-131', () => {
+            const found = FunctionFormatter.findFunctions('nodeFilter((nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’))');
+            expect(found).to.exist;
+            expect(found.length).to.equal(1);
+            expect(found).to.deep.equal([
+                {
+                    name: 'nodeFilter',
+                    arguments: ['(nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’)'],
+                },
+            ]);
+        });
+        /*
+        it('find multiple recursive functions with arguments', () => {
+            const found = FunctionFormatter.findFunctions('complexFunction(simpleFunction(foo), bar, baz), anotherThing(extraThing(recursiveThing($nodes)))');
+            expect(found).to.exist;
+            expect(found.length).to.equal(5);
+            expect(found).to.deep.equal([
+                {
+                    name: 'simpleFunction',
+                    arguments: ['foo']
+                },
+                {
+                    name: 'complexFunction',
+                    arguments: ['simpleFunction(foo)', 'bar', 'baz']
+                },
+                {
+                    name: 'recursiveThing',
+                    arguments: ['$nodes']
+                },
+                {
+                    name: 'extraThing',
+                    arguments: ['recursiveThing($nodes)']
+                },
+                {
+                    name: 'anotherThing',
+                    arguments: ['extraThing(recursiveThing($nodes))']
+                }
+            ]);
+        });
+        */
     });
 
     describe('replace()', () => {
@@ -90,6 +229,12 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
             const res = FunctionFormatter.replace('exclamationer(Hey)  insulter(Bob, jerk)', FUNCS);
             expect(res).to.equal('Hey!!!  Bob is a total jerk!');
         });
+        /*
+        it('handles nested parentheses', () => {
+            const res = FunctionFormatter.replace('exclamationer((foo) or (bar))  insulter((baz) (monkey(shoe)) (this is raw parentheses), jerk)', FUNCS, true);
+            expect(res).to.equal('(foo) or (bar)!!!  (baz) (monkey(shoe)) (this is raw parentheses) is a total jerk!');
+        });
+        */
     });
 
     const metadata = {
