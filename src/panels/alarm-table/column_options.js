@@ -19,6 +19,7 @@ export class ColumnOptionsCtrl {
       {text: 'Row', value: 'row'},
     ];
     this.columnTypes = [
+      {text: 'Checkbox', value: 'checkbox'},
       {text: 'Number', value: 'number'},
       {text: 'String', value: 'string'},
       {text: 'Date', value: 'date'},

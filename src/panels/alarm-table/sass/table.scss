@@ -75,6 +75,11 @@ $padding-large: 0.50em;
   margin-bottom: $padding-small;
 }
 
+td.onms-checkbox {
+  padding-left: 10px;
+  /* font-size: larger; */
+}
+
 .severity-icon {
   padding-left: 10px;
   margin-left: -5px;
