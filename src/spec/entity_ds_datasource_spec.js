@@ -5,7 +5,6 @@ import {UI} from '../datasources/entity-ds/UI';
 import {API} from 'opennms';
 import {Mapping} from '../datasources/entity-ds/Mapping';
 import AlarmEntity from '../datasources/entity-ds/AlarmEntity';
-import {FilterCloner} from '../datasources/entity-ds/FilterCloner';
 import {OpenNMSEntityDatasource as Datasource} from '../datasources/entity-ds/datasource';
 import {ClientDelegate} from '../lib/client_delegate';
 
@@ -175,43 +174,13 @@ describe("OpenNMS_Entity_Datasource", function() {
                 // Simulate persisting and reloading
                 const serialized = JSON.stringify(apiFilter);
                 const deserialized = JSON.parse(serialized);
-                const cloned = new FilterCloner().cloneFilter(deserialized);
+                const cloned = API.Filter.fromJson(deserialized);
 
                 // Now try to map it to an ui filter
                 const uiFilter = mapping.getUiFilter(cloned);
                 expect(uiFilter.getQueryString()).to.eql("select all alarms where alarmAckUser = 'Administrator' and (severity >= 'WARNING')");
             });
         });
-
-    });
-
-    describe('FilterCloner', function() {
-
-        let apiFilter = new API.Filter()
-            .withClause(new API.Clause(new API.Restriction('key', API.Comparators.EQ, 'value'), API.Operators.AND))
-            .withClause(new API.Clause(new API.Restriction('key2', API.Comparators.EQ, 'value2'), API.Operators.AND))
-            .withClause(new API.Clause(new API.NestedRestriction()
-                .withClause(new API.Clause(new API.Restriction("key3", API.Comparators.NE, "value3"), API.Operators.OR)), API.Operators.AND));
-
-        it('should clone already initialized', function(done) {
-            const otherFilter = new FilterCloner().cloneFilter(apiFilter);
-            expect(apiFilter).to.eql(otherFilter);
-
-            done();
-        });
-
-        it('should clone', function(done) {
-            const jsonString = JSON.stringify(apiFilter);
-            const object = JSON.parse(jsonString);
-            expect(object).not.to.be.an.instanceof(API.Filter);
-
-            const filterObject = new FilterCloner().cloneFilter(object);
-            expect(filterObject).to.be.an.instanceof(API.Filter);
-            expect(apiFilter).to.eql(filterObject);
-
-            done();
-        });
-
 
     });
 

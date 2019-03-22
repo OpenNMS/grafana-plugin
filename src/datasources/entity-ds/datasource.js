@@ -1,7 +1,6 @@
 import {ClientDelegate} from '../../lib/client_delegate';
 import {FunctionFormatter} from '../../lib/function_formatter';
 import {API, Model} from 'opennms';
-import {FilterCloner} from './FilterCloner';
 import _ from 'lodash';
 import AlarmEntity from './AlarmEntity';
 import NodeEntity from './NodeEntity';
@@ -74,7 +73,7 @@ export class OpenNMSEntityDatasource {
   // (otherwise substitution would happen in original query,
   // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
   buildQuery(filter, options) {
-      var clonedFilter = new FilterCloner().cloneFilter(filter);
+      var clonedFilter = API.Filter.fromJson(filter);
 
       // Before replacing any variables, add a global time range restriction (which is hidden to the user)
       if (options && options.enforceTimeRange) {
