@@ -1,0 +1,48 @@
+<div class="editor-row filter-panel">
+    <div class="section gf-form-group">
+        <h5 class="section-heading">Filter Columns:</h5>
+        <div class="gf-form column-reorder filter-column" ng-repeat="column in editor.panel.columns" id="column-{{$index}}" draggable="true">
+            <div class="gf-form-inline gf-form-label">
+                <i class="pointer fa fa-remove" ng-click="editor.removeColumn(column, $index)"></i>
+                <span class="onms-label width-10">{{column.text}}</span>
+                <div class="onms-radio-group">
+                    <span class="radio-item">
+                        <input type="radio" id="radio-{{$index}}-single" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'single'" ng-change="ctrl.typeChanged(column, $index)">
+                        <label for="radio-{{$index}}-single">Single</label>
+                    </span>
+                    <span class="radio-item">
+                        <input type="radio" id="radio-{{$index}}-multi" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'multi'" ng-change="ctrl.typeChanged(column, $index)">
+                        <label for="radio-{{$index}}-multi">Multi</label>
+                    </span>
+                    <span class="radio-item">
+                        <input type="radio" id="radio-{{$index}}-text" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'text'" ng-change="ctrl.typeChanged(column, $index)">
+                        <label for="radio-{{$index}}-text">Text</label>
+                    </span>
+                </div>
+                <span class="onms-label width-20"><span ng-if="column.entityType">{{column.entityType.label}} entity in </span>{{column.datasource}}</span>
+            </div>
+        </div>
+        <div class="gf-form">
+            <div class="gf-form">
+                <span class="gf-form-label width-8">Data source</span>
+                <div class="gf-form-select-wrapper">
+                    <select class="gf-form-input gf-size-auto"
+                        ng-model="current.datasource"
+                        ng-change="editor.updateCurrent()"
+                        ng-options="f.value for f in datasources track by f.name"
+                        required>
+                        <option value="" ng-if="false"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="gf-form-select-wrapper" ng-if="current.datasourceType === 'opennms-helm-entity-datasource'">
+                <select class="gf-form-input gf-size-auto"
+                        ng-model="current.entityType"
+                        ng-change="editor.updateCurrent()"
+                        ng-options="type as type.label for type in editor.entityTypes track by type.id">
+                </select>
+            </div>
+            <metric-segment segment="editor.addColumnSegment" get-options="editor.getColumnOptions()" on-change="editor.addColumn()"></metric-segment>
+        </div>
+    </div>
+</div>

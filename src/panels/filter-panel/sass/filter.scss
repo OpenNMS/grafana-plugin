@@ -1,0 +1,36 @@
+.filter-panel {
+  &.panel-columns.submenu-controls {
+    margin-left: -10px;
+  }
+
+  .filter-column {
+    .gf-form-inline {
+      display: table;
+      > * {
+        display: table-cell;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .onms-label {
+    padding-left: 5px;
+  }
+
+  .onms-radio-group {
+    .radio-item {
+      display: inline-block;
+      input {
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      label {
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+      }
+    }
+  }
+}

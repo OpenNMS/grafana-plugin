@@ -9,7 +9,19 @@ const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
 };
 
-export const entityTypes = [ 'alarm', 'node' ];
+export const entityTypes = [
+    {
+        id: 'alarm',
+        label: 'Alarms',
+        queryFunction: 'alarms',
+    },
+    {
+        id: 'node',
+        label: 'Nodes',
+        queryFunction: 'nodes',
+    },
+];
+
 export const getEntity = (e, client, datasource) => {
     if (!e) {
         return null;
@@ -26,13 +38,14 @@ export const getEntity = (e, client, datasource) => {
 
 export class OpenNMSEntityDatasource {
   /** @ngInject */
-  constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
+  constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv, dashboardSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
+    this.dashboardSrv = dashboardSrv;
     this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv, $q);
 
     // When enabled in the datasource, the grafana user should be used instead of the datasource username on
@@ -58,7 +71,7 @@ export class OpenNMSEntityDatasource {
       let entity = getEntity(entityType, this.opennmsClient, this);
       if (!entity) {
         console.error('Unable to determine entity from entity type', entityType);
-        entity = new AlarmEntity(this.opennmsClient);
+        entity = new AlarmEntity(this.opennmsClient, this);
       }
 
       options.enforceTimeRange = true;
@@ -73,15 +86,16 @@ export class OpenNMSEntityDatasource {
   // (otherwise substitution would happen in original query,
   // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
   buildQuery(filter, options) {
-      var clonedFilter = API.Filter.fromJson(filter);
+      const clonedFilter = API.Filter.fromJson(filter);
 
       // Before replacing any variables, add a global time range restriction (which is hidden to the user)
+      // This behavior should probably be _in_ the entity, but... ¯\_(ツ)_/¯
       if (options && options.enforceTimeRange) {
           if (!options.entity || options.entity.type === 'alarm') {
-            clonedFilter.withAndRestriction(
-                new API.NestedRestriction()
-                    .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from"))
-                    .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
+              clonedFilter.withAndRestriction(new API.NestedRestriction()
+                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from"))
+                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to"))
+              );
           }
       }
 
@@ -105,7 +119,7 @@ export class OpenNMSEntityDatasource {
     if (restriction.attribute === 'node') {
         if (restriction.value.indexOf(':') > 0) {
             if (restriction.comparator.id !== API.Comparators.EQ.id) {
-                console.log('WARNING: Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
+                console.warn('Using a comparator other than EQ will probably not work as expected with a foreignSource:foreignId node criteria.');
             }
             const nodeCriteria = restriction.value.split(':');
             const replacement = new API.NestedRestriction(
@@ -118,7 +132,7 @@ export class OpenNMSEntityDatasource {
         } else if (restriction.value === '{}') {
             return true;
         } else {
-            console.log('WARNING: found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
+            console.warn('found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.',restriction);
         }
     } 
     return false;
@@ -234,10 +248,10 @@ export class OpenNMSEntityDatasource {
   }
 
   _getQueryEntity(query) {
-      const q = query && query.query ? query.query : query;
+    const q = query && query.hasOwnProperty('query') ? query.query : query;
     if (q === undefined || q === null || q.trim().length === 0) {
         console.log('_getQueryEntity: no query defined, assuming "alarm" entity type.');
-        return new AlarmEntity(this.opennmsClient);
+        return new AlarmEntity(this.opennmsClient, this);
     }
 
     try {
