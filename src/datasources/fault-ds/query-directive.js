@@ -23,7 +23,7 @@ angular.module('grafana.directives')
         $scope.query.updateControls();
 
         $scope.findOperators = function(attribute) {
-            return datasource.metricFindQuery({'find': 'comparators', 'attribute': attribute})
+            return datasource.metricFindQuery(attribute, { queryType: 'comparators' })
                 .then(function(comparators) {
                     // the API.Comparator.id or API.Comparator.label fields cannot be used.
                     comparators = _.filter(comparators, function(comparator) {
@@ -41,7 +41,7 @@ angular.module('grafana.directives')
 
             // attribute input
             if (segment.type == 'key' || segment.type == 'plus-button') {
-                return datasource.metricFindQuery({find: "attributes", strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'})
+                return datasource.metricFindQuery(null, {queryType: 'attributes', strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'})
                     .then(function(properties) {
                         let segments = _.map(properties, function(property) {
                             var segment = uiSegmentSrv.newKey(property.id);
@@ -79,7 +79,7 @@ angular.module('grafana.directives')
 
             // condition input
             if (segment.type === 'condition') {
-                return this.datasource.metricFindQuery({find: 'operators'}).then(function(operators) {
+                return this.datasource.metricFindQuery(null, {queryType: 'operators'}).then(function(operators) {
                     return _.map(operators, function(operator) {
                         return uiSegmentSrv.newCondition(operator.label);
                     });

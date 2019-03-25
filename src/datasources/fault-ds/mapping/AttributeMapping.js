@@ -6,7 +6,8 @@ export class AttributeMapping {
             'location': 'location.locationName',
             'service': 'serviceType.name',
             'category': 'category.name',
-            'ipAddress': 'ipAddr',
+            'ipAddr': 'ipInterface.ipAddress',
+            'ipAddress': 'ipInterface.ipAddress',
             'severity': 'severity'
         };
     }

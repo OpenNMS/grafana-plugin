@@ -217,13 +217,14 @@ export class OpenNMSFMDatasource {
     return this.q.when([]);
   }
 
-  metricFindQuery(query) {
-    if (!query || !query.find) {
-        return this.q.when([]);
-    }
+  metricFindQuery(query, optionalOptions) {
+    const options = optionalOptions || {};
+    const attribute = new Mapping.AttributeMapping().getApiAttribute(query);
+    console.log('fault-ds: metricFindQuery:', attribute, options);
 
-    if (query.find === "attributes") {
-        if (query.strategy === 'featured') {
+    // special case queries to fill in metadata
+    if (options.queryType === 'attributes') {
+        if (options.strategy === 'featured') {
             const featuredAttributes = _.map(_.sortBy(FeaturedAttributes), (attribute) => {
                 return {id: attribute}
             });
@@ -231,27 +232,27 @@ export class OpenNMSFMDatasource {
         }
         // assume all
         return this.alarmClient.getProperties();
-    }
-    if (query.find === "comparators") {
-        const attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
+    } else if (options.queryType === 'comparators') {
         return this.alarmClient.getPropertyComparators(attribute);
-    }
-    if (query.find == 'values') {
-        return this.searchForValues(query);
-    }
-    if (query.find === 'operators') {
+    } else if (options.queryType === 'operators') {
         return this.alarmClient.findOperators();
     }
-    return this.q.when([]);
+
+    if (attribute === undefined || attribute === null || attribute === '') {
+        console.log('fault-ds: metricFindQuery: no attribute specified');
+        return this.q.when([]);
+    }
+
+    return this.searchForValues(attribute).then(values => {
+        console.log('fault-ds: searchForValues:', values);
+        return values;
+    });
   }
 
-  searchForValues(query) {
-      let attribute = new Mapping.AttributeMapping().getApiAttribute(query.attribute);
-      if (attribute === 'ipAddr') {
-          attribute = 'ipInterface.ipAddress';
-      }
+  searchForValues(attribute) {
+      console.log('fault-ds: searchForValues: ' + attribute);
       if (attribute === 'isSituation' || attribute === 'isInSituation' || attribute === 'isAcknowledged') {
-        return this.q.when([{ id: 'false', label: 'false'}, {id: 'true', label: 'true'}]);
+        return this.q.when([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}]);
       }
       return this.alarmClient.findProperty(attribute)
           .then(property => {
@@ -272,7 +273,7 @@ export class OpenNMSFMDatasource {
               }
               return property.findValues({limit: 1000}).then(values => {
                   return values.filter(value => value !== null).map(value => {
-                      return {id: value, label: value}
+                      return {id: value, label: value, text: value, value: value}
                   });
               });
           });
