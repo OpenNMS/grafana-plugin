@@ -4,7 +4,7 @@ import kbn from 'app/core/utils/kbn';
 
 import {Model} from '../../opennms';
 
-moment.updateLocale('en-short', {
+moment.defineLocale('en-short', {
   parentLocale: 'en',
   relativeTime: {
     future: "+%s",
