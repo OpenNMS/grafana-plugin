@@ -25,7 +25,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-_moment2.default.updateLocale('en-short', {
+_moment2.default.defineLocale('en-short', {
   parentLocale: 'en',
   relativeTime: {
     future: "+%s",

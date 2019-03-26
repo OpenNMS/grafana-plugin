@@ -40,7 +40,7 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], fun
         };
       }();
 
-      moment.updateLocale('en-short', {
+      moment.defineLocale('en-short', {
         parentLocale: 'en',
         relativeTime: {
           future: "+%s",
