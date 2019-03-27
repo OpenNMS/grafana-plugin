@@ -2,6 +2,8 @@ import { TableRenderer } from "./renderer"
 import md5 from 'crypto-js/md5';
 import {Model} from 'opennms';
 
+import Tagify from '@yaireo/tagify';
+
 const compareStrings = (a, b) => {
   return (a || b) ? (!a ? -1 : !b ? 1 : a.localeCompare(b)) : 0;
 };
@@ -16,11 +18,14 @@ export class AlarmDetailsCtrl {
     this.editFeedback = false;
     $scope.editor = { index: 0 };
 
-    this.CORRECT_OUTLINED = "/public/plugins/opennms-helm-app/img/if_icon-ios7-checkmark-outline_211714.png";
-    this.CORRECT_FILLED = "/public/plugins/opennms-helm-app/img/if_icon-ios7-checkmark_211715.png";
+    this.CORRECT_OUTLINED = "btn feedback-button feedback-button";
+    this.CORRECT_FILLED = "btn feedback-button feedback-button-correct";
 
-    this.INCORRECT_OUTLINED = "/public/plugins/opennms-helm-app/img/if_icon-close_211652.png";
-    this.INCORRECT_FILLED = "/public/plugins/opennms-helm-app/img/if_icon-close-circled_211650.png";
+    this.INCORRECT_OUTLINED = "btn feedback-button feedback-button";
+    this.INCORRECT_FILLED = "btn feedback-button feedback-button-incorrect";
+
+    this.ROOT_CAUSE_NO = "btn feedback-button feedback-button";
+    this.ROOT_CAUSE_YES = "btn feedback-button feedback-button-root-cause";
 
     // Save the alarm
     $scope.alarm = $scope.$parent.alarm;
@@ -62,6 +67,13 @@ export class AlarmDetailsCtrl {
     if ($scope.ticketingEnabled) {
       $scope.tabs.push('Ticketing');
     }
+
+    // Feedback Tags
+    $scope.feedbackTags = new Set([]);
+    $scope.feedbackTagsInput = document.querySelector('input[name=tags]');
+    // init Tagify script on the above inputs
+    $scope.tagify = new Tagify();
+
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
       $scope.tabs.push('Related Alarms');
@@ -118,6 +130,18 @@ export class AlarmDetailsCtrl {
     return button;
   }
 
+  detailFeedbackRootCauseButton(reductionKey) {
+    let button = this.ROOT_CAUSE_NO;
+    if (this.isRootCause(reductionKey)) {
+      button = this.ROOT_CAUSE_YES;
+    }
+    return button;
+  }
+
+  getFeedbackTags() {
+    return this.$scope.feedbackTags;
+  }
+
   initalizeFeeback() {
     this.$scope.feedbackCorrectCount = 0;
     this.$scope.feedbackIncorrectCount = 0;
@@ -129,11 +153,22 @@ export class AlarmDetailsCtrl {
       alarmFeedback.alarmKey = alarm.reductionKey;
       alarmFeedback.feedbackType = Model.FeedbackTypes.CORRECT;
       alarmFeedback.reason = "ALL_CORRECT";
+      alarmFeedback.rootCause = false;
+      alarmFeedback.tags = [];
       alarmFeedback.user = this.contextSrv.user.login;
       feedback.push(alarmFeedback);
       this.$scope.feedbackCorrectCount++;
     }
     return feedback;
+  }
+
+  isRootCause(reductionKey) {
+    for (let feedback of this.$scope.situationFeedback) {
+      if (feedback.alarmKey === reductionKey) {
+        return feedback.rootCause;
+      }
+    }
+    return false;
   }
 
   markIncorrect(reductionKey) {
@@ -158,10 +193,23 @@ export class AlarmDetailsCtrl {
     }
   }
 
+  markRootCause(reductionKey, wasRootCause) {
+    let isRootCause = !wasRootCause; // marking or unmarking inverts the previous state
+    for (let feedback of this.$scope.situationFeedback) {
+      if (feedback.alarmKey === reductionKey) {
+        feedback.rootCause = isRootCause;
+      } else if (isRootCause) { // if we are making this alarm the root cause, all others are not
+        feedback.rootCause = false;
+      }
+    }
+
+  }
+
   submitEditedFeedback(form) {
     for (let feedback of this.$scope.situationFeedback) {
       if (form) {
         feedback.reason = form.reason;
+        feedback.tags = form.tags.split(" ");
       }
     }
     this.submitFeedback(this.$scope.situationFeedback);
@@ -189,7 +237,11 @@ export class AlarmDetailsCtrl {
         if (fb.alarmKey === ifb.alarmKey)
           ifb = fb;
       }
+      for (let tag of fb.tags) {
+        this.$scope.feedbackTags.add(tag);
+      }
     }
+    this.$scope.tagify.addTags(this.$scope.feedbackTags);
   }
 
   editSituationFeedback() {
@@ -230,6 +282,51 @@ export class AlarmDetailsCtrl {
       }
     });
   }
+
+  showSelectionModal(label, columns, search, callback) {
+    // var scope = this.$scope.$new();
+
+    // scope.label = label;
+    // scope.columns = columns;
+    // scope.search = search;
+
+    // scope.result = this.$q.defer();
+    // scope.result.promise.then(callback);
+
+    // var modal = this.$modal({
+    //   template: 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/modal.selection.html',
+    //   persist: false,
+    //   show: false,
+    //   scope: scope,
+    //   keyboard: false
+    // });
+    // this.$q.when(modal).then(function (modalEl) { modalEl.modal('show'); });
+  }
+
+  addAlarmQuery() {
+    var self = this;
+    this.showSelectionModal("alarms", {
+      'Node': 'node',
+      'Description': 'description',
+      'Severity': 'dseverity'
+    }, function () {
+      return "";
+      /* self.datasource
+        .getAvailableFilters()
+        .then(function (results) {
+          return {
+            'count': results.data.length,
+            'totalCount': results.data.length,
+            'rows': results.data
+          };
+        });
+        */
+    }, function (filter) {
+      self.target.filter = filter;
+      // self.targetBlur('filter');
+    });
+  }
+
 }
 
 /** @ngInject */

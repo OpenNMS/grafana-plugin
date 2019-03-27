@@ -108,7 +108,7 @@
                 <thead class="alarm-details-header">
                     <th colspan="2">Label</th>
                     <th>Log Message</th>
-                    <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
+                    <th ng-if="editFeedback" colspan="3" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody ng-repeat-start="node in relatedAlarms">
                     <tr class="alarm-details-node-spacer"><td colspan="{{editFeedback? 5 : 3 }}"><!-- {{node.label + ' / ' + node.$index}} --></td></tr>
@@ -125,17 +125,27 @@
                         </td>
                         <td severity>{{summary.label}}</td>
                         <td severity ng-bind-html="summary.logMessage"></td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
-                            <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
+                        <td ng-if="editFeedback" ng-class="feedback-button-td" width="60px">
+                            <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markCorrect(summary.reductionKey)">Related</button>
                         </td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
-                            <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="22" width="22" />
+                        <td ng-if="editFeedback" ng-class="feedback-button-td" width="60px">
+                            <div style="width: 100%; height: 100%;">
+                                <button type="button" class="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markIncorrect(summary.reductionKey)">Not related</button>
+                            </div>
                         </td>
+                        <td ng-if="editFeedback" ng-class="feedback-button-td" width="60px">
+                            <div style="width: 100%; height: 100%;">
+                                <button type="button" class="{{ctrl.detailFeedbackRootCauseButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markRootCause(summary.reductionKey, ctrl.isRootCause(summary.reductionKey))">Root Cause</button>
+                            </div>
+                       </td>
                     </tr>
                 </tbody>
-                <tbody class="severity">
+                <tbody ng-repeat-end class="feedback-table">
                     <tr ng-if="editFeedback">
-                        <td colspan="3" class="text-right">Tally</td>
+                        <td colspan="3" class="text-right feedback-button">Tally</td>
                         <td class="text-center feedback-button">{{feedbackCorrectCount}}</td>
                         <td class="text-center feedback-button">{{feedbackIncorrectCount}}</td>
                     </tr>
@@ -145,7 +155,27 @@
             <div ng-if="submittedFeedback">
                 Feedback Submitted.
             </div>
+
             <div ng-if="editFeedback">
+                <div class="gf-from-group">
+                    <div class="gf-form">
+                        <button class="btn btn-secondary gf-form-btn" ng-click="{{ctrl.addAlarmQuery()}}" ng-hide="ctrl.datasourceInstance.meta.mixed">
+                            Add Alarm
+                        </button>
+                    </div>
+                </div>
+                <div class="gf-from-group">
+                    testing tagify wrapper
+                    <tagify [settings]="settings"
+                            (add)="onAdd($event)"
+                            (remove)="onRemove($event)">
+                    </tagify>
+                </div>
+                <div class="gf-from-group">
+                    <div class="gf-form">
+                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.tags" value="{{ctrl.getFeedbackTags()}}" placeholder="Add tags...">
+                    </div>
+                </div>
                 <div class="gf-from-group">
                     <div class="gf-form">
                         <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.reason" placeholder="Enter an optional comment">
@@ -158,7 +188,8 @@
                     <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Re-submit Feedback...</a>
             </div>
             <div ng-if="situationFeebackEnabled && !editFeedback && !hasSituationFeedback" class="text-right">
-                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Submit Feedback...</a>
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Provide Feedback...</a>
             </div>
     </div>
 </div>
+
