@@ -309,18 +309,21 @@ System.register(['./constants', './interpolate', 'lodash', './function_formatter
         }, {
           key: 'buildQuery',
           value: function buildQuery(options) {
+            var maxDataPoints = options.maxDataPoints || 300;
+            var intervalMs = options.intervalMs || 60 * 1000;
+
             var self = this,
                 start = options.range.from.valueOf(),
                 end = options.range.to.valueOf(),
-                step = Math.floor((end - start) / options.maxDataPoints);
-            step = step < options.intervalMs ? options.intervalMs : step;
+                step = Math.floor((end - start) / maxDataPoints);
+            step = step < intervalMs ? intervalMs : step;
 
             var query = {
               "start": start,
               "end": end,
               "step": step,
               "relaxed": true, // enable relaxed mode, which allows for missing attributes
-              "maxrows": options.maxDataPoints,
+              "maxrows": maxDataPoints,
               "source": [],
               "expression": []
             };

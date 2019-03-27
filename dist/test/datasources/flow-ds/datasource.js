@@ -186,9 +186,9 @@ var FlowDatasource = exports.FlowDatasource = function () {
   }], [{
     key: 'toTable',
     value: function toTable(table) {
-      var columns = _lodash2.default.map(table.headers, function (column) {
+      var columns = table && table.headers ? _lodash2.default.map(table.headers, function (column) {
         return { "text": column };
-      });
+      }) : [];
 
       return [{
         "columns": columns,

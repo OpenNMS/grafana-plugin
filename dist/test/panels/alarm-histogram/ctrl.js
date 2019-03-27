@@ -36,17 +36,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
     _inherits(AlarmHistogramCtrl, _MetricsPanelCtrl);
 
-    function AlarmHistogramCtrl($scope, $injector) {
+    function AlarmHistogramCtrl($scope, $injector, $timeout) {
         _classCallCheck(this, AlarmHistogramCtrl);
 
         var _this = _possibleConstructorReturn(this, (AlarmHistogramCtrl.__proto__ || Object.getPrototypeOf(AlarmHistogramCtrl)).call(this, $scope, $injector));
 
         _this.scope = $scope;
+        _this.$timeout = $timeout;
+
+        _this._renderRetries = 0;
 
         _lodash2.default.defaults(_this.panel, {
             groupProperty: 'acknowledged',
             direction: 'horizontal'
         });
+
+        _this.retryTimes = 10; // number of times to retry
+        _this.retryDelay = 100; // milliseconds, how long to wait to retry
 
         _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
         _this.events.on('data-received', _this.onDataReceived.bind(_this));
@@ -133,15 +139,27 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
     }, {
         key: "onRender",
         value: function onRender() {
-            // Size handling
-            if (this.elem.width() === 0) {
-                return true;
-            }
+            var _this2 = this;
 
-            var height = this.ctrl.height || this.ctrl.panel.height || this.ctrl.row.height;
+            var height = this.ctrl.height || this.ctrl.panel.height || this.ctrl.row && this.ctrl.row.height;
             if (_lodash2.default.isString(height)) {
                 height = parseInt(height.replace('px', ''), 10);
             }
+
+            if (this.elem.width() === 0 || height === 0 || height === undefined) {
+                if (this._renderRetries > this.retryTimes) {
+                    console.log('onRender: still unable to determine height, and we ran out of retries');
+                    return false;
+                }
+                this._renderRetries++;
+
+                console.log('onRender: unable to determine height, retrying again in ' + this.retryDelay + 'ms');
+                this.$timeout(function () {
+                    _this2.onRender();
+                }, this.retryDelay);
+                return true;
+            }
+
             height -= 5; // padding
             height -= this.ctrl.panel.title ? 24 : 9; // subtract panel title bar
 
@@ -214,7 +232,8 @@ var AlarmHistogramCtrl = function (_MetricsPanelCtrl) {
 
             for (var i = 0; i < data.length; i++) {
                 var columnIndex = _lodash2.default.findIndex(data[i].columns, { text: column });
-                for (var j = 0; j < data[i].rows.length; j++) {
+                var rows = data[i] && data[i].rows ? data[i].rows : [];
+                for (var j = 0; j < rows.length; j++) {
                     result.push(data[i].rows[j][columnIndex]);
                 }
             }

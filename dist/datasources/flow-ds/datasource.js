@@ -202,9 +202,9 @@ System.register(['lodash', '../../lib/client_delegate'], function (_export, _con
         }], [{
           key: 'toTable',
           value: function toTable(table) {
-            var columns = _.map(table.headers, function (column) {
+            var columns = table && table.headers ? _.map(table.headers, function (column) {
               return { "text": column };
-            });
+            }) : [];
 
             return [{
               "columns": columns,
