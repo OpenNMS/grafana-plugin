@@ -54,6 +54,14 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v3.0.1
+
+- Updated a ton of dependencies, there are now 0 warnings from `yarn audit` ([HELM-138](https://issues.opennms.org/browse/HELM-138))
+- Fixes for running under Grafana 6 ([HELM-132](https://issues.opennms.org/browse/HELM-132))
+- A fix for parsing nested parentheses when using label formatters ([HELM-131](https://issues.opennms.org/browse/HELM-131))
+- Fixed relative date formatter initialization ([HELM-134](https://issues.opennms.org/browse/HELM-134)) (Thanks,  Brynjar!)
+- Includes bug fixes from [OpenNMS.js v1.3.1](https://github.com/OpenNMS/opennms-js/releases/tag/v1.3.1)
+
 ### v3.0.0
 
 #### General
