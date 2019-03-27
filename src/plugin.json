@@ -36,7 +36,7 @@
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaVersion": "5.x.x",
+    "grafanaVersion": ">=5.0.0",
     "plugins": []
   }
 }

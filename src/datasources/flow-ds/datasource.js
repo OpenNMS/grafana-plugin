@@ -150,9 +150,9 @@ export class FlowDatasource {
   }
 
   static toTable(table) {
-    let columns = _.map(table.headers, column => {
+    let columns = table && table.headers ? _.map(table.headers, column => {
       return {"text": column}
-    });
+    }) : [];
 
     return [
       {
