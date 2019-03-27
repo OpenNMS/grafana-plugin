@@ -9,15 +9,21 @@ import "../../jquery.flot.categories";
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
 
-    constructor($scope, $injector) {
+    constructor($scope, $injector, $timeout) {
         super($scope, $injector);
 
         this.scope = $scope;
+        this.$timeout = $timeout;
+
+        this._renderRetries = 0;
 
         _.defaults(this.panel, {
             groupProperty: 'acknowledged',
             direction: 'horizontal',
         });
+
+        this.retryTimes = 10; // number of times to retry
+        this.retryDelay = 100; // milliseconds, how long to wait to retry
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('data-received', this.onDataReceived.bind(this));
@@ -107,15 +113,25 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
     }
 
     onRender() {
-        // Size handling
-        if (this.elem.width() === 0) {
-            return true;
-        }
-
-        let height = this.ctrl.height || this.ctrl.panel.height || this.ctrl.row.height;
+        let height = this.ctrl.height || this.ctrl.panel.height || (this.ctrl.row && this.ctrl.row.height);
         if (_.isString(height)) {
             height = parseInt(height.replace('px', ''), 10);
         }
+
+        if (this.elem.width() === 0 || height === 0 || height === undefined) {
+            if (this._renderRetries > this.retryTimes) {
+                console.log('onRender: still unable to determine height, and we ran out of retries');
+                return false;
+            }
+            this._renderRetries++;
+
+            console.log('onRender: unable to determine height, retrying again in ' + this.retryDelay + 'ms');
+            this.$timeout(() => {
+                this.onRender();
+            }, this.retryDelay);
+            return true;
+        }
+
         height -= 5; // padding
         height -= this.ctrl.panel.title ? 24 : 9; // subtract panel title bar
 
@@ -190,8 +206,9 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
         let result = [];
 
         for (let i = 0; i < data.length; i++) {
-            let columnIndex = _.findIndex(data[i].columns, {text: column});
-            for (let j = 0; j < data[i].rows.length; j++) {
+            const columnIndex = _.findIndex(data[i].columns, {text: column});
+            const rows = data[i] && data[i].rows ? data[i].rows : [];
+            for (let j = 0; j < rows.length; j++) {
                 result.push(data[i].rows[j][columnIndex]);
             }
         }
