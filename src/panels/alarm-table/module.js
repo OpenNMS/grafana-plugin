@@ -38,6 +38,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       targets: [{}],
       transform: 'table',
       pageSize: 5,
+      pagingPausesRefresh: false,
       showHeader: true,
       styles: [
         {
@@ -175,8 +176,6 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   issueQueries(datasource) {
-    this.pageIndex = 0;
-
     if (this.panel.transform === 'annotations') {
       if (this.setTimeQueryStart) this.setTimeQueryStart();
       return this.annotationsSrv
@@ -199,8 +198,25 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   onDataReceived(dataList) {
-    this.dataRaw = dataList;
-    this.pageIndex = 0;
+    this.newDataRaw = dataList;
+
+    if (!this.panel.pagingPausesRefresh || this.pageIndex === 0 || !this.dataRaw || this.dataRaw.length === 0) {
+      this.updateData();
+    }
+
+    this.render();
+  }
+
+  refreshData() {
+    this.updateData();
+    this.scope.$evalAsync(() => {
+      this.render();
+    });
+  }
+
+  updateData() {
+    this.dataRaw = this.newDataRaw;
+    delete this.newDataRaw;
 
     // automatically correct transform mode based on data
     if (this.dataRaw && this.dataRaw.length) {
@@ -216,8 +232,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         }
       }
     }
-
-    this.render();
+    this.pageIndex = 0;
   }
 
   render() {
@@ -327,9 +342,16 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         paginationList.append(pageLinkElem);
       }
 
+      if (ctrl.newDataRaw) {
+        paginationList.append($('<li><a class="table-panel-page-refresh pointer" name="refresh"><i class="fa fa-refresh" aria-hidden="true"></i> refresh</a></li>'));
+      }
       footerElem.append(paginationList);
     }
 
+    function refreshData() {
+      ctrl.refreshData();
+    }
+  
     function renderPanel() {
       const panelElem = elem.parents('.panel-content');
       const rootElem = elem.find('.table-panel-scroll');
@@ -364,9 +386,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     elem.on('click', '.table-panel-page-link', switchPage);
     elem.on('click', '.table-panel-filter-link', addFilterClicked);
+    elem.on('click', '.table-panel-page-refresh', refreshData);
 
     const unbindDestroy = scope.$on('$destroy', function () {
+      elem.off('click', '.table-panel-page-link');
       elem.off('click', '.table-panel-filter-link');
+      elem.off('click', '.table-panel-page-refresh');
       unbindDestroy();
     });
 
