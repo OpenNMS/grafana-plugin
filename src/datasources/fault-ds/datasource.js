@@ -271,7 +271,7 @@ export class OpenNMSFMDatasource {
                       }));
               }
               return property.findValues({limit: 1000}).then(values => {
-                  return values.map(value => {
+                  return values.filter(value => value !== null).map(value => {
                       return {id: value, label: value}
                   });
               });
