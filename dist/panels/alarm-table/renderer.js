@@ -201,6 +201,16 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], fun
               };
             }
 
+            if (column.style.type === 'checkbox') {
+              return function (v) {
+                // coerce the value into a boolean
+                var checked = ('' + v).match(/^(true|t|y|yes)$/i) !== null;
+
+                // then turn the value to an icon
+                return checked ? '\u2713' : '';
+              };
+            }
+
             return function (value) {
               return _this.defaultCellFormatter(value, column.style);
             };
@@ -322,11 +332,14 @@ System.register(['lodash', 'moment', 'app/core/utils/kbn', '../../opennms'], fun
 
               for (var i = 0; i < this.table.columns.length; i++) {
                 var columnClasses = [];
+                var col = this.table.columns[i];
                 if (this.panel.severity === 'column') {
-                  var col = this.table.columns[i];
                   if (col && col.style && col.style.type === 'severity') {
                     columnClasses.push(severity);
                   }
+                }
+                if (col && col.style && col.style.type === 'checkbox') {
+                  columnClasses.push('onms-checkbox');
                 }
                 cellHtml += this.renderCell(i, row[i], y === startPos, columnClasses);
               }

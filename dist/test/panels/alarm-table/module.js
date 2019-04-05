@@ -82,6 +82,10 @@ var AlarmTableCtrl = function (_MetricsPanelCtrl) {
         pattern: 'Severity',
         displayAs: 'icon'
       }, {
+        type: 'checkbox',
+        pattern: '/^Is /',
+        width: '9em'
+      }, {
         type: 'date',
         pattern: '/.*Time/', // Render all "* Time" columns as date, e.g. "Last Event Time", "First Event Time", etc.
         dateFormat: 'YYYY-MM-DD HH:mm:ss'
