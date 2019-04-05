@@ -170,6 +170,16 @@ export class TableRenderer {
       };
     }
 
+    if (column.style.type === 'checkbox') {
+      return v => {
+        // coerce the value into a boolean
+        const checked = (''+v).match(/^(true|t|y|yes)$/i) !== null;
+
+        // then turn the value to an icon
+        return checked ? '\u2713' : '';
+      };
+    }
+
     return (value) => {
       return this.defaultCellFormatter(value, column.style);
     };
@@ -313,11 +323,14 @@ export class TableRenderer {
 
       for (let i = 0; i < this.table.columns.length; i++) {
         let columnClasses = [];
+        const col = this.table.columns[i];
         if (this.panel.severity === 'column') {
-          const col = this.table.columns[i];
           if (col && col.style && col.style.type === 'severity') {
             columnClasses.push(severity);
           }
+        }
+        if (col && col.style && col.style.type === 'checkbox') {
+          columnClasses.push('onms-checkbox');
         }
         cellHtml += this.renderCell(i, row[i], y === startPos, columnClasses);
       }

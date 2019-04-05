@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 const FeaturedAttributes = [
     "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
-    "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
+    "isAcknowledged", "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
     "service", "severity", "situationAlarmCount", "uei"
 ];
 
@@ -250,7 +250,7 @@ export class OpenNMSFMDatasource {
       if (attribute === 'ipAddr') {
           attribute = 'ipInterface.ipAddress';
       }
-      if (attribute === 'isSituation' || attribute === 'isInSituation') {
+      if (attribute === 'isSituation' || attribute === 'isInSituation' || attribute === 'isAcknowledged') {
         return this.q.when([{ id: 'false', label: 'false'}, {id: 'true', label: 'true'}]);
       }
       return this.alarmClient.findProperty(attribute)
@@ -271,7 +271,7 @@ export class OpenNMSFMDatasource {
                       }));
               }
               return property.findValues({limit: 1000}).then(values => {
-                  return values.map(value => {
+                  return values.filter(value => value !== null).map(value => {
                       return {id: value, label: value}
                   });
               });
@@ -284,7 +284,7 @@ export class OpenNMSFMDatasource {
             "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
             "Type", "Description", "Location", "Log Message", "Reduction Key",
             "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
-            "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address",
+            "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "Is Acknowledged",
             "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
             "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
             "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
@@ -337,6 +337,7 @@ export class OpenNMSFMDatasource {
                 alarm.suppressedUntil,
                 alarm.suppressedBy,
                 alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
+                !_.isNil(alarm.ackUser) && !_.isNil(alarm.ackTime),
 
                 // Event
                 alarm.firstEventTime,
@@ -400,6 +401,7 @@ export class OpenNMSFMDatasource {
                 // Store the ticketerConfig here
                 "ticketerConfig": metadata.ticketerConfig
             };
+
             return row;
         });
 
