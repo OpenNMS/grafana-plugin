@@ -352,7 +352,8 @@ $details-header-font-weight: 500;
   }
   
   .feedback-button-td {
-    padding: 0 0;
+    display: table-cell;
+    padding: 0 0 0 0 !important;
   }
 
   .feedback-button-div {
