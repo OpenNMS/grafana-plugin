@@ -2,16 +2,12 @@ import { TableRenderer } from "./renderer"
 import md5 from 'crypto-js/md5';
 import {Model} from 'opennms';
 
-import Tagify from '../../yaireo/tagify/tagify';
-// require('../../yaireo/tagify/tagify.service.ts');
-
 const compareStrings = (a, b) => {
   return (a || b) ? (!a ? -1 : !b ? 1 : a.localeCompare(b)) : 0;
 };
 
 export class AlarmDetailsCtrl {
   /** @ngInject */
-//  constructor($scope, backendSrv, contextSrv, datasourceSrv, tagifyService) {
   constructor($scope, backendSrv, contextSrv, datasourceSrv) {
     this.$scope = $scope;
     this.backendSrv = backendSrv;
@@ -62,13 +58,6 @@ export class AlarmDetailsCtrl {
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
     $scope.feebackButton = this.CORRECT_OUTLINED;
-    $scope.tagArray =  [
-      { text: 'just' },
-      { text: 'some' },
-      { text: 'cool' },
-      { text: 'tags' }
-    ];
-    $scope.feedback_tags = $scope.tagArray;
 
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
@@ -78,16 +67,7 @@ export class AlarmDetailsCtrl {
     }
 
     // Feedback Tags
-    $scope.feedbackTags = new Set([]);
-    $scope.feedbackTagsInput = document.querySelector('input[name=feeedbackTags]');
-    // init Tagify script on the above inputs
-    // $scope.tagify = document.querySelector('input[name=feeedbackTags]'),
-    //   tagified = new Tagify($scope.tagify,
-    //     {
-    //       whitelist : ["A# .NET", "A# (Axiom)", "A-0 System"],
-    //       blacklist : ['fuck', 'shit']
-    //     });
-
+    $scope.existingFeedbackTags = new Set([]);
 
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
@@ -151,14 +131,6 @@ export class AlarmDetailsCtrl {
       button = this.ROOT_CAUSE_YES;
     }
     return button;
-  }
-
-  getFeedbackTags() {
-    var tagsStr = '';
-    for (let t of this.$scope.feedbackTags) {
-      tagsStr += t + " ";
-    }
-    return tagsStr;
   }
 
   initalizeFeeback() {
@@ -228,15 +200,11 @@ export class AlarmDetailsCtrl {
     }
   }
 
-  onTagifyAdd(event) {
-    //banana
-    console.log(event);
-  }
   submitEditedFeedback(form) {
     for (let feedback of this.$scope.situationFeedback) {
       if (form) {
         feedback.reason = form.reason;
-        feedback.tags = form.tags.split(" ");
+        feedback.tags = this.$scope.feedbackTags;
       }
     }
     this.submitFeedback(this.$scope.situationFeedback);
@@ -265,10 +233,9 @@ export class AlarmDetailsCtrl {
           ifb = fb;
       }
       for (let tag of fb.tags) {
-        this.$scope.feedbackTags.add(tag);
+        this.$scope.existingFeedbackTags.add(tag);
       }
     }
-    // this.$scope.tagify.addTags(this.$scope.feedbackTags);
   }
 
   editSituationFeedback() {

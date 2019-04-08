@@ -126,8 +126,8 @@
                         <td severity>{{summary.label}}</td>
                         <td severity ng-bind-html="summary.logMessage"></td>
                         <td ng-if="editFeedback" class="feedback-button-td" width="60px">
-                            <div style="height=1005;width=100%">
-                            <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
                                 ng-click="ctrl.markCorrect(summary.reductionKey)">Is Related</button>
                             </div>
                         </td>
@@ -138,7 +138,7 @@
                             </div>
                         </td>
                         <td ng-if="editFeedback" class="feedback-button-td" width="60px">
-                            <div style="width: 100%; height: 100%;">
+                            <div class="feedback-button-div">
                                 <button type="button" class="{{ctrl.detailFeedbackRootCauseButton(summary.reductionKey)}}"
                                 ng-click="ctrl.markRootCause(summary.reductionKey, ctrl.isRootCause(summary.reductionKey))">Root Cause</button>
                             </div>
@@ -160,34 +160,13 @@
             </div>
 
             <div ng-if="editFeedback">
+                <div class="gf-from-group">
+                    <bootstrap-tagsinput  ng-model="ctrl.$scope.feedbackTags"
+                        tagClass="gf-form-input ng-pristine ng-valid ng-empty ng-touched"
+                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" placeholder="Tags...">
+                    </bootstrap-tagsinput>
+                </div>
 
-                <div class="gf-from-group">
-                    feedback-taglifys---
-                    <feeedbackTags name="feedbackTags" class="gf-form-input ng-pristine ng-valid ng-empty ng-touched"
-                        [settings]="{
-                        whitelist : ['apple', 'babnana', 'crayon'],
-                        blacklist : ['fuck', 'shit']
-                      }"
-                            (add)="ctrl.onTagifyAdd($event)"
-                            (remove)="ctrl.onRemove($event)">
-                            banana
-                    </feeedbackTags>
-                    ---feedback-taglifys
-                    <p/>
-                    feedback-ngTagsInput ---
-                    <tags-input ng-model="ctrl.feedback_tags" 
-                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" placeholder="Enter input-tags">
-                        <auto-complete source="ctrl.loadTags($query)"></auto-complete>
-                        blarrch
-                    </tags-input>
-                    --- feedback-ngTagsInput
-                </div>
-                <div class="gf-from-group">
-                    <div class="gf-form">
-                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" 
-                            type="text" ng-model="feedbackForm.tags" value="{{ctrl.getFeedbackTags()}}" placeholder="Add space separated tags...">
-                    </div>
-                </div>
                 <div class="gf-from-group">
                     <div class="gf-form">
                         <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.reason" placeholder="Enter an optional comment">
@@ -196,6 +175,7 @@
                     </div>
                 </div>
             </div>
+
             <div ng-if="situationFeebackEnabled && !editFeedback && hasSituationFeedback" class="text-right">
                     <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Re-submit Feedback...</a>
             </div>
