@@ -1,6 +1,6 @@
 const ARGUMENT_MATCH = /\s*,\s*/;
 
-import parse from '../../parenthesis/index';
+import parse from 'parenthesis/index';
 
 const isString = (value) => {
     return typeof value === 'string' || value instanceof String;

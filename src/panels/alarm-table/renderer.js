@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
 
-import {Model} from '../../opennms';
+import {Model} from 'opennms';
 
 moment.defineLocale('en-short', {
   parentLocale: 'en',

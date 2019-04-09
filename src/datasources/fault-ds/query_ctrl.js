@@ -1,10 +1,10 @@
 import {QueryCtrl} from 'app/plugins/sdk';
-import './css/query-editor.css!'
+import './css/query-editor.css';
 import _ from 'lodash';
-import {API} from '../../opennms';
+import {API} from 'opennms';
 import {Mapping} from './Mapping';
 import {UI} from './UI';
-import './query-directive'
+import './query-directive';
 import {FilterCloner} from "./FilterCloner";
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
@@ -76,4 +76,3 @@ export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
 }
 
 OpenNMSFMDatasourceQueryCtrl.templateUrl = 'datasources/fault-ds/partials/query.editor.html';
-

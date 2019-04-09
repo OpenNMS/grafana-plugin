@@ -1,4 +1,4 @@
-import {API, Client, Rest} from '../opennms';
+import {API, Client, Rest} from 'opennms';
 import _ from 'lodash';
 
 let Q;

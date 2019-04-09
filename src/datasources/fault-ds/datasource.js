@@ -1,5 +1,5 @@
 import {ClientDelegate} from '../../lib/client_delegate';
-import {API, Model} from '../../opennms';
+import {API, Model} from 'opennms';
 import {FilterCloner} from './FilterCloner';
 import {Mapping} from './Mapping';
 import _ from 'lodash';

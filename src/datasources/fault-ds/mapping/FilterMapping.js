@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {API} from '../../../opennms'
+import {API} from 'opennms'
 import {UI} from '../UI';
 import {ClauseMapping} from './ClauseMapping';
 

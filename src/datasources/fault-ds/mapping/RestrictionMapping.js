@@ -5,7 +5,7 @@ import {ClauseMapping} from './ClauseMapping'
 import {AttributeMapping} from './AttributeMapping';
 import {ValueMapping} from './ValueMapping';
 import {UI} from '../UI'
-import {API} from '../../../opennms';
+import {API} from 'opennms';
 
 export class RestrictionMapping {
 

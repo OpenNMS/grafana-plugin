@@ -4,8 +4,7 @@ import $ from "jquery";
 import "jquery.flot";
 import "jquery.flot.selection";
 import "jquery.flot.crosshair";
-import "../../jquery.flot.categories";
-
+import "flot/jquery.flot.categories";
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
 

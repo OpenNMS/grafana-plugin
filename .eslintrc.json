@@ -9,6 +9,7 @@
         "$": true
     },
     "extends": "eslint:recommended",
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 2017,
         "sourceType": "module"
@@ -186,7 +187,7 @@
         "no-shadow": "off",
         "no-shadow-restricted-names": "error",
         "no-spaced-func": "off",
-        "no-sync": "error",
+        "no-sync": "warn",
         "no-tabs": "error",
         "no-template-curly-in-string": "error",
         "no-ternary": "off",
