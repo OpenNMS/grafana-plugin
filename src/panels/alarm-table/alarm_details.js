@@ -1,6 +1,7 @@
 import { TableRenderer } from "./renderer"
 import md5 from 'crypto-js/md5';
 import {Model} from 'opennms';
+import _ from 'lodash';
 
 const compareStrings = (a, b) => {
   return (a || b) ? (!a ? -1 : !b ? 1 : a.localeCompare(b)) : 0;
@@ -169,11 +170,13 @@ export class AlarmDetailsCtrl {
 
   markIncorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.CORRECT) {
-        feedback.feedbackType = Model.FeedbackTypes.FALSE_POSITIVE;
-        this.$scope.feedbackCorrectCount--;
-        this.$scope.feedbackIncorrectCount++;
-        break;
+      if (feedback.alarmKey === reductionKey) {
+        if (feedback.feedbackType == Model.FeedbackTypes.CORRECT) {
+          feedback.feedbackType = Model.FeedbackTypes.FALSE_POSITIVE;
+          this.$scope.feedbackCorrectCount--;
+          this.$scope.feedbackIncorrectCount++;
+          break;
+        }
       }
     }
   }
@@ -233,9 +236,11 @@ export class AlarmDetailsCtrl {
       this.$scope.situationFeedback[index].tags = fb.tags;
       for (let tag of fb.tags) {
         this.$scope.feedbackTags.add(tag);
+        $('#tags-input').tagsinput('add', tag);
       }
     }
-    $('tags-input').tagsinput('refresh');
+    this.$scope.retrievedFeedback = _.clone(this.$scope.situationFeedback);
+    $('#tags-input').tagsinput('refresh');
   }
 
   editSituationFeedback() {
@@ -258,7 +263,7 @@ export class AlarmDetailsCtrl {
   }
 
   cancelEditedFeedback() {
-    this.$scope.situationFeedback = this.initalizeFeeback();
+    this.$scope.situationFeedback = _.clone(this.$scope.retrievedFeedback);
     this.$scope.editFeedback = false;
     this.$scope.submittedFeedback = false;
   }
@@ -275,6 +280,12 @@ export class AlarmDetailsCtrl {
         return ds;
       }
     });
+  }
+
+  tagsTypeAhead(query) {
+    // TODO - query rest endpoint for tags on the first time and then further filter them as typing continues
+    // or hit rest endpoint each time...
+    console.log("TYPEAHEAD: " + query);
   }
 
   showSelectionModal(label, columns, search, callback) {

@@ -161,9 +161,12 @@
 
             <div ng-if="editFeedback">
                 <div class="gf-from-group">
-                    <bootstrap-tagsinput  ng-model="ctrl.$scope.feedbackTags" name="tags-input"
-                        tagClass="gf-form-input ng-pristine ng-valid ng-empty ng-touched feedback-tag-input"
-                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched feedback-tag-input" placeholder="Tags...">
+                    <bootstrap-tagsinput  ng-model="ctrl.$scope.feedbackTags" data-role="tagsinput" name="tags-input"
+                        tagClass="gf-form-input ng-pristine ng-valid ng-empty ng-touched alarm-details-table feedback-tag-element"
+                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched feedback-tag-input" 
+                        focusClass="feedback-tag-element"
+                        placeholder="Tags...">
+                        <typeahead source="ctrl.tagsTypeAhead()" />
                     </bootstrap-tagsinput>
                 </div>
 

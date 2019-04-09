@@ -386,7 +386,12 @@ $details-header-font-weight: 500;
   }
 
   .feedback-tag-input {
-    display: inline;
-    padding: 0 0;
+    display: inline !important;
+    padding: 0 0 !important;
+  }
+
+  .feedback-tag-element {
+    background-color: #262628 !important;
+    border-color: antiquewhite !important;
   }
 }
