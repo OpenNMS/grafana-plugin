@@ -67,7 +67,7 @@ export class AlarmDetailsCtrl {
     }
 
     // Feedback Tags
-    $scope.existingFeedbackTags = new Set([]);
+    $scope.feedbackTags = new Set([]);
 
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
@@ -202,9 +202,9 @@ export class AlarmDetailsCtrl {
 
   submitEditedFeedback(form) {
     for (let feedback of this.$scope.situationFeedback) {
+      feedback.tags = this.$scope.feedbackTags;
       if (form) {
         feedback.reason = form.reason;
-        feedback.tags = this.$scope.feedbackTags;
       }
     }
     this.submitFeedback(this.$scope.situationFeedback);
@@ -228,14 +228,14 @@ export class AlarmDetailsCtrl {
 
   updateFeedback(feedback) {
     for (let fb of feedback) {
-      for (let ifb of this.$scope.situationFeedback) {
-        if (fb.alarmKey === ifb.alarmKey)
-          ifb = fb;
-      }
+      const index = this.$scope.situationFeedback.findIndex(ifb => ifb.alarmKey === fb.alarmKey);
+      this.$scope.situationFeedback[index].rootCause = fb.rootCause;
+      this.$scope.situationFeedback[index].tags = fb.tags;
       for (let tag of fb.tags) {
-        this.$scope.existingFeedbackTags.add(tag);
+        this.$scope.feedbackTags.add(tag);
       }
     }
+    $('tags-input').tagsinput('refresh');
   }
 
   editSituationFeedback() {

@@ -269,12 +269,6 @@ $critical-color: #DB4345;
   font-size: .875rem !important;
 }
 
-.feedback-button {
-  text-align: center;
-  // Remove the padding adding by the dense table class. Works well for text, but not for images
-  padding-left: 0em !important;
-}
-
 .picked-up {
   opacity: 0.3;
 }
@@ -389,5 +383,10 @@ $details-header-font-weight: 500;
 
   .feedback-button-root-cause {
     background-color: #9030C0;
+  }
+
+  .feedback-tag-input {
+    display: inline;
+    padding: 0 0;
   }
 }
