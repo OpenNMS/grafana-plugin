@@ -320,50 +320,6 @@ export class AlarmDetailsCtrl {
     console.log("TYPEAHEAD: " + query);
   }
 
-  showSelectionModal(label, columns, search, callback) {
-    // var scope = this.$scope.$new();
-
-    // scope.label = label;
-    // scope.columns = columns;
-    // scope.search = search;
-
-    // scope.result = this.$q.defer();
-    // scope.result.promise.then(callback);
-
-    // var modal = this.$modal({
-    //   template: 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/modal.selection.html',
-    //   persist: false,
-    //   show: false,
-    //   scope: scope,
-    //   keyboard: false
-    // });
-    // this.$q.when(modal).then(function (modalEl) { modalEl.modal('show'); });
-  }
-
-  addAlarmQuery() {
-    var self = this;
-    this.showSelectionModal("alarms", {
-      'Node': 'node',
-      'Description': 'description',
-      'Severity': 'dseverity'
-    }, function () {
-      return "";
-      /* self.datasource
-        .getAvailableFilters()
-        .then(function (results) {
-          return {
-            'count': results.data.length,
-            'totalCount': results.data.length,
-            'rows': results.data
-          };
-        });
-        */
-    }, function (filter) {
-      self.target.filter = filter;
-      // self.targetBlur('filter');
-    });
-  }
-
 }
 
 /** @ngInject */
