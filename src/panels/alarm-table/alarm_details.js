@@ -81,6 +81,7 @@ export class AlarmDetailsCtrl {
             if (feedback && feedback.length > 0) {
               self.updateFeedback(feedback);
               $scope.hasSituationFeedback = true;
+              $scope.retrievedFeedback = self.clone($scope.situationFeedback);
             }
             $scope.situationFeedbackButton = self.situationFeedbackButton();
             $scope.situationFeebackEnabled = true;
@@ -98,6 +99,24 @@ export class AlarmDetailsCtrl {
 
     // Raw global details link
     $scope.detailsLink = $scope.alarm.detailsPage.substring(0, $scope.alarm.detailsPage.indexOf("="));
+  }
+
+  // required to correctly re-assign values of the retrieved feedback to the working feedback
+  clone(feedback) {
+    let cloned  = [];
+    for (var i = 0; i < feedback.length; i++) {
+      let fb = new Model.OnmsSituationFeedback();
+      fb.situationKey = feedback[i].situationKey;
+      fb.situationFingerprint = feedback[i].situationFingerprint;
+      fb.alarmKey = feedback[i].alarmKey;
+      fb.feedbackType = feedback[i].feedbackType;
+      fb.reason = feedback[i].reason;
+      fb.rootCause = feedback[i].rootCause;
+      fb.tags = feedback[i].tags;
+      fb.user = feedback[i].user;
+      cloned.push(fb);
+    }
+    return cloned;
   }
 
   detailFeedbackIncorrectButton(reductionKey) {
@@ -203,6 +222,18 @@ export class AlarmDetailsCtrl {
     }
   }
 
+  resetCounters() {
+    // reset the counters
+    this.$scope.feedbackCorrectCount = this.$scope.situationFeedback.length;
+    this.$scope.feedbackIncorrectCount = 0;
+    for(let fb of this.$scope.situationFeedback) {
+      if (fb.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
+        this.$scope.feedbackCorrectCount--;
+        this.$scope.feedbackIncorrectCount++;
+      }
+    }
+  }
+
   submitEditedFeedback(form) {
     for (let feedback of this.$scope.situationFeedback) {
       feedback.tags = this.$scope.feedbackTags;
@@ -234,12 +265,12 @@ export class AlarmDetailsCtrl {
       const index = this.$scope.situationFeedback.findIndex(ifb => ifb.alarmKey === fb.alarmKey);
       this.$scope.situationFeedback[index].rootCause = fb.rootCause;
       this.$scope.situationFeedback[index].tags = fb.tags;
+      this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
       for (let tag of fb.tags) {
         this.$scope.feedbackTags.add(tag);
         $('#tags-input').tagsinput('add', tag);
       }
     }
-    this.$scope.retrievedFeedback = _.clone(this.$scope.situationFeedback);
     $('#tags-input').tagsinput('refresh');
   }
 
@@ -263,9 +294,10 @@ export class AlarmDetailsCtrl {
   }
 
   cancelEditedFeedback() {
-    this.$scope.situationFeedback = _.clone(this.$scope.retrievedFeedback);
+    this.$scope.situationFeedback = this.clone(this.$scope.retrievedFeedback);
     this.$scope.editFeedback = false;
     this.$scope.submittedFeedback = false;
+    this.resetCounters();
   }
 
   fingerPrint(situation) {
