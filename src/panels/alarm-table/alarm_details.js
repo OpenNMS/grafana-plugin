@@ -59,6 +59,7 @@ export class AlarmDetailsCtrl {
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
     $scope.feebackButton = this.CORRECT_OUTLINED;
+    $scope.tagsInput = $('#tags-input');
 
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
@@ -166,6 +167,7 @@ export class AlarmDetailsCtrl {
       alarmFeedback.reason = "ALL_CORRECT";
       alarmFeedback.rootCause = false;
       alarmFeedback.tags = [];
+      alarmFeedback.timestamp = 0;
       alarmFeedback.user = this.contextSrv.user.login;
       feedback.push(alarmFeedback);
       this.$scope.feedbackCorrectCount++;
@@ -261,17 +263,23 @@ export class AlarmDetailsCtrl {
   }
 
   updateFeedback(feedback) {
-    for (let fb of feedback) {
+    // We get all feedback from the datasource.
+    // Use only the latest that matches the current relatedAlarms.
+    let sortedFeedback = _.orderBy(feedback, ['timestamp'],  ['desc']);
+    for (let fb of sortedFeedback) {
       const index = this.$scope.situationFeedback.findIndex(ifb => ifb.alarmKey === fb.alarmKey);
-      this.$scope.situationFeedback[index].rootCause = fb.rootCause;
-      this.$scope.situationFeedback[index].tags = fb.tags;
-      this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
-      for (let tag of fb.tags) {
-        this.$scope.feedbackTags.add(tag);
-        $('#tags-input').tagsinput('add', tag);
+      if (this.$scope.situationFeedback[index].timestamp < fb.timestamp) {
+        this.$scope.situationFeedback[index].rootCause = fb.rootCause;
+        this.$scope.situationFeedback[index].tags = fb.tags;
+        this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
+        this.$scope.situationFeedback[index].timestamp = fb.timestamp;
+        for (let tag of fb.tags) {
+          this.$scope.feedbackTags.add(tag);
+          this.$scope.tagsInput.tagsinput('add', tag);
+        }
       }
     }
-    $('#tags-input').tagsinput('refresh');
+    this.resetCounters();
   }
 
   editSituationFeedback() {
