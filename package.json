@@ -20,6 +20,7 @@
     "babel-cli": "^6.24.1",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
+    "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^3.5.0",
     "commander": "^2.11.0",
     "copy-webpack-plugin": "^5.0.2",

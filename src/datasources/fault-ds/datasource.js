@@ -15,7 +15,7 @@ const isNumber = function isNumber(num) {
 };
 
 export class OpenNMSFMDatasource {
-
+  /** @ngInject */
   constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;

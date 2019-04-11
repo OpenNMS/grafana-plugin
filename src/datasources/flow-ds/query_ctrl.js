@@ -7,7 +7,7 @@ import {Gfuncs} from "./flow_functions";
 import './css/query-editor.css';
 
 export class FlowDatasourceQueryCtrl extends QueryCtrl {
-
+  /** @ngInject */
   constructor($scope, $injector, uiSegmentSrv) {
     super($scope, $injector);
 

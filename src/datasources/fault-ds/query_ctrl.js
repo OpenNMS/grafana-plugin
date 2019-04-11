@@ -8,7 +8,7 @@ import './query-directive';
 import {FilterCloner} from "./FilterCloner";
 
 export class OpenNMSFMDatasourceQueryCtrl extends QueryCtrl {
-
+  /** @ngInject */
   constructor($scope, $injector, $q,uiSegmentSrv)  {
     super($scope, $injector);
     this.$q = $q;

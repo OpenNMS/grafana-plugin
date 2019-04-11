@@ -12,7 +12,6 @@ You can use the following to invoke this from a datasource:
   }
 */
 export class NRTGHandler {
-
   constructor(options, datasource) {
     this.options = options;
     this.datasource = datasource;

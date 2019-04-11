@@ -5,7 +5,7 @@ import appEvents from 'app/core/app_events';
 import _ from 'lodash';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
-
+  /** @ngInject */
   constructor($rootScope, $scope, $injector, $q, $modal) {
     super($scope, $injector);
 

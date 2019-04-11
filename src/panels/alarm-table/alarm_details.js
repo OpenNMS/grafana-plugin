@@ -7,7 +7,6 @@ const compareStrings = (a, b) => {
 };
 
 export class AlarmDetailsCtrl {
-
   /** @ngInject */
   constructor($scope, backendSrv, contextSrv, datasourceSrv) {
     this.$scope = $scope;

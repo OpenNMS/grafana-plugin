@@ -7,7 +7,7 @@ import "jquery.flot.crosshair";
 import "flot/jquery.flot.categories";
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
-
+    /** @ngInject */
     constructor($scope, $injector, $timeout) {
         super($scope, $injector);
 
