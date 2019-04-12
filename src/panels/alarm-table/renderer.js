@@ -190,6 +190,8 @@ export class TableRenderer {
   }
 
   renderCell(columnIndex, value, addWidthHack, columnClasses) {
+    const title = !_.isNil(value) && _.isString(value) ? ' title="' + value.trim().replace(/"/g, '&quot;') + '"' : '';
+
     value = this.formatColumnValue(columnIndex, value);
     let column = this.table.columns[columnIndex];
     let styles = {};
@@ -259,7 +261,7 @@ export class TableRenderer {
       classesAsString = 'class="' + classes.join(' ') + '"';
     }
 
-    return '<td ' + stylesAsString + ' ' + classesAsString + '>' + value + widthHack + '</td>';
+    return '<td ' + stylesAsString + ' ' + classesAsString + title + '>' + value + widthHack + '</td>';
   }
 
   static getIconForSeverity(severity) {
