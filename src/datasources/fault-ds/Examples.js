@@ -1,4 +1,4 @@
-import {API, Model} from '../../opennms';
+import {API, Model} from 'opennms';
 
 export class Example {
     constructor(description, apiFilter) {

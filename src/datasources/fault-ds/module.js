@@ -7,6 +7,7 @@ class OpenNMSFMDatasourceConfigCtrl {}
 OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/fault-ds/partials/config.html';
 
 class OpenNMSFMDatasourceQueryOptionsCtrl {
+  /** @ngInject */
   constructor(uiSegmentSrv) {
     this.uiSegmentSrv = uiSegmentSrv;
     this.examples = Examples;

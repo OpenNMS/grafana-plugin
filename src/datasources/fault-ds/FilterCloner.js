@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import {API} from '../../opennms'
+import {API} from 'opennms'
 
 /**
  * The filter may be reloaded from a persisted state.

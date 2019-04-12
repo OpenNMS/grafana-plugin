@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {Model} from '../../opennms';
+import {Model} from 'opennms';
 import {CustomAction} from '../../lib/custom_action';
 
 export class ActionMgr {

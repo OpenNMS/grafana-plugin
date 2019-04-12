@@ -1,4 +1,4 @@
-@import "colors";
+@import 'colors';
 
 $cell-text-color: $cell-light-color;
 $cell-border-color: $dark-2;
@@ -14,4 +14,4 @@ $alarm-details-border-color: $dark-1;
 
 $alarm-details-header: linear-gradient(135deg, #2f2f32, #262628); // from grafana _variables.dark.scss
 
-@import "table";
+@import 'table';

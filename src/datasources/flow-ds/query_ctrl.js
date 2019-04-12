@@ -4,10 +4,10 @@ import _ from 'lodash';
 import './add_opennms_func';
 import './func_editor';
 import {Gfuncs} from "./flow_functions";
-import './css/query-editor.css!';
+import './css/query-editor.css';
 
 export class FlowDatasourceQueryCtrl extends QueryCtrl {
-
+  /** @ngInject */
   constructor($scope, $injector, uiSegmentSrv) {
     super($scope, $injector);
 

@@ -1,5 +1,7 @@
-@import "ionicons";
-@import "colors";
+$ionicons-font-path: '../../../../node_modules/ionicons/fonts';
+
+@import '~ionicons/scss/ionicons';
+@import 'colors';
 
 $padding-small: 0.25em;
 $padding-large: 0.50em;

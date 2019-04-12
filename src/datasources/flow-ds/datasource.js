@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
 
 export class FlowDatasource {
-
+  /** @ngInject */
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;

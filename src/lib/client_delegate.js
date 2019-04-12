@@ -1,10 +1,10 @@
-import {API, Client, Rest} from '../opennms';
+import {API, Client, Rest} from 'opennms';
 import _ from 'lodash';
 
 let Q;
 
 export class ClientDelegate {
-
+    /** @ngInject */
     constructor(settings, backendSrv, $q) {
         this.type = settings.type;
         this.url = settings.url;

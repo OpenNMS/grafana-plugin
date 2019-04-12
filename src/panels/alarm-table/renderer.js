@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
 
-import {Model} from '../../opennms';
+import {Model} from 'opennms';
 
 moment.defineLocale('en-short', {
   parentLocale: 'en',
@@ -25,7 +25,7 @@ moment.defineLocale('en-short', {
 });
 
 export class TableRenderer {
-
+  /** @ngInject */
   constructor(panel, table, isUtc, sanitize, selectionMgr) {
     this.panel = panel;
     this.table = table;
@@ -190,6 +190,8 @@ export class TableRenderer {
   }
 
   renderCell(columnIndex, value, addWidthHack, columnClasses) {
+    const title = !_.isNil(value) && _.isString(value) ? ' title="' + value.trim().replace(/"/g, '&quot;') + '"' : '';
+
     value = this.formatColumnValue(columnIndex, value);
     let column = this.table.columns[columnIndex];
     let styles = {};
@@ -259,7 +261,7 @@ export class TableRenderer {
       classesAsString = 'class="' + classes.join(' ') + '"';
     }
 
-    return '<td ' + stylesAsString + ' ' + classesAsString + '>' + value + widthHack + '</td>';
+    return '<td ' + stylesAsString + ' ' + classesAsString + title + '>' + value + widthHack + '</td>';
   }
 
   static getIconForSeverity(severity) {
