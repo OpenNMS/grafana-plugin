@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
 
-import {Model} from '../../opennms';
+import {Model} from 'opennms';
 
 moment.defineLocale('en-short', {
   parentLocale: 'en',
@@ -25,7 +25,7 @@ moment.defineLocale('en-short', {
 });
 
 export class TableRenderer {
-
+  /** @ngInject */
   constructor(panel, table, isUtc, sanitize, selectionMgr) {
     this.panel = panel;
     this.table = table;

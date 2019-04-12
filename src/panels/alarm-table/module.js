@@ -21,7 +21,7 @@ loadPluginCss({
 const doubleClickDelay = 250;
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
-
+  /** @ngInject */
   constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, timeSrv) {
     super($scope, $injector);
     this.$rootScope = $rootScope;

@@ -12,6 +12,7 @@ const directive = () => {
 };
 
 class OnmsTimeoutCtrl {
+  /** @ngInject */
   constructor() {
       if (!this.current) {
       console.log('no current controller!');

@@ -1,4 +1,4 @@
-import {Model} from '../../opennms';
+import {Model} from 'opennms';
 
 export class TableModel {
   constructor() {

@@ -1,4 +1,5 @@
 class ModalCtrl {
+  /** @ngInject */
   constructor($scope) {
     this.$scope = $scope;
     this.query = "";

@@ -1,4 +1,4 @@
-import {Model} from '../opennms';
+import {Model} from 'opennms';
 import {CustomAction, getMatch} from '../lib/custom_action';
 
 describe('CustomAction :: getMatch', () => {

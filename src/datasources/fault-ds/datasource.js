@@ -1,5 +1,5 @@
 import {ClientDelegate} from '../../lib/client_delegate';
-import {API, Model} from '../../opennms';
+import {API, Model} from 'opennms';
 import {FilterCloner} from './FilterCloner';
 import {Mapping} from './Mapping';
 import _ from 'lodash';
@@ -15,7 +15,7 @@ const isNumber = function isNumber(num) {
 };
 
 export class OpenNMSFMDatasource {
-
+  /** @ngInject */
   constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {FunctionFormatter} from './function_formatter';
 
 export class OpenNMSDatasource {
-
+  /** @ngInject */
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;

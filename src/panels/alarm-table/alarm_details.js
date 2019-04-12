@@ -1,13 +1,12 @@
 import { TableRenderer } from "./renderer"
-import md5 from '../../crypto-js/md5';
-import {Model} from '../../opennms';
+import md5 from 'crypto-js/md5';
+import {Model} from 'opennms';
 
 const compareStrings = (a, b) => {
   return (a || b) ? (!a ? -1 : !b ? 1 : a.localeCompare(b)) : 0;
 };
 
 export class AlarmDetailsCtrl {
-
   /** @ngInject */
   constructor($scope, backendSrv, contextSrv, datasourceSrv) {
     this.$scope = $scope;
@@ -238,7 +237,7 @@ export function alarmDetailsAsDirective() {
   'use strict';
   return {
     restrict: 'E',
-    templateUrl: 'public/plugins/opennms-helm-app/panels/alarm-table/alarm_details.html',
+    templateUrl: '/public/plugins/opennms-helm-app/panels/alarm-table/alarm_details.html',
     controller: AlarmDetailsCtrl,
     bindToController: true,
     controllerAs: 'ctrl',

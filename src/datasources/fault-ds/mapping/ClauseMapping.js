@@ -1,7 +1,7 @@
 import {OperatorMapping} from './OperatorMapping';
 import {RestrictionMapping} from './RestrictionMapping';
 import {UI} from '../UI';
-import {API} from '../../../opennms'
+import {API} from 'opennms'
 
 export class ClauseMapping {
     constructor(uiSegmentSrv) {
