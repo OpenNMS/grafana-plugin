@@ -192,7 +192,7 @@ export class AlarmDetailsCtrl {
   markIncorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
       if (feedback.alarmKey === reductionKey) {
-        if (feedback.feedbackType == Model.FeedbackTypes.CORRECT) {
+        if (feedback.feedbackType.id == Model.FeedbackTypes.CORRECT.id) {
           feedback.feedbackType = Model.FeedbackTypes.FALSE_POSITIVE;
           this.$scope.feedbackCorrectCount--;
           this.$scope.feedbackIncorrectCount++;
