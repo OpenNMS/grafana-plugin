@@ -124,7 +124,7 @@ export class AlarmDetailsCtrl {
     let button = this.INCORRECT_OUTLINED;
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
-        if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
+        if (feedback.alarmKey === reductionKey && feedback.feedbackType.id === Model.FeedbackTypes.FALSE_POSITIVE.id) {
           button = this.INCORRECT_FILLED;
           break;
         }
@@ -137,7 +137,7 @@ export class AlarmDetailsCtrl {
     let button = this.CORRECT_FILLED;
     if (this.$scope.situationFeedback) {
       for (let feedback of this.$scope.situationFeedback) {
-        if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
+        if (feedback.alarmKey === reductionKey && feedback.feedbackType.id === Model.FeedbackTypes.FALSE_POSITIVE.id) {
           button = this.CORRECT_OUTLINED;
           break;
         }
@@ -204,7 +204,7 @@ export class AlarmDetailsCtrl {
 
   markCorrect(reductionKey) {
     for (let feedback of this.$scope.situationFeedback) {
-      if (feedback.alarmKey === reductionKey && feedback.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
+      if (feedback.alarmKey === reductionKey && feedback.feedbackType.id === Model.FeedbackTypes.FALSE_POSITIVE.id) {
         feedback.feedbackType = Model.FeedbackTypes.CORRECT;
         this.$scope.feedbackCorrectCount++;
         this.$scope.feedbackIncorrectCount--;
@@ -229,7 +229,7 @@ export class AlarmDetailsCtrl {
     this.$scope.feedbackCorrectCount = this.$scope.situationFeedback.length;
     this.$scope.feedbackIncorrectCount = 0;
     for(let fb of this.$scope.situationFeedback) {
-      if (fb.feedbackType === Model.FeedbackTypes.FALSE_POSITIVE) {
+      if (fb.feedbackType.id === Model.FeedbackTypes.FALSE_POSITIVE.id) {
         this.$scope.feedbackCorrectCount--;
         this.$scope.feedbackIncorrectCount++;
       }
@@ -237,8 +237,10 @@ export class AlarmDetailsCtrl {
   }
 
   submitEditedFeedback(form) {
+    const now = Date.now();
     for (let feedback of this.$scope.situationFeedback) {
       feedback.tags = this.$scope.feedbackTags;
+      feedback.timestamp = now;
       if (form) {
         feedback.reason = form.reason;
       }
