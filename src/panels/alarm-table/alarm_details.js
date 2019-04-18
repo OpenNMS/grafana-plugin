@@ -58,8 +58,9 @@ export class AlarmDetailsCtrl {
 
     // Situation Feedback
     $scope.situationFeebackEnabled = false;
+    $scope.feedbackReason = '';
+    $scope.retrievedReason = '';
     $scope.feebackButton = this.CORRECT_OUTLINED;
-    $scope.tagsInput = $('#tags-input');
 
     // Compute the tabs
     $scope.tabs = ['Overview', 'Memos'];
@@ -69,7 +70,8 @@ export class AlarmDetailsCtrl {
     }
 
     // Feedback Tags
-    $scope.feedbackTags = new Set([]);
+    $scope.feedbackTags = [];
+    $scope.retrievedTags = [];
 
     // If this is a Situation, collect any correlation feedback previously submitted
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
@@ -236,14 +238,12 @@ export class AlarmDetailsCtrl {
     }
   }
 
-  submitEditedFeedback(form) {
+  submitEditedFeedback() {
     const now = Date.now();
     for (let feedback of this.$scope.situationFeedback) {
       feedback.tags = this.$scope.feedbackTags;
       feedback.timestamp = now;
-      if (form) {
-        feedback.reason = form.reason;
-      }
+      feedback.reason = this.$scope.feedbackReason;
     }
     this.submitFeedback(this.$scope.situationFeedback);
   }
@@ -270,23 +270,27 @@ export class AlarmDetailsCtrl {
     let sortedFeedback = _.orderBy(feedback, ['timestamp'],  ['desc']);
     for (let fb of sortedFeedback) {
       const index = this.$scope.situationFeedback.findIndex(ifb => ifb.alarmKey === fb.alarmKey);
-      if (index >= 0 && index <= this.$scope.situationFeedback.length) {
-        if (this.$scope.situationFeedback[index].timestamp < fb.timestamp) {
-          this.$scope.situationFeedback[index].rootCause = fb.rootCause;
-          this.$scope.situationFeedback[index].tags = fb.tags;
-          this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
-          this.$scope.situationFeedback[index].timestamp = fb.timestamp;
-          for (let tag of fb.tags) {
-            this.$scope.feedbackTags.add(tag);
-            this.$scope.tagsInput.tagsinput('add', tag);
-          }
+      if (index < 0) {
+        // feedback for alarm that is no longer associated.
+        continue;
+      }
+      if (this.$scope.situationFeedback[index].timestamp < fb.timestamp) {
+        this.$scope.situationFeedback[index].rootCause = fb.rootCause;
+        this.$scope.situationFeedback[index].tags = fb.tags;
+        this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
+        this.$scope.situationFeedback[index].timestamp = fb.timestamp;
+        for (let tag of fb.tags) {
+          this.$scope.retrievedTags.push(tag);
         }
+        this.$scope.retrievedReason = fb.reason;
       }
     }
     this.resetCounters();
   }
 
   editSituationFeedback() {
+    this.$scope.feedbackTags = [...this.$scope.retrievedTags];
+    this.$scope.feedbackReason = this.$scope.retrievedReason;
     this.$scope.editFeedback = true;
     this.$scope.submittedFeedback = false;
   }

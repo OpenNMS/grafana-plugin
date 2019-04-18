@@ -172,8 +172,9 @@
 
                 <div class="gf-from-group">
                     <div class="gf-form">
-                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.reason" placeholder="Enter an optional comment">
-                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback(feedbackForm)">Save</button>
+                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="ctrl.$scope.feedbackReason" placeholder="Enter an optional comment">
+                        </input>
+                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback()">Save</button>
                         <button class="btn btn-inverse" ng-click="ctrl.cancelEditedFeedback()">Cancel</button>
                     </div>
                 </div>
