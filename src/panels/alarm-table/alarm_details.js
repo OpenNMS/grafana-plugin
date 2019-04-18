@@ -270,14 +270,16 @@ export class AlarmDetailsCtrl {
     let sortedFeedback = _.orderBy(feedback, ['timestamp'],  ['desc']);
     for (let fb of sortedFeedback) {
       const index = this.$scope.situationFeedback.findIndex(ifb => ifb.alarmKey === fb.alarmKey);
-      if (this.$scope.situationFeedback[index].timestamp < fb.timestamp) {
-        this.$scope.situationFeedback[index].rootCause = fb.rootCause;
-        this.$scope.situationFeedback[index].tags = fb.tags;
-        this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
-        this.$scope.situationFeedback[index].timestamp = fb.timestamp;
-        for (let tag of fb.tags) {
-          this.$scope.feedbackTags.add(tag);
-          this.$scope.tagsInput.tagsinput('add', tag);
+      if (index >= 0 && index <= this.$scope.situationFeedback.length) {
+        if (this.$scope.situationFeedback[index].timestamp < fb.timestamp) {
+          this.$scope.situationFeedback[index].rootCause = fb.rootCause;
+          this.$scope.situationFeedback[index].tags = fb.tags;
+          this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
+          this.$scope.situationFeedback[index].timestamp = fb.timestamp;
+          for (let tag of fb.tags) {
+            this.$scope.feedbackTags.add(tag);
+            this.$scope.tagsInput.tagsinput('add', tag);
+          }
         }
       }
     }
@@ -304,7 +306,10 @@ export class AlarmDetailsCtrl {
   }
 
   cancelEditedFeedback() {
-    this.$scope.situationFeedback = this.clone(this.$scope.retrievedFeedback);
+    // if we retrieved feedback from the server, restore that when cancelling.
+    if (this.$scope.retrievedFeedback != undefined) {
+      this.$scope.situationFeedback = this.clone(this.$scope.retrievedFeedback);
+    }
     this.$scope.editFeedback = false;
     this.$scope.submittedFeedback = false;
     this.resetCounters();
