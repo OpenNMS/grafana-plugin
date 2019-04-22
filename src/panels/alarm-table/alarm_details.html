@@ -123,8 +123,8 @@
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
-                        <td severity>{{summary.label}}</td>
-                        <td severity ng-bind-html="summary.logMessage"></td>
+                        <td severity><div class=alarm-detail-logmessage>{{summary.label}}</div></td>
+                        <td severity><div class=alarm-detail-logmessage>{{summary.logMessage}}</div></td>
                         <td ng-if="editFeedback" class="feedback-button-td" width="60px">
                             <div class="feedback-button-div">
                                 <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"

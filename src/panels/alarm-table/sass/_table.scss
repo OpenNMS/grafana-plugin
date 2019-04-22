@@ -388,6 +388,11 @@ $details-header-font-weight: 500;
 
 }
 
+.alarm-detail-logmessage {
+  overflow: hidden;
+  height: 20px;
+}
+
 .feedback-tag-input {
   display: inline !important;
   padding: 0 0 !important;
