@@ -280,7 +280,10 @@ export class AlarmDetailsCtrl {
         this.$scope.situationFeedback[index].feedbackType = fb.feedbackType;
         this.$scope.situationFeedback[index].timestamp = fb.timestamp;
         for (let tag of fb.tags) {
-          this.$scope.retrievedTags.push(tag);
+          // don't duplicate tags
+          if (!this.$scope.retrievedTags.includes(tag)) {
+            this.$scope.retrievedTags.push(tag);
+          }
         }
         this.$scope.retrievedReason = fb.reason;
       }
