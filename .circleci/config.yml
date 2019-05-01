@@ -15,7 +15,7 @@ references:
 
   node_container_config: &node_container_config
     docker:
-      - image: circleci/node
+      - image: circleci/node:11
 
   docker_container_config: &docker_container_config
     docker:

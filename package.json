@@ -35,7 +35,7 @@
     "jsdom-global": "^3.0.2",
     "mini-css-extract-plugin": "^0.5.0",
     "mocha": "^5.2.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "parallel-webpack": "^2.3.0",
     "prunk": "^1.3.0",
     "recursive-copy": "^2.0.6",
