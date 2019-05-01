@@ -90,13 +90,13 @@ td.onms-checkbox {
 }
 
 $severity-font-weight: normal;
-$indeterminate-color: #990000;
-$cleared-color: #EEE000;
-$normal-color: #86B15B;
-$warning-color: #FCCC3B;
-$minor-color: #EE901C;
-$major-color: #E3692F;
-$critical-color: #DB4345;
+$cleared-color: #CCCCCC;
+$indeterminate-color: #8080EE;
+$normal-color: #99BF73;
+$warning-color: #FFCC00;
+$minor-color: #FF8600;
+$major-color: #EE1E00;
+$critical-color: #B50322;
 
 .severity {
   .indeterminate {
