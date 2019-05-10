@@ -108,7 +108,7 @@
                 <thead class="alarm-details-header">
                     <th colspan="2">Label</th>
                     <th>Log Message</th>
-                    <th ng-if="editFeedback" colspan="2" class="text-center">Correlation Feedback</th>
+                    <th ng-if="editFeedback" colspan="3" class="text-center">Correlation Feedback</th>
                 </thead>
                 <tbody ng-repeat-start="node in relatedAlarms">
                     <tr class="alarm-details-node-spacer"><td colspan="{{editFeedback? 5 : 3 }}"><!-- {{node.label + ' / ' + node.$index}} --></td></tr>
@@ -123,21 +123,34 @@
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
-                        <td severity>{{summary.label}}</td>
-                        <td severity ng-bind-html="summary.logMessage"></td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markCorrect(summary.reductionKey)">
-                            <img ng-src="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}" alt="Correct" height="22" width="22" />
+                        <td severity><div class=alarm-detail-logmessage>{{summary.label}}</div></td>
+                        <td severity title="{{summary.logMessage}}"><div class=alarm-detail-logmessage>{{summary.logMessage}}</div></td>
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markCorrect(summary.reductionKey)">Is Related</button>
+                            </div>
                         </td>
-                        <td ng-if="editFeedback" class="feedback-button" ng-click="ctrl.markIncorrect(summary.reductionKey)">
-                            <img ng-src="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}" alt="Incorrect" height="22" width="22" />
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markIncorrect(summary.reductionKey)">Not Related</button>
+                            </div>
                         </td>
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackRootCauseButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markRootCause(summary.reductionKey, ctrl.isRootCause(summary.reductionKey))">Root Cause</button>
+                            </div>
+                       </td>
                     </tr>
                 </tbody>
-                <tbody class="severity">
+                <tbody>
                     <tr ng-if="editFeedback">
-                        <td colspan="3" class="text-right">Tally</td>
-                        <td class="text-center feedback-button">{{feedbackCorrectCount}}</td>
-                        <td class="text-center feedback-button">{{feedbackIncorrectCount}}</td>
+                        <td colspan="3" class="text-right feedback-button-td">Tally</td>
+                        <td class="text-center feedback-button-td">{{feedbackCorrectCount}}</td>
+                        <td class="text-center feedback-button-td">{{feedbackIncorrectCount}}</td>
+                        <td class="text-center feedback-button-td">&nbsp;</td>
                     </tr>
                 </tbody>
             </table>
@@ -145,20 +158,34 @@
             <div ng-if="submittedFeedback">
                 Feedback Submitted.
             </div>
-            <div ng-if="editFeedback">
+
+            <div ng-show="editFeedback">
+                <div class="gf-from-group">
+                    <bootstrap-tagsinput  ng-model="ctrl.$scope.feedbackTags" data-role="tagsinput" name="tags-input"
+                        tagClass="feedback-tag-element"
+                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched feedback-tag-input" 
+                        focusClass="feedback-tag-element"
+                        placeholder="Tags...">
+                        <typeahead source="ctrl.tagsTypeAhead()" />
+                    </bootstrap-tagsinput>
+                </div>
+
                 <div class="gf-from-group">
                     <div class="gf-form">
-                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="feedbackForm.reason" placeholder="Enter an optional comment">
-                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback(feedbackForm)">Save</button>
+                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="ctrl.$scope.feedbackReason" placeholder="Enter an optional comment">
+                        </input>
+                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback()">Save</button>
                         <button class="btn btn-inverse" ng-click="ctrl.cancelEditedFeedback()">Cancel</button>
                     </div>
                 </div>
             </div>
+
             <div ng-if="situationFeebackEnabled && !editFeedback && hasSituationFeedback" class="text-right">
                     <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Re-submit Feedback...</a>
             </div>
             <div ng-if="situationFeebackEnabled && !editFeedback && !hasSituationFeedback" class="text-right">
-                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Submit Feedback...</a>
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Provide Feedback...</a>
             </div>
     </div>
 </div>
+
