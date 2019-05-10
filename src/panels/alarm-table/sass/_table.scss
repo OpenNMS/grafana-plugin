@@ -269,12 +269,6 @@ $critical-color: #B50322;
   font-size: .875rem !important;
 }
 
-.feedback-button {
-  text-align: center;
-  // Remove the padding adding by the dense table class. Works well for text, but not for images
-  padding-left: 0em !important;
-}
-
 .picked-up {
   opacity: 0.3;
 }
@@ -347,4 +341,64 @@ $details-header-font-weight: 500;
     }
   }
 
+  .feedback-table {
+    table-layout: fixed;
+  }
+
+  .feedback-button-td {
+    box-sizing: content-box;
+    vertical-align: baseline;
+    display: table-cell;
+    padding: 0 0 0 0 !important;
+  }
+
+  .feedback-button-div {
+    width: 100%;
+    height: 100%;
+    box-sizing: content-box;
+    padding: 0 0 0 0;
+    padding-bottom: 0;
+    display: inline-block;
+  }
+
+  .feedback-button {
+    background-color: #262628;
+    color: white;
+    display: block;
+    font-size: 10px;
+    text-align: center;
+    padding: 10px;
+    widows: 100%;
+    height: 100%;
+    box-sizing: content-box;
+    border-radius: 0px;
+  }
+
+  .feedback-button-correct {
+    background-color: #299c46;
+  }
+
+  .feedback-button-incorrect {
+    background-color: #ca4333;
+  }
+
+  .feedback-button-root-cause {
+    background-color: #9030C0;
+  }
+
+}
+
+.alarm-detail-logmessage {
+  overflow: hidden;
+  height: 20px;
+}
+
+.feedback-tag-input {
+  display: inline !important;
+  padding: 0 0 !important;
+}
+
+.feedback-tag-element {
+  background-color: #262628 !important;
+  border-color: antiquewhite !important;
 }
