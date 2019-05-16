@@ -2,6 +2,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
 
+// Grafana 6 APIs we can't use (yet?)
+// import { getValueFormat, getColorFromHexRgbOrName, GrafanaThemeType, stringToJsRegex } from '@grafana/ui';
+// import { ColumnStyle } from '@grafana/ui/src/components/Table/TableCellBuilder';
+
 import {Model} from 'opennms';
 
 moment.defineLocale('en-short', {
@@ -26,12 +30,14 @@ moment.defineLocale('en-short', {
 
 export class TableRenderer {
   /** @ngInject */
-  constructor(panel, table, isUtc, sanitize, selectionMgr) {
+  constructor(panel, table, isUtc, sanitize, selectionMgr, templateSrv, theme) {
     this.panel = panel;
     this.table = table;
     this.isUtc = isUtc;
     this.sanitize = sanitize;
     this.selectionMgr = selectionMgr;
+    this.templateSrv = templateSrv;
+    this.theme = theme;
 
     this.initColumns();
   }
@@ -47,13 +53,13 @@ export class TableRenderer {
     this.colorState = {};
 
     for (let colIndex = 0; colIndex < this.table.columns.length; colIndex++) {
-      let column = this.table.columns[colIndex];
+      const column = this.table.columns[colIndex];
       column.title = column.text;
 
       for (let i = 0; i < this.panel.styles.length; i++) {
-        let style = this.panel.styles[i];
+        const style = this.panel.styles[i];
 
-        let regex = kbn.stringToJsRegex(style.pattern);
+        const regex = kbn.stringToJsRegex(style.pattern);
         if (column.text.match(regex)) {
           column.style = style;
 
@@ -77,9 +83,13 @@ export class TableRenderer {
     for (let i = style.thresholds.length; i > 0; i--) {
       if (value >= style.thresholds[i - 1]) {
         return style.colors[i];
+        // in Grafana 6:
+        // return getColorFromHexRgbOrName(style.colors[i], this.theme);
       }
     }
     return _.first(style.colors);
+    // in Grafana 6:
+    // return getColorFromHexRgbOrName(_.first(style.colors), this.theme);
   }
 
   defaultCellFormatter(v, style) {
@@ -118,10 +128,18 @@ export class TableRenderer {
         if (_.isArray(v)) {
           v = v[0];
         }
+
+        // if is an epoch (numeric string and len > 12)
+        if (_.isString(v) && !isNaN(v) && v.length > 12) {
+          v = parseInt(v, 10);
+        }
+
         let date = moment(v);
+
         if (this.isUtc) {
           date = date.utc();
         }
+
         if (column.style.dateFormat === 'relative') {
           return date.fromNow();
         } else if (column.style.dateFormat === 'relative-short') {
@@ -133,22 +151,75 @@ export class TableRenderer {
       };
     }
 
+    if (column.style.type === 'string') {
+      return v => {
+        if (_.isArray(v)) {
+          v = v.join(', ');
+        }
+
+        const mappingType = column.style.mappingType || 0;
+
+        if (mappingType === 1 && column.style.valueMaps) {
+          for (let i = 0; i < column.style.valueMaps.length; i++) {
+            const map = column.style.valueMaps[i];
+
+            if (v === null) {
+              if (map.value === 'null') {
+                return map.text;
+              }
+              continue;
+            }
+
+            // Allow both numeric and string values to be mapped
+            if ((!_.isString(v) && Number(map.value) === Number(v)) || map.value === v) {
+              this.setColorState(v, column.style);
+              return this.defaultCellFormatter(map.text, column.style);
+            }
+          }
+        }
+
+        if (mappingType === 2 && column.style.rangeMaps) {
+          for (let i = 0; i < column.style.rangeMaps.length; i++) {
+            const map = column.style.rangeMaps[i];
+
+            if (v === null) {
+              if (map.from === 'null' && map.to === 'null') {
+                return map.text;
+              }
+              continue;
+            }
+
+            if (Number(map.from) <= Number(v) && Number(map.to) >= Number(v)) {
+              this.setColorState(v, column.style);
+              return this.defaultCellFormatter(map.text, column.style);
+            }
+          }
+        }
+
+        if (v === null || v === void 0) {
+          return '-';
+        }
+
+        this.setColorState(v, column.style);
+        return this.defaultCellFormatter(v, column.style);
+      };
+    }
+
     if (column.style.type === 'number') {
-      let valueFormatter = kbn.valueFormats[column.unit || column.style.unit];
+      const valueFormatter = kbn.valueFormats[column.unit || column.style.unit];
+      // Grafana 6:
+      // const valueFormatter = getValueFormat(column.unit || column.style.unit);
 
       return v => {
         if (v === null || v === void 0) {
           return '-';
         }
 
-        if (_.isString(v)) {
+        if (_.isString(v) || _.isArray(v)) {
           return this.defaultCellFormatter(v, column.style);
         }
 
-        if (column.style.colorMode) {
-          this.colorState[column.style.colorMode] = TableRenderer.getColorForValue(v, column.style);
-        }
-
+        this.setColorState(v, column.style);
         return valueFormatter(v, column.style.decimals, null);
       };
     }
@@ -180,88 +251,257 @@ export class TableRenderer {
       };
     }
 
-    return (value) => {
+    return value => {
       return this.defaultCellFormatter(value, column.style);
     };
+  }
+
+  setColorState(value, style) {
+    if (!style.colorMode) {
+      return;
+    }
+
+    if (value === null || value === void 0 || _.isArray(value)) {
+      return;
+    }
+
+    const numericValue = Number(value);
+    if (isNaN(numericValue)) {
+      return;
+    }
+
+    this.colorState[style.colorMode] = this.getColorForValue(numericValue, style);
+  }
+
+  renderRowVariables(rowIndex) {
+    const scopedVars = {};
+    let cellVariable;
+    const row = this.table.rows[rowIndex];
+    for (let i = 0; i < row.length; i++) {
+      cellVariable = `__cell_${i}`;
+      scopedVars[cellVariable] = { value: row[i] };
+    }
+    return scopedVars;
   }
 
   formatColumnValue(colIndex, value) {
     return this.formatters[colIndex] ? this.formatters[colIndex](value) : value;
   }
 
-  renderCell(columnIndex, value, addWidthHack, columnClasses) {
+  renderCell(columnIndex, rowIndex, value, addWidthHack, columnClasses) {
     const title = !_.isNil(value) && _.isString(value) ? ' title="' + value.trim().replace(/"/g, '&quot;') + '"' : '';
-
     value = this.formatColumnValue(columnIndex, value);
-    let column = this.table.columns[columnIndex];
-    let styles = {};
-    let classes = column.classes || [];
-    classes = classes.concat(columnClasses);
+
+    const column = this.table.columns[columnIndex];
+    const cellStyles = [];
+    let cellStyle = '';
+    const textStyles = [];
+    let textStyle = '';
+    const cellClasses = [].concat(columnClasses);
+    let cellClass = '';
+
+    //let styles = {};
+    //let classes = column.classes || [];
+    //classes = classes.concat(columnClasses);
 
     if (this.colorState.cell) {
-      styles['background-color'] = this.colorState.cell;
-      styles['color'] = 'white';
+      cellStyles.push('background-color:' + this.colorState.cell);
+      cellStyles.push('color:white');
+      cellClasses.push('table-panel-color-cell');
       this.colorState.cell = null;
     } else if (this.colorState.value) {
-      styles['color'] = this.colorState.value;
+      textStyles.push('color:' + this.colorState.value);
       this.colorState.value = null;
     }
 
     // because of the fixed table headers css only solution
     // there is an issue if header cell is wider the cell
     // this hack adds header content to cell (not visible)
-    let widthHack = '';
+    let columnHtml = '';
     if (addWidthHack) {
-      widthHack = '<div class="table-panel-width-hack">' + column.title + '</div>';
+      columnHtml = '<div class="table-panel-width-hack">' + column.title + '</div>';
     }
 
     if (value === undefined) {
-      styles['display'] = 'none';
+      cellStyle = ' style="display:none;"';
       column.hidden = true;
     } else {
       column.hidden = false;
     }
 
-    if (column.style.center) {
-      classes.push('text-center');
+    if (column.hidden === true) {
+      return '';
     }
 
-    if (column.style.width) {
-      styles['width'] = column.style.width;
+    /*
+    if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
+      column.style.center = true;
+    }
+    */
+
+    if (column.style && column.style.center) {
+      cellClasses.push('text-center');
+    }
+
+    if (column.style && column.style.preserveFormat) {
+      cellClasses.push('table-panel-cell-pre');
+    }
+
+    if (column.style && column.style.width) {
+      textStyles.push('width:' + column.style.width);
       if (column.style.clip) {
-        styles['max-width'] = column.style.width;
-        styles['white-space'] = 'nowrap';
+        textStyles.push('max-width:' + column.style.width);
+        textStyles.push('white-space:nowrap');
       }
     }
 
     if (column.style.clip) {
-      styles['overflow'] = 'hidden';
-      styles['text-overflow'] = 'ellipsis';
-      styles['white-space'] = 'nowrap';
+      textStyles.push('overflow:hidden');
+      textStyles.push('text-overflow:ellipsis');
+      if (!column.style.preserveFormat) {
+        textStyles.push('white-space:nowrap');
+      }
     }
 
-    let stylesAsString = '';
-    if (Object.keys(styles).length > 0) {
-      stylesAsString = 'style="' + _.reduce(_.map(styles, function(val, key){ return key + ':' + val; }),
-      (memo, style) => {
-        if (memo.length > 0) {
-          return memo + '; ' + style;
-        } else {
-          return style;
+    if (textStyles.length) {
+      textStyle = ' style="' + textStyles.join(';') + '"';
+    }
+
+    if (column.style && column.style.link) {
+      // Render cell as link
+      const scopedVars = this.renderRowVariables(rowIndex);
+      scopedVars['__cell'] = { value: value };
+
+      const cellLink = this.templateSrv.replace(column.style.linkUrl, scopedVars, encodeURIComponent);
+      const cellLinkTooltip = this.templateSrv.replace(column.style.linkTooltip, scopedVars);
+      const cellTarget = column.style.linkTargetBlank ? '_blank' : '';
+
+      cellClasses.push('table-panel-cell-link');
+
+      columnHtml += `
+        <a href="${cellLink}" target="${cellTarget}" data-link-tooltip data-original-title="${cellLinkTooltip}" data-placement="right"${textStyle}>
+          ${value}
+        </a>
+      `;
+      textStyle = '';
+    } else {
+      columnHtml += value;
+    }
+
+    if (column.filterable) {
+      cellClasses.push('table-panel-cell-filterable');
+      columnHtml += `
+        <a class="table-panel-filter-link" data-link-tooltip data-original-title="Filter out value" data-placement="bottom"
+           data-row="${rowIndex}" data-column="${columnIndex}" data-operator="!=">
+          <i class="fa fa-search-minus"></i>
+        </a>
+        <a class="table-panel-filter-link" data-link-tooltip data-original-title="Filter for value" data-placement="bottom"
+           data-row="${rowIndex}" data-column="${columnIndex}" data-operator="=">
+          <i class="fa fa-search-plus"></i>
+        </a>`;
+    }
+
+    if (cellClasses.length) {
+      cellClass = ' class="' + cellClasses.join(' ') + '"';
+    }
+
+    columnHtml = '<td' + cellClass + cellStyle + textStyle + title + '>' + columnHtml + '</td>';
+    return columnHtml;
+  }
+
+  render(page) {
+    const pageSize = this.panel.pageSize || 100;
+    const startPos = page * pageSize;
+    const endPos = Math.min(startPos + pageSize, this.table.rows.length);
+    let html = '';
+
+    for (let y = startPos; y < endPos; y++) {
+      const row = this.table.rows[y];
+      let cellHtml = '';
+      let rowStyle = '';
+      const rowClasses = [];
+      let rowClass = '';
+
+      let prevRow, nextRow;
+      if (y-1 >= 0) {
+        prevRow = this.table.rows[y-1];
+      }
+      if (y+1 < endPos) {
+        nextRow = this.table.rows[y+1];
+      }
+
+      const source = row.meta && row.meta.source ? row.meta.source.replace(/'/g, '\\\'') : undefined;
+      const alarm = row.meta && row.meta.alarm ? row.meta.alarm : undefined;
+      const severity = alarm ? alarm.severity.label.toLowerCase() : undefined;
+
+      for (let i = 0; i < this.table.columns.length; i++) {
+        let columnClasses = [];
+        const col = this.table.columns[i];
+        if (this.panel.severity === 'column') {
+          if (col && col.style && col.style.type === 'severity') {
+            columnClasses.push(severity);
+          }
         }
-      }, '') + '"';
+        if (col && col.style && col.style.type === 'checkbox') {
+          columnClasses.push('onms-checkbox');
+        }
+        cellHtml += this.renderCell(i, y, row[i], y === startPos, columnClasses);
+      }
+
+      if (this.colorState.row) {
+        rowStyle = ' style="background-color:' + this.colorState.row;
+        rowClasses.push('table-panel-color-row');
+        this.colorState.row = null;
+      }
+
+      if (this.panel.severity === true || this.panel.severity === 'row') {
+        rowClasses.push(severity);
+      }
+
+      if (this.isRowSelected(row)) {
+        rowClasses.push("selected");
+      }
+
+      if (prevRow && this.isRowSelected(prevRow)) {
+        rowClasses.push("prev-selected");
+      }
+
+      if (nextRow && this.isRowSelected(nextRow)) {
+        rowClasses.push("next-selected");
+      }
+
+      if (rowClasses.length) {
+        rowClass = 'class="' + rowClasses.join(' ') + '"';
+      }
+
+      html += '<tr ' + rowClass + rowStyle + ` ng-click="ctrl.onRowClick($event, '${source}', ${alarm.id})"  context-menu="ctrl.getContextMenu($event, '${source}', ${alarm.id})">` + cellHtml + '</tr>';
     }
 
-    if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
-      classes.push('text-center');
-    }
+    return html;
+  }
 
-    let classesAsString = '';
-    if (classes.length > 0) {
-      classesAsString = 'class="' + classes.join(' ') + '"';
-    }
+  render_values() {
+    const rows = [];
 
-    return '<td ' + stylesAsString + ' ' + classesAsString + title + '>' + value + widthHack + '</td>';
+    for (let y = 0; y < this.table.rows.length; y++) {
+      const row = this.table.rows[y];
+      const newRow = [];
+      for (let i = 0; i < this.table.columns.length; i++) {
+        newRow.push(this.formatColumnValue(i, row[i]));
+      }
+      rows.push(newRow);
+    }
+    return {
+      columns: this.table.columns,
+      rows: rows,
+    };
+  }
+
+  isRowSelected(row) {
+    return this.selectionMgr.isRowSelected({
+      source: row.meta.source,
+      alarmId: row.meta.alarm.id
+    });
   }
 
   static getIconForSeverity(severity) {
@@ -290,95 +530,5 @@ export class TableRenderer {
         break;
     }
     return icon;
-  }
-
-  isRowSelected(row) {
-    return this.selectionMgr.isRowSelected({
-      source: row.meta.source,
-      alarmId: row.meta.alarm.id
-    });
-  }
-
-  render(page) {
-    let pageSize = this.panel.pageSize || 100;
-    let startPos = page * pageSize;
-    let endPos = Math.min(startPos + pageSize, this.table.rows.length);
-    let html = "";
-
-    for (let y = startPos; y < endPos; y++) {
-      let row = this.table.rows[y];
-      let prevRow, nextRow;
-      if (y-1 >= 0) {
-        prevRow = this.table.rows[y-1];
-      }
-      if (y+1 < endPos) {
-        nextRow = this.table.rows[y+1];
-      }
-
-      let cellHtml = '';
-      let rowStyle = '';
-      let rowClasses = [];
-
-      let source = row.meta.source.replace(/'/g, '\\\'');
-      let alarm = row.meta.alarm;
-      let severity = alarm.severity.label.toLowerCase();
-
-      for (let i = 0; i < this.table.columns.length; i++) {
-        let columnClasses = [];
-        const col = this.table.columns[i];
-        if (this.panel.severity === 'column') {
-          if (col && col.style && col.style.type === 'severity') {
-            columnClasses.push(severity);
-          }
-        }
-        if (col && col.style && col.style.type === 'checkbox') {
-          columnClasses.push('onms-checkbox');
-        }
-        cellHtml += this.renderCell(i, row[i], y === startPos, columnClasses);
-      }
-
-      if (this.colorState.row) {
-        rowStyle = ' style="background-color:' + this.colorState.row + ';color: white"';
-        this.colorState.row = null;
-      }
-
-      if (this.panel.severity === true || this.panel.severity === 'row') {
-        rowClasses.push(severity);
-      }
-
-      if (this.isRowSelected(row)) {
-        rowClasses.push("selected");
-      }
-
-      if (prevRow && this.isRowSelected(prevRow)) {
-        rowClasses.push("prev-selected");
-      }
-
-      if (nextRow && this.isRowSelected(nextRow)) {
-        rowClasses.push("next-selected");
-      }
-
-      let rowClass = 'class="' + rowClasses.join(' ') + '"';
-      html += '<tr ' + rowStyle + rowClass + ` ng-click="ctrl.onRowClick($event, '${source}', ${alarm.id})"  context-menu="ctrl.getContextMenu($event, '${source}', ${alarm.id})">` + cellHtml + '</tr>';
-    }
-
-    return html;
-  }
-
-  render_values() {
-    let rows = [];
-
-    for (let y = 0; y < this.table.rows.length; y++) {
-      let row = this.table.rows[y];
-      let new_row = [];
-      for (let i = 0; i < this.table.columns.length; i++) {
-        new_row.push(this.formatColumnValue(i, row[i]));
-      }
-      rows.push(new_row);
-    }
-    return {
-      columns: this.table.columns,
-      rows: rows,
-    };
   }
 }

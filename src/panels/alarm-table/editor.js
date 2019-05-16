@@ -18,10 +18,32 @@ export class TablePanelEditorCtrl {
     this.destIndex = undefined;
 
     this.addColumnSegment = uiSegmentSrv.newPlusButton();
-    let editor = document.querySelectorAll('.editor-row')[0];
+    this.updateTransformHints();
+
+    const editor = document.querySelectorAll('.editor-row')[0];
     for (const e of [ 'dragstart', 'dragover', 'dragleave', 'drop']) {
       //console.log('adding listener: ' + e);
       editor.addEventListener(e, (evt) => { this.handleEvent(e, evt); }, false);
+    }
+  }
+
+  updateTransformHints() {
+    // BMR: alarm table can always choose which columns to include, and in what order
+    this.canSetColumns = true;
+    this.columnsHelpMessage = '';
+
+    switch (this.panel.transform) {
+      case 'timeseries_aggregations': {
+        this.canSetColumns = true;
+        break;
+      }
+      case 'json': {
+        this.canSetColumns = true;
+        break;
+      }
+      case 'table': {
+        this.columnsHelpMessage = 'Columns and their order are determined by the data query';
+      }
     }
   }
 
@@ -117,22 +139,22 @@ export class TablePanelEditorCtrl {
     }
     let columns = this.transformers[this.panel.transform].getColumns(this.panelCtrl.dataRaw);
     // Filter out columns that have already been selected
-    let self = this;
-    columns = columns.filter(function(a){return self.panel.columns.indexOf(a) < 0});
-    let segments = _.map(columns, (c) => this.uiSegmentSrv.newSegment({value: c.text}));
+    columns = columns.filter(a => this.panel.columns.indexOf(a) < 0);
+
+    const segments = _.map(columns, (c) => this.uiSegmentSrv.newSegment({value: c.text}));
     return this.$q.when(segments);
   }
 
   addColumn() {
-    let columns = transformers[this.panel.transform].getColumns(this.panelCtrl.dataRaw);
-    let column = _.find(columns, {text: this.addColumnSegment.value});
+    const columns = transformers[this.panel.transform].getColumns(this.panelCtrl.dataRaw);
+    const column = _.find(columns, {text: this.addColumnSegment.value});
 
     if (column) {
       this.panel.columns.push(column);
       this.render();
     }
 
-    let plusButton = this.uiSegmentSrv.newPlusButton();
+    const plusButton = this.uiSegmentSrv.newPlusButton();
     this.addColumnSegment.html = plusButton.html;
     this.addColumnSegment.value = plusButton.value;
   }
@@ -143,6 +165,7 @@ export class TablePanelEditorCtrl {
       this.panel.columns.push({text: 'Avg', value: 'avg'});
     }
 
+    this.updateTransformHints();
     this.render();
   }
 
