@@ -14,4 +14,7 @@ $alarm-details-border-color: $dark-1;
 
 $alarm-details-header: linear-gradient(135deg, #2f2f32, #262628); // from grafana _variables.dark.scss
 
+/* taken from grafana _variables.dark.scss */
+$blue: #33b5e5;
+
 @import 'table';

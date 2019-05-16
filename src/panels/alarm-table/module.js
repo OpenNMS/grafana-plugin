@@ -22,7 +22,7 @@ const doubleClickDelay = 250;
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
   /** @ngInject */
-  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, timeSrv) {
+  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, templateSrv, timeSrv, variableSrv) {
     super($scope, $injector);
     this.$rootScope = $rootScope;
     this.annotationsSrv = annotationsSrv;
@@ -30,12 +30,15 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.$compile = $compile;
     this.backendSrv = backendSrv;
     this.datasourceSrv = datasourceSrv;
+    this.templateSrv = templateSrv;
     this.timeSrv = timeSrv;
+    this.variableSrv = variableSrv;
 
     let panelDefaults = {
       targets: [{}],
       transform: 'table',
       pageSize: 5,
+      pagingPausesRefresh: false,
       showHeader: true,
       styles: [
         {
@@ -83,11 +86,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           type: 'number',
           alias: '',
           decimals: 2,
-          colors: ["rgba(245, 54, 54, 0.9)", "rgba(237, 129, 40, 0.89)", "rgba(50, 172, 45, 0.97)"],
+          colors: ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'],
           colorMode: null,
           pattern: '/.*/',
           thresholds: [],
-        }
+        },
       ],
       columns: [
           {text: 'Severity'},
@@ -173,11 +176,14 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   issueQueries(datasource) {
-    this.pageIndex = 0;
-
     if (this.panel.transform === 'annotations') {
-      this.setTimeQueryStart();
-      return this.annotationsSrv.getAnnotations({dashboard: this.dashboard, panel: this.panel, range: this.range})
+      if (this.setTimeQueryStart) this.setTimeQueryStart();
+      return this.annotationsSrv
+        .getAnnotations({
+          dashboard: this.dashboard,
+          panel: this.panel,
+          range: this.range,
+        })
         .then(annotations => {
           return {data: annotations};
         });
@@ -192,8 +198,25 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   onDataReceived(dataList) {
-    this.dataRaw = dataList;
-    this.pageIndex = 0;
+    this.newDataRaw = dataList;
+
+    if (!this.panel.pagingPausesRefresh || this.pageIndex === 0 || !this.dataRaw || this.dataRaw.length === 0) {
+      this.updateData();
+    }
+
+    this.render();
+  }
+
+  refreshData() {
+    this.updateData();
+    this.scope.$evalAsync(() => {
+      this.render();
+    });
+  }
+
+  updateData() {
+    this.dataRaw = this.newDataRaw;
+    delete this.newDataRaw;
 
     // automatically correct transform mode based on data
     if (this.dataRaw && this.dataRaw.length) {
@@ -209,15 +232,23 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         }
       }
     }
-
-    this.render();
+    this.pageIndex = 0;
   }
 
   render() {
     this.table = transformDataToTable(this.dataRaw, this.panel);
     this.table.sort(this.panel.sort);
 
-    this.renderer = new TableRenderer(this.panel, this.table, this.dashboard.isTimezoneUtc(), this.$sanitize, this.selectionMgr);
+    this.renderer = new TableRenderer(
+      this.panel,
+      this.table,
+      this.dashboard.isTimezoneUtc(),
+      this.$sanitize,
+      this.selectionMgr,
+      this.templateSrv,
+      // Grafana 6:
+      // config.theme.type,
+    );
 
     return super.render(this.table);
   }
@@ -243,7 +274,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   link(scope, elem, attrs, ctrl) {
     let data;
-    let panel = ctrl.panel;
+    const panel = ctrl.panel;
     let pageCount = 0;
 
     scope.getColumnStyle = (col) => {
@@ -284,42 +315,51 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     function switchPage(e) {
-      let el = $(e.currentTarget);
-      ctrl.pageIndex = (parseInt(el.text(), 10) - 1);
+      const el = $(e.currentTarget);
+      ctrl.pageIndex = parseInt(el.text(), 10) - 1;
       renderPanel();
     }
 
     function appendPaginationControls(footerElem) {
       footerElem.empty();
 
-      let pageSize = panel.pageSize || 100;
+      const pageSize = panel.pageSize || 100;
       pageCount = Math.ceil(data.rows.length / pageSize);
       if (pageCount === 1) {
         return;
       }
 
-      let startPage = Math.max(ctrl.pageIndex - 3, 0);
-      let endPage = Math.min(pageCount, startPage + 9);
+      const startPage = Math.max(ctrl.pageIndex - 3, 0);
+      const endPage = Math.min(pageCount, startPage + 9);
 
-      let paginationList = $('<ul></ul>');
+      const paginationList = $('<ul></ul>');
 
       for (let i = startPage; i < endPage; i++) {
-        let activeClass = i === ctrl.pageIndex ? 'active' : '';
-        let pageLinkElem = $('<li><a class="table-panel-page-link pointer ' + activeClass + '">' + (i + 1) + '</a></li>');
+        const activeClass = i === ctrl.pageIndex ? 'active' : '';
+        const pageLinkElem = $(
+          '<li><a class="table-panel-page-link pointer ' + activeClass + '">' + (i + 1) + '</a></li>'
+        );
         paginationList.append(pageLinkElem);
       }
 
+      if (ctrl.newDataRaw) {
+        paginationList.append($('<li><a class="table-panel-page-refresh pointer" name="refresh"><i class="fa fa-refresh" aria-hidden="true"></i> refresh</a></li>'));
+      }
       footerElem.append(paginationList);
     }
 
+    function refreshData() {
+      ctrl.refreshData();
+    }
+  
     function renderPanel() {
-      let panelElem = elem.parents('.panel');
-      let rootElem = elem.find('.table-panel-scroll');
-      let tbodyElem = elem.find('tbody');
-      let footerElem = elem.find('.table-panel-footer');
+      const panelElem = elem.parents('.panel-content');
+      const rootElem = elem.find('.table-panel-scroll');
+      const tbodyElem = elem.find('tbody');
+      const footerElem = elem.find('.table-panel-footer');
 
       elem.css({'font-size': panel.fontSize});
-      panelElem.addClass('table-panel-wrapper');
+      panelElem.addClass('table-panel-content');
 
       appendTableRows(tbodyElem);
       appendPaginationControls(footerElem);
@@ -327,14 +367,35 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       rootElem.css({'max-height': panel.scroll ? getTableHeight() : ''});
     }
 
-    elem.on('click', '.table-panel-page-link', switchPage);
+    // hook up link tooltips
+    elem.tooltip({
+      selector: '[data-link-tooltip]',
+    });
 
-    let unbindDestroy = scope.$on('$destroy', function () {
+    function addFilterClicked(e) {
+      const filterData = $(e.currentTarget).data();
+      const options = {
+        datasource: panel.datasource,
+        key: data.columns[filterData.column].text,
+        value: data.rows[filterData.row][filterData.column],
+        operator: filterData.operator,
+      };
+
+      ctrl.variableSrv.setAdhocFilter(options);
+    }
+
+    elem.on('click', '.table-panel-page-link', switchPage);
+    elem.on('click', '.table-panel-filter-link', addFilterClicked);
+    elem.on('click', '.table-panel-page-refresh', refreshData);
+
+    const unbindDestroy = scope.$on('$destroy', function () {
       elem.off('click', '.table-panel-page-link');
+      elem.off('click', '.table-panel-filter-link');
+      elem.off('click', '.table-panel-page-refresh');
       unbindDestroy();
     });
 
-    ctrl.events.on('render', function (renderData) {
+    ctrl.events.on('render', renderData => {
       data = renderData || data;
       if (data) {
         renderPanel();
@@ -571,10 +632,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
 AlarmTableCtrl.templateUrl = 'panels/alarm-table/module.html';
 
-export {
-  AlarmTableCtrl,
-  AlarmTableCtrl as PanelCtrl
-};
+export { AlarmTableCtrl, AlarmTableCtrl as PanelCtrl };
 
 coreModule.directive('alarmDetailsAsModal',  alarmDetailsAsDirective);
 coreModule.directive('memoEditor',  memoEditorAsDirective);

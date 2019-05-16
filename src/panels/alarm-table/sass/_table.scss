@@ -72,6 +72,14 @@ $padding-large: 0.50em;
   padding: 0 $padding-large;
 }
 
+.table-panel-page-refresh {
+  padding-left: 3rem;
+  color: $blue;
+  i {
+    padding-right: .25rem;
+  }
+}
+
 .alarm-details-table td p {
   margin-top: $padding-small;
   margin-bottom: $padding-small;
@@ -258,6 +266,14 @@ $critical-color: #B50322;
 
 .gf-form-no-margin {
   margin-bottom: .0rem !important;
+}
+
+.gf-form-help-icon {
+  &--onms-refresh {
+    float: right;
+    padding-top: .5rem;
+    padding-right: 1rem;
+  }
 }
 
 .gf-smaller-form-label {
