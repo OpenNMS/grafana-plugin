@@ -2,6 +2,7 @@ $ionicons-font-path: '../../../../node_modules/ionicons/fonts';
 
 @import '~ionicons/scss/ionicons';
 @import 'colors';
+@import 'severity-themes';
 
 $padding-small: 0.25em;
 $padding-large: 0.50em;
@@ -98,53 +99,46 @@ td.onms-checkbox {
 }
 
 $severity-font-weight: normal;
-$indeterminate-color: #990000;
-$cleared-color: #EEE000;
-$normal-color: #86B15B;
-$warning-color: #FCCC3B;
-$minor-color: #EE901C;
-$major-color: #E3692F;
-$critical-color: #DB4345;
 
 .severity {
   .indeterminate {
-    background-color: $indeterminate-color;
+    @include severity-background-color('indeterminate');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .cleared {
-    background-color: $cleared-color;
+    @include severity-background-color('cleared');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .normal {
-    background-color: $normal-color;
+    @include severity-background-color('normal');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .warning {
-    background-color: $warning-color;
+    @include severity-background-color('warning');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .minor {
-    background-color: $minor-color;
+    @include severity-background-color('minor');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .major {
-    background-color: $major-color;
+    @include severity-background-color('major');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
 
   .critical {
-    background-color: $critical-color;
+    @include severity-background-color('critical');
     color: $cell-text-color;
     font-weight: $severity-font-weight;
   }
@@ -169,32 +163,37 @@ $critical-color: #DB4345;
   background-color: $selected-cell-no-severity-background-color;
 }
 
-.alarm-table > .severity > .indeterminate {
-  background-color: lighten($indeterminate-color, 25%);
+@mixin severity-highlight($severity) {
+  @include severity-background-color-light($severity);
+  color: $cell-dark-color;
 }
 
-.alarm-table > .severity > .selected.cleared {
-  background-color: lighten($cleared-color, 25%);
+.alarm-table .severity .selected .indeterminate {
+  @include severity-highlight('indeterminate');
 }
 
-.alarm-table >.severity > .selected.normal {
-  background-color: lighten($normal-color, 25%);
+.alarm-table .severity .selected .cleared {
+  @include severity-highlight('cleared');
 }
 
-.alarm-table > .severity > .selected.warning {
-  background-color: lighten($warning-color, 25%);
+.alarm-table .severity .selected .normal {
+  @include severity-highlight('normal');
 }
 
-.alarm-table > .severity > .selected.minor {
-  background-color: lighten($minor-color, 25%);
+.alarm-table .severity .selected .warning {
+  @include severity-highlight('warning');
 }
 
-.alarm-table > .severity > .selected.major {
-  background-color: lighten($major-color, 25%);
+.alarm-table .severity .selected .minor {
+  @include severity-highlight('minor');
 }
 
-.alarm-table > .severity > .selected.critical {
-  background-color: lighten($critical-color, 35%);
+.alarm-table .severity .selected .major {
+  @include severity-highlight('major');
+}
+
+.alarm-table .severity .selected .critical {
+  @include severity-highlight('critical');
 }
 
 .alarm-table tr.next-selected td {
@@ -237,31 +236,31 @@ $critical-color: #DB4345;
 }
 
 .alarm-table tr.indeterminate:hover {
-  background-color: lighten($indeterminate-color, 25%);
+  @include severity-highlight('indeterminate');
 }
 
 .alarm-table tr.cleared:hover {
-  background-color: lighten($cleared-color, 25%);
+  @include severity-highlight('cleared');
 }
 
 .alarm-table tr.normal:hover {
-  background-color: lighten($normal-color, 25%);
+  @include severity-highlight('normal');
 }
 
 .alarm-table tr.warning:hover {
-  background-color: lighten($warning-color, 25%);
+  @include severity-highlight('warning');
 }
 
 .alarm-table tr.minor:hover {
-  background-color: lighten($minor-color, 25%);
+  @include severity-highlight('minor');
 }
 
 .alarm-table tr.major:hover {
-  background-color: lighten($major-color, 25%);
+  @include severity-highlight('major');
 }
 
 .alarm-table tr.critical:hover {
-  background-color: lighten($critical-color, 25%);
+  @include severity-highlight('critical');
 }
 
 .gf-form-no-margin {
