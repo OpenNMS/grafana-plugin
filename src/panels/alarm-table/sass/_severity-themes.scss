@@ -1,0 +1,69 @@
+@import '~opennms-style/opennms';
+
+// If you add a theme here, you must also give it an entry in
+// alarm-table/editor.js for the editor drop-down.
+
+$severity-themes: (
+  'helm': (
+    'cleared': #EEE000,
+    'indeterminate': #990000,
+    'normal': #86B15B,
+    'warning': #FCCC3B,
+    'minor': #EE901C,
+    'major': #E3692F,
+    'critical': #DB4345,
+  ),
+  'opennms': (
+    'cleared': $opennms-severity-cleared-dark,
+    'indeterminate': $opennms-severity-indeterminate-dark,
+    'normal': $opennms-severity-normal-dark,
+    'warning': $opennms-severity-warning-dark,
+    'minor': $opennms-severity-minor-dark,
+    'major': $opennms-severity-major-dark,
+    'critical': $opennms-severity-critical-dark,
+  ),
+  'omi': (
+    'cleared': #cccccc,
+    'indeterminate': #00d3c9,
+    'normal': #00d3c9,
+    'warning': #00d3c9,
+    'minor': #ffce56,
+    'major': #ff9033,
+    'critical': #ff3b50,
+  ),
+) !default;
+
+@mixin opennms-themify($property, $lighten, $key, $themes: $severity-themes) {
+  @each $theme, $colors in $themes {
+    $theme-color: null;
+    @if $lighten {
+      $theme-color: lighten(map-get($colors, $key), 25%);
+    }
+    @else {
+      $theme-color: map-get($colors, $key);
+    }
+    &.opennms-theme-#{$theme}, .opennms-theme-#{$theme} & {
+      #{$property}: $theme-color;
+    }
+  }
+}
+
+@mixin severity-color($arguments...) {
+  @include opennms-themify('color', false, $arguments...);
+}
+@mixin severity-background-color($arguments...) {
+  @include opennms-themify('background-color', false, $arguments...);
+}
+@mixin severity-border-color($arguments...) {
+  @include opennms-themify('border-color', false, $arguments...);
+}
+
+@mixin severity-color-light($arguments...) {
+  @include opennms-themify('color', true, $arguments...);
+}
+@mixin severity-background-color-light($arguments...) {
+  @include opennms-themify('background-color', true, $arguments...);
+}
+@mixin severity-border-color-light($arguments...) {
+  @include opennms-themify('border-color', true, $arguments...);
+}
