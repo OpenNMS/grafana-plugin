@@ -1,4 +1,4 @@
-<div class="modal-body alarm-details" style="overflow: auto;" dynamic-height>
+<div class="modal-body alarm-details" style="overflow: auto;" dynamic-height ng-class="'opennms-theme-' + (ctrl.panel.theme ? ctrl.panel.theme : 'helm')">
     <div class="modal-header">
         <h2 class="modal-header-title">
             <a href="{{ alarm.detailsPage }}" target="_blank"><i class="fa fa-external-link"></i></a>
