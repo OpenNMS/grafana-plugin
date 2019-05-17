@@ -22,49 +22,49 @@
         <div ng-if="editor.index == 0">
             <table class="filter-table gf-form-group alarm-details-table severity">
                 <tr>
-                    <td>UEI</td>
+                    <th>UEI</th>
                     <td class="wrap">{{alarm.uei}}</td>
                 </tr>
                 <tr ng-class="(severity === true || severity === 'row') ? alarm.severity.label.toLowerCase() : ''">
-                    <td >Severity</td>
+                    <th >Severity</th>
                     <td class="wrap severity-icon"><span ng-class="severity === 'column' ? alarm.severity.label.toLowerCase() : ''"><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
                 </tr>
                 <tr>
-                    <td>Log Message</td>
+                    <th>Log Message</th>
                     <td class="wrap log-message" ng-bind-html="alarm.logMessage"></td>
                 </tr>
                 <tr>
-                    <td style="vertical-align: text-top">Description</td>
+                    <th>Description</th>
                     <td class="wrap description" style="white-space: normal" ng-bind-html="alarm.description"></td>
                 </tr>
                 <tr ng-if="alarm.operatorInstructions">
-                    <td>Operator Instructions</td>
+                    <th>Operator Instructions</th>
                     <td class="wrap operator-instructions" ng-bind-html="alarm.operatorInstructions"></td>
                 </tr>
             </table>
             <table class="filter-table gf-form-group alarm-details-table">
                 <tr>
-                    <td>Last Event Time</td>
+                    <th>Last Event Time</th>
                     <td>{{alarm.lastEvent.time}}</td>
                 </tr>
                 <tr>
-                    <td>First Event Time</td>
+                    <th>First Event Time</th>
                     <td>{{alarm.firstEventTime}}</td>
                 </tr>
                 <tr>
-                    <td>Count</td>
+                    <th>Count</th>
                     <td>{{alarm.count}}</td>
                 </tr>
                 <tr>
-                    <td>Reduction Key</td>
+                    <th>Reduction Key</th>
                     <td class="wrap reduction-key">{{alarm.reductionKey}}</td>
                 </tr>
                 <tr ng-if="alarm.managedObjectInstance">
-                    <td>Managed Object Instance</td>
+                    <th>Managed Object Instance</th>
                     <td>{{alarm.managedObjectInstance}}</td>
                 </tr>
                 <tr ng-if="alarm.managedObjectType">
-                    <td>Managed Object Type</td>
+                    <th>Managed Object Type</th>
                     <td>{{alarm.managedObjectType}}</td>
                 </tr>
             </table>
