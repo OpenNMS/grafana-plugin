@@ -1,4 +1,4 @@
-<div class="modal-body alarm-details" style="overflow: auto;" dynamic-height ng-class="'opennms-theme-' + (ctrl.panel.theme ? ctrl.panel.theme : 'helm')">
+<div class="modal-body alarm-details" ng-class="'opennms-theme-' + (ctrl.panel.theme ? ctrl.panel.theme : 'helm')">
     <div class="modal-header">
         <h2 class="modal-header-title">
             <a href="{{ alarm.detailsPage }}" target="_blank"><i class="fa fa-external-link"></i></a>
@@ -18,28 +18,28 @@
         </a>
     </div>
 
-    <div class="modal-content">
+    <div class="modal-content" dynamic-height>
         <div ng-if="editor.index == 0">
-            <table class="filter-table gf-form-group alarm-details-table">
+            <table class="filter-table gf-form-group alarm-details-table severity">
                 <tr>
                     <td>UEI</td>
-                    <td>{{alarm.uei}}</td>
+                    <td class="wrap">{{alarm.uei}}</td>
                 </tr>
-                <tr>
-                    <td>Severity</td>
-                    <td><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</td>
+                <tr ng-class="(severity === true || severity === 'row') ? alarm.severity.label.toLowerCase() : ''">
+                    <td >Severity</td>
+                    <td class="wrap severity-icon"><span ng-class="severity === 'column' ? alarm.severity.label.toLowerCase() : ''"><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
                 </tr>
                 <tr>
                     <td>Log Message</td>
-                    <td ng-bind-html="alarm.logMessage"></td>
+                    <td class="wrap log-message" ng-bind-html="alarm.logMessage"></td>
                 </tr>
                 <tr>
                     <td style="vertical-align: text-top">Description</td>
-                    <td style="white-space: normal" ng-bind-html="alarm.description"></td>
+                    <td class="wrap description" style="white-space: normal" ng-bind-html="alarm.description"></td>
                 </tr>
                 <tr ng-if="alarm.operatorInstructions">
                     <td>Operator Instructions</td>
-                    <td ng-bind-html="alarm.operatorInstructions"></td>
+                    <td class="wrap operator-instructions" ng-bind-html="alarm.operatorInstructions"></td>
                 </tr>
             </table>
             <table class="filter-table gf-form-group alarm-details-table">
@@ -57,7 +57,7 @@
                 </tr>
                 <tr>
                     <td>Reduction Key</td>
-                    <td>{{alarm.reductionKey}}</td>
+                    <td class="wrap reduction-key">{{alarm.reductionKey}}</td>
                 </tr>
                 <tr ng-if="alarm.managedObjectInstance">
                     <td>Managed Object Instance</td>
@@ -85,9 +85,7 @@
             </div>
         </div>
 
-        <div ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow: auto; overflow-wrap: normal">
-            <pre style="white-space: pre">{{ getAlarmString() }}</pre>
-        </div>
+        <span ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow-wrap: normal; white-space: pre">{{ getAlarmString() }}</span>
 
         <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
             <table class="filter-table gf-form-group">
