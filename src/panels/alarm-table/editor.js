@@ -14,6 +14,16 @@ export class TablePanelEditorCtrl {
     this.transformers = transformers;
     this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
 
+    this.themes = {
+      helm: 'Helm Default',
+      opennms: 'OpenNMS',
+      omi: 'OMi',
+    };
+
+    if (!this.themes[this.panel.theme]) {
+      this.panel.theme = 'helm';
+    }
+
     this.srcIndex = undefined;
     this.destIndex = undefined;
 
