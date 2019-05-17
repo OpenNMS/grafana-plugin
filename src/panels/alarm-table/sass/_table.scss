@@ -311,8 +311,14 @@ $details-header-font-weight: 500;
 
 .alarm-details-table {
   th {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
+    line-height: 1.6rem;
     font-weight: $details-header-font-weight;
+    vertical-align: text-top;
+  }
+  td {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
   .wrap {
     white-space: normal;
