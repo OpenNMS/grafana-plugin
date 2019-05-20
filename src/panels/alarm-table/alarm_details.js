@@ -29,6 +29,7 @@ export class AlarmDetailsCtrl {
     // Save the alarm
     $scope.alarm = $scope.$parent.alarm;
     $scope.source = $scope.$parent.source;
+    $scope.theme = $scope.$parent.theme;
 
     if ($scope.alarm.relatedAlarms && $scope.alarm.relatedAlarms.length > 0) {
       const related = {};
