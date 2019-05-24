@@ -1,16 +1,16 @@
 import Q from "q";
 import _ from 'lodash';
 import moment from 'moment';
-import {UI} from '../datasources/fault-ds/UI';
+import {UI} from '../datasources/entity-ds/UI';
 import {API} from 'opennms';
-import {Mapping} from '../datasources/fault-ds/Mapping';
-import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
-import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource';
+import {Mapping} from '../datasources/entity-ds/Mapping';
+import {FilterCloner} from '../datasources/entity-ds/FilterCloner';
+import {OpenNMSFMDatasource as Datasource} from '../datasources/entity-ds/datasource';
 import {ClientDelegate} from '../lib/client_delegate';
 
 import {TemplateSrv} from './template_srv';
 
-describe("OpenNMS_FaultManagement_Datasource", function() {
+describe("OpenNMS_Entity_Datasource", function() {
     let uiSegmentSrv = {
         newSegment: function (value, type) {
             return {value: value, type: type};

@@ -220,7 +220,7 @@ export class OpenNMSFMDatasource {
   metricFindQuery(query, optionalOptions) {
     const options = optionalOptions || {};
     const attribute = new Mapping.AttributeMapping().getApiAttribute(query);
-    console.log('fault-ds: metricFindQuery:', attribute, options);
+    console.log('entity-ds: metricFindQuery:', attribute, options);
 
     // special case queries to fill in metadata
     if (options.queryType === 'attributes') {
@@ -239,18 +239,18 @@ export class OpenNMSFMDatasource {
     }
 
     if (attribute === undefined || attribute === null || attribute === '') {
-        console.log('fault-ds: metricFindQuery: no attribute specified');
+        console.log('entity-ds: metricFindQuery: no attribute specified');
         return this.q.when([]);
     }
 
     return this.searchForValues(attribute).then(values => {
-        console.log('fault-ds: searchForValues:', values);
+        console.log('entity-ds: searchForValues:', values);
         return values;
     });
   }
 
   searchForValues(attribute) {
-      console.log('fault-ds: searchForValues: ' + attribute);
+      console.log('entity-ds: searchForValues: ' + attribute);
       if (attribute === 'isSituation' || attribute === 'isInSituation' || attribute === 'isAcknowledged') {
         return this.q.when([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}]);
       }

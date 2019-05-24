@@ -1,10 +1,10 @@
 {
-  "name": "OpenNMS Faults",
+  "name": "OpenNMS Entities",
   "id": "opennms-helm-fault-datasource",
   "type": "datasource",
 
   "partials": {
-    "config": "datasources/fault-ds/partials/config.html"
+    "config": "datasources/entity-ds/partials/config.html"
   },
 
   "metrics": true,

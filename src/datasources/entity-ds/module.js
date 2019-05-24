@@ -4,7 +4,7 @@ import {Examples} from './Examples';
 import '../../components/timeout';
 
 class OpenNMSFMDatasourceConfigCtrl {}
-OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/fault-ds/partials/config.html';
+OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/entity-ds/partials/config.html';
 
 class OpenNMSFMDatasourceQueryOptionsCtrl {
   /** @ngInject */

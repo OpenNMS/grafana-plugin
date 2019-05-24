@@ -11,7 +11,7 @@ const distdir = path.resolve(rootdir, 'dist');
 const createVariants = require('parallel-webpack').createVariants;
 
 const plugins = [
-  'datasources/fault-ds',
+  'datasources/entity-ds',
   'datasources/flow-ds',
   'datasources/perf-ds',
   'panels/alarm-histogram',
