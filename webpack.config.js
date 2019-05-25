@@ -24,6 +24,7 @@ const baseconfig = {
   output: {
     filename: '[name].js',
     chunkFilename: '[name].js',
+    libraryTarget: 'amd',
     path: distdir,
   },
   externals: [
@@ -107,6 +108,7 @@ function createConfig(options) {
 
   if (options.type === 'root') {
     config.entry = {
+      'module': 'src/module.js',
       'datasources/perf-ds/css/opennms.dark': 'src/datasources/perf-ds/sass/opennms.dark.scss',
       'datasources/perf-ds/css/opennms.light': 'src/datasources/perf-ds/sass/opennms.light.scss',
       'panels/alarm-table/css/table.dark': 'src/panels/alarm-table/sass/table.dark.scss',
