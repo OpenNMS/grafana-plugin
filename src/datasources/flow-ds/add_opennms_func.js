@@ -14,69 +14,79 @@ angular
       '<i class="fa fa-plus"></i></a>';
 
     return {
+      scope: {
+        segmentMetric: '@',
+        ctrl: '<'
+      },
       link: function ($scope, elem) {
         let ctrl = $scope.ctrl;
         let graphiteVersion = ctrl.datasource.graphiteVersion;
         let categories = Gfuncs.getCategories(graphiteVersion);
         let allFunctions = getAllFunctionNames(categories);
 
-        $scope.functionMenu = createFunctionDropDownMenu(categories);
+        // Set up a watch to re-render the function menu button every time the segment metric changes since some
+        // functions are context-aware depending on which metric is selected
+        $scope.$watch('segmentMetric', function (newSegmentValue) {
+          // Clear the previous content of the button
+          elem.empty();
+          $scope.functionMenu = createFunctionDropDownMenu(categories, newSegmentValue);
 
-        let $input = $(inputTemplate);
-        let $button = $(buttonTemplate);
-        $input.appendTo(elem);
-        $button.appendTo(elem);
+          let $input = $(inputTemplate);
+          let $button = $(buttonTemplate);
+          $input.appendTo(elem);
+          $button.appendTo(elem);
 
-        $input.attr('data-provide', 'typeahead');
-        $input.typeahead({
-          source: allFunctions,
-          minLength: 1,
-          items: 10,
-          updater: function (value) {
-            let funcDef = Gfuncs.getFuncDef(value);
-            if (!funcDef) {
-              // try find close match
-              value = value.toLowerCase();
-              funcDef = _.find(allFunctions, function (funcName) {
-                return funcName.toLowerCase().indexOf(value) === 0;
+          $input.attr('data-provide', 'typeahead');
+          $input.typeahead({
+            source: allFunctions,
+            minLength: 1,
+            items: 10,
+            updater: function (value) {
+              let funcDef = Gfuncs.getFuncDef(value);
+              if (!funcDef) {
+                // try find close match
+                value = value.toLowerCase();
+                funcDef = _.find(allFunctions, function (funcName) {
+                  return funcName.toLowerCase().indexOf(value) === 0;
+                });
+
+                if (!funcDef) {
+                  return;
+                }
+              }
+
+              $scope.$apply(function () {
+                ctrl.addFunction(funcDef);
               });
 
-              if (!funcDef) {
-                return;
-              }
+              $input.trigger('blur');
+              return '';
             }
+          });
 
-            $scope.$apply(function () {
-              ctrl.addFunction(funcDef);
-            });
+          $button.click(function () {
+            $button.hide();
+            $input.show();
+            $input.focus();
+          });
 
-            $input.trigger('blur');
-            return '';
-          }
+          $input.keyup(function () {
+            elem.toggleClass('open', $input.val() === '');
+          });
+
+          $input.blur(function () {
+            // clicking the function dropdown menu wont
+            // work if you remove class at once
+            setTimeout(function () {
+              $input.val('');
+              $input.hide();
+              $button.show();
+              elem.removeClass('open');
+            }, 200);
+          });
+
+          $compile(elem.contents())($scope);
         });
-
-        $button.click(function () {
-          $button.hide();
-          $input.show();
-          $input.focus();
-        });
-
-        $input.keyup(function () {
-          elem.toggleClass('open', $input.val() === '');
-        });
-
-        $input.blur(function () {
-          // clicking the function dropdown menu wont
-          // work if you remove class at once
-          setTimeout(function () {
-            $input.val('');
-            $input.hide();
-            $button.show();
-            elem.removeClass('open');
-          }, 200);
-        });
-
-        $compile(elem.contents())($scope);
       }
     };
   });
@@ -90,13 +100,17 @@ function getAllFunctionNames(categories) {
   }, []);
 }
 
-function createFunctionDropDownMenu(categories) {
+function createFunctionDropDownMenu(categories, selectedSegment) {
   return _.map(categories, function (list, category) {
     let submenu = _.map(list, function (value) {
-      return {
-        text: value.name,
-        click: "ctrl.addFunction('" + value.name + "')",
-      };
+      // Only add this submenu item if it is applicable to the currently selected metric segment
+      if (!value.appliesToSegments || value.appliesToSegments.includes(selectedSegment)) {
+        return {
+          text: value.name,
+          click: "ctrl.addFunction('" + value.name + "')",
+        };
+      }
+      return {};
     });
 
     return {
