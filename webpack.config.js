@@ -171,7 +171,6 @@ function createConfig(options) {
           context: 'src',
         },
       ]),
-      /* new BundleAnalyzerPlugin(), */
     ]);
   } else if (options.type === 'plugins') {
     config.output.filename = '[name]/module.js';
