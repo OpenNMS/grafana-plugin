@@ -161,7 +161,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   refreshAppConfig() {
     const self = this;
-    self.backendSrv.get(`/api/plugins/opennms-helm-app/settings`).then(result => {
+    self.backendSrv.get(`api/plugins/opennms-helm-app/settings`).then(result => {
       if (result && result.jsonData) {
         self.appConfig = result.jsonData;
       } else {
