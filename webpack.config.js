@@ -151,6 +151,10 @@ function createConfig(options) {
       }),
       new CopyPlugin([
         {
+          from: '*.md',
+          to: distdir,
+        },
+        {
           from: '**/*.json',
           to: distdir,
           context: 'src',
