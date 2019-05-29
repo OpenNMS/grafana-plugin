@@ -40,7 +40,7 @@ const baseconfig = {
       const prefixes = ['app/', 'grafana/'];
       for (let prefix of prefixes) {
         if (request.indexOf(prefix) === 0) {
-          return callback(null, '/public/' + request);
+          return callback(null, request);
         }
       }
       callback();
@@ -171,7 +171,6 @@ function createConfig(options) {
           context: 'src',
         },
       ]),
-      /* new BundleAnalyzerPlugin(), */
     ]);
   } else if (options.type === 'plugins') {
     config.output.filename = '[name]/module.js';
