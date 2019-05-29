@@ -40,7 +40,7 @@ const baseconfig = {
       const prefixes = ['app/', 'grafana/'];
       for (let prefix of prefixes) {
         if (request.indexOf(prefix) === 0) {
-          return callback(null, '/public/' + request);
+          return callback(null, request);
         }
       }
       callback();
