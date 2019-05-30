@@ -355,7 +355,7 @@ export class TableRenderer {
       }
     }
 
-    if (column.style.clip) {
+    if (column.style && column.style.clip) {
       textStyles.push('overflow:hidden');
       textStyles.push('text-overflow:ellipsis');
       if (!column.style.preserveFormat) {
