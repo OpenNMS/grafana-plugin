@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
+import kbn from 'app/core/utils/kbn';
+import {Gfuncs} from "./flow_functions";
 
 export class FlowDatasource {
   /** @ngInject */
@@ -16,7 +18,6 @@ export class FlowDatasource {
   query(options) {
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
-    let step = Math.floor((end - start) / options.maxDataPoints);
 
     if (options.targets.length > 1) {
       throw new Error("Multiple targets are not currently supported when using the OpenNMS Flow Datasource.");
@@ -41,6 +42,16 @@ export class FlowDatasource {
     let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
     // Transform
     let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
+
+    // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
+    // value from grafan's automatically calculated maxDataPoints (based on pixel width)
+    let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
+    let step;
+    if (groupByInterval) {
+      step = kbn.interval_to_ms(groupByInterval);
+    } else {
+      step = Math.floor((end - start) / options.maxDataPoints);
+    }
 
     switch (target.metric) {
       case 'conversations':
@@ -359,7 +370,11 @@ export class FlowDatasource {
       return def;
     }
     // Return the parameter value, and perform any required template variable substitutions
-    return this.templateSrv.replace(func.parameters[idx]);
+    if (Gfuncs.getFuncDef(name).params[0].type === 'int') {
+      return func.parameters[idx];
+    } else {
+      return this.templateSrv.replace(func.parameters[idx]);
+    }
   }
 
   getFunctionParametersOrDefault(target, name, idx, def) {

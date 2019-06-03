@@ -13,6 +13,14 @@ prunk.mock('app/plugins/sdk', {
 prunk.mock('app/core/app_events', {
   appEvents: null
 });
+prunk.mock('app/core/utils/kbn', {
+  interval_to_ms: (str) => {return 0;}
+});
+prunk.mock('angular', {
+  $: {
+    isNumeric: (arg) => {return true;}
+  }
+});
 
 // Setup jsdom
 // Required for loading angularjs

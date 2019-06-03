@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import {Gfuncs} from "./flow_functions";
+import {Gfuncs, Cardinality} from "./flow_functions";
 
 angular
   .module('grafana.directives')
@@ -24,12 +24,10 @@ angular
         let categories = Gfuncs.getCategories(graphiteVersion);
         let allFunctions = getAllFunctionNames(categories);
 
-        // Set up a watch to re-render the function menu button every time the segment metric changes since some
-        // functions are context-aware depending on which metric is selected
-        $scope.$watch('segmentMetric', function (newSegmentValue) {
+        let renderFunction = (segmentValue, selectedFunctions) => {
           // Clear the previous content of the button
           elem.empty();
-          $scope.functionMenu = createFunctionDropDownMenu(categories, newSegmentValue);
+          $scope.functionMenu = createFunctionDropDownMenu(categories, segmentValue, selectedFunctions);
 
           let $input = $(inputTemplate);
           let $button = $(buttonTemplate);
@@ -86,6 +84,18 @@ angular
           });
 
           $compile(elem.contents())($scope);
+        };
+
+        // Set up a watch to re-render the function menu button every time a function is added to hide new functions
+        // based on their Cardinality and whether or not they have already been selected
+        $scope.$watch('ctrl.target.functions', function(newFunctions) {
+          renderFunction($scope.segmentMetric, newFunctions);
+        });
+
+        // Set up a watch to re-render the function menu button every time the segment metric changes since some
+        // functions are context-aware depending on which metric is selected
+        $scope.$watch('segmentMetric', function (newSegmentValue) {
+          renderFunction(newSegmentValue, $scope.ctrl.target.functions);
         });
       }
     };
@@ -100,22 +110,72 @@ function getAllFunctionNames(categories) {
   }, []);
 }
 
-function createFunctionDropDownMenu(categories, selectedSegment) {
-  return _.map(categories, function (list, category) {
-    let submenu = _.map(list, function (value) {
-      // Only add this submenu item if it is applicable to the currently selected metric segment
-      if (!value.appliesToSegments || value.appliesToSegments.includes(selectedSegment)) {
-        return {
-          text: value.name,
-          click: "ctrl.addFunction('" + value.name + "')",
-        };
+function shouldRenderFunctionBasedOnCardinality(f, selectedFunctions) {
+  if (!selectedFunctions || !f.cardinality) {
+    return true;
+  }
+
+  return !(f.cardinality === Cardinality.SINGLE && functionsContainNamedFunction(f.name, selectedFunctions));
+}
+
+function isExcluded(f, selectedFunctions) {
+    if (!selectedFunctions || !f.mutuallyExcludes) {
+        return false;
+    }
+
+    return functionsExcludeNamedFunction(f.name, selectedFunctions);
+}
+
+function functionsContainNamedFunction(functionName, selectedFunctions) {
+  let result = false;
+  selectedFunctions.forEach((f) => {
+    if (f.name === functionName) {
+      result = true;
+    }
+  });
+  return result;
+}
+
+function functionsExcludeNamedFunction(functionName, selectedFunctions) {
+    let result = false;
+    selectedFunctions.forEach((f) => {
+        let funcDef = Gfuncs.getFuncDef(f.name);
+        if (funcDef.mutuallyExcludes && funcDef.mutuallyExcludes.includes(functionName)) {
+            result = true;
+        }
+    });
+    return result;
+}
+
+function createFunctionDropDownMenu(categories, selectedSegment, selectedFunctions) {
+  let categoriesToRender = [];
+
+  _.forEach(categories, (functionsInCategory, categoryName) => {
+    let functionsToRender = [];
+    functionsInCategory.forEach((item) => {
+      // Only add this submenu item if it is applicable to the currently selected metric segment and its Cardinality
+      // isn't preventing it from being added
+      if ((!item.appliesToSegments || item.appliesToSegments.includes(selectedSegment)) &&
+          shouldRenderFunctionBasedOnCardinality(item, selectedFunctions) && !isExcluded(item, selectedFunctions)) {
+        functionsToRender.push(item);
       }
-      return {};
     });
 
-    return {
-      text: category,
-      submenu: submenu
-    };
+    let submenu = _.map(functionsToRender, (f) => {
+      return {
+        text: f.name,
+        click: "ctrl.addFunction('" + f.name + "')",
+      };
+    });
+
+    // Only include this category if it has at least one function to display
+    if (submenu.length > 0) {
+      categoriesToRender.push({
+        text: categoryName,
+        submenu: submenu
+      });
+    }
   });
+
+  return categoriesToRender;
 }
