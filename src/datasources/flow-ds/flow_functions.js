@@ -104,48 +104,57 @@ addFuncDef({
 addFuncDef({
   name: 'perSecond',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'toBits',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'negativeEgress',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'negativeIngress',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'asTableSummary',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['perSecond', 'toBits', 'negativeEgress', 'negativeIngress', 'combineIngressEgress', 'onlyIngress',
+    'onlyEgress', 'withGroupByInterval'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'combineIngressEgress',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'onlyIngress',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'onlyEgress',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
@@ -153,6 +162,7 @@ addFuncDef({
   name: 'withGroupByInterval',
   category: categories.Transform,
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   params: [{
     name: "interval",
     type: "string"
