@@ -370,7 +370,7 @@ export class FlowDatasource {
       return def;
     }
     // Return the parameter value, and perform any required template variable substitutions
-    if (Gfuncs.getFuncDef(name).params[0].type === 'int') {
+    if (Gfuncs.getFuncDef(name).params[idx].type === 'int') {
       return func.parameters[idx];
     } else {
       return this.templateSrv.replace(func.parameters[idx]);
