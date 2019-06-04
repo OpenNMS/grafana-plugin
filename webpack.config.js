@@ -16,6 +16,7 @@ const plugins = [
   'datasources/perf-ds',
   'panels/alarm-histogram',
   'panels/alarm-table',
+  'panels/helm-histogram',
 ];
 
 const baseconfig = {
@@ -113,6 +114,8 @@ function createConfig(options) {
       'datasources/perf-ds/css/opennms.light': 'src/datasources/perf-ds/sass/opennms.light.scss',
       'panels/alarm-table/css/table.dark': 'src/panels/alarm-table/sass/table.dark.scss',
       'panels/alarm-table/css/table.light': 'src/panels/alarm-table/sass/table.light.scss',
+      'panels/helm-histogram/css/legend.dark': 'src/panels/helm-histogram/sass/legend.dark.scss',
+      'panels/helm-histogram/css/legend.light': 'src/panels/helm-histogram/sass/legend.light.scss',
     };
 
     config.module.rules = config.module.rules.concat([

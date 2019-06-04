@@ -1,0 +1,12 @@
+{
+  "type": "panel",
+  "name": "Helm Histogram",
+  "id": "opennms-helm-helm-histogram-panel",
+
+  "info": {
+    "logos": {
+      "small": "img/helm-histogram.svg",
+      "large": "img/helm-histogram.svg"
+    }
+  }
+}
