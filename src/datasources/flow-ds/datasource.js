@@ -44,7 +44,7 @@ export class FlowDatasource {
     let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
 
     // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
-    // value from grafan's automatically calculated maxDataPoints (based on pixel width)
+    // value from Grafana's automatically calculated maxDataPoints (based on pixel width)
     let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
     let step;
     if (groupByInterval) {
@@ -73,13 +73,13 @@ export class FlowDatasource {
           if (conversations && conversations.length > 0) {
             return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -104,13 +104,13 @@ export class FlowDatasource {
           if (applications && applications.length > 0) {
             return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -134,13 +134,13 @@ export class FlowDatasource {
           if (hosts && hosts.length > 0) {
             return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -227,7 +227,22 @@ export class FlowDatasource {
     });
   }
 
-  static toTable(table) {
+  static toTable(target, table) {
+    let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
+
+    if (toBits) {
+      let inIndex = table.headers.indexOf('Bytes In');
+      let outIndex = table.headers.indexOf('Bytes Out');
+      table.rows = _.map(table.rows, (row) => {
+        row[inIndex] *= 8;
+        row[outIndex] *= 8;
+        return row;
+      });
+      table.headers[inIndex] = 'Bits In';
+      table.headers[outIndex] = 'Bits Out';
+    }
+
+
     let columns = table && table.headers ? _.map(table.headers, column => {
       return {"text": column}
     }) : [];

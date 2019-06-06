@@ -111,7 +111,6 @@ addFuncDef({
 addFuncDef({
   name: 'toBits',
   cardinality: Cardinality.SINGLE,
-  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
@@ -132,7 +131,7 @@ addFuncDef({
 addFuncDef({
   name: 'asTableSummary',
   cardinality: Cardinality.SINGLE,
-  mutuallyExcludes: ['perSecond', 'toBits', 'negativeEgress', 'negativeIngress', 'combineIngressEgress', 'onlyIngress',
+  mutuallyExcludes: ['perSecond', 'negativeEgress', 'negativeIngress', 'combineIngressEgress', 'onlyIngress',
     'onlyEgress', 'withGroupByInterval'],
   category: categories.Transform
 });
