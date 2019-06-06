@@ -296,7 +296,7 @@ export class ClientDelegate {
     getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId);
+                return flowDao.getSeriesForTopNConversations({N: N, includeOther: includeOther}, start, end, step, nodeCriteria, interfaceId);
             }).catch(this.decorateError);
     }
 
@@ -310,7 +310,7 @@ export class ClientDelegate {
     getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId) {
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId);
+                return flowDao.getSummaryForTopNConversations({N: N, includeOther: includeOther}, start, end, nodeCriteria, interfaceId);
             }).catch(this.decorateError);
     }
 
