@@ -3,8 +3,9 @@ import {Mapping} from '../Mapping';
 import {UI} from '../UI';
 
 export class Filter {
-    constructor(uiSegmentSrv) {
+    constructor(uiSegmentSrv, entity) {
         this.uiSegmentSrv = uiSegmentSrv;
+        this.entity = entity;
         this.query = new UI.Query(uiSegmentSrv);
         this.query.root = true;
     }
@@ -14,7 +15,8 @@ export class Filter {
     }
 
     getQueryString() {
-        let string = "select all alarms";
+        const entityName = this.entity && this.entity.id ? this.entity.id : 'alarm';
+        let string = 'select all ' + entityName + 's';
         if (this.query.isEmpty()) {
             return string;
         }
@@ -32,7 +34,7 @@ export class Filter {
 
     addClause(clause) {
         if (clause instanceof API.Clause) {
-            const uiClause = new Mapping.ClauseMapping(this.uiSegmentSrv).getUiClause(clause);
+            const uiClause = new Mapping.ClauseMapping(this.uiSegmentSrv, this.entity).getUiClause(clause);
             this.query.addClause(uiClause);
         } else if (clause instanceof UI.Clause) {
             this.query.addClause(clause);

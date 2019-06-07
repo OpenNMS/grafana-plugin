@@ -1,12 +1,12 @@
-import {OpenNMSFMDatasource} from './datasource';
-import {OpenNMSFMDatasourceQueryCtrl} from './query_ctrl';
+import {OpenNMSEntityDatasource} from './datasource';
+import {OpenNMSEntityDatasourceQueryCtrl} from './query_ctrl';
 import {Examples} from './Examples';
 import '../../components/timeout';
 
-class OpenNMSFMDatasourceConfigCtrl {}
-OpenNMSFMDatasourceConfigCtrl.templateUrl = 'datasources/entity-ds/partials/config.html';
+class OpenNMSEntityDatasourceConfigCtrl {}
+OpenNMSEntityDatasourceConfigCtrl.templateUrl = 'datasources/entity-ds/partials/config.html';
 
-class OpenNMSFMDatasourceQueryOptionsCtrl {
+class OpenNMSEntityDatasourceQueryOptionsCtrl {
   /** @ngInject */
   constructor(uiSegmentSrv) {
     this.uiSegmentSrv = uiSegmentSrv;
@@ -22,11 +22,11 @@ class OpenNMSFMDatasourceQueryOptionsCtrl {
       this.panelCtrl.panel.targets.push(target);
   }
 }
-OpenNMSFMDatasourceQueryOptionsCtrl.templateUrl = 'datasources/fault-ds/partials/query.options.html';
+OpenNMSEntityDatasourceQueryOptionsCtrl.templateUrl = 'datasources/entity-ds/partials/query.options.html';
 
 export {
-  OpenNMSFMDatasource as Datasource,
-  OpenNMSFMDatasourceQueryCtrl as QueryCtrl,
-  OpenNMSFMDatasourceConfigCtrl as ConfigCtrl,
-  OpenNMSFMDatasourceQueryOptionsCtrl as QueryOptionsCtrl,
+  OpenNMSEntityDatasource as Datasource,
+  OpenNMSEntityDatasourceQueryCtrl as QueryCtrl,
+  OpenNMSEntityDatasourceConfigCtrl as ConfigCtrl,
+  OpenNMSEntityDatasourceQueryOptionsCtrl as QueryOptionsCtrl,
 };

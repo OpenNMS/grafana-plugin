@@ -1,20 +1,31 @@
 import {ClientDelegate} from '../../lib/client_delegate';
+import {FunctionFormatter} from '../../lib/function_formatter';
 import {API, Model} from 'opennms';
 import {FilterCloner} from './FilterCloner';
-import {Mapping} from './Mapping';
 import _ from 'lodash';
-
-const FeaturedAttributes = [
-    "affectedNodeCount", "alarmAckTime", "category", "ipAddress",
-    "isAcknowledged", "isSituation", "isInSituation", "location", "node", "node.label", "reductionKey",
-    "service", "severity", "situationAlarmCount", "uei"
-];
+import AlarmEntity from './AlarmEntity';
+import NodeEntity from './NodeEntity';
 
 const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
 };
 
-export class OpenNMSFMDatasource {
+export const entityTypes = [ 'alarm', 'node' ];
+export const getEntity = (e, client, datasource) => {
+    if (!e) {
+        return null;
+    }
+
+    const entityType = e.id ? e.id : e;
+    switch(entityType) {
+        case 'alarm': return new AlarmEntity(client, datasource);
+        case 'node': return new NodeEntity(client, datasource);
+    }
+
+    throw new Error('Unable to get entity for ' + JSON.stringify(e));
+};
+
+export class OpenNMSEntityDatasource {
   /** @ngInject */
   constructor(instanceSettings, $q, backendSrv, templateSrv, contextSrv) {
     this.type = instanceSettings.type;
@@ -23,7 +34,7 @@ export class OpenNMSFMDatasource {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
-    this.alarmClient = new ClientDelegate(instanceSettings, backendSrv, $q);
+    this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv, $q);
 
     // When enabled in the datasource, the grafana user should be used instead of the datasource username on
     // supported operations
@@ -37,22 +48,26 @@ export class OpenNMSFMDatasource {
     }
   }
 
-  query(options) {
+  async query(options) {
+      const target = options.targets[0]; // TODO: handle multiple target queries
+
       // Initialize filter
-      var filter = options.targets[0].filter || new API.Filter();
-      filter.limit = options.targets[0].limit || 0; // 0 = no limit
+      const filter = target.filter || new API.Filter();
+      const entityType = target.entityType || 'alarm';
+      filter.limit = target.limit || 0; // 0 = no limit
+
+      let entity = getEntity(entityType, this.opennmsClient, this);
+      if (!entity) {
+        console.error('Unable to determine entity from entity type', entityType);
+        entity = new AlarmEntity(this.opennmsClient);
+      }
 
       options.enforceTimeRange = true;
+      options.entity = entity;
       const clonedFilter = this.buildQuery(filter, options);
 
-      var self = this;
-      return this.alarmClient.findAlarms(clonedFilter).then(alarms => {
-          return this.alarmClient.getClientWithMetadata().then(client => {
-              return {
-                data: self.toTable(alarms, client.server.metadata)
-              };
-          });
-      });
+      const data = await entity.query(clonedFilter);
+      return { data: data };
   }
 
   // Clone Filter to make substitution possible
@@ -63,10 +78,12 @@ export class OpenNMSFMDatasource {
 
       // Before replacing any variables, add a global time range restriction (which is hidden to the user)
       if (options && options.enforceTimeRange) {
-          clonedFilter.withAndRestriction(
-              new API.NestedRestriction()
-                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from"))
-                  .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
+          if (!options.entity || options.entity.type === 'alarm') {
+            clonedFilter.withAndRestriction(
+                new API.NestedRestriction()
+                    .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.GE, "$range_from"))
+                    .withAndRestriction(new API.Restriction("lastEventTime", API.Comparators.LE, "$range_to")));
+          }
       }
 
       // Substitute $<variable> or [[variable]] in the restriction value
@@ -184,7 +201,7 @@ export class OpenNMSFMDatasource {
     }
 
   testDatasource() {
-      return this.alarmClient.getClientWithMetadata()
+      return this.opennmsClient.getClientWithMetadata()
           .then(metadata => {
               if (metadata) {
                   return {
@@ -217,25 +234,50 @@ export class OpenNMSFMDatasource {
     return this.q.when([]);
   }
 
+  _getQueryEntity(query) {
+      const q = query && query.query ? query.query : query;
+    if (q === undefined || q === null || q.trim().length === 0) {
+        console.log('_getQueryEntity: no query defined, assuming "alarm" entity type.');
+        return new AlarmEntity(this.opennmsClient);
+    }
+
+    try {
+        const functions = FunctionFormatter.findFunctions(q);
+        for (const func of functions) {
+            if (func.name === 'nodes') {
+                return new NodeEntity(this.opennmsClient, this);
+            } else if (func.name === 'alarms') {
+                return new AlarmEntity(this.opennmsClient, this);
+            }
+        }
+    } catch (e) {
+        console.warn('_getQueryEntity: failed to get functions:', e);
+    }
+
+    console.warn('WARNING: unable to infer entity type based on query: ' + q);
+    return null;
+  }
+
   metricFindQuery(query, optionalOptions) {
     const options = optionalOptions || {};
-    const attribute = new Mapping.AttributeMapping().getApiAttribute(query);
-    console.log('entity-ds: metricFindQuery:', attribute, options);
+
+    const entity = options.entityType ? getEntity(options.entityType, this.opennmsClient, this) : this._getQueryEntity({ query: query });
+
+    let attribute = entity.getAttributeMapping().getApiAttribute(query);
 
     // special case queries to fill in metadata
     if (options.queryType === 'attributes') {
         if (options.strategy === 'featured') {
-            const featuredAttributes = _.map(_.sortBy(FeaturedAttributes), (attribute) => {
-                return {id: attribute}
-            });
-            return this.q.when(featuredAttributes);
+            return this.q.when(entity.getColumns().filter(col => col.featured).map(col => {
+                return { id: col.resource, value: col.text }
+            }));
         }
         // assume all
-        return this.alarmClient.getProperties();
+        return this.q.when(entity.getProperties());
     } else if (options.queryType === 'comparators') {
-        return this.alarmClient.getPropertyComparators(attribute);
+        return this.q.when(entity.getPropertyComparators(attribute));
     } else if (options.queryType === 'operators') {
-        return this.alarmClient.findOperators();
+        return this.q.when(this.opennmsClient.findOperators());
     }
 
     if (attribute === undefined || attribute === null || attribute === '') {
@@ -243,18 +285,31 @@ export class OpenNMSFMDatasource {
         return this.q.when([]);
     }
 
-    return this.searchForValues(attribute).then(values => {
+    let e = entity;
+    const functions = FunctionFormatter.findFunctions(attribute);
+    for (const func of functions) {
+      if (func.name === 'nodes') {
+            e = new NodeEntity(entity.client, this);
+            attribute = func.arguments[0] || 'id';
+        } else if (func.name === 'alarms') {
+            e = new AlarmEntity(entity.client, this);
+            attribute = func.arguments[0] || 'id';
+        }
+        // TODO: add nodeFilter() support (requires OpenNMS.js update)
+    }
+
+    return this.searchForValues(e, attribute).then(values => {
         console.log('entity-ds: searchForValues:', values);
         return values;
     });
   }
 
-  searchForValues(attribute) {
-      console.log('entity-ds: searchForValues: ' + attribute);
+  searchForValues(entity, attribute) {
       if (attribute === 'isSituation' || attribute === 'isInSituation' || attribute === 'isAcknowledged') {
         return this.q.when([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}]);
       }
-      return this.alarmClient.findProperty(attribute)
+
+      return entity.findProperty(attribute)
           .then(property => {
               if (!property) {
                   return this.q.when([]);
@@ -273,203 +328,67 @@ export class OpenNMSFMDatasource {
               }
               return property.findValues({limit: 1000}).then(values => {
                   return values.filter(value => value !== null).map(value => {
-                      return {id: value, label: value, text: value, value: value}
+                      return {id: value, label: value, text: value ? String(value) : value, value: value}
                   });
               });
           });
-  }
-
-    // Converts the data fetched from the Alarm REST Endpoint of OpenNMS to the grafana table model
-    toTable(alarms, metadata) {
-        let columnNames = [
-            "ID", "Count", "Acked By", "Ack Time", "UEI", "Severity",
-            "Type", "Description", "Location", "Log Message", "Reduction Key",
-            "Trouble Ticket", "Trouble Ticket State", "Node ID", "Node Label", "Service",
-            "Suppressed Time", "Suppressed Until", "Suppressed By", "IP Address", "Is Acknowledged",
-            "First Event Time", "Last Event ID", "Last Event Time", "Last Event Source",
-            "Last Event Creation Time", "Last Event Severity", "Last Event Label", "Last Event Location",
-            "Sticky ID", "Sticky Note", "Sticky Author", "Sticky Update Time", "Sticky Creation Time",
-            "Journal ID", "Journal Note", "Journal Author", "Journal Update Time", "Journal Creation Time",
-            "Is Situation", "Situation Alarm Count", "Affected Node Count",
-            "Managed Object Instance", "Managed Object Type",
-            "Data Source"
-        ];
-
-        // Build a sorted list of (unique) event parameter names
-        let parameterNames = _.uniq(_.sortBy(_.flatten(_.map(alarms, alarm => {
-          if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
-            return [];
-          }
-          return _.map(alarm.lastEvent.parameters, parameter => {
-            return parameter.name;
-          });
-        })), name => name), true);
-
-        // Include the event parameters as columns
-        _.each(parameterNames, parameterName => {
-          columnNames.push("Param_" + parameterName);
-        });
-
-        let columns = _.map(columnNames, column => {
-            return { "text" : column }
-        });
-
-        let self = this;
-        let rows = _.map(alarms, alarm => {
-            let row = [
-                alarm.id,
-                alarm.count,
-                alarm.ackUser,
-                alarm.ackTime,
-                alarm.uei,
-                alarm.severity.label,
-                alarm.type ? alarm.type.label : undefined,
-                alarm.description,
-                alarm.location,
-
-                alarm.logMessage,
-                alarm.reductionKey,
-                alarm.troubleTicket,
-                alarm.troubleTicketState ? alarm.troubleTicketState.label : undefined,
-                alarm.nodeId,
-                alarm.nodeLabel,
-                alarm.service ? alarm.service.name : undefined,
-                alarm.suppressedTime,
-                alarm.suppressedUntil,
-                alarm.suppressedBy,
-                alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
-                !_.isNil(alarm.ackUser) && !_.isNil(alarm.ackTime),
-
-                // Event
-                alarm.firstEventTime,
-                alarm.lastEvent ? alarm.lastEvent.id : undefined,
-                alarm.lastEvent ? alarm.lastEvent.time : undefined,
-                alarm.lastEvent ? alarm.lastEvent.source : undefined,
-                alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
-                alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
-                alarm.lastEvent ? alarm.lastEvent.label : undefined,
-                alarm.lastEvent ? alarm.lastEvent.location : undefined,
-
-                // Sticky Note
-                alarm.sticky ? alarm.sticky.id : undefined,
-                alarm.sticky ? alarm.sticky.body : undefined,
-                alarm.sticky ? alarm.sticky.author : undefined,
-                alarm.sticky ? alarm.sticky.updated : undefined,
-                alarm.sticky ? alarm.sticky.created : undefined,
-
-                // Journal Note
-                alarm.journal ? alarm.journal.id : undefined,
-                alarm.journal ? alarm.journal.body : undefined,
-                alarm.journal ? alarm.journal.author : undefined,
-                alarm.journal ? alarm.journal.updated : undefined,
-                alarm.journal ? alarm.journal.created : undefined,
-
-                // Situation Data
-                alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N',
-                alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined,
-                alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
-                alarm.managedObjectInstance ? alarm.managedObjectInstance : undefined,
-                alarm.managedObjectType ? alarm.managedObjectType : undefined,
-
-                // Data Source
-                self.name
-            ];
-
-            // Index the event parameters by name
-            let eventParametersByName = {};
-            if (alarm.lastEvent && alarm.lastEvent.parameters) {
-              _.each(alarm.lastEvent.parameters, parameter => {
-                eventParametersByName[parameter.name] = parameter.value;
-              });
-            }
-
-            // Append the event parameters to the row
-            row = row.concat(_.map(parameterNames, parameterName => {
-              if (_.has(eventParametersByName, parameterName)) {
-                return eventParametersByName[parameterName];
-              } else {
-                return undefined;
-              }
-            }));
-
-            row.meta = {
-                // Store the alarm for easy access by the panels - may not be necessary
-                'alarm': alarm,
-                // Store the name of the data-source as part of the data so that
-                // the panel can grab an instance of the DS to perform actions
-                // on the alarms
-                "source": this.name,
-                // Store the ticketerConfig here
-                "ticketerConfig": metadata.ticketerConfig
-            };
-
-            return row;
-        });
-
-        return [
-            {
-                "columns": columns,
-                "rows": rows,
-                "type": "table",
-            }
-        ];
     }
 
     getAlarm(alarmId) {
-        return this.alarmClient.getAlarm(alarmId);
+        return this.opennmsClient.getAlarm(alarmId);
     }
 
     acknowledgeAlarm(alarmId) {
-        return this.alarmClient.doAck(alarmId, this.user);
+        return this.opennmsClient.doAck(alarmId, this.user);
     }
 
     unacknowledgeAlarm(alarmId) {
-        return this.alarmClient.doUnack(alarmId, this.user);
+        return this.opennmsClient.doUnack(alarmId, this.user);
     }
 
     clearAlarm(alarmId) {
-        return this.alarmClient.doClear(alarmId, this.user);
+        return this.opennmsClient.doClear(alarmId, this.user);
     }
 
     escalateAlarm(alarmId) {
-        return this.alarmClient.doEscalate(alarmId, this.user);
+        return this.opennmsClient.doEscalate(alarmId, this.user);
     }
 
     createTicketForAlarm(alarmId) {
-        return this.alarmClient.doTicketAction(alarmId, "create");
+        return this.opennmsClient.doTicketAction(alarmId, "create");
     }
 
     updateTicketForAlarm(alarmId) {
-        return this.alarmClient.doTicketAction(alarmId, "update");
+        return this.opennmsClient.doTicketAction(alarmId, "update");
     }
 
     closeTicketForAlarm(alarmId) {
-        return this.alarmClient.doTicketAction(alarmId, "close");
+        return this.opennmsClient.doTicketAction(alarmId, "close");
     }
 
     saveSticky(alarmId, sticky) {
-        return this.alarmClient.saveSticky(alarmId, sticky, this.user);
+        return this.opennmsClient.saveSticky(alarmId, sticky, this.user);
     }
 
     deleteSticky(alarmId) {
-        return this.alarmClient.deleteSticky(alarmId);
+        return this.opennmsClient.deleteSticky(alarmId);
     }
 
     saveJournal(alarmId, journal) {
-        return this.alarmClient.saveJournal(alarmId, journal, this.user);
+        return this.opennmsClient.saveJournal(alarmId, journal, this.user);
     }
 
     deleteJournal(alarmId) {
-        return this.alarmClient.deleteJournal(alarmId);
+        return this.opennmsClient.deleteJournal(alarmId);
     }
 
     // Situation Feedback
 
     getSituationFeedback(situationId) {
-        return this.alarmClient.getSituationfeedback(situationId);
+        return this.opennmsClient.getSituationfeedback(situationId);
     }
 
     submitSituationFeedback(situationId, feedback) {
-        return this.alarmClient.submitSituationFeedback(situationId, feedback);
+        return this.opennmsClient.submitSituationFeedback(situationId, feedback);
     }
 }

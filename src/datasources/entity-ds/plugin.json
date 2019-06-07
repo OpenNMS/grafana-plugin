@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS Entities",
-  "id": "opennms-helm-fault-datasource",
+  "id": "opennms-helm-entity-datasource",
   "type": "datasource",
 
   "partials": {
@@ -12,8 +12,8 @@
 
   "info": {
     "logos": {
-      "small": "img/fm-ds.svg",
-      "large": "img/fm-ds.svg"
+      "small": "img/entity-ds.svg",
+      "large": "img/entity-ds.svg"
     }
   }
 

@@ -547,7 +547,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   performAlarmActionOnDatasource(source, action, alarmId) {
     let self = this;
     this.datasourceSrv.get(source).then(ds => {
-      if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
+      if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
         throw {message: 'Only OpenNMS datasources are supported'};
       } else {
         if (!ds[action]) {
