@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
+import kbn from 'app/core/utils/kbn';
+import {Gfuncs} from "./flow_functions";
 
 export class FlowDatasource {
   /** @ngInject */
@@ -16,7 +18,6 @@ export class FlowDatasource {
   query(options) {
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
-    let step = Math.floor((end - start) / options.maxDataPoints);
 
     if (options.targets.length > 1) {
       throw new Error("Multiple targets are not currently supported when using the OpenNMS Flow Datasource.");
@@ -42,6 +43,16 @@ export class FlowDatasource {
     // Transform
     let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
 
+    // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
+    // value from Grafana's automatically calculated maxDataPoints (based on pixel width)
+    let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
+    let step;
+    if (groupByInterval) {
+      step = kbn.interval_to_ms(groupByInterval);
+    } else {
+      step = Math.floor((end - start) / options.maxDataPoints);
+    }
+
     switch (target.metric) {
       case 'conversations':
         if (!asTableSummary) {
@@ -62,13 +73,13 @@ export class FlowDatasource {
           if (conversations && conversations.length > 0) {
             return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -93,13 +104,13 @@ export class FlowDatasource {
           if (applications && applications.length > 0) {
             return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -123,13 +134,13 @@ export class FlowDatasource {
           if (hosts && hosts.length > 0) {
             return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
               return {
-                data: FlowDatasource.toTable(table)
+                data: FlowDatasource.toTable(target, table)
               };
             });
           }
@@ -216,7 +227,22 @@ export class FlowDatasource {
     });
   }
 
-  static toTable(table) {
+  static toTable(target, table) {
+    let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
+
+    if (toBits) {
+      let inIndex = table.headers.indexOf('Bytes In');
+      let outIndex = table.headers.indexOf('Bytes Out');
+      table.rows = _.map(table.rows, (row) => {
+        row[inIndex] *= 8;
+        row[outIndex] *= 8;
+        return row;
+      });
+      table.headers[inIndex] = 'Bits In';
+      table.headers[outIndex] = 'Bits Out';
+    }
+
+
     let columns = table && table.headers ? _.map(table.headers, column => {
       return {"text": column}
     }) : [];
@@ -359,7 +385,11 @@ export class FlowDatasource {
       return def;
     }
     // Return the parameter value, and perform any required template variable substitutions
-    return this.templateSrv.replace(func.parameters[idx]);
+    if (Gfuncs.getFuncDef(name).params[idx].type === 'int') {
+      return func.parameters[idx];
+    } else {
+      return this.templateSrv.replace(func.parameters[idx]);
+    }
   }
 
   getFunctionParametersOrDefault(target, name, idx, def) {
