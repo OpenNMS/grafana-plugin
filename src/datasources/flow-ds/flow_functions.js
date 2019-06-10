@@ -19,17 +19,25 @@ function addFuncDef(funcDef) {
   index[funcDef.shortName || funcDef.name] = funcDef;
 }
 
+export const Cardinality = Object.freeze({
+  SINGLE: "single",
+  MULTIPLE: "multiple"
+});
+
 // Combine
 
 addFuncDef({
   name: 'topN',
   category: categories.Combine,
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['withApplication', 'withHost', 'withConversation'],
   params: [{name: "n", type: "int",}],
   defaultParams: [10]
 });
 
 addFuncDef({
   name: 'includeOther',
+  cardinality: Cardinality.SINGLE,
   category: categories.Combine
 });
 
@@ -38,12 +46,14 @@ addFuncDef({
 addFuncDef({
   name: 'withExporterNode',
   category: categories.Filter,
+  cardinality: Cardinality.SINGLE,
   params: [{name: "nodeCriteria", type: "string"}]
 });
 
 addFuncDef({
   name: 'withIfIndex',
   category: categories.Filter,
+  cardinality: Cardinality.SINGLE,
   params: [{name: "ifIndex", type: "int"}]
 });
 
@@ -51,6 +61,7 @@ addFuncDef({
 addFuncDef({
   name: 'withApplication',
   category: categories.Filter,
+  mutuallyExcludes: ['topN'],
   appliesToSegments: ['applications'],
   params: [{
     name: "application",
@@ -65,6 +76,7 @@ addFuncDef({
 addFuncDef({
   name: 'withHost',
   category: categories.Filter,
+  mutuallyExcludes: ['topN'],
   appliesToSegments: ['hosts'],
   params: [{
     name: "host",
@@ -79,6 +91,7 @@ addFuncDef({
 addFuncDef({
   name: 'withConversation',
   category: categories.Filter,
+  mutuallyExcludes: ['topN'],
   appliesToSegments: ['conversations'],
   params: [{
     name: "conversation",
@@ -90,42 +103,69 @@ addFuncDef({
 
 addFuncDef({
   name: 'perSecond',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'toBits',
+  cardinality: Cardinality.SINGLE,
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'negativeEgress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'negativeIngress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'asTableSummary',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['perSecond', 'negativeEgress', 'negativeIngress', 'combineIngressEgress', 'onlyIngress',
+    'onlyEgress', 'withGroupByInterval'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'combineIngressEgress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'onlyIngress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
 addFuncDef({
   name: 'onlyEgress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
+});
+
+addFuncDef({
+  name: 'withGroupByInterval',
+  category: categories.Transform,
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
+  params: [{
+    name: "interval",
+    type: "string"
+  }]
 });
 
 _.each(categories, function (funcList, catName) {
