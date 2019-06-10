@@ -47,6 +47,45 @@ addFuncDef({
   params: [{name: "ifIndex", type: "int"}]
 });
 
+
+addFuncDef({
+  name: 'withApplication',
+  category: categories.Filter,
+  appliesToSegments: ['applications'],
+  params: [{
+    name: "application",
+    type: "string",
+    options: (input, ctx) => {
+      return ctx.client.getApplications(input, ctx.getStartTime(), ctx.getEndTime(), ctx.getNodeCriteria(),
+          ctx.getInterfaceId());
+    }
+  }]
+});
+
+addFuncDef({
+  name: 'withHost',
+  category: categories.Filter,
+  appliesToSegments: ['hosts'],
+  params: [{
+    name: "host",
+    type: "string",
+    options: (input, ctx) => {
+      return ctx.client.getHosts(input, ctx.getStartTime(), ctx.getEndTime(), ctx.getNodeCriteria(),
+          ctx.getInterfaceId());
+    }
+  }]
+});
+
+addFuncDef({
+  name: 'withConversation',
+  category: categories.Filter,
+  appliesToSegments: ['conversations'],
+  params: [{
+    name: "conversation",
+    type: "string"
+  }]
+});
+
 // Transform
 
 addFuncDef({

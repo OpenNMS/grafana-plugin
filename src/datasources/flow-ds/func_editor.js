@@ -5,7 +5,7 @@ import _ from 'lodash';
  */
 angular
   .module('grafana.directives')
-  .directive('opennmsFuncEditor', function ($compile, templateSrv) {
+  .directive('opennmsFuncEditor', function ($compile, templateSrv, timeSrv) {
 
     let funcSpanTemplate = '<a ng-click="">{{func.def.name}}</a><span>(</span>';
     let paramTemplate = '<input type="text" style="display:none"' +
@@ -97,10 +97,16 @@ angular
           this.style.width = (3 + this.value.length) * 8 + 'px';
         }
 
-        function addTypeahead($input, paramIndex) {
+        function addTypeahead($input, paramIndex, optionsUpdater) {
           $input.attr('data-provide', 'typeahead');
 
-          let options = funcDef.params[paramIndex].options;
+          let options;
+          if (optionsUpdater) {
+            options = [];
+            $input.data('optionsUpdater', optionsUpdater);
+          } else {
+            options = funcDef.params[paramIndex].options;
+          }
           if (funcDef.params[paramIndex].type === 'int') {
             options = _.map(options, function (val) {
               return val.toString();
@@ -122,6 +128,18 @@ angular
           let typeahead = $input.data('typeahead');
           typeahead.lookup = function () {
             this.query = this.$element.val() || '';
+
+            if (this.$element.data('optionsUpdater')) {
+              if (this.$element.val().length > 0) {
+                this.$element.data('optionsUpdater')(this.$element.val(),
+                    new OptionsContext(timeSrv, $scope.ctrl.functions, $scope.ctrl.datasource.client)).then((data) => {
+                  typeahead.source = data;
+                  return this.process(this.source);
+                });
+              } else {
+                typeahead.source = [];
+              }
+            }
             return this.process(this.source);
           };
         }
@@ -170,6 +188,9 @@ angular
             $paramLink.click(_.partial(clickFuncParam, index));
 
             if (funcDef.params[index].options) {
+              if (typeof funcDef.params[index].options === 'function') {
+                addTypeahead($input, index, funcDef.params[index].options);
+              }
               addTypeahead($input, index);
             }
 
@@ -236,3 +257,37 @@ angular
     };
 
   });
+
+class OptionsContext {
+  constructor(timeSrv, functions, client) {
+    this.range = timeSrv.timeRange();
+    this.functions = functions;
+    this.client = client;
+  }
+
+  getStartTime() {
+    return this.range.from.valueOf();
+  }
+
+  getEndTime() {
+    return this.range.to.valueOf();
+  }
+
+  getNodeCriteria() {
+    return this.getFirstParam('withExporterNode');
+  }
+
+  getInterfaceId() {
+    return this.getFirstParam('withIfIndex');
+  }
+
+  getFirstParam(defName) {
+    let param = undefined;
+    this.functions.forEach((func) => {
+      if(func.def.name === defName) {
+        param = func.params[0];
+      }
+    });
+    return param;
+  }
+}
