@@ -36,39 +36,106 @@ export class FlowDatasource {
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
     let ifIndex = this.getFunctionParameterOrDefault(target, 'withIfIndex', 0);
+    let applications = this.getFunctionParametersOrDefault(target, 'withApplication', 0, null);
+    let conversations = this.getFunctionParametersOrDefault(target, 'withConversation', 0, null);
+    let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
     // Transform
     let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
 
-    if (target.metric === 'conversations') {
-      if (!asTableSummary) {
-        return this.client.getSeriesForTopNConversations(N, start, end, step, exporterNode, ifIndex).then(series => {
-          return {
-            data: FlowDatasource.toSeries(target, series)
-          };
-        });
-      } else {
-        return this.client.getSummaryForTopNConversations(N, start, end, exporterNode, ifIndex).then(table => {
-          return {
-            data: FlowDatasource.toTable(table)
-          };
-        });
-      }
-    } else if (target.metric === 'applications') {
-      if (!asTableSummary) {
-        return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
-          return {
-            data: FlowDatasource.toSeries(target, series)
-          };
-        });
-      } else {
-        return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
-          return {
-            data: FlowDatasource.toTable(table)
-          };
-        });
-      }
-    } else {
-      throw 'Unsupported target metric: ' + target.metric;
+    switch (target.metric) {
+      case 'conversations':
+        if (!asTableSummary) {
+          if (conversations && conversations.length > 0) {
+            return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          } else {
+            return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          }
+        } else {
+          if (conversations && conversations.length > 0) {
+            return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          } else {
+            return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          }
+        }
+      case 'applications':
+        if (!asTableSummary) {
+          if (applications && applications.length > 0) {
+            return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          } else {
+            return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          }
+
+        } else {
+          if (applications && applications.length > 0) {
+            return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          } else {
+            return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          }
+        }
+      case 'hosts':
+        if (!asTableSummary) {
+          if (hosts && hosts.length > 0) {
+            return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          } else {
+            return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex).then(series => {
+              return {
+                data: FlowDatasource.toSeries(target, series)
+              };
+            });
+          }
+        } else {
+          if (hosts && hosts.length > 0) {
+            return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          } else {
+            return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex).then(table => {
+              return {
+                data: FlowDatasource.toTable(table)
+              };
+            });
+          }
+        }
+      default:
+        throw 'Unsupported target metric: ' + target.metric;
     }
   }
 
@@ -274,6 +341,13 @@ export class FlowDatasource {
     return matchingFunctions.length > 0 ? matchingFunctions[0] : null;
   }
 
+  static getFunctions(target, name) {
+    let matchingFunctions = _.filter(target.functions, function (f) {
+      return f.name === name;
+    });
+    return matchingFunctions.length > 0 ? matchingFunctions : null;
+  }
+
   static isFunctionPresent(target, name) {
     return FlowDatasource.getFirstFunction(target, name) !== null;
   }
@@ -286,5 +360,23 @@ export class FlowDatasource {
     }
     // Return the parameter value, and perform any required template variable substitutions
     return this.templateSrv.replace(func.parameters[idx]);
+  }
+
+  getFunctionParametersOrDefault(target, name, idx, def) {
+    let funcs = FlowDatasource.getFunctions(target, name);
+    if (funcs === null) {
+      // No match, use the default value
+      return def;
+    }
+
+    let returnFuncs = [];
+    funcs.forEach((func) => {
+      if (func.parameters[idx]) {
+        returnFuncs.push(this.templateSrv.replace(func.parameters[idx]));
+      }
+    });
+
+    // Return the parameter value, and perform any required template variable substitutions
+    return returnFuncs;
   }
 }
