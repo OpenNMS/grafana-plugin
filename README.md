@@ -54,6 +54,32 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v4.0.0
+
+#### General
+
+#### Entities Data Source
+
+The Fault Management Data Source is now the Entities Data Source.
+
+In addition to querying alarms, it can now query nodes as well.
+This is useful for filtering in variables, or can be used for just viewing and filtering nodes from within Grafana.
+
+For details, see [the Helm documentation](http://docs.opennms.org/helm/releases/latest/helm/latest/welcome/index.html).
+
+#### Flow Data Source
+
+- Enhancements have been made to support Horizon 25's addition of "top N" queries for conversations, hosts, and applicattions.
+
+#### Alarm Table
+
+- Alarm table code has been sync'd with enhancements from the upstream Grafana table panel.
+- It is now possible to configure the alarm table to not automatically refresh when new data is updated if you have navigated away from the first page of the list.
+- String-based columns (like log message) now get a mouseover with the full text of the column.
+- Severity columns have been enhanced, including basic support for themes.
+- Support has been added to tag a specific alarm as the "root cause" in a situation when providing feedback in the Alarm Details screen.
+- A number of UI cleanups have been made to the Alarm Details screen, fixing word wrapping, resizing when the browser is resized, and more.
+
 ### v3.0.1
 
 - Updated a ton of dependencies, there are now 0 warnings from `yarn audit` ([HELM-138](https://issues.opennms.org/browse/HELM-138))
