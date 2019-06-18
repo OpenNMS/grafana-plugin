@@ -1,0 +1,25 @@
+<div>
+    <div class="gf-form-inline" ng-repeat="clause in query.clauses">
+
+        <!-- WHERE or Operator -->
+        <div class="gf-form" style="height: 100%; vertical-align: top;">
+            <label ng-if="$index == 0" class="gf-form-label query-keyword width-7">WHERE</label>
+            <metric-segment class="width-7" ng-if="$index > 0" segment="clause.operator" get-options="getSuggestions(clause, clause.operator, $index)" on-change="segmentUpdated(clause, clause.operator, $index)"></metric-segment>
+        </div>
+        <div ng-repeat="segment in clause.restriction.segments" class="gf-form">
+                <metric-segment segment="segment" get-options="getSuggestions(clause, segment, $index)" on-change="segmentUpdated(clause, segment, $index)"></metric-segment>
+        </div>
+
+        <!-- controls for the current clause -->
+        <div class="gf-form" style="position: absolute; right: 140px; margin-right: 0px">
+            <button class="btn btn-inverse gf-form-btn" title="{{control.title}}" ng-click="performClick(clause, control)" ng-repeat="control in clause.controls">
+                <i class="fa {{control.icon}}"></i>
+            </button>
+        </div>
+
+        <!-- add nested if exists -->
+        <onms-query style="padding-left: 50px; padding-top: 0px" query="clause.restriction" datasource="datasource" query-ctrl="queryCtrl" hide-where="true" ng-if="clause.restriction.clauses">
+
+        </onms-query>
+    </div>
+</div>
