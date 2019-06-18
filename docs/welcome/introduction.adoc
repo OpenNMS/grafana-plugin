@@ -28,7 +28,7 @@ For further details on how _alarms_ work, this *OpenNMS 101* video on Youtube is
 [[performance]]
 == Performance Management
 
-Fault management (abbreviated  as _PM_ throughout the application) is the process of gathering, storing, and analyzing system health using a series of metrics or key performance indicators (_KPIs_).
+Performance management (abbreviated  as _PM_ throughout the application) is the process of gathering, storing, and analyzing system health using a series of metrics or key performance indicators (_KPIs_).
 These metrics can be used for historical analysis, or used to automatically generate faults when certain conditions or thresholds are met.
 
 {product-title} currently supports retrieving and visualizing *metric data (measurements) that is stored by OpenNMS*.
