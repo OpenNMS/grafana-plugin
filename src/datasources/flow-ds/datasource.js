@@ -385,7 +385,7 @@ export class FlowDatasource {
     }
 
     // Return the parameter value, and perform any required template variable substitutions
-    if (isNaN(func.parameters[idx])) {
+    if (_.isString(func.parameters[idx])) {
       return this.templateSrv.replace(func.parameters[idx]);
     } else {
       return func.parameters[idx];
