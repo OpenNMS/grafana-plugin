@@ -25,9 +25,9 @@
                     <th>UEI</th>
                     <td class="wrap">{{alarm.uei}}</td>
                 </tr>
-                <tr ng-class="(severity === true || severity === 'row') ? alarm.severity.label.toLowerCase() : ''">
+                <tr ng-class="(severity === true || severity === 'row') && alarm.severity ? alarm.severity.label.toLowerCase() : ''">
                     <th >Severity</th>
-                    <td class="wrap severity-icon"><span ng-class="severity === 'column' ? alarm.severity.label.toLowerCase() : ''"><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
+                    <td class="wrap severity-icon"><span ng-class="severity === 'column' && alarm.severity ? alarm.severity.label.toLowerCase() : ''"><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
                 </tr>
                 <tr>
                     <th>Log Message</th>

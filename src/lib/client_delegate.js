@@ -95,6 +95,60 @@ export class ClientDelegate {
         return this.clientWithMetadata;
     }
 
+    // Inventory (node) related functions
+
+    getNodeDao() {
+        return this.getClientWithMetadata().then(function(client) {
+            return client.nodes();
+        });
+    }
+
+    findNodes(filter) {
+        return this.getNodeDao()
+            .then(function(nodeDao) {
+                return nodeDao.find(filter);
+            }).catch(this.decorateError);
+    }
+
+    getNode(nodeId) {
+      return this.getNodeDao()
+        .then(function(nodeDao) {
+            return nodeDao.get(nodeId);
+        }).catch(this.decorateError);
+    }
+
+    getNodeProperties() {
+        return this.getNodeDao()
+            .then(nodeDao => {
+                return nodeDao.searchProperties();
+            }).catch(this.decorateError);
+    }
+
+    findNodeProperty(propertyId) {
+        return this.getNodeProperties()
+            .then(properties => {
+                return _.find(properties, function(property) {
+                    return property.id === propertyId;
+                });
+            });
+    }
+
+    getNodePropertyComparators(propertyId) {
+        return this.findNodeProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.log("No comparators found for property with id '" + propertyId + "'. Falling back to EQ.");
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            }).catch(this.decorateError);
+    }
+
     // Fault related functions
 
     getAlarmDao() {
@@ -195,15 +249,15 @@ export class ClientDelegate {
         return this.$q.when(operators);
     }
 
-    getProperties() {
+    getAlarmProperties() {
         return this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.searchProperties();
             }).catch(this.decorateError);
     }
 
-    findProperty(propertyId) {
-        return this.getProperties()
+    findAlarmProperty(propertyId) {
+        return this.getAlarmProperties()
             .then(properties => {
                 return _.find(properties, function(property) {
                     return property.id === propertyId;
@@ -211,8 +265,8 @@ export class ClientDelegate {
             });
     }
 
-    getPropertyComparators(propertyId) {
-        return this.findProperty(propertyId)
+    getAlarmPropertyComparators(propertyId) {
+        return this.findAlarmProperty(propertyId)
             .then(property => {
                 if (property) {
                     const comparators = property.type.getComparators();

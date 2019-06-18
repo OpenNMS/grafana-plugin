@@ -8,4 +8,4 @@ Standards-Version: 3.7.3
 Package: opennms-helm
 Architecture: all
 Depends: grafana (>= 5)
-Description: A PM/FM console for Grafana
+Description: An OpenNMS Console for Grafana

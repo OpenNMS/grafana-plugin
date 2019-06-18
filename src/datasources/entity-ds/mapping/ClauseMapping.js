@@ -4,8 +4,9 @@ import {UI} from '../UI';
 import {API} from 'opennms'
 
 export class ClauseMapping {
-    constructor(uiSegmentSrv) {
+    constructor(uiSegmentSrv, entity) {
         this.uiSegmentSrv = uiSegmentSrv;
+        this.entity = entity;
     }
 
     getUiClause(apiClause) {
@@ -13,7 +14,7 @@ export class ClauseMapping {
             throw new TypeError("apiClause is not of type API.Clause");
         }
         const uiOperator = new OperatorMapping().getUiOperator(apiClause.operator);
-        const uiRestriction = new RestrictionMapping(this.uiSegmentSrv).getUiRestriction(apiClause.restriction);
+        const uiRestriction = new RestrictionMapping(this.uiSegmentSrv, this.entity).getUiRestriction(apiClause.restriction);
         return new UI.Clause(this.uiSegmentSrv, uiOperator, uiRestriction);
     }
 
@@ -22,7 +23,7 @@ export class ClauseMapping {
             throw new TypeError("uiClause is not of type UI.Clause");
         }
         const apiOperator = new OperatorMapping().getApiOperator(uiClause.operator.value);
-        const apiRestriction = new RestrictionMapping(this.uiSegmentSrv).getApiRestriction(uiClause.restriction);
+        const apiRestriction = new RestrictionMapping(this.uiSegmentSrv, this.entity).getApiRestriction(uiClause.restriction);
         if (apiRestriction !== null) {
             return new API.Clause(apiRestriction, apiOperator);
         }

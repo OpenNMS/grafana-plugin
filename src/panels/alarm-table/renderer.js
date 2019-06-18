@@ -431,8 +431,8 @@ export class TableRenderer {
       }
 
       const source = row.meta && row.meta.source ? row.meta.source.replace(/'/g, '\\\'') : undefined;
-      const alarm = row.meta && row.meta.alarm ? row.meta.alarm : undefined;
-      const severity = alarm ? alarm.severity.label.toLowerCase() : undefined;
+      const alarm = row.meta && row.meta.alarm ? row.meta.alarm : {};
+      const severity = alarm && alarm.severity && alarm.severity.label ? alarm.severity.label.toLowerCase() : undefined;
 
       for (let i = 0; i < this.table.columns.length; i++) {
         let columnClasses = [];
@@ -500,7 +500,7 @@ export class TableRenderer {
   isRowSelected(row) {
     return this.selectionMgr.isRowSelected({
       source: row.meta.source,
-      alarmId: row.meta.alarm.id
+      alarmId: row.meta.alarm ? row.meta.alarm.id : undefined,
     });
   }
 

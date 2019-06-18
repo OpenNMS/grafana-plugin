@@ -1,12 +1,13 @@
 import angular from 'angular';
 import _ from 'lodash';
 import {ComparatorMapping} from "./mapping/ComparatorMapping";
-import {UI} from "./UI";
+
+import { VALUE_PLACEHOLDER } from './constants';
 
 angular.module('grafana.directives')
     .directive('onmsQuery', function() {
         return {
-            templateUrl: 'public/plugins/opennms-helm-app/datasources/fault-ds/partials/query.html',
+            templateUrl: 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/query.html',
             controller: 'QueryController',
             restrict: 'EA',
             controllerAs: 'ctrl',
@@ -22,8 +23,15 @@ angular.module('grafana.directives')
         const QueryCtrl = $scope.queryCtrl;
         $scope.query.updateControls();
 
+        const getEntityType = () => {
+            if ($scope.queryCtrl.target && $scope.queryCtrl.target.entityType && $scope.queryCtrl.target.entityType.id) {
+                return $scope.queryCtrl.target.entityType.id;
+            }
+            return undefined;
+        };
+
         $scope.findOperators = function(attribute) {
-            return datasource.metricFindQuery({'find': 'comparators', 'attribute': attribute})
+            return datasource.metricFindQuery(attribute, { entityType: getEntityType(), queryType: 'comparators' })
                 .then(function(comparators) {
                     // the API.Comparator.id or API.Comparator.label fields cannot be used.
                     comparators = _.filter(comparators, function(comparator) {
@@ -41,15 +49,18 @@ angular.module('grafana.directives')
 
             // attribute input
             if (segment.type == 'key' || segment.type == 'plus-button') {
-                return datasource.metricFindQuery({find: "attributes", strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'})
-                    .then(function(properties) {
-                        let segments = _.map(properties, function(property) {
-                            var segment = uiSegmentSrv.newKey(property.id);
-                            return segment;
-                        });
-                        return segments;
-                    })
-                    .catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+                return datasource.metricFindQuery(null, {
+                    entityType: getEntityType(),
+                    queryType: 'attributes',
+                    strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'
+                }).then(function(properties) {
+                    let segments = _.map(properties, function(property) {
+                        var segment = uiSegmentSrv.newKey(property.id);
+                        return segment;
+                    });
+                    return segments;
+                })
+                .catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
             }
 
             // comparator input
@@ -60,26 +71,30 @@ angular.module('grafana.directives')
 
             // value input
             if (segment.type == 'value') {
+                console.log('type=value', index, segments);
                 let attributeSegment = segments[index-2];
                 let theQuery = {
                     'find': 'values',
                     'attribute': attributeSegment.value,
-                    'query': segment.value === UI.Restriction.VALUE_PLACEHOLDER ? '' : segment.value
+                    'query': segment.value === VALUE_PLACEHOLDER ? '' : segment.value
                 };
+                console.log('theQuery=', theQuery);
 
-                return datasource.metricFindQuery(theQuery)
-                    .then(function(values) {
-                        return _.map(values, function(searchResult) {
-                            var segment = uiSegmentSrv.newKeyValue(searchResult.label);
-                            return segment;
-                        })
+                return datasource.metricFindQuery(attributeSegment.value, {
+                    queryType: 'values',
+                    entityType: getEntityType()
+                }).then(function(values) {
+                    return _.map(values, function(searchResult) {
+                        var segment = uiSegmentSrv.newKeyValue(searchResult.label);
+                        return segment;
                     })
-                    .catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+                })
+                .catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
             }
 
             // condition input
             if (segment.type === 'condition') {
-                return this.datasource.metricFindQuery({find: 'operators'}).then(function(operators) {
+                return this.datasource.metricFindQuery(null, { entityType: getEntityType(), queryType: 'operators' }).then(function(operators) {
                     return _.map(operators, function(operator) {
                         return uiSegmentSrv.newCondition(operator.label);
                     });

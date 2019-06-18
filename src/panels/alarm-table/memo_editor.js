@@ -64,7 +64,7 @@ export class MemoEditorCtrl {
 
   getDatasource() {
     return this.datasourceSrv.get(this.$scope.source).then(ds => {
-      if (ds.type && ds.type.indexOf("fault-datasource") < 0) {
+      if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
         throw {message: 'Only OpenNMS datasources are supported'};
       } else {
         return ds;

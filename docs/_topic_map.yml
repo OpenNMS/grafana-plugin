@@ -60,6 +60,8 @@ Dir: datasources
 Topics:
     - Name: Peformance Datasource
       File: performance_datasource
+    - Name: Entity Datasource
+      File: entity_datasource
     - Name: Flow Datasource
       File: flow_datasource
 ---

@@ -1,16 +1,21 @@
 import Q from "q";
 import _ from 'lodash';
 import moment from 'moment';
-import {UI} from '../datasources/fault-ds/UI';
+import {UI} from '../datasources/entity-ds/UI';
 import {API} from 'opennms';
-import {Mapping} from '../datasources/fault-ds/Mapping';
-import {FilterCloner} from '../datasources/fault-ds/FilterCloner';
-import {OpenNMSFMDatasource as Datasource} from '../datasources/fault-ds/datasource';
+import {Mapping} from '../datasources/entity-ds/Mapping';
+import AlarmEntity from '../datasources/entity-ds/AlarmEntity';
+import {FilterCloner} from '../datasources/entity-ds/FilterCloner';
+import {OpenNMSEntityDatasource as Datasource} from '../datasources/entity-ds/datasource';
 import {ClientDelegate} from '../lib/client_delegate';
 
 import {TemplateSrv} from './template_srv';
 
-describe("OpenNMS_FaultManagement_Datasource", function() {
+import { KEY_PLACEHOLDER, VALUE_PLACEHOLDER } from '../datasources/entity-ds/constants';
+
+const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
+
+describe("OpenNMS_Entity_Datasource", function() {
     let uiSegmentSrv = {
         newSegment: function (value, type) {
             return {value: value, type: type};
@@ -92,7 +97,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         });
 
         describe('RestrictionMapping', function () {
-            let mapping = new Mapping.RestrictionMapping(uiSegmentSrv);
+            let mapping = new Mapping.RestrictionMapping(uiSegmentSrv, alarmEntity);
 
             it("should map from api restriction", function (done) {
                 expect(mapping.getUiRestriction(new API.Restriction("my-property", API.Comparators.LE, 'some-value')))
@@ -119,7 +124,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         });
 
         describe('ClauseMapping', function() {
-            let mapping = new Mapping.ClauseMapping(uiSegmentSrv);
+            let mapping = new Mapping.ClauseMapping(uiSegmentSrv, alarmEntity);
 
            it ('should ignore not initialized clauses (restrictionDTO is null)', function(done) {
 
@@ -132,12 +137,12 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
 
         describe('FilterMapping', function() {
 
-            let mapping = new Mapping.FilterMapping(uiSegmentSrv);
+            let mapping = new Mapping.FilterMapping(uiSegmentSrv, alarmEntity);
 
             it ('should map from empty ui to api filter', function(done) {
                 let apiFilter = new API.Filter();
                 apiFilter.limit = 0;
-                expect(mapping.getApiFilter(new UI.Filter(uiSegmentSrv))).to.eql(apiFilter);
+                expect(mapping.getApiFilter(new UI.Filter(uiSegmentSrv, alarmEntity))).to.eql(apiFilter);
 
                 done();
             });
@@ -148,7 +153,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
                     .withClause(new API.Clause(new API.Restriction("key2", API.Comparators.NE, "value2"), API.Operators.AND));
                 apiFilter.limit = 0;
 
-                const uiFilter = new UI.Filter(uiSegmentSrv)
+                const uiFilter = new UI.Filter(uiSegmentSrv, alarmEntity)
                     .withClause(new UI.Clause(uiSegmentSrv, UI.Operators.OR, new UI.RestrictionDTO("key", "=", "value")))
                     .withClause(new UI.Clause(uiSegmentSrv, UI.Operators.AND, new UI.RestrictionDTO("key2", "!=", "value2")));
 
@@ -218,9 +223,9 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             expect(restriction.asRestrictionDTO()).to.eql(null);
 
             // Should be null when initialized with defaults
-            restriction.setAttribute(UI.Restriction.KEY_PLACEHOLDER);
+            restriction.setAttribute(KEY_PLACEHOLDER);
             restriction.setComparator("=");
-            restriction.setValue(UI.Restriction.VALUE_PLACEHOLDER);
+            restriction.setValue(VALUE_PLACEHOLDER);
 
             // Should be null for all other Comparators
             Object.keys(UI.Comparators).forEach(key => {
@@ -233,7 +238,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             expect(restriction.asRestrictionDTO()).to.eql(null);
 
             // Should be null if attribute is set
-            restriction.setValue(UI.Restriction.VALUE_PLACEHOLDER);
+            restriction.setValue(VALUE_PLACEHOLDER);
             restriction.setAttribute("my attribute");
             expect(restriction.asRestrictionDTO()).to.eql(null);
 
@@ -250,7 +255,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         let query;
 
         beforeEach(function () {
-            query = new UI.Filter(uiSegmentSrv).query;
+            query = new UI.Filter(uiSegmentSrv, alarmEntity).query;
         });
 
         it('should add new empty clause', function(done) {
@@ -278,7 +283,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         let uiFilter;
 
         beforeEach(function() {
-            uiFilter = new UI.Filter(uiSegmentSrv);
+            uiFilter = new UI.Filter(uiSegmentSrv, alarmEntity);
         });
 
         describe('AddControl', function() {
@@ -433,7 +438,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         let uiFilter;
 
         beforeEach(function () {
-            uiFilter = new UI.Filter(uiSegmentSrv);
+            uiFilter = new UI.Filter(uiSegmentSrv, alarmEntity);
         });
 
         describe('addClause', function () {
@@ -688,7 +693,7 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
             ctx.backendSrv = {};
             ctx.$q = Q;
             ctx.settings = {
-                type: "opennms-fm",
+                type: "opennms-entity",
                 name: "dummy-name",
                 url: "http://localhost:8980/opennms"
             };
@@ -740,9 +745,9 @@ describe("OpenNMS_FaultManagement_Datasource", function() {
         let ctx = {};
 
         const defaultSettings = {
-            "type": "opennms-fm",
+            "type": "opennms-entity",
             "url": "http://localhost:8980/opennms",
-            "name": "OpenNMS FM Datasource"
+            "name": "OpenNMS Entity Datasource"
         };
 
         const createDatasource = function(settings, ctx) {
