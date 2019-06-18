@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
 import kbn from 'app/core/utils/kbn';
-import {Gfuncs} from "./flow_functions";
 
 export class FlowDatasource {
   /** @ngInject */
@@ -384,11 +383,12 @@ export class FlowDatasource {
       // No match, use the default value
       return def;
     }
+
     // Return the parameter value, and perform any required template variable substitutions
-    if (Gfuncs.getFuncDef(name).params[idx].type === 'int') {
-      return func.parameters[idx];
-    } else {
+    if (isNaN(func.parameters[idx])) {
       return this.templateSrv.replace(func.parameters[idx]);
+    } else {
+      return func.parameters[idx];
     }
   }
 
