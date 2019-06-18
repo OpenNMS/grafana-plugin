@@ -1,4 +1,4 @@
-import {FunctionFormatter} from "../datasources/perf-ds/function_formatter";
+import {FunctionFormatter} from "../lib/function_formatter";
 
 const FUNCS = {
     exclamationer: (arg) => {

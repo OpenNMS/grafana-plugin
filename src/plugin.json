@@ -19,18 +19,19 @@
     ],
     "screenshots": [
       {"name": "Alarms", "path": "img/Helm_Screenshot_Alarms.png"},
-      {"name": "Environemnt Sensors", "path": "img/Helm_Screenshot_Environmental.png"},
-      {"name": "Fault Data Source", "path": "img/Helm_Screenshot_Faults_Data_Source.png"},
+      {"name": "Environment Sensors", "path": "img/Helm_Screenshot_Environmental.png"},
+      {"name": "Entity Data Source", "path": "img/Helm_Screenshot_Entities_Data_Source.png"},
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "3.0.2-SNAPSHOT",
+    "version": "4.0.0-SNAPSHOT",
     "updated": "2019-03-27"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
-    {"type": "datasource", "name": "OpenNMS Faults"},
+    {"type": "panel", "name": "Filter Panel"},
+    {"type": "datasource", "name": "OpenNMS Entities"},
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}

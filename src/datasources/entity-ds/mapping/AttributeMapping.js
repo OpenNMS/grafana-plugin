@@ -1,14 +1,8 @@
 import _ from 'lodash';
 
 export class AttributeMapping {
-    constructor() {
-        this.attributeMapping = {
-            'location': 'location.locationName',
-            'service': 'serviceType.name',
-            'category': 'category.name',
-            'ipAddress': 'ipAddr',
-            'severity': 'severity'
-        };
+    constructor(mapping) {
+        this.attributeMapping = mapping;
     }
 
     getUiAttribute(externalAttribute) {

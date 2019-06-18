@@ -65,7 +65,7 @@ image::gf-custom-actions.png[Custom Actions, 500]
 [[bw-ds-setup]]
 == Data Source Setup
 
-In this section, you will configure the _Fault Management (FM)_ data source.
+In this section, you will configure the _Entities_ data source.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 In the top-left corner of the page, click on the Grafana icon, and then click *Data Sources*:
@@ -74,9 +74,9 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . Next, click on `Add data source`.
 
-. In the *Name* field enter: `My First OpenNMS FM DS`.
+. In the *Name* field enter: `My First OpenNMS DS`.
 
-. Change the *Type* to `OpenNMS Faults`.
+. Change the *Type* to `OpenNMS Entities`.
 
 . In the *Url* field enter the URL to your OpenNMS instance i.e. `http://localhost:8980/opennms`.
 +

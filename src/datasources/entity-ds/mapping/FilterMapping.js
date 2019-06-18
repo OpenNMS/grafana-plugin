@@ -8,8 +8,9 @@ import {ClauseMapping} from './ClauseMapping';
  */
 export class FilterMapping {
 
-    constructor(uiSegmentSrv) {
+    constructor(uiSegmentSrv, entity) {
         this.uiSegmentSrv = uiSegmentSrv;
+        this.entity = entity;
     }
 
     getApiFilter(uiFilter) {
@@ -23,7 +24,7 @@ export class FilterMapping {
         filter.limit = 0;
 
         _.each(uiFilter.query.clauses, function(eachClause) {
-            const apiClause = new ClauseMapping(self.uiSegmentSrv).getApiClause(eachClause);
+            const apiClause = new ClauseMapping(self.uiSegmentSrv, self.entity).getApiClause(eachClause);
             if (apiClause !== null) {
                 filter.withClause(apiClause);
             }
@@ -37,10 +38,10 @@ export class FilterMapping {
         }
 
         const self = this;
-        let uiFilter = new UI.Filter(this.uiSegmentSrv);
+        let uiFilter = new UI.Filter(this.uiSegmentSrv, self.entity);
 
         _.each(apiFilter.clauses, apiClause => {
-            const uiClause = new ClauseMapping(self.uiSegmentSrv).getUiClause(apiClause);
+            const uiClause = new ClauseMapping(self.uiSegmentSrv, self.entity).getUiClause(apiClause);
             uiFilter.addClause(uiClause);
 
             // set parentQuery for all nested queries

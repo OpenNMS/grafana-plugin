@@ -222,11 +222,13 @@ export class FunctionFormatter {
                         // argument is a function
                         ret.push(res);
                     } else {
-                        throw new Error('cannot reach here');
+                        console.log('cannot reach here (result)', prev, res, result);
+                        throw new Error('cannot reach here (result)');
                     }
                 });
             } else {
-                throw new Error('cannot reach here');
+                console.log('cannot reach here (args)', arg, args);
+                throw new Error('cannot reach here (args)');
             }
         });
         return ret;

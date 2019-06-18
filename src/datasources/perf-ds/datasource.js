@@ -1,7 +1,7 @@
 import {QueryType} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
-import {FunctionFormatter} from './function_formatter';
+import {FunctionFormatter} from '../../lib/function_formatter';
 
 export class OpenNMSDatasource {
   /** @ngInject */

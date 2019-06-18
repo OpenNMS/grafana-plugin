@@ -16,6 +16,10 @@ _OpenNMS Helm_ is a https://grafana.com[Grafana] application that allows users t
 * xref:../installation/install-centos-redhat.adoc#[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
 * xref:../installation/install-debian-ubuntu.adoc#[Installing on Debian / Ubuntu]
 
+== Upgrading _OpenNMS Helm_
+
+* xref:../installation/upgrading.adoc#[Tips on Upgrading Helm]
+
 == Need Help?
 
 * Fork me on https://github.com/OpenNMS/opennms-helm[GitHub]

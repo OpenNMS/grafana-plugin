@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
-const KEY_PLACEHOLDER = 'select attribute';
-const VALUE_PLACEHOLDER = 'select value';
+import { KEY_PLACEHOLDER, VALUE_PLACEHOLDER } from '../constants';
 
 export class Restriction {
 
