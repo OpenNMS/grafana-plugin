@@ -200,7 +200,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
     getOptions(seriesData) {
         // Set up the graph settings
-        let series = {
+        const series = {
             bars: {
                 show: true,
                 barWidth: 0.6,
@@ -211,22 +211,30 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
             stack: this.panel.mode === 'stacked'
         };
 
-        let axisSettings = {
+        const axisSettings = {
             mode: "categories",
             tickLength: 0,
             autoscaleMargin: .02
         };
 
-        let axisLabelSetting = [{
+        const axisLabelSetting = [{
             axisLabel: this.units
         }];
 
-        let options = {
+        const classForLabels = this.panel.legendPosition === 'bottom' ? 'flow-histogram-label-bottom' :
+            'flow-histogram-label-right';
+        const labelFormatterFunc = (label, series) => {
+            return '<span class="' + classForLabels + '">' + label + '</span>';
+        };
+
+        const options = {
             legend: {
                 show: true,
                 sorted: this.panel.mode === 'stacked' ? null : 'ascending',
                 container: this.legendContainer,
-                noColumns: this.panel.legendPosition === 'bottom' ? seriesData.length : 1
+                noColumns: this.panel.legendPosition === 'bottom' ? seriesData.length : 1,
+                labelBoxBorderColor: null,
+                labelFormatter: labelFormatterFunc
             },
             axisLabels: {
                 show: true
