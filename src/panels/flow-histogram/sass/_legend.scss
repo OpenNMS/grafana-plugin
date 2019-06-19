@@ -1,0 +1,21 @@
+.legend-container {
+  overflow-y: scroll;
+}
+
+.legend-container-bottom {
+  // Note: Would be better to derive this at runtime somehow
+  height: 40px;
+}
+
+.legend-container-bottom td {
+  display: inline-block;
+}
+
+.legend-container-right {
+  // Note: Would be better to derive this at runtime somehow
+  width:200px;
+}
+
+.flow-histogram-label-bottom {
+  padding-right: 10px;
+}

@@ -251,6 +251,10 @@ export class FlowDatasource {
         "columns": columns,
         "rows": table.rows,
         "type": "table",
+        "vars": {
+          metric: target.metric,
+          toBits: toBits
+        }
       }
     ];
   }

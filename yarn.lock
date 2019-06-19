@@ -2976,6 +2976,10 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
+"flot-axislabels@https://github.com/j-white/flot-axislabels#master":
+  version "2.0.1"
+  resolved "https://github.com/j-white/flot-axislabels#bf38a00da475e5fc7e6c672d4c37443ec4a5cfcf"
+
 "flot@https://github.com/flot/flot#v0.8.3":
   version "0.8.3"
   resolved "https://github.com/flot/flot#453b017cc5acfd75e252b93e8635f57f4196d45d"
