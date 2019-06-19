@@ -30,6 +30,14 @@
                     <td class="wrap severity-icon"><span ng-class="severity === 'column' && alarm.severity ? alarm.severity.label.toLowerCase() : ''"><i class="icon" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
                 </tr>
                 <tr>
+                    <th>Last Event Time</th>
+                    <td>{{alarm.lastEvent.time}}</td>
+                </tr>
+                <tr>
+                    <th>First Event Time</th>
+                    <td>{{alarm.firstEventTime}}</td>
+                </tr>
+                <tr>
                     <th>Log Message</th>
                     <td class="wrap log-message" ng-bind-html="alarm.logMessage"></td>
                 </tr>
@@ -43,14 +51,6 @@
                 </tr>
             </table>
             <table class="filter-table gf-form-group alarm-details-table">
-                <tr>
-                    <th>Last Event Time</th>
-                    <td>{{alarm.lastEvent.time}}</td>
-                </tr>
-                <tr>
-                    <th>First Event Time</th>
-                    <td>{{alarm.firstEventTime}}</td>
-                </tr>
                 <tr>
                     <th>Count</th>
                     <td>{{alarm.count}}</td>
