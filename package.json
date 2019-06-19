@@ -55,6 +55,7 @@
     "babel-preset-es2015": "^6.24.1",
     "crypto-js": "^3.1.9-1",
     "flot": "https://github.com/flot/flot#v0.8.3",
+    "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "ionicons": "2.0.1",
     "lodash": "^4.17.11",
     "opennms": "1.5.0",

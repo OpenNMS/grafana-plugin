@@ -31,6 +31,7 @@
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
     {"type": "panel", "name": "Filter Panel"},
+    {"type": "panel", "name": "Flow Histogram"},
     {"type": "datasource", "name": "OpenNMS Entities"},
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},

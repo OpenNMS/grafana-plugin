@@ -1,0 +1,22 @@
+<div class="graph-wrapper">
+    <div class="graph-canvas-wrapper">
+        <div ng-if="datapointsWarning"
+             class="datapoints-warning">
+            <span ng-show="!datapointsCount"
+                  class="small">
+                No datapoints <tip>No datapoints returned from metric query</tip>
+            </span>
+            <span ng-show="datapointsOutside"
+                  class="small">
+                Datapoints outside time range
+            </span>
+        </div>
+
+        <div class="histogram-chart">
+        </div>
+        <div id="legend-container" class="legend-container">
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
