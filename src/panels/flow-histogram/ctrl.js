@@ -46,7 +46,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
     }
 
     onInitEditMode() {
-        this.addEditorTab('Grouping', 'public/plugins/opennms-helm-app/panels/helm-histogram/editor.html', 2);
+        this.addEditorTab('Grouping', 'public/plugins/opennms-helm-app/panels/flow-histogram/editor.html', 2);
     }
 
     onDataReceived(data) {
@@ -415,7 +415,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
     }
 }
 
-HelmHistogramCtrl.templateUrl = 'panels/helm-histogram/module.html';
+HelmHistogramCtrl.templateUrl = 'panels/flow-histogram/module.html';
 
 export {
     HelmHistogramCtrl

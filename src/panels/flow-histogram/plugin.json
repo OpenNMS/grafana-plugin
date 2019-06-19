@@ -1,0 +1,12 @@
+{
+  "type": "panel",
+  "name": "Flow Histogram",
+  "id": "opennms-helm-flow-histogram-panel",
+
+  "info": {
+    "logos": {
+      "small": "img/flow-histogram.svg",
+      "large": "img/flow-histogram.svg"
+    }
+  }
+}
