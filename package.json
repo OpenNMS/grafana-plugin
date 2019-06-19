@@ -59,7 +59,8 @@
     "lodash": "^4.17.11",
     "opennms": "1.5.0",
     "parenthesis": "^3.1.5",
-    "q": "^1.5.0"
+    "q": "^1.5.0",
+    "xlsx": "^0.14.3"
   },
   "resolutions": {
     "babel-traverse": "^6.26.0",
