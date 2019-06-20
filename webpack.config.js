@@ -34,6 +34,8 @@ const baseconfig = {
     'jquery.flot',
     'jquery.flot.crosshair',
     'jquery.flot.selection',
+    'jquery.flot.stack',
+    'jquery.flot.time',
     'lodash',
     'moment',
     function (_context, request, callback) {
