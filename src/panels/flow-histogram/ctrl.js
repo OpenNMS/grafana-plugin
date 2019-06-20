@@ -2,13 +2,13 @@ import {MetricsPanelCtrl} from "app/plugins/sdk";
 import _ from "lodash";
 import $ from "jquery";
 import moment from "moment";
-import "flot/jquery.flot";
-import "flot/jquery.flot.time";
-import "flot/jquery.flot.selection";
-import "flot/jquery.flot.crosshair";
+import "jquery.flot";
+import "jquery.flot.time";
+import "jquery.flot.selection";
+import "jquery.flot.crosshair";
+import "jquery.flot.stack";
 import "flot-axislabels/jquery.flot.axislabels";
 import "flot/jquery.flot.categories";
-import "flot/jquery.flot.stack";
 
 class HelmHistogramCtrl extends MetricsPanelCtrl {
     /** @ngInject */
@@ -17,6 +17,23 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
         this.scope = $scope;
         this.$timeout = $timeout;
+
+        // We use both the 'stack' and 'categories' Flot plugins
+        // For these to work well together, we need the 'categories' plugin
+        // to be called *before* the stack plugin.
+        // Re-order them if necessary
+        const categoriesPluginIdx = _.findIndex($.plot.plugins, plugin => {
+            return plugin.name === 'categories';
+        });
+        const stackPluginIdx = _.findIndex($.plot.plugins, plugin => {
+            return plugin.name === 'stack';
+        });
+        if (categoriesPluginIdx >= 0 && stackPluginIdx >= 0 && categoriesPluginIdx > stackPluginIdx) {
+            // We found both plugins, and the categories plugin comes *after* the stack plugin, swap them
+            const stackPlugin = $.plot.plugins[stackPluginIdx];
+            $.plot.plugins[stackPluginIdx] = $.plot.plugins[categoriesPluginIdx];
+            $.plot.plugins[categoriesPluginIdx] = stackPlugin;
+        }
 
         this._renderRetries = 0;
 
