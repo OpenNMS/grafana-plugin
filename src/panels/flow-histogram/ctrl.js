@@ -2,13 +2,13 @@ import {MetricsPanelCtrl} from "app/plugins/sdk";
 import _ from "lodash";
 import $ from "jquery";
 import moment from "moment";
-import "flot/jquery.flot";
-import "flot/jquery.flot.time";
-import "flot/jquery.flot.selection";
-import "flot/jquery.flot.crosshair";
+import "jquery.flot";
+import "jquery.flot.time";
+import "jquery.flot.selection";
+import "jquery.flot.crosshair";
 import "flot-axislabels/jquery.flot.axislabels";
 import "flot/jquery.flot.categories";
-import "flot/jquery.flot.stack";
+import "jquery.flot.stack";
 
 class HelmHistogramCtrl extends MetricsPanelCtrl {
     /** @ngInject */
