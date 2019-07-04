@@ -154,8 +154,8 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
                 break;
             case 'conversations':
                 labelFunc = (column, row) => {
-                    return row[column.indexOf('Source IP')] + ' <-> ' +
-                        row[column.indexOf('Dest. IP')] + ' [' + row[column.indexOf('Application')] + ']';
+                    return row[column.indexOf('source')] + ' <-> ' +
+                        row[column.indexOf('dest.')] + ' [' + row[column.indexOf('application')] + ']';
                 };
                 break;
         }
@@ -389,9 +389,9 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
         const values = [];
 
         const columns = data[0].columns.map((e) => {
-            return e.text;
+            return e.text.toLowerCase();
         });
-        const valueColumnIndex = columns.indexOf(valueColumn);
+        const valueColumnIndex = columns.indexOf(valueColumn.toLowerCase());
 
         data[0].rows.forEach((row) => {
             values.push({
