@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: "warn"*/
 import {MetricsPanelCtrl} from "app/plugins/sdk";
 import _ from "lodash";
 import $ from "jquery";

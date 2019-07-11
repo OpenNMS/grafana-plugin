@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: "warn"*/
 import prunk from 'prunk';
 import jsdom from 'jsdom';
 import chai from 'chai';
