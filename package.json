@@ -58,6 +58,7 @@
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "ionicons": "2.0.1",
     "lodash": "^4.17.11",
+    "mocha-junit-reporter": "^1.23.0",
     "opennms": "1.5.0",
     "parenthesis": "^3.1.5",
     "q": "^1.5.0"
@@ -87,9 +88,9 @@
     "dev": "webpack --mode=development",
     "build": "webpack --mode=production --optimize-minimize --optimize-dedupe",
     "eslint": "eslint 'src/**/*.js'",
-    "eslint-circleci": "eslint 'src/**/*.js' --format junit --output-file ~/reports/eslint/eslint.xml",
+    "eslint-circleci": "eslint 'src/**/*.js' --format junit --output-file reports/eslint/eslint.xml",
     "test": "mocha --require @babel/register --require jsdom-global/register --require src/spec/test-main.js src/spec/*.js",
-    "test-circleci": "mocha --require @babel/register --require jsdom-global/register --require src/spec/test-main.js src/spec/*.js --reporter mocha-junit-reporter --reporter-options mochaFile=~/reports/mocha/test-results.xml",
+    "test-circleci": "mocha --require @babel/register --require jsdom-global/register --require src/spec/test-main.js src/spec/*.js --reporter mocha-junit-reporter --reporter-options mochaFile=reports/mocha/test-results.xml",
     "watch": "webpack --mode=development --watch",
     "watch-test": "mocha --watch --require @babel/register --require jsdom-global/register --require src/spec/test-main.js src/spec/*.js"
   }
