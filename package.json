@@ -58,7 +58,6 @@
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "ionicons": "2.0.1",
     "lodash": "^4.17.11",
-    "mocha-junit-reporter": "^1.23.0",
     "opennms": "1.5.0",
     "parenthesis": "^3.1.5",
     "q": "^1.5.0"
