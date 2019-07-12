@@ -13,6 +13,8 @@ import {loadPluginCss} from 'app/plugins/sdk';
 import {SelectionMgr} from "./selection_mgr";
 import {ActionMgr} from "./action_mgr";
 
+import * as XLSX from 'xlsx';
+
 loadPluginCss({
   dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
   light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
@@ -253,6 +255,37 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     return super.render(this.table);
   }
 
+  _getWorkbook() {
+    const workbook = XLSX.utils.book_new();
+    workbook.Props = {
+      Title: this.panel.title,
+    }
+
+    const columns = this.table.columns.map((col) => {
+      return col.text;
+    });
+    const rows = this.table.rows.map((row) => {
+      const ret = {};
+      row.forEach((col, index) => {
+        ret[columns[index]] = col;
+      });
+      return ret;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows, {header:columns});
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.panel.title);
+  }
+
+  exportCSV() {
+    const workbook = this._getWorkbook();
+    XLSX.writeFile(workbook, this.panel.title + '.csv');
+  }
+
+  exportExcel() {
+    const workbook = this._getWorkbook();
+    XLSX.writeFile(workbook, this.panel.title + '.xlsx');
+  }
+
   toggleColumnSort(col, colIndex) {
     // remove sort flag from current column
     if (this.table.columns[this.panel.sort.col]) {
@@ -356,7 +389,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       const panelElem = elem.parents('.panel-content');
       const rootElem = elem.find('.table-panel-scroll');
       const tbodyElem = elem.find('tbody');
-      const footerElem = elem.find('.table-panel-footer');
+      const footerElem = elem.find('.table-panel-footer .pagination');
 
       elem.css({'font-size': panel.fontSize});
       panelElem.addClass('table-panel-content');

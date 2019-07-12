@@ -17,6 +17,14 @@ $grafana-default-table-line-height: 30px;
   height: 2.25em;
 }
 
+.table-panel-footer {
+  .export {
+    float:right;
+    margin-top: $padding-small;
+    margin-right: $padding-small;
+  }
+}
+
 .table-panel-table {
   td:first-child, td:last-child {
     &.text-center {

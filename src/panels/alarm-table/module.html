@@ -25,4 +25,9 @@
 	</span>
 </div>
 <div class="table-panel-footer">
+        <div class="export navbar-buttons" ng-if="ctrl.table.rows.length">
+            <button class="btn navbar-button export-button-csv" title="Export to CSV" ng-click="ctrl.exportCSV()"><i class="fa fa-table"></i></button>
+            <button class="btn navbar-button export-button-xls" title="Export to Excel" ng-click="ctrl.exportExcel()"><i class="fa fa-file-excel-o"></i></button>
+        </div>
+        <div class="pagination"></div>
 </div>
