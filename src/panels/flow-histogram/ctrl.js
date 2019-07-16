@@ -9,12 +9,14 @@ import "jquery.flot.crosshair";
 import "jquery.flot.stack";
 import "flot-axislabels/jquery.flot.axislabels";
 import "flot/jquery.flot.categories";
+import legend from './legend';
+
 
 class HelmHistogramCtrl extends MetricsPanelCtrl {
     /** @ngInject */
-    constructor($scope, $injector, $timeout) {
+    constructor($scope, $injector, $timeout, $rootScope) {
         super($scope, $injector);
-
+        this.$rootScope = $rootScope;
         this.scope = $scope;
         this.$timeout = $timeout;
 
@@ -35,16 +37,23 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
             $.plot.plugins[categoriesPluginIdx] = stackPlugin;
         }
 
-        this._renderRetries = 0;
-
         _.defaults(this.panel, {
             direction: 'horizontal',
             units: 'b',
             display: 'total',
             mode: 'separate',
-            legendPosition: 'right'
+            legend: {
+                show: true,
+                sideWidth: 120,
+                bottomHeight: 42
+            },
+            legendType: 'Under graph',
+            aliasColors: []
         });
 
+        this._renderRetries = 0;
+        this.typeChanged = false;
+        this.hiddenSeries = {};
         this.retryTimes = 10; // number of times to retry
         this.retryDelay = 100; // milliseconds, how long to wait to retry
 
@@ -53,12 +62,12 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
         this.events.on('data-error', this.onDataError.bind(this));
         this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
         this.events.on('render', this.onRender.bind(this));
+
+        this.setLegendWidthForLegacyBrowser();
     }
 
     link($scope, elem, attrs, ctrl) {
-        this.elem = elem.find('.histogram-chart');
-        this.legendContainer = elem.find('#legend-container');
-        this.wrapper = elem.find('.graph-canvas-wrapper');
+        this.elem = elem.find('.flow-panel__chart');
         this.ctrl = ctrl;
     }
 
@@ -68,12 +77,13 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
     onDataReceived(data) {
         // Adjust the values based on the units selected
-        const unitInfo = HelmHistogramCtrl.getUnits(data, this.panel.units);
-        this.units = unitInfo.units;
-
-        const labeledValues = this.getLabeledValues(data);
-        this.series = this.getSeries(labeledValues, unitInfo.divisor);
-
+        if (data.length > 0) {
+            const unitInfo = HelmHistogramCtrl.getUnits(data, this.panel.units);
+            this.units = unitInfo.units;
+            const labeledValues = this.getLabeledValues(data);
+            this.series = this.getSeries(labeledValues, unitInfo.divisor);
+            this.setData();
+        }
         this.render();
     }
 
@@ -84,9 +94,6 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
     onRender() {
         this.elem.empty();
-        if (this.legendContainer) {
-            this.legendContainer.empty();
-        }
 
         let height = this.ctrl.height || this.ctrl.panel.height || (this.ctrl.row && this.ctrl.row.height);
         if (_.isString(height)) {
@@ -107,34 +114,38 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
             return true;
         }
 
-        height -= 5; // padding
-        height -= this.ctrl.panel.title ? 24 : 9; // subtract panel title bar
+        height -= 8; // subtract for panel title bar
+        const legendHeight = this.getLegendHeight(height);
+        height -= legendHeight;
 
-        // Move the legend depending on which position was selected
-        // Note: not sure if this is the best way to be doing this
-        switch (this.panel.legendPosition) {
-            case 'right':
-                this.legendContainer.css('height', height + 'px');
-                this.legendContainer.removeClass('legend-container-bottom');
-                this.legendContainer.addClass('legend-container-right');
-                this.wrapper.css('display', 'flex');
-                this.elem.css('width', '100%');
-                break;
-            case 'bottom':
-                this.legendContainer.css('height', '');
-                this.legendContainer.removeClass('legend-container-right');
-                this.legendContainer.addClass('legend-container-bottom');
-                this.wrapper.css('display', '');
-                this.elem.css('width', '');
-                height -= this.legendContainer.height();
-                break;
+        const plotCanvas = $('<div></div>');
+        const plotCss = {
+            margin: 'auto',
+            position: 'relative',
+            height: height + 'px',
+        };
+        this.elem.html(plotCanvas);
+        plotCanvas.css(plotCss);
+
+        if (this.panel.legendType === 'Right side' || this.typeChanged) {
+            // Schedule to be called back to ensure we render after the legend renders for proper layout
+            setTimeout(() => this.renderChart(plotCanvas), 0);
+            this.typeChanged = false;
+        } else {
+            this.renderChart(plotCanvas);
         }
+    }
 
-        this.elem.css('height', height + 'px');
-
-        const seriesData = this.getSeriesData(this.series, this.panel.direction, this.panel.mode);
-        const options = this.getOptions(seriesData);
-        $.plot(this.elem, seriesData, options);
+    renderChart(plotCanvas) {
+        if (!this.series || this.series.length === 0) {
+            this.noDataPoints()
+        } else {
+            if(plotCanvas.height() > 0 && plotCanvas.width() > 0) {
+                const options = this.getOptions();
+                this.setData();
+                $.plot(plotCanvas, this.seriesData, options);
+            }
+        }
     }
 
     getLabeledValues(data) {
@@ -215,7 +226,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
         return series;
     }
 
-    getOptions(seriesData) {
+    getOptions() {
         // Set up the graph settings
         const series = {
             bars: {
@@ -238,20 +249,9 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
             axisLabel: this.units
         }];
 
-        const classForLabels = this.panel.legendPosition === 'bottom' ? 'flow-histogram-label-bottom' :
-            'flow-histogram-label-right';
-        const labelFormatterFunc = (label, series) => {
-            return '<span class="' + classForLabels + '">' + label + '</span>';
-        };
-
         const options = {
             legend: {
-                show: true,
-                sorted: this.panel.mode === 'stacked' ? null : 'ascending',
-                container: this.legendContainer,
-                noColumns: this.panel.legendPosition === 'bottom' ? seriesData.length : 1,
-                labelBoxBorderColor: null,
-                labelFormatter: labelFormatterFunc
+                show: false
             },
             axisLabels: {
                 show: true
@@ -287,23 +287,30 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
                 dataFromSeries = HelmHistogramCtrl.getData(this.series, this.panel.direction);
                 let inSeriesData = {
                     label: "In",
-                    data: dataFromSeries.dataIn,
                     bars: {
                         show: true,
                         barWidth: 0.2,
                     },
-                    color: '#86B15B'
+                    color: this.getColorForSeriesIndex(0)
                 };
+
+                if (!this.hiddenSeries[0]) {
+                    inSeriesData.data = dataFromSeries.dataIn;
+                }
 
                 let outSeriesData = {
                     label: "Out",
-                    data: dataFromSeries.dataOut,
                     bars: {
                         show: true,
                         barWidth: 0.2,
                     },
-                    color: '#DB4345'
+                    color: this.getColorForSeriesIndex(1)
                 };
+
+                if (!this.hiddenSeries[1]) {
+                    outSeriesData.data = dataFromSeries.dataOut;
+                }
+
                 switch (direction) {
                     case 'horizontal':
                         inSeriesData.bars.align = "left";
@@ -325,16 +332,94 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
             case 'stacked': {
                 dataFromSeries = HelmHistogramCtrl.getDataStacked(this.series, this.panel.direction);
                 let stackedSeriesData = [];
+                let seriesIndex = 0;
                 for (const key of Object.keys(dataFromSeries)) {
-                    stackedSeriesData.push({
+                    let item = {
                         label: key,
-                        data: dataFromSeries[key]
-                    });
+                        color: this.getColorForSeriesIndex(seriesIndex),
+                    };
+                    if (!this.hiddenSeries[seriesIndex++]) {
+                        item.data = dataFromSeries[key];
+                    }
+                    stackedSeriesData.push(item);
                 }
 
                 return stackedSeriesData;
             }
         }
+    }
+
+    setData() {
+        this.seriesData = this.getSeriesData(this.series, this.panel.direction, this.panel.mode);
+        this.legendData = this.getLegendData(this.seriesData, this.panel.direction, this.panel.mode);
+    }
+
+    getLegendData(seriesData, direction, mode) {
+        let seriesIndex = 0;
+        if (direction === 'vertical' && mode === 'separate') {
+            // In this case we need to reverse the order of the labels
+            let legendData = [];
+            for (let i = seriesData.length - 1; i >= 0; i--) {
+                let serie = seriesData[i];
+                legendData.push({
+                    label: serie.label,
+                    color: this.getColorForSeriesIndex(seriesIndex++)
+                });
+            }
+            return legendData;
+        }
+
+        return _.map(seriesData, (serie) => {
+            return {
+                label: serie.label,
+                color: this.getColorForSeriesIndex(seriesIndex++)
+            }
+        });
+    }
+
+    getColorForSeriesIndex(index) {
+        return this.panel.aliasColors[index] ? this.panel.aliasColors[index] : this.$rootScope.colors[index];
+    }
+
+    changeSeriesColor(index, color) {
+        this.panel.aliasColors[index] = color;
+        this.render();
+    }
+
+    toggleSeries(index) {
+        if (this.hiddenSeries[index]) {
+            delete this.hiddenSeries[index];
+        } else {
+            this.hiddenSeries[index] = true;
+        }
+        this.render();
+    }
+
+    onLegendTypeChanged() {
+        this.setLegendWidthForLegacyBrowser();
+        this.typeChanged = true;
+        this.render();
+    }
+
+    setLegendWidthForLegacyBrowser() {
+        const isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+        if (isIE11 && this.panel.legendType === 'Right side' && !this.panel.legend.sideWidth) {
+            this.panel.legend.sideWidth = 150;
+        }
+    }
+
+    getLegendHeight() {
+        if (!this.panel.legend.show || this.panel.legendType === 'Right side') {
+            return 0;
+        }
+
+        if (this.panel.legendType === 'Under graph') {
+            return this.panel.legend.bottomHeight;
+        }
+    }
+
+    noDataPoints() {
+        this.elem.html('<div class="datapoints-warning"><span class="small">No data points</span></div>');
     }
 
     static getData(series, direction) {
