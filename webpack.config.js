@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const childProcess = require('child_process');
 
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -158,6 +159,17 @@ function createConfig(options) {
         {
           from: '*.md',
           to: distdir,
+          transform: (content, path) => {
+            if (path.indexOf('README.md') > 0) {
+              content += '\n'
+                + '## Build Information\n'
+                + '\n'
+                + '- Build Date: ' + new Date().toISOString() + '\n'
+                // eslint-disable-next-line no-sync
+                + '- Git Revision: ' + childProcess.execSync('git rev-parse HEAD') + '\n'
+            }
+            return content;
+          }
         },
         {
           from: '**/*.json',
