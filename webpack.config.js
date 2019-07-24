@@ -2,6 +2,9 @@ const _ = require('lodash');
 const path = require('path');
 const childProcess = require('child_process');
 
+const argv = require('yargs').argv;
+const isProduction = argv.mode === 'production';
+
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -21,7 +24,7 @@ const plugins = [
 ];
 
 const baseconfig = {
-  mode: 'development',
+  devtool: isProduction ? 'source-map' : 'eval',
   entry: {},
   output: {
     filename: '[name].js',
