@@ -1,13 +1,1 @@
-{
-	"version": 3,
-	"file": "opennms.dark.css",
-	"sources": [
-		"../../../../src/datasources/perf-ds/sass/opennms.dark.scss",
-		"../../../../src/datasources/perf-ds/sass/opennms.scss",
-		"../../../../src/datasources/perf-ds/sass/base/_config.scss",
-		"../../../../src/datasources/perf-ds/sass/components/modal.scss",
-		"../../../../src/datasources/perf-ds/sass/components/query-editor.scss"
-	],
-	"names": [],
-	"mappings": "AEAA,AAAA,cAAc,CAAC;EACb,KAAK,EAAE,KAAK,GACb;;AAED,AAAA,YAAY,CAAC;EACX,KAAK,EAAE,OAAiB,GACzB;;AAED,AAAA,WAAW,CAAC,WAAW,CAAC;EACtB,WAAW,EAAE,GAAG,GACjB;;AAED,AAAA,KAAK,CAAC;EACJ,gBAAgB,EAAE,OAAO,GAC1B;;AAED,AAAA,eAAe,CAAC;EACd,OAAO,EAAE,KAAK;EACd,MAAM,EAAE,KAAK;EACb,UAAU,EAAE,MACd,GAAC;;ACpBD,AAAA,eAAe,CAAC;EACd,OAAO,EAAE,KAAK;EACd,MAAM,EAAE,KAAK;EACb,UAAU,EAAE,MAAM;EAClB,UAAU,EAAE,MAAM,GACnB;;AAED,AAAA,eAAe,CAAC,MAAM,CAAC;EACrB,KAAK,EAAE,IAAI;EACX,WAAW,EAAE,GAAG;EAChB,YAAY,EAAE,GAAG,GAClB;;ACXD,AAAA,WAAW,CAAC;EACV,OAAO,EAAE,KAAK;EACd,KAAK,EAAE,IAAI,GACZ"
-}
+{"version":3,"sources":["webpack:///./src/datasources/perf-ds/sass/base/_config.scss","webpack:///./src/datasources/perf-ds/sass/components/modal.scss","webpack:///./src/datasources/perf-ds/sass/components/query-editor.scss"],"names":[],"mappings":"AAAA,eACE,WAAY,CACb,aAGC,aAAwB,CACzB,wBAGC,eAAgB,CACjB,MAGC,wBAAyB,CAC1B,gBAGC,aAAc,CACd,YAAa,CACb,iBACF,CAAC,gBCnBC,aAAc,CACd,YAAa,CACb,iBAAkB,CAClB,iBAAkB,CACnB,uBAGC,UAAW,CACX,eAAgB,CAChB,gBAAiB,CAClB,YCVC,aAAc,CACd,UAAW","file":"datasources/perf-ds/css/opennms.dark.css","sourcesContent":[".query-keyword {\n  width: 110px;\n}\n\n.input-error {\n  color: rgb(229, 189, 28);\n}\n\n.tight-form .help-block {\n  margin-left: 5px;\n}\n\n.info {\n  background-color: #000000;\n}\n\n.modal-selector {\n  display: block;\n  height: 350px;\n  overflow-y: scroll\n}\n",".modal-selector {\n  display: block;\n  height: 350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.modal-selector .table {\n  width: 100%;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n",".help-block {\n  display: block;\n  width: 100%;\n}"],"sourceRoot":""}
