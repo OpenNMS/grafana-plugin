@@ -60,7 +60,7 @@ export class OpenNMSEntityDatasource {
     }
   }
 
-  async query(options) {
+  query(options) {
       const target = options.targets[0]; // TODO: handle multiple target queries
 
       // Initialize filter
@@ -78,8 +78,9 @@ export class OpenNMSEntityDatasource {
       options.entity = entity;
       const clonedFilter = this.buildQuery(filter, options);
 
-      const data = await entity.query(clonedFilter);
-      return { data: data };
+      return this.q.when(entity.query(clonedFilter)).then((data) => {
+          return { data: data };
+      });
   }
 
   // Clone Filter to make substitution possible
@@ -312,7 +313,7 @@ export class OpenNMSEntityDatasource {
     }
 
     return this.searchForValues(e, attribute).then(values => {
-        console.log('entity-ds: searchForValues:', values);
+        console.log('entity-ds: searchForValues (' + attribute + '):', values);
         return values;
     });
   }

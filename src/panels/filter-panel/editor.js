@@ -39,32 +39,41 @@ export class FilterPanelEditorCtrl {
     this.reset();
   }
 
-  async updateCurrent() {
-    await this.$scope.$evalAsync(() => {});
-
-    const current = this.$scope.current;
-
-    const dsName = current.datasource && current.datasource.name ? current.datasource.name : undefined;
-    await this.setDatasource(dsName);
-    this.setEntityType(current.entityType);
-    this.render();
-  }
-
-  async setDatasource(dsName) {
+  setDatasource(dsName) {
+    const self = this;
     console.debug('Setting datasource to: ' + dsName);
-    try {
-      const ds = await this.getDatasource(dsName);
-      this.$scope.current.datasourceType = ds.type;
-    } catch(err) {
+    return self.getDatasource(dsName).then((ds) => {
+      self.$scope.current.datasourceType = ds.type;
+      return ds;
+    }).catch((err) => {
       console.warn('Failed to get datasource ' + dsName, err);
-      this.$scope.current.datasourceType = undefined;
-    }
+      self.$scope.current.datasourceType = undefined;
+      return self.$q.reject(err);
+    });
   }
 
   setEntityType(type) {
     const t = type ? type : this.entityTypes[0];
     this.$scope.current.entityType = t;
     console.debug('Setting entity type to:', t);
+  }
+
+  updateCurrent() {
+    const self = this;
+    const deferred = self.$q.defer();
+
+    self.$scope.$evalAsync(() => {
+      const current = self.$scope.current;
+      const dsName = current.datasource && current.datasource.name ? current.datasource.name : undefined;
+
+      self.setDatasource(dsName).then(() => {
+        self.setEntityType(current.entityType);
+        deferred.resolve(self.render());
+      }).catch((err) => {
+        deferred.reject(err);
+      });
+    });
+    return deferred.promise;
   }
 
   removeClasses(...classes) {
@@ -153,81 +162,99 @@ export class FilterPanelEditorCtrl {
     }
   }
 
-  async getColumnOptions() {
+  getColumnOptions() {
     const self = this;
     const $scope = self.$scope;
     const dsName = $scope.datasource;
 
-    const ds = await self.getDatasource(dsName);
+    return self.getDatasource(dsName).then((ds) => {
+      const deferred = self.$q.defer();
 
-    await $scope.$evalAsync(() => {});
+      // make sure the other scoped variables are updated before evaluating everything else
+      $scope.$evalAsync(() => {
+        const entityType = ds.type === 'opennms-helm-entity-datasource' ? $scope.current.entityType : undefined;
 
-    const entityType = ds.type === 'opennms-helm-entity-datasource' ? $scope.current.entityType : undefined;
+        const opts = {
+          queryType: 'attributes'
+        };
+        if (entityType) {
+          opts.entityType = entityType.id;
+        }
+    
+        ds.metricFindQuery(entityType ? entityType.queryFunction + '()' : null, opts).then((res) => {
+          console.debug('getColumnOptions: metricFindQuery result:', res);
+    
+          // filter out columns that have already been selected
+          const filtered = res.filter(a => self.panel.columns.indexOf(a) < 0);
+      
+          const segments = filtered.map(c => self.uiSegmentSrv.newSegment({
+            // datasource: ds.name,
+            value: c.name
+          }));
+      
+          deferred.resolve(segments);
+        }).catch((err) => {
+          deferred.reject(err);
+        });
+      });
 
-    const opts = {
-      queryType: 'attributes'
-    };
-    if (entityType) {
-      opts.entityType = entityType.id;
-    }
-
-    const res = await ds.metricFindQuery(entityType ? entityType.queryFunction + '()' : null, opts);
-    console.log('getColumnOptions: metricFindQuery result:', res);
-
-    // filter out columns that have already been selected
-    const filtered = res.filter(a => self.panel.columns.indexOf(a) < 0);
-
-    const segments = filtered.map(c => this.uiSegmentSrv.newSegment({
-      // datasource: ds.name,
-      value: c.name
-    }));
-
-    return segments;
+      return deferred.promise;
+    });
   }
 
-  async addColumn() {
+  addColumn() {
     const self = this;
     const $scope = self.$scope;
-
     const label = self.addColumnSegment.value;
 
-    const ds = await self.getDatasource($scope.current.datasource);
+    return self.getDatasource($scope.current.datasource).then((ds) => {
+      const deferred = self.$q.defer();
 
-    const entityType = ds.type === 'opennms-helm-entity-datasource' ? $scope.current.entityType : undefined;
+      // make sure the other scoped variables are updated before evaluating everything else
+      $scope.$evalAsync(() => {
+        const entityType = ds.type === 'opennms-helm-entity-datasource' ? $scope.current.entityType : undefined;
 
-    const opts = {
-      queryType: 'attributes'
-    };
-    if (entityType) {
-      opts.entityType = entityType.id;
-    }
+        const opts = {
+          queryType: 'attributes'
+        };
+        if (entityType) {
+          opts.entityType = entityType.id;
+        }
+    
+        ds.metricFindQuery(entityType ? entityType.queryFunction + '()' : null, opts).then((res) => {
+          console.debug('addColumn: metricFindQuery result:', res);
+    
+          const match = res.filter(col => col.name === label)[0];
+          if (match) {
+            const label = match.name;
+            const column = new FilterColumn(label, ds.name, match.id, 'multi', entityType);
+            console.debug('adding column:', column);
+            self.panel.columns.push(column);
+          }
+      
+          const plusButton = self.uiSegmentSrv.newPlusButton();
+          self.addColumnSegment.html = plusButton.html;
+          self.addColumnSegment.value = plusButton.value;
+          deferred.resolve(self.render());
+        }).catch((err) => {
+          deferred.reject(err);
+        });
+      });
 
-    const res = await ds.metricFindQuery(entityType ? entityType.queryFunction + '()' : null, opts);
-    console.log('addColumn: metricFindQuery result:', res);
-
-    const match = res.filter(col => col.name === label)[0];
-    if (match) {
-      const label = match.name;
-      const column = new FilterColumn(label, ds.name, match.id, 'multi', entityType);
-      console.debug('adding column:', column);
-      self.panel.columns.push(column);
-    }
-
-    const plusButton = self.uiSegmentSrv.newPlusButton();
-    self.addColumnSegment.html = plusButton.html;
-    self.addColumnSegment.value = plusButton.value;
-    self.render();
+      return deferred.promise;
+    });
   }
 
   render() {
     this.panelCtrl.render();
   }
 
-  async getDatasource(ds) {
+  getDatasource(ds) {
     const dsName = ds && ds.name ? ds.name : ds;
-    const d = await this.datasourceSrv.get(dsName);
-    console.debug('getDatasource: ' + (dsName ? dsName : 'default') + '=', d);
-    return d;
+    return this.datasourceSrv.get(dsName).then((d) => {
+      console.debug('getDatasource: ' + (dsName ? dsName : 'default') + '=', d);
+      return d;
+    });
   }
 
   getMetricSource(ds) {
@@ -249,28 +276,26 @@ export class FilterPanelEditorCtrl {
     });
   }
 
-  async reset() {
-    this.$scope.datasources = this.getDatasources();
+  reset() {
+    const self = this;
+    self.$scope.datasources = self.getDatasources();
+    const current = self.$scope.current;
 
-    const current = this.$scope.current;
-    if (this.panel.datasource) {
-      const ds = await this.getDatasource(this.panel.datasource);
-      current.datasource = this.getMetricSource(ds);
-    }  else {
-      const ds = await this.getDatasource();
-      current.datasource = this.$scope.datasources.filter((existing) => {
+    return self.getDatasource(self.panel.datasource).then((ds) => {
+      const datasource = self.$scope.datasources.filter((existing) => {
         return ds.name === existing.name;
       })[0];
-    }
-
-    current.entityType =  undefined;
-    await this.updateCurrent();
+      console.debug('reset(): panel datasource "' + self.panel.datasource + '" matched:', datasource);
+      current.datasource = datasource;
+      current.entityType = undefined;
+      return self.updateCurrent();
+    });
   }
 
-  async removeColumn(column, index) {
+  removeColumn(column, index) {
     console.debug('removing column:', column);
     this.panel.columns.splice(index, 1);
-    await this.reset();
+    return this.reset();
   }
 }
 
