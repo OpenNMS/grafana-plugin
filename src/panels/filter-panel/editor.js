@@ -255,7 +255,7 @@ export class FilterPanelEditorCtrl {
 
   getDatasource(ds) {
     const dsName = ds && ds.name ? ds.name : ds;
-    return this.datasourceSrv.get(dsName).then((d) => {
+    return this.datasourceSrv.get(dsName || undefined).then((d) => {
       console.debug('getDatasource: ' + (dsName ? dsName : 'default') + '=', d);
       return d;
     });
@@ -273,11 +273,23 @@ export class FilterPanelEditorCtrl {
     };
   }
 
+  getConfiguredDatasource() {
+    if (this.panel.columns && this.panel.columns.length > 0) {
+      return this.panel.columns[0].datasource;
+    }
+    return undefined;
+  }
+
   getDatasources() {
     const sources = this.datasourceSrv.getMetricSources();
-    return sources.filter(ds => {
-      return !ds.meta.mixed && ds.value !== null;
+    const configuredDatasource = this.getConfiguredDatasource();
+    const filtered = sources.filter(ds => {
+      if (configuredDatasource) {
+        return ds.name === configuredDatasource;
+      }
+      return ds.meta.id === 'opennms-helm-entity-datasource' && ds.value !== null;
     });
+    return filtered;
   }
 
   reset() {
@@ -285,10 +297,13 @@ export class FilterPanelEditorCtrl {
     self.$scope.datasources = self.getDatasources();
     const current = self.$scope.current;
 
-    return self.getDatasource(self.panel.datasource).then((ds) => {
+    const resetDatasource = self.getConfiguredDatasource() || self.panel.datasource || undefined;
+
+    return self.getDatasource(resetDatasource).then((ds) => {
       const datasource = self.$scope.datasources.filter((existing) => {
         return ds.name === existing.name;
       })[0];
+
       console.debug('reset(): panel datasource "' + self.panel.datasource + '" matched:', datasource);
       current.datasource = datasource;
       current.entityType = undefined;
