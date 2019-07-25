@@ -184,8 +184,10 @@ export class FilterPanelEditorCtrl {
         ds.metricFindQuery(entityType ? entityType.queryFunction + '()' : null, opts).then((res) => {
           console.debug('getColumnOptions: metricFindQuery result:', res);
     
+          const data = res && res.data ? res.data : res;
+
           // filter out columns that have already been selected
-          const filtered = res.filter(a => self.panel.columns.indexOf(a) < 0);
+          const filtered = data.filter(a => self.panel.columns.indexOf(a) < 0);
       
           const segments = filtered.map(c => self.uiSegmentSrv.newSegment({
             // datasource: ds.name,
