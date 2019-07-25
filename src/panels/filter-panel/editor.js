@@ -43,10 +43,12 @@ export class FilterPanelEditorCtrl {
     const self = this;
     console.debug('Setting datasource to: ' + dsName);
     return self.getDatasource(dsName).then((ds) => {
+      self.$scope.current.datasource = ds;
       self.$scope.current.datasourceType = ds.type;
       return ds;
     }).catch((err) => {
       console.warn('Failed to get datasource ' + dsName, err);
+      self.$scope.current.datasource = undefined;
       self.$scope.current.datasourceType = undefined;
       return self.$q.reject(err);
     });
@@ -165,7 +167,7 @@ export class FilterPanelEditorCtrl {
   getColumnOptions() {
     const self = this;
     const $scope = self.$scope;
-    const dsName = $scope.datasource;
+    const dsName = $scope.current.datasource;
 
     return self.getDatasource(dsName).then((ds) => {
       const deferred = self.$q.defer();
