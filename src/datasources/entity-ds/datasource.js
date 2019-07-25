@@ -78,9 +78,7 @@ export class OpenNMSEntityDatasource {
       options.entity = entity;
       const clonedFilter = this.buildQuery(filter, options);
 
-      return this.q.when(entity.query(clonedFilter)).then((data) => {
-          return { data: data };
-      });
+      return this.q.when(entity.query(clonedFilter));
   }
 
   // Clone Filter to make substitution possible
