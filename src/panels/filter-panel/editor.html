@@ -1,10 +1,14 @@
 <div class="editor-row filter-panel">
     <div class="section gf-form-group">
         <h5 class="section-heading">Filter Columns:</h5>
+        <div class="gf-form-label gf-size-auto" ng-if="editor.panel.columns &amp;&amp; editor.panel.columns.length &gt; 0">
+            Using datasource: {{editor.panel.columns[0].datasource}}
+        </div>
+
         <div class="gf-form column-reorder filter-column" ng-repeat="column in editor.panel.columns" id="column-{{$index}}" draggable="true">
             <div class="gf-form-inline gf-form-label">
                 <i class="pointer fa fa-remove" ng-click="editor.removeColumn(column, $index)"></i>
-                <span class="onms-label width-10">{{column.text}}</span>
+                <span class="onms-label width-16">{{column.text}} ({{column.entityType.label}})</span>
                 <div class="onms-radio-group">
                     <span class="radio-item">
                         <input type="radio" id="radio-{{$index}}-single" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'single'" ng-change="ctrl.typeChanged(column, $index)">
@@ -19,13 +23,12 @@
                         <label for="radio-{{$index}}-text">Text</label>
                     </span>
                 </div>
-                <span class="onms-label width-20"><span ng-if="column.entityType">{{column.entityType.label}} entity in </span>{{column.datasource}}</span>
             </div>
         </div>
         <div class="gf-form">
             <div class="gf-form">
-                <span class="gf-form-label width-8">Data source</span>
-                <div class="gf-form-select-wrapper">
+                <span class="gf-form-label gf-size-auto">Data source entity:</span>
+                <div class="gf-form-select-wrapper" ng-if="!editor.panel.columns || editor.panel.columns.length === 0">
                     <select class="gf-form-input gf-size-auto"
                         ng-model="current.datasource"
                         ng-change="editor.updateCurrent()"
