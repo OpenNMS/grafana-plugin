@@ -43,6 +43,9 @@ jobs:
             - yarn-packages-{{ .Branch }}
             - yarn-packages-
       - run:
+          name: Install Test Dependencies
+          command: npm install mocha-junit-reporter
+      - run:
           name: Install Yarn Dependencies
           command: yarn install --pure-lockfile
       - save_cache:
@@ -55,7 +58,15 @@ jobs:
           command: yarn build
       - run:
           name: Run Tests
-          command: yarn test
+          command: |
+              mkdir -p reports/mocha
+              mkdir -p reports/eslint
+              yarn test-circleci
+              yarn eslint-circleci
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports
       - persist_to_workspace:
           root: *working_directory
           paths:
