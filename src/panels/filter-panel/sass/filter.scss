@@ -1,8 +1,12 @@
-.filter-panel {
-  &.panel-columns.submenu-controls {
-    margin-left: -10px;
+.panel-container.panel-transparent {
+  .filter-panel {
+    &.panel-columns.submenu-controls {
+      margin-left: -10px;
+    }
   }
+}
 
+.filter-panel {
   .filter-column {
     .gf-form-inline {
       display: table;
