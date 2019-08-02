@@ -1,6 +1,7 @@
-= Upgrading Helm
+= Upgrading from Older Versions
 
 In most cases, all you should need to upgrade is install the new package.
+However, major version releases can sometimes introduce breaking changes.
 
 == Helm 3 to 4
 

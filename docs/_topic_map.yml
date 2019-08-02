@@ -44,6 +44,8 @@ Topics:
       File: plugin
     - Name: Installing from source
       File: source
+    - Name: Upgrading from Older Versions
+      File: upgrading
 ---
 Name: Getting Started
 Dir: getting_started
