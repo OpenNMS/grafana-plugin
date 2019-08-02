@@ -148,6 +148,6 @@ For details, see [the Helm documentation](http://docs.opennms.org/helm/releases/
 
 ## Build Information
 
-- Build Date: 2019-08-01T06:00:35.359Z
-- Git Revision: 59626c57b2136a860c7a5280110916c576eb5b2b
+- Build Date: 2019-08-02T18:27:50.018Z
+- Git Revision: 6e812423cece8e1917509155443945c6df854bc2
 
