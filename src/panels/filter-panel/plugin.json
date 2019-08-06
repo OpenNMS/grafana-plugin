@@ -1,0 +1,12 @@
+{
+  "type": "panel",
+  "name": "Filter Panel",
+  "id": "opennms-helm-filter-panel",
+
+  "info": {
+    "logos": {
+      "small": "img/filter.svg",
+      "large": "img/filter.svg"
+    }
+  }
+}

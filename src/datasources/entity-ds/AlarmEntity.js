@@ -1,4 +1,7 @@
 import _ from 'lodash';
+
+import {API} from 'opennms';
+
 import { AttributeMapping } from './mapping/AttributeMapping';
 import Entity from './Entity';
 
@@ -77,8 +80,75 @@ export default class AlarmEntity extends Entity {
     return columns;
   }
 
+  getPanelRestrictions() {
+    const self = this;
+    const dashboard = self.datasource.dashboardSrv.getCurrent();
+    const filterPanel = dashboard.panels.filter(panel => panel.type === 'opennms-helm-filter-panel')[0];
+    const restrictions = new API.NestedRestriction();
+
+    if (filterPanel && filterPanel.columns && filterPanel.columns.length > 0) {
+      filterPanel.columns.forEach((column) => {
+        const selected = column.selected;
+        if (!selected) {
+          return;
+        }
+        let key = selected.resource;
+        if (selected.entityType && selected.entityType.id !== self.type) {
+          key = selected.entityType.id + '.' + key;
+        }
+        const comparator = API.Comparators.EQ;
+        const getValueRestriction = val => {
+          if (!self.datasource.templateSrv.isAllValue(val) && !_.isNil(val)) {
+            if ((selected.resource === 'categories' || selected.resource === 'category.name')) {
+              return new API.Restriction('category.name', comparator, val);
+            } else if (selected.inputType === 'text') {
+              if (val.length === 0) {
+                  return undefined;
+              }
+              if (!val.startsWith('*') && !val.endsWith('*')) {
+                  return new API.Restriction(key, comparator, '*' + val + '*');
+              }
+            }
+            return new API.Restriction(key, comparator, val);
+          }
+          return undefined;
+        };
+        if (selected.value) {
+          const values = Array.isArray(selected.value) ? selected.value : [selected.value];
+          let restriction;
+          if (values.length === 0) {
+            return;
+          } else if (values.length === 1) {
+            restriction = getValueRestriction(values[0]);
+          } else {
+            restriction = new API.NestedRestriction();
+            values.forEach(val => {
+              if (val) restriction.withOrRestriction(getValueRestriction(val));
+            });
+            if (!restriction.clauses || restriction.clauses.length === 0) {
+              restriction = undefined;
+            }
+          }
+          if (restriction) {
+            restrictions.withAndRestriction(restriction);
+          }
+        }
+      });
+    }
+    if (restrictions.clauses && restrictions.clauses.length > 0) {
+      return restrictions;
+    }
+    return undefined;
+  }
+
   async query(filter) {
     const self = this;
+
+    const panelRestrictions = this.getPanelRestrictions();
+
+    if (panelRestrictions) {
+      filter.withAndRestriction(panelRestrictions);
+    }
 
     const c = await this.client.getClientWithMetadata();
     const metadata = c.server.metadata;

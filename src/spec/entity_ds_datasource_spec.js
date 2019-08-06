@@ -5,14 +5,12 @@ import {UI} from '../datasources/entity-ds/UI';
 import {API} from 'opennms';
 import {Mapping} from '../datasources/entity-ds/Mapping';
 import AlarmEntity from '../datasources/entity-ds/AlarmEntity';
-import {OpenNMSEntityDatasource as Datasource} from '../datasources/entity-ds/datasource';
+import {OpenNMSEntityDatasource as Datasource, entityTypes} from '../datasources/entity-ds/datasource';
 import {ClientDelegate} from '../lib/client_delegate';
 
 import {TemplateSrv} from './template_srv';
 
 import { KEY_PLACEHOLDER, VALUE_PLACEHOLDER } from '../datasources/entity-ds/constants';
-
-const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
 
 describe("OpenNMS_Entity_Datasource", function() {
     let uiSegmentSrv = {
@@ -96,6 +94,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         });
 
         describe('RestrictionMapping', function () {
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             let mapping = new Mapping.RestrictionMapping(uiSegmentSrv, alarmEntity);
 
             it("should map from api restriction", function (done) {
@@ -123,6 +122,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         });
 
         describe('ClauseMapping', function() {
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             let mapping = new Mapping.ClauseMapping(uiSegmentSrv, alarmEntity);
 
            it ('should ignore not initialized clauses (restrictionDTO is null)', function(done) {
@@ -135,7 +135,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         });
 
         describe('FilterMapping', function() {
-
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             let mapping = new Mapping.FilterMapping(uiSegmentSrv, alarmEntity);
 
             it ('should map from empty ui to api filter', function(done) {
@@ -224,6 +224,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         let query;
 
         beforeEach(function () {
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             query = new UI.Filter(uiSegmentSrv, alarmEntity).query;
         });
 
@@ -252,6 +253,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         let uiFilter;
 
         beforeEach(function() {
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             uiFilter = new UI.Filter(uiSegmentSrv, alarmEntity);
         });
 
@@ -407,6 +409,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         let uiFilter;
 
         beforeEach(function () {
+            const alarmEntity = new AlarmEntity(undefined, {name: 'OpenNMS Entity Datasource'});
             uiFilter = new UI.Filter(uiSegmentSrv, alarmEntity);
         });
 
@@ -720,7 +723,7 @@ describe("OpenNMS_Entity_Datasource", function() {
         };
 
         const createDatasource = function(settings, ctx) {
-            ctx.datasource = new Datasource(settings, ctx.$q, ctx.backendSrv, ctx.templateSrv, ctx.contextSrv);
+            ctx.datasource = new Datasource(settings, ctx.$q, ctx.backendSrv, ctx.templateSrv, ctx.contextSrv, ctx.dashboardSrv);
             return ctx.datasource;
         };
 
@@ -731,6 +734,14 @@ describe("OpenNMS_Entity_Datasource", function() {
             ctx.templateSrv = new TemplateSrv();
             ctx.uiSegmentSrv = uiSegmentSrv;
             ctx.contextSrv = {user: {login: "admin", email: "admin@opennms.org", name:"The Administrator"}};
+            ctx.dashboardSrv = {
+                dashboard: {
+                    panels: []
+                }
+            }
+            ctx.dashboardSrv.getCurrent = function() {
+                return ctx.dashboardSrv.dashboard;
+            }
             ctx.range_from = moment();
             ctx.range_to = ctx.range_from.add(1, 'days');
             createDatasource(defaultSettings, ctx);
@@ -944,6 +955,80 @@ describe("OpenNMS_Entity_Datasource", function() {
                 expect(actualFilter.clauses[0].restriction.clauses.length).to.equal(2);
                 expect(actualFilter.clauses[0].restriction.clauses[0].restriction.value).to.equal('NORMAL');
                 expect(actualFilter.clauses[0].restriction.clauses[1].restriction.value).to.equal('WARNING');
+            });
+
+            it ('should add additional criteria when a filter panel is configured', () => {
+                ctx.datasource.templateSrv = ctx.templateSrv;
+                const selected =  {
+                    datasource: ctx.datasource.name,
+                    inputType: 'text',
+                    entityType: entityTypes[0],
+                    resource: 'logMsg',
+                    text: 'foo*bar',
+                    value: 'foo*bar',
+                };
+                ctx.dashboardSrv.dashboard.panels.push({
+                    type: 'opennms-helm-filter-panel',
+                    columns: [
+                        Object.assign({}, {
+                            selected: selected,
+                        }, selected),
+                    ],
+                });
+
+                const entity = new AlarmEntity({}, ctx.datasource);
+                const restrictions = entity.getPanelRestrictions();
+                expect(restrictions.clauses.length).to.equal(1);
+                expect(restrictions.clauses[0].restriction.attribute).to.equal('logMsg');
+                expect(restrictions.clauses[0].restriction.value).to.equal('*foo*bar*');
+            });
+
+            it ('should not add * to the criteria value if it starts or ends with *', () => {
+                const selected =  {
+                    datasource: ctx.datasource.name,
+                    inputType: 'text',
+                    entityType: entityTypes[0],
+                    resource: 'logMsg',
+                    text: 'foo*bar*',
+                    value: 'foo*bar*',
+                };
+                ctx.dashboardSrv.dashboard.panels.push({
+                    type: 'opennms-helm-filter-panel',
+                    columns: [
+                        Object.assign({}, {
+                            selected: selected,
+                        }, selected),
+                    ],
+                });
+
+                const entity = new AlarmEntity({}, ctx.datasource);
+                const restrictions = entity.getPanelRestrictions();
+                expect(restrictions.clauses.length).to.equal(1);
+                expect(restrictions.clauses[0].restriction.attribute).to.equal('logMsg');
+                expect(restrictions.clauses[0].restriction.value).to.equal('foo*bar*');
+            });
+
+            it ('should not add * to the criteria value if it is an empty string', () => {
+                const selected =  {
+                    datasource: ctx.datasource.name,
+                    inputType: 'text',
+                    entityType: entityTypes[0],
+                    resource: 'logMsg',
+                    text: '',
+                    value: '',
+                };
+                ctx.dashboardSrv.dashboard.panels.push({
+                    type: 'opennms-helm-filter-panel',
+                    columns: [
+                        Object.assign({}, {
+                            selected: selected,
+                        }, selected),
+                    ],
+                });
+
+                const entity = new AlarmEntity({}, ctx.datasource);
+                const restrictions = entity.getPanelRestrictions();
+                expect(restrictions).to.be.undefined;
             });
         });
     });
