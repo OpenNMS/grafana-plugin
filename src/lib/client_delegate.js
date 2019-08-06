@@ -355,8 +355,8 @@ export class ClientDelegate {
                     start: start,
                     end: end,
                     step: step,
-                    nodeCriteria: nodeCriteria,
-                    interfaceId: interfaceId,
+                    exporterNode: nodeCriteria,
+                    ifIndex: interfaceId,
                     includeOther: includeOther
                 });
             }).catch(this.decorateError);
@@ -376,8 +376,8 @@ export class ClientDelegate {
                     N: N,
                     start: start,
                     end: end,
-                    nodeCriteria: nodeCriteria,
-                    interfaceId: interfaceId,
+                    exporterNode: nodeCriteria,
+                    ifIndex: interfaceId,
                     includeOther: includeOther
                 });
             }).catch(this.decorateError);
