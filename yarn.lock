@@ -4972,10 +4972,10 @@ onetime@^2.0.0:
   version "0.1.0"
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
-opennms@snapshot.ranger.wip:
-  version "2.0.0-snapshot.ranger.wip.4"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.ranger.wip.4.tgz#ed6036a442b023ffe01cb6358554b853665e4c0d"
-  integrity sha512-wpwGMbBbHPubCLE9emgOaqgiS+5ypGGduS3HdI4ZG2JV9WsDGZNFYL1ZWgnxOAOqGoGPnzDkAbwFWQJ1bC2jxg==
+opennms@dev:
+  version "2.0.0-snapshot.develop.157"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.157.tgz#fb1916399fb138de1037fa1db2231ca0fd09bcd7"
+  integrity sha512-LPrVBZY8anyLSylxS8+8v0RBKfJ6rt2esrhQIF1ZJvqTFdmoLLHY1GiypbVkvL34ABw6O4oopNkLWqlZFZSH/w==
   dependencies:
     "@babel/runtime-corejs2" "^7.5.5"
     "@types/btoa" "^1.2.3"

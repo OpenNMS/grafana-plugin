@@ -59,7 +59,7 @@
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "ionicons": "2.0.1",
     "lodash": "^4.17.11",
-    "opennms": "snapshot.ranger.wip",
+    "opennms": "dev",
     "parenthesis": "^3.1.5",
     "perfect-scrollbar": "^1.4.0",
     "q": "^1.5.0",
