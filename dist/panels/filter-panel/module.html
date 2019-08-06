@@ -1,0 +1,9 @@
+<div class="filter-panel panel-columns submenu-controls">
+    <div class="submenu-item gf-form-inline" ng-repeat="v in columnVariables track by v.id" id="{{v.id}}">
+        <div class="gf-form">
+            <label class="gf-form-label template-variable">{{v.label || v.name}}</label>
+            <onms-value-select-dropdown ng-if="v.inputType !== 'text'" variable="v" on-updated="ctrl.variableUpdated(v, $index)"></onms-value-select-dropdown>
+            <input type="text" ng-if="v.inputType === 'text'" ng-model="v.query" ng-change="ctrl.variableUpdated(v, $index)" class="gf-form-input">
+        </div>
+    </div>
+</div>
