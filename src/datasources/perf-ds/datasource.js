@@ -86,7 +86,7 @@ export class OpenNMSDatasource {
       });
     } else {
       // There are no sources listed, let Grafana display "No data points" to the user
-      return {'data': []};
+      return this.$q.when({ data: [] });
     }
 
     return request
