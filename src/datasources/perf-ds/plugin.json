@@ -9,6 +9,7 @@
 
   "metrics": true,
   "annotations": false,
+  "hiddenQueries": true,
 
   "queryOptions": {
     "minInterval": true,
