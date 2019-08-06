@@ -229,7 +229,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           this.panel.transform = 'json';
         } else {
           if (this.panel.transform === 'table' || this.panel.transform === 'json') {
-            this.panel.transform = 'timeseries_to_rows';
+            this.panel.transform = 'table';
           }
         }
       }

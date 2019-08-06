@@ -16,13 +16,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
     this.$scope = $scope;
     this.uiSegmentSrv = uiSegmentSrv;
     this.featuredAttributes = true; // limits the selection to the featured attributes
-
-    this.entityTypes = entityTypes.map((type) => {
-      return {
-        id: type,
-        label: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase() + 's',
-      };
-    });
+    this.entityTypes = entityTypes;
 
     if (!this.target) {
       this.target = {};
