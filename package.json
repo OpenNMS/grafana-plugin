@@ -56,7 +56,7 @@
     "crypto-js": "^3.1.9-1",
     "flot": "https://github.com/flot/flot#v0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
-    "ionicons": "2.0.1",
+    "ionicons": "4.6.2",
     "lodash": "^4.17.13",
     "opennms": "dev",
     "parenthesis": "^3.1.7",
