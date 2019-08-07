@@ -978,7 +978,7 @@ ajv@^4.9.2:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
-ajv@^6.1.0, ajv@^6.10.2, ajv@^6.5.3, ajv@^6.5.5, ajv@^6.6.1:
+ajv@^6.1.0, ajv@^6.10.2, ajv@^6.5.3, ajv@^6.5.5:
   version "6.10.2"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52"
   integrity sha512-TXtUUEYHuaTEbLZWIKUr5pmBuhDLy+8KYtPYdcV8qC+pOZL+NKqYwvWSRrVXHn+ZmRRAu8vJTAznH7Oag6RVRw==
@@ -2240,23 +2240,19 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.11.0, commander@^2.8.1:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
-
-commander@^2.16.0, commander@^2.20.0:
+commander@^2.11.0, commander@^2.16.0, commander@^2.20.0, commander@^2.8.1, commander@^2.9.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
   integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
-
-commander@^2.9.0, commander@~2.17.1:
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
 commander@~2.14.1:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.14.1.tgz#2235123e37af8ca3c65df45b026dbd357b01b9aa"
   integrity sha512-+YR16o3rK53SmWHU3rEM3tPAh2rwb1yPcQX5irVn7mb0gXbwuCCrnkbV5+PBfETdfg1vui07nM6PCG1zndcjQw==
+
+commander@~2.17.1:
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -5111,9 +5107,9 @@ onetime@^2.0.0:
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
 opennms@dev:
-  version "2.0.0-snapshot.develop.157"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.157.tgz#fb1916399fb138de1037fa1db2231ca0fd09bcd7"
-  integrity sha512-LPrVBZY8anyLSylxS8+8v0RBKfJ6rt2esrhQIF1ZJvqTFdmoLLHY1GiypbVkvL34ABw6O4oopNkLWqlZFZSH/w==
+  version "2.0.0-snapshot.develop.158"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.158.tgz#00783fc0d372a9ed00e7405d57a3e337d34884fa"
+  integrity sha512-Z4WS3chvqDXur4C0lKYPcvs2I6xQi6H3CO/ioSfxu5p8ZvNkpN0P/ckx+RTUGy1tzG/kAHKRthKvTK7wBvzEYA==
   dependencies:
     "@babel/runtime-corejs2" "^7.5.5"
     "@types/btoa" "^1.2.3"
@@ -6201,7 +6197,7 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
 
-slice-ansi@^2.0.0, slice-ansi@^2.1.0:
+slice-ansi@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-2.1.0.tgz#cacd7693461a637a5788d92a7dd4fba068e81636"
   integrity sha512-Qu+VC3EwYLldKa1fCxuuvULvSJOKEgk9pi8dZeCVK7TqBfUNTH4sFkk4joj8afVSfAYgJoSOetjx9QWOJ5mYoQ==
@@ -6575,17 +6571,7 @@ symbol-tree@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
 
-table@^5.0.2:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/table/-/table-5.2.2.tgz#61d474c9e4d8f4f7062c98c7504acb3c08aa738f"
-  integrity sha512-f8mJmuu9beQEDkKHLzOv4VxVYlU68NpdzjbGPl69i4Hx0sTopJuNxuzJd17iV2h24dAfa93u794OnDA5jqXvfQ==
-  dependencies:
-    ajv "^6.6.1"
-    lodash "^4.17.11"
-    slice-ansi "^2.0.0"
-    string-width "^2.1.1"
-
-table@^5.4.4:
+table@^5.0.2, table@^5.4.4:
   version "5.4.4"
   resolved "https://registry.yarnpkg.com/table/-/table-5.4.4.tgz#6e0f88fdae3692793d1077fd172a4667afe986a6"
   integrity sha512-IIfEAUx5QlODLblLrGTTLJA7Tk0iLSGBvgY8essPRVNGHAzThujww1YqHLs6h3HfTg55h++RzLHH5Xw/rfv+mg==
