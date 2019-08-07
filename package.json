@@ -28,7 +28,7 @@
     "css-chunks-html-webpack-plugin": "^1.1.1",
     "css-loader": "^2.1.1",
     "eslint": "^5.13.0",
-    "fs-extra": "^4.0.3",
+    "fs-extra": "^8.1.0",
     "grunt": "^1.0.4",
     "grunt-contrib-clean": "~2.0.0",
     "grunt-exec": "^3.0.0",
