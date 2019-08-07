@@ -38,7 +38,7 @@
     "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
     "opennms-style": "https://github.com/OpenNMS/opennms-style.git#v0.1.0",
-    "parallel-webpack": "^2.3.0",
+    "parallel-webpack": "^2.4.0",
     "prunk": "^1.3.0",
     "recursive-copy": "^2.0.10",
     "rimraf": "^2.6.1",
