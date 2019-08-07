@@ -61,7 +61,7 @@
     "opennms": "dev",
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.4.0",
-    "q": "^1.5.0",
+    "q": "^1.5.1",
     "xlsx": "^0.14.3"
   },
   "resolutions": {
