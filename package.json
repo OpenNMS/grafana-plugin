@@ -24,7 +24,7 @@
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^3.5.0",
     "commander": "^2.11.0",
-    "copy-webpack-plugin": "^5.0.2",
+    "copy-webpack-plugin": "^5.0.4",
     "css-chunks-html-webpack-plugin": "^1.1.1",
     "css-loader": "^3.2.0",
     "eslint": "^5.13.0",
