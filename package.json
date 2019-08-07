@@ -16,7 +16,7 @@
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
-    "@babel/register": "^7.4.0",
+    "@babel/register": "^7.5.5",
     "argv": "^0.0.2",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^10.0.1",
