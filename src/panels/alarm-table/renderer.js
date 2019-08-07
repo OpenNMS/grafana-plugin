@@ -1,3 +1,5 @@
+import 'ionicons/dist/css/ionicons.css';
+
 import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
@@ -505,28 +507,28 @@ export class TableRenderer {
   }
 
   static getIconForSeverity(severity) {
-    let icon = 'ion-help';
+    let icon = 'ion-ios-help';
     switch(severity) {
       case 'indeterminate':
-        icon = 'ion-help';
+        icon = 'ion-ios-help';
         break;
       case 'warning':
-        icon = 'ion-alert-circled';
+        icon = 'ion-ios-warning';
         break;
       case 'minor':
-        icon = 'ion-flash';
+        icon = 'ion-ios-flash';
         break;
       case 'major':
-        icon = 'ion-flame';
+        icon = 'ion-ios-flame';
         break;
       case 'critical':
-        icon = 'ion-nuclear';
+        icon = 'ion-ios-nuclear';
         break;
       case 'normal':
-        icon = 'ion-leaf';
+        icon = 'ion-ios-leaf';
         break;
       case 'cleared':
-        icon = 'ion-checkmark-circled';
+        icon = 'ion-ios-checkmark-circle';
         break;
     }
     return icon;
