@@ -1,6 +1,8 @@
+/* we do this now by importing the CSS direct in `renderer.js`
 $ionicons-font-path: '../../../../node_modules/ionicons/fonts';
+@import '~ionicons/dist/css/ionicons';
+*/
 
-@import '~ionicons/scss/ionicons';
 @import 'colors';
 @import 'severity-themes';
 
