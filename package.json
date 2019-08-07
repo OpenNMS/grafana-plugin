@@ -35,7 +35,7 @@
     "jsdom": "^11.6.2",
     "jsdom-global": "^3.0.2",
     "mini-css-extract-plugin": "^0.5.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
     "opennms-style": "https://github.com/OpenNMS/opennms-style.git#v0.1.0",
     "parallel-webpack": "^2.3.0",
