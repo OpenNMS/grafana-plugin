@@ -3152,9 +3152,10 @@ flatted@^2.0.0:
   version "2.0.1"
   resolved "https://github.com/j-white/flot-axislabels#bf38a00da475e5fc7e6c672d4c37443ec4a5cfcf"
 
-"flot@https://github.com/flot/flot#v0.8.3":
-  version "0.8.3"
-  resolved "https://github.com/flot/flot#453b017cc5acfd75e252b93e8635f57f4196d45d"
+flot@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/flot/-/flot-3.2.5.tgz#f803005e0cea7ebea8a947e93b55996ebade9764"
+  integrity sha512-YDLSgjKpeDGU01KtwQeOLc3ebdQve7f3k/8iN6tPO0KTcWFDJYWvpWbzpl0BKH2DoEYHE3QuSqiAAQaADH6hnw==
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
