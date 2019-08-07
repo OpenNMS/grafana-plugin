@@ -19,7 +19,7 @@
     "@babel/register": "^7.5.5",
     "argv": "^0.0.2",
     "babel-eslint": "^10.0.2",
-    "babel-loader": "^8.0.5",
+    "babel-loader": "^8.0.6",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
     "commander": "^2.11.0",
