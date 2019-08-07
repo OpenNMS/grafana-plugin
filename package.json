@@ -30,7 +30,7 @@
     "eslint": "^5.13.0",
     "fs-extra": "^4.0.3",
     "grunt": "^1.0.4",
-    "grunt-contrib-clean": "~1.1.0",
+    "grunt-contrib-clean": "~2.0.0",
     "grunt-exec": "^3.0.0",
     "jsdom": "^11.6.2",
     "jsdom-global": "^3.0.2",
