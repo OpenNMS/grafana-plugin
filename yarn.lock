@@ -5557,9 +5557,10 @@ prr@~1.0.1:
   resolved "https://registry.yarnpkg.com/prr/-/prr-1.0.1.tgz#d3fc114ba06995a45ec6893f484ceb1d78f5f476"
   integrity sha1-0/wRS6BplaRexok/SEzrHXj19HY=
 
-prunk@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/prunk/-/prunk-1.3.0.tgz#bc5a1d3ee9c019ae2ee52ffd1fd4d9bc7f7a767b"
+prunk@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/prunk/-/prunk-1.3.1.tgz#5c1f5615c218ac76621b4d8a97ec13717807756a"
+  integrity sha512-nLpTxQCqaKzdpzA344aK8u1wpVcnT0OD9oruH281TeqkqnxCWW4dD8Vn65mQWlfwPO8yWFyeK2h2qcw2N7hveA==
 
 pseudomap@^1.0.2:
   version "1.0.2"
