@@ -58,7 +58,7 @@
     "flot": "https://github.com/flot/flot#v0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "ionicons": "2.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "opennms": "dev",
     "parenthesis": "^3.1.5",
     "perfect-scrollbar": "^1.4.0",
@@ -73,10 +73,11 @@
     "fstream": "^1.0.12",
     "growl": "^1.10.0",
     "js-yaml": "^3.13.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "micromatch": "^3.1.10",
     "request": "^2.88.0",
-    "sshpk": "^1.16.1"
+    "sshpk": "^1.16.1",
+    "tar-fs": "^1.16.2"
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
   "spec": {
