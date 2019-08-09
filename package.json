@@ -22,7 +22,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
-    "commander": "^2.11.0",
+    "commander": "^3.0.0",
     "copy-webpack-plugin": "^5.0.4",
     "css-chunks-html-webpack-plugin": "^1.1.1",
     "css-loader": "^3.2.0",
