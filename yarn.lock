@@ -2150,6 +2150,11 @@ commander@^2.9.0, commander@~2.17.1:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
+commander@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.0.tgz#0641ea00838c7a964627f04cddc336a2deddd60a"
+  integrity sha512-pl3QrGOBa9RZaslQiqnnKX2J068wcQw7j9AIaBQ9/JEp5RY6je4jKTImg0Bd+rpoONSe7GUFSgkxLeo17m3Pow==
+
 commander@~2.14.1:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.14.1.tgz#2235123e37af8ca3c65df45b026dbd357b01b9aa"
@@ -4973,9 +4978,9 @@ onetime@^2.0.0:
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
 opennms@dev:
-  version "2.0.0-snapshot.develop.157"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.157.tgz#fb1916399fb138de1037fa1db2231ca0fd09bcd7"
-  integrity sha512-LPrVBZY8anyLSylxS8+8v0RBKfJ6rt2esrhQIF1ZJvqTFdmoLLHY1GiypbVkvL34ABw6O4oopNkLWqlZFZSH/w==
+  version "2.0.0-snapshot.develop.162"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.162.tgz#141d7630d6260105192ea8666f66398d5a299123"
+  integrity sha512-6dokx6Bk5O6RIvUhIYL3B4VQSTLxgv7mrLIVcVNqxxVZvc+EDTAwyQp5DlHPktvc7WnlcSJ5oCy+wQuUF8W5RA==
   dependencies:
     "@babel/runtime-corejs2" "^7.5.5"
     "@types/btoa" "^1.2.3"
@@ -4983,7 +4988,7 @@ opennms@dev:
     btoa "^1.2.1"
     chalk "^2.4.2"
     cli-table3 "^0.5.0"
-    commander "^2.9.0"
+    commander "^3.0.0"
     fs "^0.0.1-security"
     html-to-formatted-text "^2.6.0"
     ip-address "^6.1.0"
