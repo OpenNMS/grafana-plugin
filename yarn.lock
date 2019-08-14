@@ -675,6 +675,13 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.8.tgz#e469b4bf9d1c9832aee4907ba8a051494357c12c"
   integrity sha512-aX+gFgA5GHcDi89KG5keey2zf0WfZk/HAQotEamsK2kbey+8yGKcson0hbK8E+v0NArlCJQCqMP161YhV6ZXLg==
 
+"@types/object-hash@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-1.3.0.tgz#b20db2074129f71829d61ff404e618c4ac3d73cf"
+  integrity sha512-il4NIe4jTx4lfhkKaksmmGHw5EsVkO8sHWkpJHM9m59r1dtsVadLSrJqdE8zU74NENDAsR3oLIOlooRAXlPLNA==
+  dependencies:
+    "@types/node" "*"
+
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
@@ -4933,6 +4940,11 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
+object-hash@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
+  integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
+
 object-keys@^1.0.12:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.1.0.tgz#11bd22348dd2e096a045ab06f6c85bcc340fa032"
@@ -4978,12 +4990,13 @@ onetime@^2.0.0:
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
 opennms@dev:
-  version "2.0.0-snapshot.develop.162"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.162.tgz#141d7630d6260105192ea8666f66398d5a299123"
-  integrity sha512-6dokx6Bk5O6RIvUhIYL3B4VQSTLxgv7mrLIVcVNqxxVZvc+EDTAwyQp5DlHPktvc7WnlcSJ5oCy+wQuUF8W5RA==
+  version "2.0.0-snapshot.develop.166"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.166.tgz#2118d1085d576e376cd9770b1a769d7e141113ea"
+  integrity sha512-V2JUYc6Ux8hLHmWPByWHYyxTnAZXdIVvk1i/whOq2zSnctCpounEXu9kolvwz8u3iuObzVZHWLWUN4cqBNS5MQ==
   dependencies:
     "@babel/runtime-corejs2" "^7.5.5"
     "@types/btoa" "^1.2.3"
+    "@types/object-hash" "^1.3.0"
     axios "^0.19.0"
     btoa "^1.2.1"
     chalk "^2.4.2"
@@ -4994,6 +5007,7 @@ opennms@dev:
     ip-address "^6.1.0"
     lodash "^4.17.15"
     moment "^2.19.3"
+    object-hash "^1.3.1"
     qs "^6.5.0"
     table "^5.4.4"
     version_compare "^0.0.3"
