@@ -7077,10 +7077,10 @@ xdg-basedir@^2.0.0:
   dependencies:
     os-homedir "^1.0.0"
 
-xlsx@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.15.0.tgz#7e5633bbeb3995373b8b9960deb6fbda912ab602"
-  integrity sha512-H2m6K+YdjQWhpquA0eU3Ft0Nahu9CDRKRIvHqFILNeweEvC7M5KR167pYZ46ohuaZT7gcnWW4rz8nstjzrJ3+w==
+xlsx@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.15.1.tgz#a767c4d412cbd0c95b30dbcd48bed7de428eb107"
+  integrity sha512-z+o4+QPMc32EPboLCzJAz94o0Zyy+8jrmWTsVpfzwknFln9qDO6/HN1KrGGVC4//sGA7dh4R3HA4fhbGIKCDOA==
   dependencies:
     adler-32 "~1.2.0"
     cfb "^1.1.3"
