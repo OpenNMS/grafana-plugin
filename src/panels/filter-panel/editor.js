@@ -324,7 +324,7 @@ export function filterPanelEditor($q, uiSegmentSrv) { // eslint-disable-line no-
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: '/public/plugins/opennms-helm-app/panels/filter-panel/editor.html',
+    templateUrl: 'public/plugins/opennms-helm-app/panels/filter-panel/editor.html',
     controller: FilterPanelEditorCtrl,
   };
 }

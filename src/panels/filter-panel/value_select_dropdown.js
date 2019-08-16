@@ -250,7 +250,7 @@ export class OnmsValueSelectDropdownCtrl {
 export function onmsValueSelectDropdown($compile, $window, $timeout, $rootScope) {
   return {
     scope: { variable: '=', onUpdated: '&' },
-    templateUrl: '/public/plugins/opennms-helm-app/panels/filter-panel/valueSelectDropdown.html',
+    templateUrl: 'public/plugins/opennms-helm-app/panels/filter-panel/valueSelectDropdown.html',
     controller: 'OnmsValueSelectDropdownCtrl',
     controllerAs: 'vm',
     bindToController: true,
