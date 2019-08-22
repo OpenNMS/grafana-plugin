@@ -335,14 +335,8 @@ export class TableRenderer {
       return '';
     }
 
-    /*
-    if (column.style.type === 'severity' && column.style.displayAs === 'icon') {
-      column.style.center = true;
-    }
-    */
-
-    if (column.style && column.style.center) {
-      cellClasses.push('text-center');
+    if (column.style && column.style.align) {
+      cellClasses.push('text-' + column.style.align);
     }
 
     if (column.style && column.style.preserveFormat) {
@@ -439,14 +433,27 @@ export class TableRenderer {
       for (let i = 0; i < this.table.columns.length; i++) {
         let columnClasses = [];
         const col = this.table.columns[i];
-        if (this.panel.severity === 'column') {
-          if (col && col.style && col.style.type === 'severity') {
+
+        if (col && !col.style) {
+          col.style = {};
+        }
+
+        // upgrade old "center" style definitions
+        if (col.style.center) {
+          col.style.align = 'center';
+          delete col.style.center;
+        }
+
+        if (!col.style.align) {
+          col.style.align = 'left';
+        }
+        if (col.style.type) {
+          if (col.style.type === 'severity' && this.panel.severity === 'column') {
             columnClasses.push(severity);
           }
+          columnClasses.push('type-' + col.style.type);
         }
-        if (col && col.style && col.style.type === 'checkbox') {
-          columnClasses.push('onms-checkbox');
-        }
+
         cellHtml += this.renderCell(i, y, row[i], y === startPos, columnClasses);
       }
 

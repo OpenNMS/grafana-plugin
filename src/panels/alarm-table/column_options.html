@@ -175,7 +175,12 @@
                 </div>
             </div>
             <div class="gf-form-inline">
-                <gf-form-switch class="gf-form" label-class="width-8" switch-class="max-width-8" label="Center" checked="style.center" on-change="editor.render()"></gf-form-switch>
+                <div class="gf-form">
+                    <label class="gf-form-label width-8">Align</label>
+                    <div class="gf-form-select-wrapper width-8">
+                        <select class="gf-form-input" ng-model="style.align" ng-model-options='{ debounce: 250 }' ng-options="align as align for align in [ 'left', 'center', 'right' ]" ng-change="editor.render()"></select>
+                    </div>
+                </div>
             </div>
             <div class="gf-form-inline">
                 <gf-form-switch class="gf-form" label-class="width-8" switch-class="max-width-8" label="Clip" checked="style.clip" on-change="editor.render()"></gf-form-switch>
