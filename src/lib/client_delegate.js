@@ -32,10 +32,9 @@ export class ClientDelegate {
           authConfig = new API.OnmsAuthConfig(username, password);
         }
 
-        let server = new API.OnmsServer(this.name, this.url, authConfig);
-        let http = new Rest.GrafanaHTTP(this.backendSrv, server, this.timeout);
+        const server = API.OnmsServer.newBuilder(this.url).setName(this.name).setAuth(authConfig).build();
+        const http = new Rest.GrafanaHTTP(this.backendSrv, server, this.timeout);
         this.client = new Client(http);
-        this.client.server = server;
         this.clientWithMetadata = undefined;
      }
 
@@ -70,14 +69,20 @@ export class ClientDelegate {
 
     getClientWithMetadata() {
         if (!this.clientWithMetadata) {
-              let self = this;
-              let client = Client.getMetadata(self.client.server, self.client.http, self.timeout)
+              const self = this;
+              const http = self.client.http;
+              const client = Client.getMetadata(http.server, http, self.timeout)
                 .then(function(metadata) {
                     // Ensure the OpenNMS we are talking to is compatible
-                    if (metadata.apiVersion() !== 2) {
+                    if (metadata.apiVersion() < 2) {
                         throw new Error("Unsupported Version");
                     }
-                    self.client.server.metadata = metadata;
+                    const server = API.OnmsServer.newBuilder(http.server.url)
+                        .setName(http.server.name)
+                        .setAuth(http.server.auth)
+                        .setMetadata(metadata)
+                        .build();
+                    http.server = server;
                     return self.client;
                 }).catch(function(e) {
                     // in case of error, reset the client, otherwise
@@ -88,7 +93,7 @@ export class ClientDelegate {
 
           // Grafana functions that invoke the datasource expect the
           // promise to be one that is returned by $q.
-          let deferred = this.$q.defer();
+          const deferred = this.$q.defer();
           client.then((success) => deferred.resolve(success)).catch((error) => deferred.reject(error));
           this.clientWithMetadata = deferred.promise;
         }
@@ -355,8 +360,8 @@ export class ClientDelegate {
                     start: start,
                     end: end,
                     step: step,
-                    nodeCriteria: nodeCriteria,
-                    interfaceId: interfaceId,
+                    exporterNode: nodeCriteria,
+                    ifIndex: interfaceId,
                     includeOther: includeOther
                 });
             }).catch(this.decorateError);
@@ -376,8 +381,8 @@ export class ClientDelegate {
                     N: N,
                     start: start,
                     end: end,
-                    nodeCriteria: nodeCriteria,
-                    interfaceId: interfaceId,
+                    exporterNode: nodeCriteria,
+                    ifIndex: interfaceId,
                     includeOther: includeOther
                 });
             }).catch(this.decorateError);

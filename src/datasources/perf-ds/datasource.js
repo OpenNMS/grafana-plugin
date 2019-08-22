@@ -86,7 +86,7 @@ export class OpenNMSDatasource {
       });
     } else {
       // There are no sources listed, let Grafana display "No data points" to the user
-      return {'data': []};
+      return this.$q.when({ data: [] });
     }
 
     return request
@@ -396,10 +396,15 @@ export class OpenNMSDatasource {
           }
 
           value = columns[i].values[j];
+          // Replace literal 'NaN' values with nulls
+          if (value === 'NaN') {
+            value = null;
+          }
+
           if (!atLeastOneNonNaNValue && !isNaN(value)) {
             atLeastOneNonNaNValue = true;
           }
-          datapoints.push([columns[i].values[j], timestamps[j]]);
+          datapoints.push([value, timestamps[j]]);
         }
 
         let label = labels[i];
