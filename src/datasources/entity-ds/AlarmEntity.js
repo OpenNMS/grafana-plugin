@@ -151,7 +151,7 @@ export default class AlarmEntity extends Entity {
     }
 
     const c = await this.client.getClientWithMetadata();
-    const metadata = c.server.metadata;
+    const metadata = c.http.server.metadata;
 
     const alarms = await this.client.findAlarms(filter);
 
