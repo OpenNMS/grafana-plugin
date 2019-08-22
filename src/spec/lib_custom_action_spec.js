@@ -4,7 +4,7 @@ import {CustomAction, getMatch} from '../lib/custom_action';
 describe('CustomAction :: getMatch', () => {
   it('should find an exact match', () => {
     const match = getMatch('$foo', 'foo');
-    expect(match).to.be.defined;
+    expect(match).to.exist;
     expect(match.token).to.equal('$foo');
     expect(match.variable).to.equal('foo');
     expect(match.index).to.be.undefined;
@@ -12,7 +12,7 @@ describe('CustomAction :: getMatch', () => {
 
   it('should find a substring match', () => {
     const match = getMatch('I like $foo bar!', 'foo');
-    expect(match).to.be.defined;
+    expect(match).to.exist;
     expect(match.token).to.equal('$foo');
     expect(match.variable).to.equal('foo');
     expect(match.index).to.be.undefined;
@@ -24,7 +24,7 @@ describe('CustomAction :: getMatch', () => {
 
   it('should find a match with a numerical index inside brackets', () => {
     const match = getMatch('I like $foo[1]', 'foo');
-    expect(match).to.be.defined;
+    expect(match).to.exist;
     expect(match.token).to.equal('$foo[1]');
     expect(match.variable).to.equal('foo');
     expect(match.index).to.equal(1);
@@ -32,7 +32,7 @@ describe('CustomAction :: getMatch', () => {
 
   it('should find a match with a string index inside brackets', () => {
     const match = getMatch('I like $foo[blah]', 'foo');
-    expect(match).to.be.defined;
+    expect(match).to.exist;
     expect(match.token).to.equal('$foo[blah]');
     expect(match.variable).to.equal('foo');
     expect(match.index).to.equal('blah');
@@ -40,7 +40,7 @@ describe('CustomAction :: getMatch', () => {
 
   it('should find a match with empty brackets', () => {
     const match = getMatch('I like $foo[]', 'foo');
-    expect(match).to.be.defined;
+    expect(match).to.exist;
     expect(match.token).to.equal('$foo[]');
     expect(match.variable).to.equal('foo');
     expect(match.index).to.be.undefined;

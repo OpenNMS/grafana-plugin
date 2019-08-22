@@ -10,7 +10,6 @@ import "jquery.flot.crosshair";
 import "jquery.flot.stack";
 import "flot-axislabels/jquery.flot.axislabels";
 import "flot/jquery.flot.categories";
-import legend from './legend';
 
 
 class HelmHistogramCtrl extends MetricsPanelCtrl {
