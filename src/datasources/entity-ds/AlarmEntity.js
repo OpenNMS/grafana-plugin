@@ -5,7 +5,7 @@ import {API} from 'opennms';
 import { AttributeMapping } from './mapping/AttributeMapping';
 import Entity from './Entity';
 
-const columns = [
+const COLUMNS = Object.freeze([
   { text: 'ID', resource: 'id' },
   { text: 'Count', resource: 'count' },
   { text: 'Acked By', resource: 'ackUser' },
@@ -53,7 +53,7 @@ const columns = [
   { text: 'Managed Object Type', resource: 'managedObjectType' },
   { text: 'Categories', resource: 'category', featured: true, visible: false },
   { text: 'Data Source' }
-];
+]);
 
 const mapping = new AttributeMapping({
   'location': 'location.locationName',
@@ -66,10 +66,14 @@ const mapping = new AttributeMapping({
   'troubleTicketState': 'troubleTicketState.label',
 });
 
+const TYPE = 'alarm';
+
 export default class AlarmEntity extends Entity {
+
   constructor(client, datasource) {
     super(client, datasource);
-    this.type = 'alarm';
+    this.type = TYPE;
+    this.columns = Array.from(COLUMNS);
   }
 
   getAttributeMapping() {
@@ -77,7 +81,7 @@ export default class AlarmEntity extends Entity {
   }
 
   getColumns() {
-    return columns;
+    return this.columns;
   }
 
   getPanelRestrictions() {
@@ -142,8 +146,6 @@ export default class AlarmEntity extends Entity {
   }
 
   async query(filter) {
-    const self = this;
-
     const panelRestrictions = this.getPanelRestrictions();
 
     if (panelRestrictions) {
@@ -155,6 +157,17 @@ export default class AlarmEntity extends Entity {
 
     const alarms = await this.client.findAlarms(filter);
 
+
+    // Rebuild the list of columns - we append to these based on the event parms that are available
+    this.columns = Array.from(COLUMNS);
+    return AlarmEntity.toTable(alarms, this.columns, metadata, this.datasource.name);
+  }
+
+  static builtinColumns() {
+    return COLUMNS;
+  }
+
+  static toTable(alarms, columns, metadata, datasourceName) {
     // Build a sorted list of (unique) event parameter names
     let parameterNames = _.uniq(_.sortBy(_.flatten(_.map(alarms, alarm => {
       if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
@@ -180,7 +193,7 @@ export default class AlarmEntity extends Entity {
         alarm.ackUser,
         alarm.ackTime,
         alarm.uei,
-        alarm.severity.label,
+        alarm.severity ? alarm.severity.label : undefined,
         alarm.type ? alarm.type.label : undefined,
         alarm.description,
         alarm.location,
@@ -204,7 +217,7 @@ export default class AlarmEntity extends Entity {
         alarm.lastEvent ? alarm.lastEvent.time : undefined,
         alarm.lastEvent ? alarm.lastEvent.source : undefined,
         alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
-        alarm.lastEvent ? alarm.lastEvent.severity.label : undefined,
+        alarm.lastEvent && alarm.lastEvent.severity ? alarm.lastEvent.severity.label : undefined,
         alarm.lastEvent ? alarm.lastEvent.label : undefined,
         alarm.lastEvent ? alarm.lastEvent.location : undefined,
 
@@ -243,7 +256,7 @@ export default class AlarmEntity extends Entity {
 
       // Append the event parameters to the row
       row = row.concat(_.map(parameterNames, parameterName => {
-        if (_.has(eventParametersByName, parameterName)) {
+        if (eventParametersByName.hasOwnProperty(parameterName)) {
           return eventParametersByName[parameterName];
         } else {
           return undefined;
@@ -251,14 +264,14 @@ export default class AlarmEntity extends Entity {
       }));
 
       row.meta = {
-          // Store the alarm for easy access by the panels - may not be necessary
+          // Store the alarm for easy access by the panels
           'alarm': alarm,
           // Store the name of the data-source as part of the data so that
           // the panel can grab an instance of the DS to perform actions
           // on the alarms
-          'source': this.datasource.name,
+          'source': datasourceName,
           // Store the entity type
-          'type': this.type,
+          'type': TYPE,
           // Store the ticketerConfig here
           'ticketerConfig': metadata.ticketerConfig
       };
