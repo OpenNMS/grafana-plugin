@@ -65,18 +65,26 @@ The Fault Management Data Source is now the Entities Data Source.
 In addition to querying alarms, it can now query nodes as well.
 This is useful for filtering in variables, or can be used for just viewing and filtering nodes from within Grafana.
 
-For details, see [the Helm documentation](http://docs.opennms.org/helm/releases/latest/helm/latest/welcome/index.html).
+For details, see [the Helm documentation](http://docs.opennms.org/helm/releases/latest/helm/latest/installation/upgrading.html).
 
 #### Flow Data Source
 
 - Enhancements have been made to support Horizon 25's addition of "top N" queries for conversations, hosts, and applicattions.
 
+#### Filter Panel
+
+A new panel has been added that allows you to configure a series of variables to put in a dashboard.
+This panel coordinates with any panels in the dashboard using the Entities Data Source to automatically apply filters matching those variables.
+
+In the future this will be enhanced to do more complicated set operations than are possible using the built-in datasource variables.
+
 #### Alarm Table
 
 - Alarm table code has been sync'd with enhancements from the upstream Grafana table panel.
-- It is now possible to configure the alarm table to not automatically refresh when new data is updated if you have navigated away from the first page of the list.
+- It is now possible to configure the alarm table to not automatically refresh when new data is updated if you have navigated away from the first page of the list. When new data arrives in the background, a refresh icon will appear in the page bar.
 - String-based columns (like log message) now get a mouseover with the full text of the column.
 - Severity columns have been enhanced, including basic support for themes.
+- A new column type (`checkbox`) has been added that will render a boolean value as either a checkmark or empty string.
 - Support has been added to tag a specific alarm as the "root cause" in a situation when providing feedback in the Alarm Details screen.
 - A number of UI cleanups have been made to the Alarm Details screen, fixing word wrapping, resizing when the browser is resized, and more.
 
