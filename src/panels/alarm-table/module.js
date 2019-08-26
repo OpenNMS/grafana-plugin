@@ -13,6 +13,7 @@ import {loadPluginCss} from 'app/plugins/sdk';
 import {SelectionMgr} from "./selection_mgr";
 import {ActionMgr} from "./action_mgr";
 
+import moment from 'moment';
 import * as XLSX from 'xlsx';
 
 loadPluginCss({
@@ -262,13 +263,18 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     const rows = this.table.rows.map((row) => {
       const ret = {};
       row.forEach((col, index) => {
-        ret[columns[index]] = col;
+        if (moment.isMoment(col) || col instanceof Date) {
+          ret[columns[index]] = moment(col).format('YYYY-MM-DD HH:mm:ss.SSS');
+        } else {
+          ret[columns[index]] = col;
+        }
       });
       return ret;
     });
 
     const worksheet = XLSX.utils.json_to_sheet(rows, {header:columns});
     XLSX.utils.book_append_sheet(workbook, worksheet, this.panel.title);
+    return workbook;
   }
 
   exportCSV() {
