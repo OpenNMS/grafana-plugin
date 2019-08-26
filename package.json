@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "@grafana/ui": "^6.3.2",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "crypto-js": "^3.1.9-1",
@@ -83,7 +84,7 @@
     "specTemplate": "src/rpm/spec.mustache",
     "installDir": "/var/lib/grafana/plugins",
     "requires": [
-      "grafana >= 5.0.0"
+      "grafana >= 6.0.0"
     ]
   },
   "scripts": {

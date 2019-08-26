@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import $ from 'jquery';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
+import config from 'app/core/config';
 import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
+import {isTableData} from '@grafana/ui';
 import coreModule from 'app/core/core_module';
 import {alarmDetailsAsDirective} from './alarm_details';
 import {memoEditorAsDirective} from "./memo_editor"
@@ -21,6 +23,7 @@ loadPluginCss({
   light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
 });
 
+export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'];
 const doubleClickDelay = 250;
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
@@ -82,6 +85,8 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           unit: 'short',
           type: 'number',
           decimals: 0,
+          colors: Array.concat([], defaultColors),
+          colorMode: null,
           pattern: '/Count/',
           align: 'right',
         },
@@ -115,12 +120,26 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     _.defaults(this.panel, panelDefaults);
 
+    if (this.panel.styles) {
+      this.panel.styles.forEach((style) => {
+        if (style.type === 'number') {
+          if (!style.colors) {
+            style.colors = Array.concat([], defaultColors);
+          }
+          if (style.colorMode === undefined) {
+            style.colorMode = null;
+          }
+        }
+      });
+    }
+
     let self = this;
     this.selectionMgr = new SelectionMgr((from,to) => self.getRowsInRange(from,to), () => self.render());
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+    this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
 
     if (this.panel.severity === true) {
       this.panel.severity = 'row';
@@ -173,6 +192,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.addEditorTab('Column Styles', columnOptionsTab, 3);
   }
 
+  onInitPanelActions(actions) {
+    actions.push({ text: 'Export CSV', click: 'ctrl.exportCSV()' });
+    actions.push({ text: 'Export Excel', click: 'ctrl.exportExcel()' })
+  }
+
   issueQueries(datasource) {
     if (this.panel.transform === 'annotations') {
       if (this.setTimeQueryStart) this.setTimeQueryStart();
@@ -218,14 +242,14 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     // automatically correct transform mode based on data
     if (this.dataRaw && this.dataRaw.length) {
-      if (this.dataRaw[0].type === 'table') {
+      if (isTableData(this.dataRaw[0])) {
         this.panel.transform = 'table';
       } else {
         if (this.dataRaw[0].type === 'docs') {
           this.panel.transform = 'json';
         } else {
           if (this.panel.transform === 'table' || this.panel.transform === 'json') {
-            this.panel.transform = 'table';
+            this.panel.transform = 'timeseries_to_rows'; // we had overridden this to 'table', not sure why?
           }
         }
       }
@@ -244,8 +268,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       this.$sanitize,
       this.selectionMgr,
       this.templateSrv,
-      // Grafana 6:
-      // config.theme.type,
+      config.theme.type,
     );
 
     return super.render(this.table);
