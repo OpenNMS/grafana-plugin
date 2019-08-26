@@ -11,17 +11,23 @@
                 <span class="onms-label width-16">{{column.text}} ({{column.entityType.label}})</span>
                 <div class="onms-radio-group">
                     <span class="radio-item">
-                        <input type="radio" id="radio-{{$index}}-single" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'single'" ng-change="ctrl.typeChanged(column, $index)">
+                        <input type="radio" id="radio-{{$index}}-single" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'single'" ng-change="ctrl.variableChanged(column, $index)">
                         <label for="radio-{{$index}}-single">Single</label>
                     </span>
                     <span class="radio-item">
-                        <input type="radio" id="radio-{{$index}}-multi" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'multi'" ng-change="ctrl.typeChanged(column, $index)">
+                        <input type="radio" id="radio-{{$index}}-multi" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'multi'" ng-change="ctrl.variableChanged(column, $index)">
                         <label for="radio-{{$index}}-multi">Multi</label>
                     </span>
                     <span class="radio-item">
-                        <input type="radio" id="radio-{{$index}}-text" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'text'" ng-change="ctrl.typeChanged(column, $index)">
+                        <input type="radio" id="radio-{{$index}}-text" name="radio-{{$index}}" ng-model="column.inputType" class="gf-form-input" ng-value="'text'" ng-change="ctrl.variableChanged(column, $index)">
                         <label for="radio-{{$index}}-text">Text</label>
                     </span>
+                </div>
+                <div class="gf-form">
+                    <div class="gf-form-inline gf-form-label">
+                        <span class="gf-form-label gf-size-8">Custom Label:</span>
+                        <input type="text" id="label-{{$index}}" ng-model="column.label" class="gf-form-input" ng-change="ctrl.variableChanged(column, $index)">
+                    </div>
                 </div>
             </div>
         </div>
