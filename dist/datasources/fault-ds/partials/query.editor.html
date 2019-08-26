@@ -1,0 +1,35 @@
+<query-editor-row query-ctrl="ctrl" can-collapse="true">
+
+    <div class="gf-form-inline">
+        <div class="gf-form">
+            <label class="gf-form-label query-keyword width-7">SELECT</label>
+            <label class="gf-form-label width-7">all alarms</label>
+        </div>
+    </div>
+
+    <onms-query query="ctrl.uiFilter.query" datasource="ctrl.datasource" query-ctrl="ctrl">
+
+    </onms-query>
+
+    <div class="gf-form" style="padding-top: 15px">
+        <label class="gf-form-label width-6">Limit</label>
+        <input type="number" placeholder="Query Limit" class="gf-form-input width-4" ng-model="ctrl.target.limit" ng-model-options='{ debounce: 250 }' bs-tooltip="'Limit the number of alarms returned (0=unlimited)'" ng-change="ctrl.onChangeInternal()" data-min-length=0 data-items=100>
+        <span style="color: rgb(229, 189, 28); padding-left: 1em" ng-if="ctrl.target.limit > 0">
+            <i class="fa fa-warning"></i>
+            Note: When using limits, column sorting only applies to the returned results.
+        </span>
+    </div>
+    <div class="gf-form">
+        <gf-form-switch class="gf-form"
+                        label="Featured attributes"
+                        tooltip="Toggles whether featured attributes or all attributes are shown"
+                        checked="ctrl.featuredAttributes"
+                        switch-class="max-width-6">
+        </gf-form-switch>
+        <button class="btn btn-inverse gf-form-btn"
+                ng-click="ctrl.clearRestrictions()"
+                ng-show="ctrl.showClearRestrictions()">
+            <i class="fa fa-times"></i>&nbsp;Clear Restrictions
+        </button>
+    </div>
+</query-editor-row>
