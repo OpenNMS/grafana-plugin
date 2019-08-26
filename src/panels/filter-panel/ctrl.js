@@ -2,7 +2,7 @@ import {MetricsPanelCtrl} from "app/plugins/sdk";
 import {filterPanelEditor} from './editor';
 import _ from "lodash";
 
-import { FilterColumn } from '../../lib/filter_column';
+import {FilterColumn} from '../../lib/filter_column';
 
 class FilterCtrl extends MetricsPanelCtrl {
     /** @ngInject */
@@ -81,7 +81,7 @@ class FilterCtrl extends MetricsPanelCtrl {
         });
     }
 
-    typeChanged(col) {
+    variableChanged(col) {
         if (col && col.text) {
             this.updateVariables().then(() => {
                 this.render();
@@ -90,7 +90,7 @@ class FilterCtrl extends MetricsPanelCtrl {
     }
 
     enrichColumn(obj) {
-        return new FilterColumn(obj.text, obj.datasource, obj.resource, obj.inputType, obj.entityType, obj.id, obj.selected);
+        return new FilterColumn(obj.text, obj.label, obj.datasource, obj.resource, obj.inputType, obj.entityType, obj.id, obj.selected);
     }
 
     getVariable(column /*, index */) {

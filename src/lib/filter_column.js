@@ -10,14 +10,23 @@ const randomString = () => {
 }
 
 export class FilterColumn {
-  constructor(text, datasource, resource, inputType, entityType, id, selected) {
+  constructor(text, label, datasource, resource, inputType, entityType, id, selected) {
     this.id = id || randomString();
-    this.text = text;
+    this._text = text;
+    this.label = label;
 
     this.datasource = datasource;
     this.resource = resource;
     this.inputType = inputType || 'multi';
     this.entityType = entityType;
     this.selected = selected || {};
+  }
+
+  get text() {
+    return (this.label === undefined || this.label.trim().length === 0) ? this._text : this.label;
+  }
+
+  set text(text) {
+    this._text = text;
   }
 }
