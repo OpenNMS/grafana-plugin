@@ -1,12 +1,11 @@
 import 'ionicons/dist/css/ionicons.css';
 
 import _ from 'lodash';
-import moment from 'moment';
-import kbn from 'app/core/utils/kbn';
+import { getValueFormat, getColorFromHexRgbOrName, stringToJsRegex } from '@grafana/ui';
 
-// Grafana 6 APIs we can't use (yet?)
-// import { getValueFormat, getColorFromHexRgbOrName, GrafanaThemeType, stringToJsRegex } from '@grafana/ui';
-// import { ColumnStyle } from '@grafana/ui/src/components/Table/TableCellBuilder';
+// Grafana 6.3+ uses `dateTime` from @grafana/data but we're staying compatible with 6.0+
+// so always use `moment` (for now).
+import moment from 'moment';
 
 import {Model} from 'opennms';
 
@@ -61,7 +60,7 @@ export class TableRenderer {
       for (let i = 0; i < this.panel.styles.length; i++) {
         const style = this.panel.styles[i];
 
-        const regex = kbn.stringToJsRegex(style.pattern);
+        const regex = stringToJsRegex(style.pattern);
         if (column.text.match(regex)) {
           column.style = style;
 
@@ -77,21 +76,16 @@ export class TableRenderer {
     }
   }
 
-  static getColorForValue(value, style) {
+  getColorForValue(value, style) {
     if (!style.thresholds) {
       return null;
     }
-
     for (let i = style.thresholds.length; i > 0; i--) {
       if (value >= style.thresholds[i - 1]) {
-        return style.colors[i];
-        // in Grafana 6:
-        // return getColorFromHexRgbOrName(style.colors[i], this.theme);
+        return getColorFromHexRgbOrName(style.colors[i], this.theme);
       }
     }
-    return _.first(style.colors);
-    // in Grafana 6:
-    // return getColorFromHexRgbOrName(_.first(style.colors), this.theme);
+    return getColorFromHexRgbOrName(_.first(style.colors), this.theme);
   }
 
   defaultCellFormatter(v, style) {
@@ -116,9 +110,7 @@ export class TableRenderer {
     }
 
     if (column.style.type === 'hidden') {
-      return () => {
-        return undefined;
-      };
+      return () => undefined;
     }
 
     if (column.style.type === 'date') {
@@ -208,16 +200,14 @@ export class TableRenderer {
     }
 
     if (column.style.type === 'number') {
-      const valueFormatter = kbn.valueFormats[column.unit || column.style.unit];
-      // Grafana 6:
-      // const valueFormatter = getValueFormat(column.unit || column.style.unit);
+      const valueFormatter = getValueFormat(column.unit || column.style.unit);
 
       return v => {
         if (v === null || v === void 0) {
           return '-';
         }
 
-        if (_.isString(v) || _.isArray(v)) {
+        if (isNaN(v) || _.isArray(v)) {
           return this.defaultCellFormatter(v, column.style);
         }
 
@@ -281,7 +271,7 @@ export class TableRenderer {
     const row = this.table.rows[rowIndex];
     for (let i = 0; i < row.length; i++) {
       cellVariable = `__cell_${i}`;
-      scopedVars[cellVariable] = { value: row[i] };
+      scopedVars[cellVariable] = { value: row[i], text: row[i] ? row[i].toString() : '' };
     }
     return scopedVars;
   }
@@ -292,6 +282,7 @@ export class TableRenderer {
 
   renderCell(columnIndex, rowIndex, value, addWidthHack, columnClasses) {
     const title = !_.isNil(value) && _.isString(value) ? ' title="' + value.trim().replace(/"/g, '&quot;') + '"' : '';
+
     value = this.formatColumnValue(columnIndex, value);
 
     const column = this.table.columns[columnIndex];
@@ -301,10 +292,6 @@ export class TableRenderer {
     let textStyle = '';
     const cellClasses = [].concat(columnClasses);
     let cellClass = '';
-
-    //let styles = {};
-    //let classes = column.classes || [];
-    //classes = classes.concat(columnClasses);
 
     if (this.colorState.cell) {
       cellStyles.push('background-color:' + this.colorState.cell);
@@ -335,12 +322,12 @@ export class TableRenderer {
       return '';
     }
 
-    if (column.style && column.style.align) {
-      cellClasses.push('text-' + column.style.align);
-    }
-
     if (column.style && column.style.preserveFormat) {
       cellClasses.push('table-panel-cell-pre');
+    }
+
+    if (column.style && column.style.align) {
+      cellClasses.push('text-' + column.style.align);
     }
 
     if (column.style && column.style.width) {
@@ -366,7 +353,7 @@ export class TableRenderer {
     if (column.style && column.style.link) {
       // Render cell as link
       const scopedVars = this.renderRowVariables(rowIndex);
-      scopedVars['__cell'] = { value: value };
+      scopedVars['__cell'] = { value: value, text: value ? value.toString() : '' };
 
       const cellLink = this.templateSrv.replace(column.style.linkUrl, scopedVars, encodeURIComponent);
       const cellLinkTooltip = this.templateSrv.replace(column.style.linkTooltip, scopedVars);

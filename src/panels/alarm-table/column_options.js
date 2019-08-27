@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
-import kbn from 'app/core/utils/kbn';
+import { getValueFormats } from '@grafana/ui';
+import { defaultColors } from './module';
 
 export class ColumnOptionsCtrl {
   /** @ngInject */
@@ -9,7 +10,7 @@ export class ColumnOptionsCtrl {
     this.activeStyleIndex = 0;
     this.panelCtrl = $scope.ctrl;
     this.panel = this.panelCtrl.panel;
-    this.unitFormats = kbn.getUnitFormats();
+    this.unitFormats = getValueFormats();
     this.colorModes = [
       {text: 'Disabled', value: null},
       {text: 'Cell', value: 'cell'},
@@ -64,7 +65,7 @@ export class ColumnOptionsCtrl {
       type: 'number',
       alias: '',
       decimals: 2,
-      colors: ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'],
+      colors: Array.concat([], defaultColors),
       colorMode: null,
       pattern: '',
       dateFormat: 'YYYY-MM-DD HH:mm:ss',
@@ -102,7 +103,7 @@ export class ColumnOptionsCtrl {
   }
 
   onColorChange(style, colorIndex) {
-    return newColor => {
+    return (newColor) => {
       style.colors[colorIndex] = newColor;
       this.render();
     };
