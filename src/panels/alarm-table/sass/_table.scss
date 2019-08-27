@@ -165,6 +165,20 @@ $severity-font-weight: normal;
   }
 }
 
+.severity-sample {
+  border: 0 !important;
+  tr, td {
+    border: 0 !important;
+    margin: 0;
+    padding: .25rem;
+    padding-left: .5rem;
+  }
+  .icon {
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+}
+
 .alarm-table td {
   vertical-align: top;
 }
