@@ -45,7 +45,7 @@ const baseconfig = {
     'moment',
     function (_context, request, callback) {
       // automatically pass-through grafana built-in paths
-      const prefixes = ['app/', 'grafana/'];
+      const prefixes = ['app/', 'grafana/', '@grafana/'];
       for (let prefix of prefixes) {
         if (request.indexOf(prefix) === 0) {
           return callback(null, request);
