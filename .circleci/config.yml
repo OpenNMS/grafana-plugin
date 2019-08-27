@@ -79,7 +79,7 @@ jobs:
         - *attach_workspace
         - run:
             name: Create tarball
-            command: mkdir -p ./dist/packages && tar --exclude='.circleci' --exclude='.git' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
+            command: mkdir -p ./dist/packages && tar --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
         - store_artifacts:
             path: ./dist/packages
         - persist_to_workspace:
