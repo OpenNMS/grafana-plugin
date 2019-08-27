@@ -58,6 +58,8 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 #### General
 
+Helm 4 now requires Grafana 6.0 or higher.
+
 #### Entities Data Source
 
 The Fault Management Data Source is now the Entities Data Source.
@@ -87,6 +89,7 @@ In the future this will be enhanced to do more complicated set operations than a
 - A new column type (`checkbox`) has been added that will render a boolean value as either a checkmark or empty string.
 - Support has been added to tag a specific alarm as the "root cause" in a situation when providing feedback in the Alarm Details screen.
 - A number of UI cleanups have been made to the Alarm Details screen, fixing word wrapping, resizing when the browser is resized, and more.
+- The alarm table can now export CSV and Excel files.  Go to `<panel title>` -> `More...` -> `Export CSV` or `Export Excel`.
 
 ### v3.0.1
 
@@ -156,6 +159,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2019-08-26T21:51:29.285Z
-- Git Revision: 7d75ee5ca763648b21a7df48c9a01c558f819bd5
+- Build Date: 2019-08-27T16:00:10.363Z
+- Git Revision: 6a47db9f4afad92ed2eb684d9a194f05b86d6631
 
