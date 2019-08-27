@@ -31,6 +31,24 @@ $severity-themes: (
     'major': #ff9033,
     'critical': #ff3b50,
   ),
+  'nnmi': (
+    'cleared': $opennms-severity-cleared-dark, /* no cleared in nnmi */
+    'indeterminate': $opennms-severity-indeterminate-dark, /* no indeterminate in nnmi */
+    'normal': #a1cc72, /* outline: #5a8f44 */
+    'warning': #6ec5c6, /* outline: #488c8c, */
+    'minor': #f9df6c, /* outline: #c09e43 */
+    'major': #dda35c, /* outline: #775337 */
+    'critical': #ea3225, /* outline: #a82119 */
+  ),
+  'netcool': (
+    'cleared': #5dc93b, /* acknowledged: #3d8825 */
+    'indeterminate': #a44ae6, /* acknowledged: #602b86 */
+    'normal': #cccccc, /* no normal in netcool */
+    'warning': #76b7f9, /* acknowledged: #5f93c8 */
+    'minor': #fffd54, /* acknowledged: #cecc42 */
+    'major': #f4b54b, /* acknowledged: #ab6623 */
+    'critical': #eb3223, /* #bc261a */
+  ),
 ) !default;
 
 @mixin opennms-themify($property, $lighten, $key, $themes: $severity-themes) {
