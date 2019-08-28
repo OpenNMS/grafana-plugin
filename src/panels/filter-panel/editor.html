@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="gf-form">
+        <div class="gf-form" id="alarm-filter-editor-add-column">
             <div class="gf-form">
                 <span class="gf-form-label gf-size-auto">Data source entity:</span>
                 <div class="gf-form-select-wrapper" ng-if="!editor.panel.columns || editor.panel.columns.length === 0">
@@ -51,7 +51,6 @@
                         ng-options="type as type.label for type in editor.entityTypes track by type.id">
                 </select>
             </div>
-            <metric-segment segment="editor.addColumnSegment" get-options="editor.getColumnOptions()" on-change="editor.addColumn()"></metric-segment>
         </div>
     </div>
 </div>

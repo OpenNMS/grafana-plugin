@@ -41,12 +41,11 @@ class FilterCtrl extends MetricsPanelCtrl {
         this.$scope.dashboard = this.dashboard;
         this.$scope.ctrl = this;
         this.$scope.columnVariables = [];
+        this.panel.columns = this.panel.columns.map((col) => FilterColumn.fromJSON(col));
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-        this.events.on('data-received', this.onDataReceived.bind(this));
-        this.events.on('data-error', this.onDataError.bind(this));
-        this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
         this.events.on('render', this.onRender.bind(this));
+        this.render();
     }
 
     link($scope, elem, attrs, ctrl) {
@@ -56,17 +55,6 @@ class FilterCtrl extends MetricsPanelCtrl {
 
     onInitEditMode() {
         this.addEditorTab('Filtering', filterPanelEditor, 2);
-    }
-
-    onDataReceived(data) {
-        this.columnData = data ? data[0] : {};
-        this.render();
-    }
-
-    onDataError() {
-        this.columnData = {};
-        /** reset data here */
-        this.render();
     }
 
     onRender() {

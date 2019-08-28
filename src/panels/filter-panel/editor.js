@@ -1,10 +1,15 @@
 import {FilterColumn} from '../../lib/filter_column';
-
 import {entityTypes} from '../../datasources/entity-ds/datasource';
+
+import $ from 'jquery';
+
+// Recreated in div#alarm-filter-editor-add-column whenever a column is added to
+// reinitialize the <metric-segment> directive.  See initializeMetricSegment below.
+const metricSegmentHtml = '<metric-segment segment="editor.addColumnSegment" get-options="editor.getColumnOptions()" on-change="editor.addColumn()"></metric-segment>';
 
 export class FilterPanelEditorCtrl {
   /** @ngInject */
-  constructor($scope, $q, uiSegmentSrv, datasourceSrv) {
+  constructor($scope, $q, uiSegmentSrv, datasourceSrv, $compile) {
     this.$q = $q;
     this.$scope = $scope;
     this.uiSegmentSrv = uiSegmentSrv;
@@ -13,6 +18,7 @@ export class FilterPanelEditorCtrl {
     this.panelCtrl = $scope.ctrl;
     this.panel = this.panelCtrl.panel;
     $scope.panel = this.panel;
+    this.$compile = $compile;
 
     this.entityTypes = entityTypes;
     
@@ -29,7 +35,8 @@ export class FilterPanelEditorCtrl {
     this.srcIndex = undefined;
     this.destIndex = undefined;
 
-    this.addColumnSegment = uiSegmentSrv.newPlusButton();
+    this.initializeMetricSegment();
+
     let editor = document.querySelectorAll('.editor-row')[0];
     for (const e of [ 'dragstart', 'dragover', 'dragleave', 'drop']) {
       editor.addEventListener(e, (evt) => { this.handleEvent(e, evt); }, false);
@@ -236,9 +243,7 @@ export class FilterPanelEditorCtrl {
             self.panel.columns.push(column);
           }
       
-          const plusButton = self.uiSegmentSrv.newPlusButton();
-          self.addColumnSegment.html = plusButton.html;
-          self.addColumnSegment.value = plusButton.value;
+          self.initializeMetricSegment();
           deferred.resolve(self.render());
         }).catch((err) => {
           deferred.reject(err);
@@ -247,6 +252,14 @@ export class FilterPanelEditorCtrl {
 
       return deferred.promise;
     });
+  }
+
+  initializeMetricSegment() {
+    this.addColumnSegment = this.uiSegmentSrv.newPlusButton();
+    const section = $('#alarm-filter-editor-add-column');
+    section.find('metric-segment').remove();
+    section.append(metricSegmentHtml);
+    this.$compile(section.contents())(this.$scope);
   }
 
   render() {
