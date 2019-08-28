@@ -38,3 +38,10 @@
     }
   }
 }
+
+onms-value-select-dropdown a {
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline;
+  /* text-overflow: ellipsis; breaks caret at the end of the variable box :( */
+}
