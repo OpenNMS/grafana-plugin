@@ -56,9 +56,9 @@
 
     <div class="section gf-form-group">
         <h5 class="section-heading">Alarms</h5>
-        <div class="gf-form max-width-20">
+        <div class="gf-form max-width-24">
             <label class="gf-form-label width-10">Style with severity</label>
-            <div class="gf-form-select-wrapper width-12">
+            <div class="gf-form-select-wrapper width-14">
                 <select class="gf-form-input"
                         ng-model="editor.panel.severity"
                         ng-change="editor.render()">
@@ -68,15 +68,48 @@
                 </select>
             </div>
         </div>
-        <div class="gf-form max-width-20">
+        <div class="gf-form max-width-24">
             <label class="gf-form-label width-10">Severity theme</label>
-            <div class="gf-form-select-wrapper width-12">
+            <div class="gf-form-select-wrapper width-14">
                 <select class="gf-form-input"
                         ng-model="editor.panel.theme"
                         ng-options="key as value for (key, value) in editor.themes"
                         ng-change="editor.render()">
                 </select>
             </div>
+        </div>
+        <div class="gf-form max-width-24 severity-sample" ng-class="'opennms-theme-' + (editor.panel.theme ? editor.panel.theme : 'helm')">
+                <label class="width-10"></label>
+                <table class="dense-table-panel-table alarm-table severity">
+                <tr>
+                    <td class="indeterminate name width-11">Indeterminate</td>
+                    <td class="indeterminate icon width-2"><i class="icon severity ion-ios-help-circle"></i></td>
+                </tr>
+                <tr>
+                    <td class="cleared name">Cleared</td>
+                    <td class="cleared icon"><i class="icon severity ion-ios-checkmark-circle"></i></td>
+                </tr>
+                <tr>
+                    <td class="normal name">Normal</td>
+                    <td class="normal icon"><i class="icon severity ion-ios-leaf"></i></td>
+                </tr>
+                <tr>
+                    <td class="warning name">Warning</td>
+                    <td class="warning icon"><i class="icon severity ion-ios-warning"></i></td>
+                </tr>
+                <tr>
+                    <td class="minor name">Minor</td>
+                    <td class="minor icon"><i class="icon severity ion-ios-flash"></i></td>
+                </tr>
+                <tr>
+                    <td class="major name">Major</td>
+                    <td class="major icon"><i class="icon severity ion-ios-flame"></i></td>
+                </tr>
+                <tr>
+                    <td class="critical name">Critical</td>
+                    <td class="critical icon"><i class="icon severity ion-ios-nuclear"></i></td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
