@@ -41,6 +41,7 @@ class FilterCtrl extends MetricsPanelCtrl {
         this.$scope.dashboard = this.dashboard;
         this.$scope.ctrl = this;
         this.$scope.columnVariables = [];
+        this.panel.columns = this.panel.columns.map((col) => FilterColumn.fromJSON(col));
 
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('render', this.onRender.bind(this));

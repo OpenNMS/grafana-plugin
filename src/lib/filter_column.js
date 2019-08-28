@@ -29,4 +29,21 @@ export class FilterColumn {
   set text(text) {
     this._text = text;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      text: this._text,
+      label: this.label,
+      datasource: this.datasource,
+      resource: this.resource,
+      inputType: this.inputType,
+      entityType: this.entityType,
+      selected: this.selected,
+    };
+  }
+
+  static fromJSON(col) {
+    return new FilterColumn(col.text, col.label, col.datasource, col.resource, col.inputType, col.entityType, col.id, col.selected);
+  }
 }
