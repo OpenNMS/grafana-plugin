@@ -501,10 +501,10 @@ export class TableRenderer {
   }
 
   static getIconForSeverity(severity) {
-    let icon = 'ion-ios-help';
+    let icon = 'ion-ios-help-circle';
     switch(severity) {
       case 'indeterminate':
-        icon = 'ion-ios-help';
+        icon = 'ion-ios-help-circle';
         break;
       case 'warning':
         icon = 'ion-ios-warning';
