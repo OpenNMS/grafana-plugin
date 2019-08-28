@@ -17,7 +17,9 @@ export class TablePanelEditorCtrl {
     this.themes = {
       helm: 'Helm Default',
       opennms: 'OpenNMS',
-      omi: 'OMi',
+      omi: 'Oh My!',
+      nnmi: 'No, Never Mind (i)',
+      netcool: "That's Cool",
     };
 
     if (!this.themes[this.panel.theme]) {

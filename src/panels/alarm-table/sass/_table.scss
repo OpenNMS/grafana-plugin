@@ -107,6 +107,10 @@ td.type-checkbox {
 $severity-font-weight: normal;
 
 .severity {
+  i {
+    -webkit-text-stroke: 2px $cell-stroke-color;
+    paint-order: stroke fill;
+  }
   .indeterminate {
     @include severity-background-color('indeterminate');
     color: $cell-text-color;
@@ -161,6 +165,20 @@ $severity-font-weight: normal;
   }
 }
 
+.severity-sample {
+  border: 0 !important;
+  tr, td {
+    border: 0 !important;
+    margin: 0;
+    padding: .25rem;
+    padding-left: .5rem;
+  }
+  .icon {
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+}
+
 .alarm-table td {
   vertical-align: top;
 }
@@ -172,6 +190,10 @@ $severity-font-weight: normal;
 @mixin severity-highlight($severity) {
   @include severity-background-color-light($severity);
   color: $cell-dark-color;
+  i {
+    -webkit-text-stroke: 2px $cell-light-color;
+    paint-order: stroke fill;
+  }
 }
 
 .alarm-table .severity .selected .indeterminate {
