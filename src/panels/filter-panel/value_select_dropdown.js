@@ -82,10 +82,17 @@ export class OnmsValueSelectDropdownCtrl {
   }
 
   clearSelections() {
-    _.each(this.options, option => {
-      option.selected = false;
-    });
+    this.selectedValues = _.filter(this.options, { selected: true });
 
+    if (this.selectedValues.length > 1) {
+      _.each(this.options, option => {
+        option.selected = false;
+      });
+    } else {
+      _.each(this.search.options, option => {
+        option.selected = true;
+      });
+    }
     this.selectionsChanged(false);
   }
 
@@ -147,7 +154,7 @@ export class OnmsValueSelectDropdownCtrl {
     commitChange = commitChange || false;
     excludeOthers = excludeOthers || false;
 
-    const setAllExceptCurrentTo = newValue => {
+    const setAllExceptCurrentTo = (newValue) => {
       _.each(this.options, other => {
         if (option !== other) {
           other.selected = newValue;
@@ -247,9 +254,9 @@ export class OnmsValueSelectDropdownCtrl {
 }
 
 /** @ngInject */
-export function onmsValueSelectDropdown($compile, $window, $timeout, $rootScope) {
+export function onmsValueSelectDropdown($compile, $window, $timeout, $rootScope) { // eslint-disable-line no-unused-vars
   return {
-    scope: { variable: '=', onUpdated: '&' },
+    scope: { dashboard: '=', variable: '=', onUpdated: '&' },
     templateUrl: 'public/plugins/opennms-helm-app/panels/filter-panel/valueSelectDropdown.html',
     controller: 'OnmsValueSelectDropdownCtrl',
     controllerAs: 'vm',
@@ -289,7 +296,7 @@ export function onmsValueSelectDropdown($compile, $window, $timeout, $rootScope)
         }
       }
 
-      scope.$watch('vm.dropdownVisible', newValue => {
+      scope.$watch('vm.dropdownVisible', (newValue) => {
         if (newValue) {
           openDropdown();
         } else {
@@ -297,13 +304,13 @@ export function onmsValueSelectDropdown($compile, $window, $timeout, $rootScope)
         }
       });
 
-      const cleanUp = $rootScope.$on('template-variable-value-updated', () => {
-        scope.vm.updateLinkText();
-      });
-
-      scope.$on('$destroy', () => {
-        cleanUp();
-      });
+      scope.vm.dashboard.on(
+        'template-variable-value-updated',
+        () => {
+          scope.vm.updateLinkText();
+        },
+        scope
+      );
 
       scope.vm.init();
     },
