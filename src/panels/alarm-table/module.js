@@ -6,7 +6,6 @@ import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
-import {isTableData} from '@grafana/ui';
 import coreModule from 'app/core/core_module';
 import {alarmDetailsAsDirective} from './alarm_details';
 import {memoEditorAsDirective} from "./memo_editor"
@@ -25,6 +24,9 @@ loadPluginCss({
 
 export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'];
 const doubleClickDelay = 250;
+
+// replace this with `import {isTableData} from '@grafana/data'` if we end up requiring grafana 6.3+
+const isTableData = (data) => data && data.hasOwnProperty('columns');
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
   /** @ngInject */
