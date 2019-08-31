@@ -6,7 +6,6 @@ import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
-import {isTableData} from '@grafana/ui';
 import coreModule from 'app/core/core_module';
 import {alarmDetailsAsDirective} from './alarm_details';
 import {memoEditorAsDirective} from "./memo_editor"
@@ -26,6 +25,87 @@ loadPluginCss({
 export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'];
 const doubleClickDelay = 250;
 
+// replace this with `import {isTableData} from '@grafana/data'` if we end up requiring grafana 6.3+
+const isTableData = (data) => data && data.hasOwnProperty('columns');
+
+const styles = {
+  ack: {
+    type: 'checkbox',
+    alias: 'Ack',
+    pattern: 'Is Acknowledged',
+    align: 'center',
+    width: '2em',
+    clip: true,
+  },
+  count: {
+    unit: 'short',
+    type: 'number',
+    decimals: 0,
+    colors: Array.concat([], defaultColors),
+    colorMode: null,
+    pattern: '/Count/',
+    align: 'right',
+    width: '3em',
+  },
+  dateTime: {
+    type: 'date',
+    pattern: '/(.*Time|Suppressed Until)/', // Render all Time columns as date, e.g. "Last Event Time", "First Event Time", etc.
+    dateFormat: 'YYYY-MM-DD HH:mm:ss',
+    align: 'center',
+    width: '6em',
+  },
+  defaultString: {
+    type: 'string',
+    pattern: '/.*/',
+  },
+  description: {
+    type: 'string',
+    pattern: 'Description',
+    sanitize: true,
+  },
+  id: {
+    type: 'string',
+    pattern: '/.*ID/', // Render all "* ID" columns as string, otherwise ID 1000 appears as 1.0 K
+  },
+  lastEventTime: {
+    type: 'date',
+    pattern: '/Last Event Time/',
+    dateFormat: 'YYYY-MM-DD HH:mm:ss',
+    align: 'center',
+    width: '5em',
+    alias: 'Last Occurrence',
+    clip: true,
+  },
+  location: {
+    type: 'string',
+    pattern: 'Location',
+    clip: true,
+    width: '5em',
+  },
+  logMessage: {
+    type: 'string',
+    pattern: 'Log Message',
+    alias: 'Message',
+    sanitize: true,
+    clip: true,
+    width: '30em',
+  },
+  node: {
+    type: 'string',
+    pattern: 'Node Label',
+    alias: 'Node',
+    width: '12em',
+  },
+  severity: {
+    type: 'severity',
+    pattern: 'Severity',
+    displayAs: 'icon',
+    align: 'center',
+    clip: true,
+    width: '3em',
+  },
+};
+
 class AlarmTableCtrl extends MetricsPanelCtrl {
   /** @ngInject */
   constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, templateSrv, timeSrv, variableSrv) {
@@ -43,70 +123,63 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     let panelDefaults = {
       targets: [{}],
       transform: 'table',
-      pageSize: 5,
+      pageSize: 10,
       pagingPausesRefresh: false,
       showHeader: true,
       styles: [
-        {
-          type: 'severity',
-          pattern: 'Severity',
-          displayAs: 'icon',
-        },
-        {
-          type: 'checkbox',
-          pattern: '/^Is /',
-          width: '9em',
-        },
-        {
-          type: 'date',
-          pattern: '/.*Time/', // Render all "* Time" columns as date, e.g. "Last Event Time", "First Event Time", etc.
-          dateFormat: 'YYYY-MM-DD HH:mm:ss',
-        },
-        {
-          type: 'date',
-          pattern: 'Suppressed Until',
-          dateFormat: 'YYYY-MM-DD HH:mm:ss',
-        },
-        {
-          type: 'string',
-          pattern: '/.*ID/', // Render all "* ID" columns as string, otherwise ID 1000 appears as 1.0 K
-        },
-        {
-          type: 'string',
-          pattern: 'Description',
-          sanitize: true
-        },
-        {
-          type: 'string',
-          pattern: 'Log Message',
-          sanitize: true
-        },
-        {
-          unit: 'short',
-          type: 'number',
-          decimals: 0,
-          colors: Array.concat([], defaultColors),
-          colorMode: null,
-          pattern: '/Count/',
-          align: 'right',
-        },
-        {
-          type: 'string',
-          pattern: '/.*/',
-        },
+        styles.severity,
+        styles.lastEventTime,
+        styles.dateTime,
+        styles.id,
+        styles.description,
+        styles.logMessage,
+        styles.count,
+        styles.node,
+        styles.ack,
+        styles.location,
+        styles.defaultString,
       ],
       columns: [
-          {text: 'Severity'},
-          {text: 'UEI'},
-          {text: 'Log Message'},
-          {text: 'Node Label'},
-          {text: 'Count'},
-          {text: 'Last Event Time'},
+          {
+            title: 'Ack',
+            text: 'Is Acknowledged',
+            style: styles.ack,
+          },
+          {
+            title: 'Severity',
+            text: 'Severity',
+            style: styles.severity,
+          },
+          {
+            title: 'Count',
+            text: 'Count',
+            style: styles.count,
+          },
+          {
+            title: 'Last Occurrence',
+            text: 'Last Event Time',
+            style: styles.lastEventTime,
+          },
+          {
+            title: 'Location',
+            text: 'Location',
+            style: styles.location,
+          },
+          {
+            title: 'Node',
+            text: 'Node Label',
+            style: styles.node,
+          },
+          {
+            title: 'Message',
+            text: 'Log Message',
+            style: styles.logMessage,
+          },
         ],
       scroll: false, // disable scrolling as the actions popup is not working properly otherwise
       fontSize: '100%',
-      sort: {col: 0, desc: true},
-      severity: true
+      sort: {col: 3, desc: true},
+      severity: 'column',
     };
 
     this.pageIndex = 0;

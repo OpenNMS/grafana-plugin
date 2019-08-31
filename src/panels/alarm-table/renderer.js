@@ -1,7 +1,8 @@
 import 'ionicons/dist/css/ionicons.css';
 
 import _ from 'lodash';
-import { getValueFormat, getColorFromHexRgbOrName, stringToJsRegex } from '@grafana/ui';
+import { getValueFormat, getColorFromHexRgbOrName } from '@grafana/ui';
+import { stringToJsRegex } from '@grafana/data';
 
 // Grafana 6.3+ uses `dateTime` from @grafana/data but we're staying compatible with 6.0+
 // so always use `moment` (for now).
