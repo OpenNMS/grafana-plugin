@@ -83,6 +83,7 @@ In the future this will be enhanced to do more complicated set operations than a
 #### Alarm Table
 
 - Alarm table code has been sync'd with enhancements from the upstream Grafana table panel.
+- The new default columns and formatting for the alarm table have been updated to be more useful.
 - It is now possible to configure the alarm table to not automatically refresh when new data is updated if you have navigated away from the first page of the list. When new data arrives in the background, a refresh icon will appear in the page bar.
 - String-based columns (like log message) now get a mouseover with the full text of the column.
 - Severity columns have been enhanced, including basic support for themes.
@@ -159,6 +160,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2019-08-30T15:46:53.750Z
-- Git Revision: e25acb19e42da36168d5ac982927f1fb196de770
+- Build Date: 2019-08-31T14:11:09.312Z
+- Git Revision: a8090fc646feafa10b4dcf65ba5211d201cb031f
 
