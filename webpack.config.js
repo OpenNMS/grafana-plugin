@@ -91,9 +91,6 @@ const baseconfig = {
           },
           {
             loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
           },
         ],
       },
@@ -143,9 +140,6 @@ function createConfig(options) {
           },
           {
             loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
           },
         ],
       },
