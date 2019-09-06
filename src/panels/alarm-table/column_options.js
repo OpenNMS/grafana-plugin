@@ -65,7 +65,7 @@ export class ColumnOptionsCtrl {
       type: 'number',
       alias: '',
       decimals: 2,
-      colors: Array.concat([], defaultColors),
+      colors: Array.prototype.concat([ ], defaultColors),
       colorMode: null,
       pattern: '',
       dateFormat: 'YYYY-MM-DD HH:mm:ss',

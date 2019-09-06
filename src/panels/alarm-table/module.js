@@ -41,7 +41,7 @@ const styles = {
     unit: 'short',
     type: 'number',
     decimals: 0,
-    colors: Array.concat([], defaultColors),
+    colors: Array.prototype.concat([], defaultColors),
     colorMode: null,
     pattern: '/Count/',
     align: 'right',
@@ -197,7 +197,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       this.panel.styles.forEach((style) => {
         if (style.type === 'number') {
           if (!style.colors) {
-            style.colors = Array.concat([], defaultColors);
+            style.colors = Array.prototype.concat([], defaultColors);
           }
           if (style.colorMode === undefined) {
             style.colorMode = null;
