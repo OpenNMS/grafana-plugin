@@ -50,7 +50,7 @@
     "which": "^1.3.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.6.0",
     "@grafana/data": "^6.3.2",
     "@grafana/ui": "^6.3.2",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
