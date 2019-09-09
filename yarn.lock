@@ -5207,14 +5207,10 @@ mocha@^6.2.0:
     yargs-parser "13.0.0"
     yargs-unparser "1.5.0"
 
-moment@2.24.0:
+moment@2.24.0, moment@^2.19.3:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
-
-moment@^2.19.3:
-  version "2.22.2"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -5587,9 +5583,9 @@ onetime@^2.0.0:
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
 opennms@dev:
-  version "2.0.0-snapshot.develop.174"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.174.tgz#621b45397ffe6dd32173570a6b92c10ec2c199c2"
-  integrity sha512-rYuJq8ZGY2tFK/YUOOpx/qKzF9v+eUMMdKJWQGaKgzVyKajDsJ0Q9Oc/yTIrUUsljsZj+bvHJ5iLmFl79mgcvw==
+  version "2.0.0-snapshot.develop.176"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.176.tgz#0266a16be0806c9b6b5cc164c77be92bbeded205"
+  integrity sha512-aMGqAbpob1xOumdLIc1wRQalMT+Va3j9N+M7FzCyG6HSBbvzULcmB18VfAMn+Gl+lPrmNboP4LJdlp0QfQPRIg==
   dependencies:
     "@babel/runtime-corejs2" "^7.5.5"
     "@types/btoa" "^1.2.3"
