@@ -5583,9 +5583,9 @@ onetime@^2.0.0:
   resolved "https://github.com/OpenNMS/opennms-style.git#30ceb541093d2e326bdeb7199270abfaff7debe5"
 
 opennms@dev:
-  version "2.0.0-snapshot.develop.181"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.181.tgz#e3174a6fb64288d90d7533c93d1084cbf74ccfdf"
-  integrity sha512-lZFe+pbUsCM43R3Vp0witLKwCpDW2HnQWw3L0+8SZHOR1b7jMZKdf2DX7C9wEh7TmBx3iEVkZU6niwU9jvZ84w==
+  version "2.0.0-snapshot.develop.183"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0-snapshot.develop.183.tgz#d76f9bed42f31b037501b695207d7208564cecf5"
+  integrity sha512-9OWfwb3hnh89Z7Q9OXXJqftkCX/KLsW8W+FR2yeZhQon6jJDDNhgewpOSNpCVW4v8b5L7MfYl59hl+ztK9K0qA==
   dependencies:
     "@babel/runtime-corejs2" "^7.6.0"
     "@types/btoa" "^1.2.3"
