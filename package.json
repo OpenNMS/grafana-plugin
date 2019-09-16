@@ -26,7 +26,7 @@
     "copy-webpack-plugin": "^5.0.4",
     "css-chunks-html-webpack-plugin": "^1.1.1",
     "css-loader": "^3.2.0",
-    "eslint": "^6.3.0",
+    "eslint": "^6.4.0",
     "fs-extra": "^8.1.0",
     "grunt": "^1.0.4",
     "grunt-contrib-clean": "~2.0.0",
@@ -45,7 +45,7 @@
     "specit": "^1.4.4",
     "style-loader": "^1.0.0",
     "url-loader": "^2.1.0",
-    "webpack": "^4.39.3",
+    "webpack": "^4.40.2",
     "webpack-cli": "^3.3.8",
     "which": "^1.3.0"
   },
