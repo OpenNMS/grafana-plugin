@@ -24,7 +24,6 @@ public/css/*.min.css
 
 # Editor junk
 *.sublime-workspace
-.vscode/
 *.swp
 .idea/
 *.iml

@@ -34,6 +34,7 @@ const baseconfig = {
     path: distdir,
   },
   externals: [
+    '@grafana/ui',
     'angular',
     'jquery',
     'jquery.flot',
@@ -45,7 +46,7 @@ const baseconfig = {
     'moment',
     function (_context, request, callback) {
       // automatically pass-through grafana built-in paths
-      const prefixes = ['app/', 'grafana/', '@grafana/ui'];
+      const prefixes = ['app/', 'grafana/'];
       for (let prefix of prefixes) {
         if (request.indexOf(prefix) === 0) {
           return callback(null, request);

@@ -51,4 +51,28 @@ export class Filter {
     removeClause(clause) {
         this.query.removeClause(clause);
     }
+
+    setOrder(order) {
+        this.query.setOrder(order);
+    }
+
+    addOrderBy(orderBy) {
+        if (orderBy instanceof API.OrderBy) {
+            const uiOrderBy = new Mapping.OrderByMapping(this.uiSegmentSrv, this.entity).getUiOrderBy(orderBy);
+            this.query.addOrderBy(uiOrderBy);
+        } else if (orderBy instanceof UI.OrderBy) {
+            this.query.addOrderBy(orderBy);
+        } else {
+            throw new Error("OrderBy type is not supported");
+        }
+    }
+
+    removeOrderBy(orderBy) {
+        this.query.removeOrderBy(orderBy);
+    }
+
+    withOrderBy(orderBy) {
+        this.addOrderBy(orderBy);
+        return this;
+    }
 }
