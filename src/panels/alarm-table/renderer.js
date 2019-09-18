@@ -1,5 +1,3 @@
-import 'ionicons/dist/css/ionicons.css';
-
 import _ from 'lodash';
 import { getValueFormat, getColorFromHexRgbOrName } from '@grafana/ui';
 import { stringToJsRegex } from '@grafana/data';
@@ -229,7 +227,7 @@ export class TableRenderer {
           return v;
         } else {
           var icon = TableRenderer.getIconForSeverity(v.toLowerCase());
-          return `<i class="icon severity-icon ${icon}" title="${v}"></i>`;
+          return `<i class="icon severity-icon fa ${icon}" title="${v}"></i>`;
         }
       };
     }
@@ -502,28 +500,28 @@ export class TableRenderer {
   }
 
   static getIconForSeverity(severity) {
-    let icon = 'ion-ios-help-circle';
+    let icon = 'fa-question-circle';
     switch(severity) {
       case 'indeterminate':
-        icon = 'ion-ios-help-circle';
+        icon = 'fa-question-circle';
         break;
       case 'warning':
-        icon = 'ion-ios-warning';
+        icon = 'fa-exclamation-triangle';
         break;
       case 'minor':
-        icon = 'ion-ios-flash';
+        icon = 'fa-bolt';
         break;
       case 'major':
-        icon = 'ion-ios-flame';
+        icon = 'fa-fire';
         break;
       case 'critical':
-        icon = 'ion-ios-nuclear';
+        icon = 'fa-bomb';
         break;
       case 'normal':
-        icon = 'ion-ios-leaf';
+        icon = 'fa-leaf';
         break;
       case 'cleared':
-        icon = 'ion-ios-checkmark-circle';
+        icon = 'fa-check-circle';
         break;
     }
     return icon;
