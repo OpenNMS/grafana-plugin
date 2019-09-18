@@ -89,3 +89,42 @@ export class AddNestedControl extends Control {
         return query.root === true && !(clause.restriction instanceof Query);
     }
 }
+
+/**
+ * Control to remove the current OrderBy from the query.
+ */
+export class RemoveOrderByControl extends Control {
+    constructor() {
+        super('Remove order by', 'fa-minus');
+    }
+
+    action(query, orderBy) {
+        query.removeOrderByControl(orderBy);
+    }
+
+    filter(query /*, orderBy*/) {
+        if (query.root === true) {
+            return query.orderBy.length > 1;
+        }
+        return true;
+    }
+}
+
+/**
+ * Control to add a new OrderBy to the query.
+ */
+export class AddOrderByControl extends Control {
+
+    constructor() {
+        super('Add new order by', 'fa-plus');
+    }
+
+    action(query, orderBy) {
+        const index = query.orderBy.indexOf(orderBy) + 1;
+        query.createNewEmptyOrderBy(index);
+    }
+
+    filter(/*query, orderBy*/) {
+        return true;
+    }
+}

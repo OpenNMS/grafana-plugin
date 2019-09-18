@@ -10,7 +10,7 @@ import {entityTypes, getEntity} from './datasource';
 
 export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   /** @ngInject */
-  constructor($scope, $injector, $q,uiSegmentSrv)  {
+  constructor($scope, $injector, $q, uiSegmentSrv)  {
     super($scope, $injector);
     this.$q = $q;
     this.$scope = $scope;
@@ -31,6 +31,10 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
       this.target.limit = 0;
     }
 
+    if (this.target.orderBy === undefined) {
+      this.target.orderBy = [];
+    }
+
     // The target filter may be de-serialized from persistence.
     // In order to re-initialize it properly, the filter is cloned.
     if (this.target.filter) {
@@ -40,7 +44,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
     }
 
     // initialize the UI filter
-    this._getUiFilter();
+    this._getUiFilter().updateControls();
   }
 
   _getEntity() {
@@ -105,7 +109,8 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   }
 
   updateTargetFilter() {
-    this.target.filter = this.filterMapping.getApiFilter(this._getUiFilter());
+    const uiFilter = this._getUiFilter();
+    this.target.filter = this.filterMapping.getApiFilter(uiFilter);
     this.panelCtrl.refresh();
   }
 

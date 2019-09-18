@@ -2,7 +2,7 @@
 
     <div class="gf-form-inline">
         <div class="gf-form">
-            <label class="gf-form-label query-keyword width-7">SELECT</label>
+            <label class="gf-form-label query-keyword width-8">SELECT</label>
             <div class="gf-form-select-wrapper">
                 <select id="{{ctrl.id}}-select"
                         class="gf-form-input gf-size-auto"
@@ -15,11 +15,16 @@
     </div>
 
     <onms-query query="ctrl.uiFilter.query" datasource="ctrl.datasource" query-ctrl="ctrl">
-
     </onms-query>
 
+    <div class="gf-form" style="position: absolute; right: 140px; margin-right: 0px">
+        <button class="btn btn-inverse gf-form-btn" title="{{control.title}}" ng-click="performClick(clause, control)" ng-repeat="control in clause.controls">
+            <i class="fa {{control.icon}}"></i>
+        </button>
+    </div>
+
     <div class="gf-form" style="padding-top: 15px">
-        <label class="gf-form-label width-6">Limit</label>
+        <label class="gf-form-label width-8">Limit</label>
         <input type="number" placeholder="Query Limit" class="gf-form-input width-4" ng-model="ctrl.target.limit" ng-model-options='{ debounce: 250 }' bs-tooltip="'Limit the number of items returned (0=unlimited)'" ng-change="ctrl.onChangeInternal()" data-min-length=0 data-items=100>
         <span style="color: rgb(229, 189, 28); padding-left: 1em" ng-if="ctrl.target.limit > 0">
             <i class="fa fa-warning"></i>

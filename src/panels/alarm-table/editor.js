@@ -98,7 +98,7 @@ export class TablePanelEditorCtrl {
         }
         if (id) {
           this.srcIndex = parseInt(id.replace(/^column-/, ''), 10);
-          console.log('picking up "' + this.panel.columns[this.srcIndex].text + '"');
+          console.log(`picking up "${this.panel.columns[this.srcIndex].text}"`);
         }
         break;
       case 'dragover':
@@ -109,7 +109,7 @@ export class TablePanelEditorCtrl {
         if (target && target.id && target.classList && target.classList.contains('column-reorder')) {
           const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
           if (!target.classList.contains('over')) {
-            //console.log('entering ' + this.panel.columns[columnIndex].text);
+            //console.log(`entering ${this.panel.columns[columnIndex].text}`);
             this.removeClasses('over');
             target.classList.add('over');
             this.destIndex = columnIndex;
@@ -119,7 +119,7 @@ export class TablePanelEditorCtrl {
       case 'dragleave':
         if (target && evt.screenX !== 0 && evt.screenY !== 0) {
           //const columnIndex = parseInt(target.id.replace(/^column-/, ''), 10);
-          //console.log('leaving ' + this.panel.columns[columnIndex].text);
+          //console.log(`leaving ${this.panel.columns[columnIndex].text}`);
           this.destIndex = undefined;
           this.removeClasses('over');
         }
@@ -133,7 +133,7 @@ export class TablePanelEditorCtrl {
             this.panel.columns.splice(this.destIndex, 0, this.panel.columns.splice(this.srcIndex, 1)[0]);
             this.panelCtrl.render();
           });
-          console.log('dropped "' + this.panel.columns[this.srcIndex].text + '" onto "' + this.panel.columns[this.destIndex].text + '"');
+          console.log(`dropped "${this.panel.columns[this.srcIndex].text}" onto "${this.panel.columns[this.destIndex].text}"`);
         } else {
           const targetIndex = (this.srcIndex == undefined) ? 'source' : 'destination';
           console.log(`WARNING: drop event received but ${targetIndex} was unset.`);
@@ -141,7 +141,7 @@ export class TablePanelEditorCtrl {
         this.removeClasses('over', 'picked-up');
         return false;
       default:
-        console.log('WARNING: unhandled event type: ' + type);
+        console.log(`WARNING: unhandled event type: ${type}`);
     }
   }
 

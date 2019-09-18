@@ -3,17 +3,27 @@ import {UI} from '../UI';
 
 import { KEY_PLACEHOLDER, VALUE_PLACEHOLDER } from '../constants';
 
+const orders = [
+    { label: 'DESC' },
+    { label: 'ASC' },
+];
+
 export class Query {
 
     constructor(uiSegmentSrv, parentQuery) {
         this.uiSegmentSrv = uiSegmentSrv;
         this.clauses = [];
+        this.orderBy = [];
         this.root = false;
         this.parentQuery = parentQuery;
+
+        this.orders = orders;
+        this.order = orders[0];
     }
 
     clear() {
         this.clauses = [];
+        this.orderBy = [];
     }
 
     isEmpty() {
@@ -31,15 +41,24 @@ export class Query {
         return this.clauses[this.getSize() - 1];
     }
 
+    setOrder(order) {
+        this.order = orders.filter((o) => o.label.toLowerCase() === order.toLowerCase())[0] || orders[0];
+    }
+
     updateControls() {
+        const self = this;
+
         // at least one row should be available even if it is a dummy row
         if (this.getSize() == 0) {
             this.createNewEmptyClause();
         }
-        var self = this;
         _.each(this.clauses, clause => {
             clause.updateControls(self);
         });
+
+        if (this.orderBy.length === 0 || !this.orderBy[this.orderBy.length - 1].isFake()) {
+            this.createNewEmptyOrderBy();
+        }
     }
 
     addClause(clause, index) {
@@ -66,11 +85,35 @@ export class Query {
         return false;
     }
 
+    addOrderBy(orderBy, index) {
+        if (this.root && orderBy) {
+            if (!orderBy.uiSegmentSrv) {
+                orderBy.uiSegmentSrv = this.uiSegmentSrv;
+            }
+            if (index !== undefined) {
+                this.orderBy.splice(index, 0, orderBy);
+            } else {
+                this.orderBy.push(orderBy);
+            }
+        }
+    }
+
+    removeOrderBy(orderBy) {
+        if (this.root && orderBy) {
+            var index = this.orderBy.indexOf(orderBy);
+            if (index >= 0) {
+                this.orderBy.splice(index, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
     asString() {
         if (this.isEmpty()) {
             return "";
         }
-        return _.map(this.clauses, function(clause, index) {
+        let ret = this.clauses.map((clause, index) => {
             let string = '';
             if (clause.restriction instanceof UI.Query) {
                 const subString = clause.restriction.asString();
@@ -92,6 +135,18 @@ export class Query {
             }
             return string;
         }).join("");
+
+        if (this.root && this.orderBy.length > 0) {
+            ret += ' ' + this.orderBy.map((orderBy) => orderBy.asString()).join(', ');
+        }
+
+        return ret;
+    }
+
+    createNewEmptyOrderBy(index) {
+        const newOrderBy = new UI.OrderBy(this.uiSegmentSrv, KEY_PLACEHOLDER, true);
+        this.addOrderBy(newOrderBy, index);
+        return newOrderBy;
     }
 
     createNewEmptyClause(index) {

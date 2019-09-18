@@ -2,8 +2,6 @@ import angular from 'angular';
 import _ from 'lodash';
 import {ComparatorMapping} from "./mapping/ComparatorMapping";
 
-import { VALUE_PLACEHOLDER } from './constants';
-
 angular.module('grafana.directives')
     .directive('onmsQuery', function() {
         return {
@@ -71,15 +69,7 @@ angular.module('grafana.directives')
 
             // value input
             if (segment.type == 'value') {
-                console.log('type=value', index, segments);
                 let attributeSegment = segments[index-2];
-                let theQuery = {
-                    'find': 'values',
-                    'attribute': attributeSegment.value,
-                    'query': segment.value === VALUE_PLACEHOLDER ? '' : segment.value
-                };
-                console.log('theQuery=', theQuery);
-
                 return datasource.metricFindQuery(attributeSegment.value, {
                     queryType: 'values',
                     entityType: getEntityType()
@@ -134,6 +124,60 @@ angular.module('grafana.directives')
                 $scope.query.updateControls();
                 QueryCtrl.updateTargetFilter();
             }
+        };
+
+        $scope.getOrderSuggestions = function(segment) {
+            if (segment.type == 'key' || segment.type == 'plus-button') {
+                return datasource.metricFindQuery(null, {
+                    entityType: getEntityType(),
+                    queryType: 'attributes',
+                    strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'
+                }).then(function(properties) {
+                    return properties.filter((property) => {
+                        const orders = $scope.query.orderBy.map((orderBy) => orderBy.getAttribute());
+                        return orders.indexOf(property.id) < 0;
+                    }).map((property) => {
+                        return uiSegmentSrv.newKey(property.id);
+                    });
+                })
+                .catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
+            }
+
+            if (segment.type == 'value') {
+                return $q.when(['DESC', 'ASC'].map((order) => {
+                    return uiSegmentSrv.newKeyValue(order);
+                }));
+            }
+
+            console.log('getOrderSuggestions: unknown segment type :(');
+            return $q.when([]);
+        };
+
+        $scope.addOrderBy = (order, index) => {
+            $scope.query.createNewEmptyOrderBy(index);
+            QueryCtrl.updateTargetFilter();
+            $scope.query.findParent().updateControls();
+        };
+
+        $scope.removeOrderBy = (order /*, index */) => {
+            $scope.query.orderBy = $scope.query.orderBy.filter((qob) => qob !== order);
+            QueryCtrl.updateTargetFilter();
+            $scope.query.findParent().updateControls();
+        };
+
+        $scope.orderUpdated = function() {
+            QueryCtrl.updateTargetFilter();
+            $scope.query.findParent().updateControls();
+        };
+
+        $scope.orderByUpdated = function(order, segment /*, segmentIndex*/) {
+            // Make the value not a fake input anymore
+            if (segment.type === 'value') {
+                segment.fake = false;
+            }
+
+            QueryCtrl.updateTargetFilter();
+            $scope.query.findParent().updateControls();
         };
 
         $scope.performClick = function(clause, control) {
