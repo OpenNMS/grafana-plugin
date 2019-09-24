@@ -198,6 +198,7 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
                     });
                 break;
         }
+        this.ctrl.renderingCompleted();
     }
 
     query(data, column) {
