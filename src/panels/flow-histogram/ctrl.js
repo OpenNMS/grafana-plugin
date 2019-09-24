@@ -134,6 +134,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
         } else {
             this.renderChart(plotCanvas);
         }
+        this.ctrl.renderingCompleted();
     }
 
     renderChart(plotCanvas) {

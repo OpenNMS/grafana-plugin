@@ -58,8 +58,11 @@ class FilterCtrl extends MetricsPanelCtrl {
     }
 
     onRender() {
+        const self = this;
         this.$scope.columns = this.panel.columns.map(column => this.enrichColumn(column));
-        this.updateVariables();
+        this.updateVariables().then(() => {
+            self.ctrl.renderingCompleted();
+        });
     }
 
     updateVariables() {
