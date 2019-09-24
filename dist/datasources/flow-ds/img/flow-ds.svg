@@ -1,1 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168.74 176.79"><title>Asset 3</title><g id="Layer_2" data-name="Layer 2"><g id="Isolation_Mode" data-name="Isolation Mode"><path d="M168.74,36.62C168.74,16.4,131,0,84.37,0S0,16.4,0,36.62V140.17c0,20.22,37.77,36.62,84.37,36.62s84.37-16.4,84.37-36.62Z" style="fill:#378c73"/><path d="M84.37,88.39" style="fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:5px"/><path d="M84.37,88.39" style="fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:5px"/><path d="M33.76,129.43a58.76,58.76,0,0,1,.77-54.12,55.92,55.92,0,0,1,97.88,54.12" style="fill:none;stroke:#fff;stroke-linecap:square;stroke-miterlimit:10;stroke-width:7px"/><line x1="114.33" y1="49.59" x2="105.15" y2="66.19" style="fill:none;stroke:#378c73;stroke-miterlimit:10;stroke-width:7px"/><line x1="49.51" y1="50.79" x2="57.01" y2="63.24" style="fill:none;stroke:#378c73;stroke-miterlimit:10;stroke-width:7px"/><line x1="18.03" y1="88.05" x2="36.28" y2="93.19" style="fill:none;stroke:#378c73;stroke-miterlimit:10;stroke-width:7px"/><line x1="146.7" y1="88.05" x2="128.82" y2="93.18" style="fill:none;stroke:#378c73;stroke-miterlimit:10;stroke-width:7px"/><circle cx="82.58" cy="104.01" r="7.81" style="fill:#fff"/><line x1="82.73" y1="104.65" x2="109.97" y2="77.53" style="fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:7px"/></g></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 168.7 176.8" style="enable-background:new 0 0 168.7 176.8;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#378B73;}
+	.st1{fill:#FFFFFF;}
+</style>
+<g>
+	<g id="Isolation_Mode_2_">
+		<path class="st0" d="M168.7,36.6C168.7,16.4,131,0,84.4,0S0,16.4,0,36.6v103.6c0,20.2,37.8,36.6,84.4,36.6s84.4-16.4,84.4-36.6
+			V36.6z"/>
+	</g>
+</g>
+<path class="st1" d="M104.5,79.5c0.8-14.3,3.5-23.8,6-29.7l3.3,2l0.1-11.4l-9.9,5.6l3.3,2c-3.2,7.4-6.7,20.1-6.7,40.5
+	c0,2.5,0.1,4.8,0.2,7.1c-4.4,0.3-9.3,0.5-14.7,0.6V39.4H90l-5.7-9.8l-5.7,9.8h3.9v56.6c-5.7,0-10.8-0.3-15.3-0.6
+	c0.1-2.3,0.2-4.6,0.2-7.1c0-20.4-3.5-33.1-6.7-40.5l3.3-2l-9.9-5.6l0.1,11.4l3.3-2c2.5,5.9,5.2,15.4,6,29.8
+	c-28.7,2.6-28.7,8.8-28.7,10.8c0,4.2,5,7,16.1,9.1c3.7,0.7,7.9,1.3,12.4,1.7c-1.1,11.9-3.6,20.3-5.9,25.8l-3.4-1.9l0.2,11.4l9.8-5.8
+	l-3.4-1.9c2.5-5.8,5.2-14.7,6.3-27.3c5,0.4,10.3,0.6,15.7,0.6v35.3h-3.9l5.7,9.8l5.7-9.8h-3.9v-35.3c5.2,0,10.3-0.2,15.1-0.6
+	c1.2,12.5,3.8,21.4,6.3,27.2l-3.4,1.9l9.8,5.8l0.2-11.4l-3.4,1.9c-2.3-5.6-4.8-14-5.9-25.8c4.8-0.4,9.2-1,13-1.7
+	c11.1-2.1,16.1-4.9,16.1-9.1C133.9,88.3,133.8,82,104.5,79.5z M41.4,90.4c2-1.2,8.3-3.5,22.4-4.8c0,0.9,0,1.9,0,2.9
+	c0,2.4-0.1,4.6-0.2,6.8C51.3,94,43.8,91.9,41.4,90.4z M104.4,95.2c-0.1-2.2-0.2-4.4-0.2-6.8c0-1,0-2,0-2.9c14.6,1.3,21,3.6,23.1,4.9
+	C124.9,91.9,117.2,94,104.4,95.2z"/>
+</svg>
