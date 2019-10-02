@@ -160,6 +160,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2019-10-02T16:21:08.206Z
-- Git Revision: d766d4e11cd0be7f244c2b87cc2aa3f92f8f0e96
+- Build Date: 2019-10-02T18:57:52.221Z
+- Git Revision: ebdecaf19df504eb3bf131963932bd55d9487403
 
