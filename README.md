@@ -67,7 +67,8 @@ The Fault Management Data Source is now the Entities Data Source.
 In addition to querying alarms, it can now query nodes as well.
 This is useful for filtering in variables, or can be used for just viewing and filtering nodes from within Grafana.
 
-For details, see [the Helm documentation](http://docs.opennms.org/helm/releases/latest/helm/latest/installation/upgrading.html).
+This is a breaking change that will require you to convert existing dashboards to use the new plugin.
+For details on upgrading, see [the Helm documentation](http://docs.opennms.org/helm/releases/latest/helm/latest/installation/upgrading.html).
 
 #### Flow Data Source
 
