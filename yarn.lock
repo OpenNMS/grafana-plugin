@@ -5687,9 +5687,10 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-"opennms-style@https://github.com/OpenNMS/opennms-style.git#v0.2.0":
-  version "0.2.0"
-  resolved "https://github.com/OpenNMS/opennms-style.git#83ff4ab0bbd14e8ee8b845530f44dd9e71b123f9"
+"opennms-style@https://github.com/OpenNMS/opennms-style.git#v0.2.1":
+  version "0.2.1"
+  uid "0202e4de4716fb0dd06531cf1036cbc2022dfb46"
+  resolved "https://github.com/OpenNMS/opennms-style.git#0202e4de4716fb0dd06531cf1036cbc2022dfb46"
 
 opennms@2.0.0:
   version "2.0.0"
