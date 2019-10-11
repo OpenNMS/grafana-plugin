@@ -47,7 +47,8 @@
     "url-loader": "^2.2.0",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9",
-    "which": "^2.0.1"
+    "which": "^2.0.1",
+    "yarn": "^1.19.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
@@ -89,8 +90,9 @@
     ]
   },
   "scripts": {
+    "clean": "rimraf dist",
     "dev": "webpack --mode=development",
-    "build": "webpack --mode=production --optimize-minimize --optimize-dedupe",
+    "build": "yarn run clean && webpack --mode=production --optimize-minimize --optimize-dedupe",
     "eslint": "eslint 'src/**/*.js'",
     "eslint-circleci": "eslint 'src/**/*.js' --format junit --output-file reports/eslint/eslint.xml",
     "test": "mocha --require @babel/register --require jsdom-global/register --require src/spec/test-main.js src/spec/*.js",
