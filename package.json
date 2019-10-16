@@ -51,7 +51,7 @@
     "yarn": "^1.19.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@babel/runtime": "^7.6.3",
     "@grafana/data": "^6.4.3",
     "@grafana/ui": "^6.4.2",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
