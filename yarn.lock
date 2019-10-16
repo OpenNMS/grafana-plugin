@@ -754,10 +754,15 @@
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
   integrity sha512-rLu3wcBWH4P5q1CGoSSH/i9hrXs7SlbRLkoq9IGuoPYNGQvDJ3pt/wmOM+XgYjIDRMVIdkUWt0RsfzF50JfnCw==
 
-"@grafana/data@6.4.2", "@grafana/data@^6.4.0":
+"@grafana/data@6.4.2":
   version "6.4.2"
   resolved "https://registry.yarnpkg.com/@grafana/data/-/data-6.4.2.tgz#1ce4687757c609a6b12b39b04cd37e20e08fee8f"
   integrity sha512-Vb8IBl1VtX+jAMOzVb6s1klPWpMwWSdrPrG0CSoI62F/Hs5Cun3nOWVjDEkfPnvMMycEuD1nMBePK/gM3W53Iw==
+
+"@grafana/data@^6.4.3":
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/@grafana/data/-/data-6.4.3.tgz#80f405551b52d6ffd5cd8c8dfa8b9a98d01ce9b8"
+  integrity sha512-H5PteN9YVUbeCAJFvbG1MWE1Xuwil1+ZUiybVIS3nqA9EienG+j7hZpBEZSZlqbvmadcJZutKPNO0nJltomnKA==
 
 "@grafana/slate-react@0.22.9-grafana":
   version "0.22.9-grafana"
