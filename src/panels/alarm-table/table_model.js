@@ -4,6 +4,9 @@ export class TableModel {
   constructor() {
     this.columns = [];
     this.rows = [];
+    this.meta = {
+      entity_metadata: [],
+    };
     this.type = 'table';
   }
 

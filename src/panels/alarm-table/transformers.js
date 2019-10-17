@@ -69,24 +69,32 @@ transformers.table = {
       for (let l = 0; l < columnsToInclude.length; l++) {
         row.push(cellsByPanelColumnIndex[l][k]);
       }
-      // Preserve the meta-data, if any
-      if (data.rows[k].meta !== undefined) {
-        row.meta = data.rows[k].meta;
-      }
       model.rows.push(row);
+      model.meta.entity_metadata.push(data.meta && data.meta.entity_metadata ? data.meta.entity_metadata[k] : undefined);
     }
+
     return model;
   },
 
   mergeTables: function(tables) {
     let model = new TableModel();
+
     // Use the list of columns from the first table:
     //  transformTable() will ensure that all tables have the same columns
     model.columns = tables[0].columns;
+
     // Concatenate the rows
     _.each(tables, table => {
-      model.rows = _.concat(model.rows, table.rows);
+      const tableRows = _.map(table.rows, (row, idx) => {
+        // temporarily stuff the meta into the row object so we can `uniqBy` easily
+        if (table && table.meta && table.meta.entity_metadata && table.meta.entity_metadata[idx]) {
+          row.meta = table.meta.entity_metadata[idx];
+        }
+        return row;
+      });
+      model.rows = _.concat(model.rows, tableRows);
     });
+
     // De-duplicate by (source, alarm.id) tuple
     model.rows = _.uniqBy(model.rows, row => {
       if (row.meta && row.meta.alarm) {
@@ -95,9 +103,16 @@ transformers.table = {
           alarmId: row.meta.alarm.id
         });
       } else {
-        return row;
+        return JSON.stringify(row);
       }
     });
+
+    model.meta.entity_metadata = _.map(model.rows, row => {
+      const meta = row.meta;
+      delete row.meta;
+      return meta;
+    });
+
     return model;
   },
 
@@ -128,6 +143,7 @@ transformers.table = {
     // Merge the results and update the model
     let mergedTables = this.mergeTables(transformedTables);
     model.columns = mergedTables.columns;
+    model.meta = mergedTables.meta;
     model.rows = mergedTables.rows;
   }
 };
