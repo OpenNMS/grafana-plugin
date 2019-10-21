@@ -79,7 +79,7 @@ export default class NodeEntity extends Entity {
       const primaryIpInterface = getPrimary(node);
       const primarySnmp = primaryIpInterface && primaryIpInterface.snmpInterface;
 
-      const row = [
+      return [
           node.id,
           node.label,
           node.labelSource,
@@ -109,26 +109,30 @@ export default class NodeEntity extends Entity {
           // Data Source
           self.name
       ];
+    });
 
-      row.meta = {
-          // Store the alarm for easy access by the panels - may not be necessary
-          'node': node,
-          // Store the entity type
-          'type': this.type,
-          // Store the name of the data-source as part of the data so that
-          // the panel can grab an instance of the DS to perform actions
-          // on the alarms
-          'source': this.datasource.name,
-      };
-      return row;
-  });
-
-  return [
-      {
-          'columns': columns,
-          'rows': rows,
-          'type': 'table',
+    const metas = _.map(nodes, node => {
+      return {
+        // Store the node for easy access by the panels
+        'node': node,
+        // Store the entity type
+        'type': 'node',
+        // Store the name of the data-source as part of the data so that
+        // the panel can grab an instance of the DS to perform actions
+        // on the nodes, if necessary
+        'source': this.datasource.name,
       }
-  ];
+    });
+
+    return [
+      {
+        'columns': columns,
+        'meta': {
+          entity_metadata: metas,
+        },
+        'rows': rows,
+        'type': 'table',
+      }
+    ];
   }
 }
