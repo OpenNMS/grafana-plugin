@@ -255,15 +255,19 @@ export default class AlarmEntity extends Entity {
       }
 
       // Append the event parameters to the row
-      row = row.concat(_.map(parameterNames, parameterName => {
+      _.each(parameterNames, (parameterName) => {
         if (eventParametersByName.hasOwnProperty(parameterName)) {
-          return eventParametersByName[parameterName];
+          row.push(eventParametersByName[parameterName]);
         } else {
-          return undefined;
+          row.push(undefined);
         }
-      }));
+      });
 
-      row.meta = {
+      return row;
+    });
+
+    const metas = _.map(alarms, alarm => {
+      return {
           // Store the alarm for easy access by the panels
           'alarm': alarm,
           // Store the name of the data-source as part of the data so that
@@ -275,13 +279,14 @@ export default class AlarmEntity extends Entity {
           // Store the ticketerConfig here
           'ticketerConfig': metadata.ticketerConfig
       };
-
-      return row;
     });
 
     return [
       {
         'columns': columns.filter(column => column.visible !== false),
+        'meta': {
+          entity_metadata: metas,
+        },
         'rows': rows,
         'type': 'table',
       }

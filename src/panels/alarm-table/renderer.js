@@ -399,21 +399,23 @@ export class TableRenderer {
 
     for (let y = startPos; y < endPos; y++) {
       const row = this.table.rows[y];
+      const meta = this.table.meta && this.table.meta.entity_metadata ? this.table.meta.entity_metadata[y] : undefined;
+
       let cellHtml = '';
       let rowStyle = '';
       const rowClasses = [];
       let rowClass = '';
 
-      let prevRow, nextRow;
+      let prevMeta, nextMeta;
       if (y-1 >= 0) {
-        prevRow = this.table.rows[y-1];
+        prevMeta = this.table.meta && this.table.meta.entity_metadata ? this.table.meta.entity_metadata[y-1] : undefined;
       }
       if (y+1 < endPos) {
-        nextRow = this.table.rows[y+1];
+        nextMeta = this.table.meta && this.table.meta.entity_metadata ? this.table.meta.entity_metadata[y+1] : undefined;
       }
 
-      const source = row.meta && row.meta.source ? row.meta.source.replace(/'/g, '\\\'') : undefined;
-      const alarm = row.meta && row.meta.alarm ? row.meta.alarm : {};
+      const source = meta && meta.source ? meta.source.replace(/'/g, '\\\'') : undefined;
+      const alarm = meta && meta.alarm ? meta.alarm : {};
       const severity = alarm && alarm.severity && alarm.severity.label ? alarm.severity.label.toLowerCase() : undefined;
 
       for (let i = 0; i < this.table.columns.length; i++) {
@@ -453,15 +455,15 @@ export class TableRenderer {
         rowClasses.push(severity);
       }
 
-      if (this.isRowSelected(row)) {
+      if (meta && this.isRowSelected(meta)) {
         rowClasses.push("selected");
       }
 
-      if (prevRow && this.isRowSelected(prevRow)) {
+      if (prevMeta && this.isRowSelected(prevMeta)) {
         rowClasses.push("prev-selected");
       }
 
-      if (nextRow && this.isRowSelected(nextRow)) {
+      if (nextMeta && this.isRowSelected(nextMeta)) {
         rowClasses.push("next-selected");
       }
 
@@ -492,10 +494,10 @@ export class TableRenderer {
     };
   }
 
-  isRowSelected(row) {
+  isRowSelected(meta) {
     return this.selectionMgr.isRowSelected({
-      source: row.meta.source,
-      alarmId: row.meta.alarm ? row.meta.alarm.id : undefined,
+      source: meta.source,
+      alarmId: meta.alarm ? meta.alarm.id : undefined,
     });
   }
 

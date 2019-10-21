@@ -133,7 +133,7 @@ describe('Table transformer', function() {
 
     it('should deduplicate alarms originating from the same datasource', function() {
       let alarm_from_ds1_as_row = [1];
-      alarm_from_ds1_as_row.meta = {
+      let alarm_from_ds1_as_row_meta = {
         source: 'ds1',
         alarm: {
           id: 1
@@ -141,7 +141,7 @@ describe('Table transformer', function() {
       };
 
       let alarm_from_ds2_as_row = [2];
-      alarm_from_ds2_as_row.meta = {
+      let alarm_from_ds2_as_row_meta = {
         source: 'ds2',
         alarm: {
           id: 1
@@ -151,11 +151,14 @@ describe('Table transformer', function() {
       let t1 = new TableModel();
       t1.columns.push("ID");
       t1.rows.push(alarm_from_ds1_as_row);
+      t1.meta.entity_metadata.push(alarm_from_ds1_as_row_meta);
 
       let t2 = new TableModel();
       t2.columns.push("ID");
       t2.rows.push(alarm_from_ds1_as_row);
+      t2.meta.entity_metadata.push(alarm_from_ds1_as_row_meta);
       t2.rows.push(alarm_from_ds2_as_row);
+      t2.meta.entity_metadata.push(alarm_from_ds2_as_row_meta);
 
       let panel = {};
       let model = new TableModel();
@@ -164,6 +167,8 @@ describe('Table transformer', function() {
       expect(model.columns).to.eql(t1.columns);
       // alarm_from_ds1_as_row should only appear once
       expect(model.rows).to.eql([alarm_from_ds1_as_row, alarm_from_ds2_as_row]);
+      // alarm_from_ds1_as_row_meta should only appear once
+      expect(model.meta.entity_metadata).to.eql([alarm_from_ds1_as_row_meta, alarm_from_ds2_as_row_meta]);
     });
   });
 

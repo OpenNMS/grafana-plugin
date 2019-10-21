@@ -536,17 +536,28 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   // Alarm related actions
 
-  findTableRow(source, alarmId) {
+  findRowAndMeta(source, alarmId) {
     let matchedRow;
+    let matchedMeta;
     _.each(this.dataRaw, table => {
-      let filteredRow = _.find(table.rows, row => {
-        return row.meta.source === source && row.meta.alarm.id === alarmId;
-      });
-      if (filteredRow !== undefined) {
-        matchedRow = filteredRow;
+      if (table.meta && table.meta.entity_metadata) {
+        const rowIdx = _.findIndex(table.meta.entity_metadata, meta => {
+          return meta.source === source && meta.alarm.id === alarmId;
+        });
+        const filteredRow = table.rows[rowIdx];
+        if (filteredRow !== undefined) {
+          matchedRow = filteredRow;
+          matchedMeta = table.meta.entity_metadata[rowIdx];
+        }
       }
     });
-    return matchedRow;
+    if (matchedRow) {
+      return {
+        row: matchedRow,
+        meta: matchedMeta,
+      };
+    }
+    return null;
   }
 
   getContextMenu($event, source, alarmId) {
@@ -566,10 +577,10 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     selectedRows = _.map(selectedRows, row => {
       // Create new objects instead of modifying the existing rows
       // returned by SelectionMgr#getSelectedRows()
-      const tableRow = self.findTableRow(row.source, row.alarmId);
+      const tableRow = self.findRowAndMeta(row.source, row.alarmId);
       return Object.assign({}, row, {
-        alarm: tableRow ? tableRow.meta.alarm : undefined,
-        ticketerConfig: tableRow ? tableRow.meta.ticketerConfig : undefined
+        alarm: tableRow && tableRow.meta ? tableRow.meta.alarm : undefined,
+        ticketerConfig: tableRow && tableRow.meta ? tableRow.meta.ticketerConfig : undefined
       });
     });
 
@@ -655,8 +666,8 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   alarmDetails(source, alarmId) {
-    const row = this.findTableRow(source, alarmId);
-    if (row === undefined) {
+    const row = this.findRowAndMeta(source, alarmId);
+    if (!row) {
       this.$rootScope.appEvent('alert-error', ['Unable to find matching alarm', '']);
       return;
     }
@@ -731,9 +742,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     let findIdx = selectionToMatch => {
-      return _.findIndex(this.table.rows, row => {
-        return row.meta.source === selectionToMatch.source && row.meta.alarm.id === selectionToMatch.alarmId;
-      });
+      if (this.table && this.table.meta && this.table.meta.entity_metadata) {
+        return _.findIndex(this.table.meta.entity_metadata, meta => {
+          return meta.source === selectionToMatch.source && meta.alarm.id === selectionToMatch.alarmId;
+        });
+      }
+      return undefined;
     };
 
     let startIdx = findIdx(from);
@@ -752,9 +766,10 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     }
 
     for (let i = startIdx; i <= endIdx; i++) {
+      const meta = this.table.meta && this.table.meta.entity_metadata ? this.table.meta.entity_metadata[i] : {};
       rows.push({
-        source: this.table.rows[i].meta.source,
-        alarmId: this.table.rows[i].meta.alarm.id
+        source: meta.source,
+        alarmId: meta.alarm.id
       });
     }
     return rows;
