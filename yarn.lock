@@ -829,25 +829,6 @@
     react-input-autosize "^2.2.1"
     react-transition-group "^2.2.1"
 
-"@types/btoa@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@types/btoa/-/btoa-1.2.3.tgz#2c8e7093f902bf8f0e10992a731a4996aa1a5732"
-  integrity sha512-ANNCZICS/ofxhzUl8V1DniBJs+sFQ+Yg5am1ZwVEf/sxoKY/J2+h5Fuw3xUErlZ7eJLdgzukBjZwnsV6+/2Rmg==
-  dependencies:
-    "@types/node" "*"
-
-"@types/node@*":
-  version "12.6.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.8.tgz#e469b4bf9d1c9832aee4907ba8a051494357c12c"
-  integrity sha512-aX+gFgA5GHcDi89KG5keey2zf0WfZk/HAQotEamsK2kbey+8yGKcson0hbK8E+v0NArlCJQCqMP161YhV6ZXLg==
-
-"@types/object-hash@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-1.3.0.tgz#b20db2074129f71829d61ff404e618c4ac3d73cf"
-  integrity sha512-il4NIe4jTx4lfhkKaksmmGHw5EsVkO8sHWkpJHM9m59r1dtsVadLSrJqdE8zU74NENDAsR3oLIOlooRAXlPLNA==
-  dependencies:
-    "@types/node" "*"
-
 "@types/prop-types@*":
   version "15.7.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.1.tgz#f1a11e7babb0c3cad68100be381d1e064c68f1f6"
@@ -5632,10 +5613,15 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-hash@^1.1.8, object-hash@^1.3.1:
+object-hash@^1.1.8:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
   integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
+
+object-hash@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.0.0.tgz#7c4cc341eb8b53367312a7c546142f00c9e0ea20"
+  integrity sha512-I7zGBH0rDKwVGeGZpZoFaDhIwvJa3l1CZE+8VchylXbInNiCj7sxxea9P5dTM4ftKR5//nrqxrdeGSTWL2VpBA==
 
 object-keys@^1.0.11:
   version "1.1.1"
@@ -5696,14 +5682,12 @@ onetime@^2.0.0:
   version "0.2.1"
   resolved "https://github.com/OpenNMS/opennms-style.git#0202e4de4716fb0dd06531cf1036cbc2022dfb46"
 
-opennms@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.0.tgz#9943c482610d09a0fb46d13b3bb8a1adb5db8f76"
-  integrity sha512-Ymvj0tIkkCu/NoaoNXbOrrksJfukzbFnG+oAjgIL0qR899e1YIKJ8WWIVH1vgCe5Ceg1JnkdGOHpQz6mz8MMRg==
+opennms@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/opennms/-/opennms-2.0.1.tgz#2a8df5e78ae763b71fb873eea11f846f545f8dfd"
+  integrity sha512-ogAQrq4vKLOH8XeLZ941dtxGnrbT54vW5IcYylWl2In2wxLhUPt3LRNeJj87JG2+BSr4xSYzZkwiG2Puf9+h4A==
   dependencies:
     "@babel/runtime-corejs2" "^7.6.0"
-    "@types/btoa" "^1.2.3"
-    "@types/object-hash" "^1.3.0"
     axios "^0.19.0"
     btoa "^1.2.1"
     chalk "^2.4.2"
@@ -5714,7 +5698,7 @@ opennms@2.0.0:
     ip-address "^6.1.0"
     lodash "^4.17.15"
     moment "^2.19.3"
-    object-hash "^1.3.1"
+    object-hash "^2.0.0"
     qs "^6.5.0"
     table "^5.4.4"
     version_compare "^0.0.3"
