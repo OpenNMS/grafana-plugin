@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+[ -f /etc/default/grafana-server ] && . /etc/default/grafana-server
+
+[ -z "$GRAFANA_USER" ] && GRAFANA_USER="grafana"
+[ -z "$GRAFANA_GROUP" ] && GRAFANA_GROUP="grafana"
+
+case "$1" in
+	configure)
+		mkdir -p /var/lib/grafana/plugins
+		chown -R "$GRAFANA_USER:$GRAFANA_GROUP" /var/lib/grafana/plugins
+		chmod 755 /var/lib/grafana/plugins
+		;;
+esac
