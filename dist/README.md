@@ -54,6 +54,10 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v4.0.1
+
+This is a small revision to 4.0.0 which contains dependency updates and a [fix for running under Grafana 6.4](https://issues.opennms.org/browse/JS-45).
+
 ### v4.0.0
 
 #### General
@@ -161,6 +165,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2019-11-01T19:20:03.739Z
-- Git Revision: 018c2c7f4af9ea8bf5b6bb4873db4798421a2f1f
+- Build Date: 2019-11-01T20:45:01.251Z
+- Git Revision: 4264a4dcc446b93ec6ddfb0c346c6503f0512dd2
 
