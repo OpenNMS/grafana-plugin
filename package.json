@@ -57,7 +57,7 @@
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "crypto-js": "^3.1.9-1",
-    "flot": "^0.8.3",
+    "flot": "^4.0.0",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.13",
     "opennms": "2.0.1",
