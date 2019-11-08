@@ -91,6 +91,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
+    "install-deps": "yarn install",
     "dev": "webpack --mode=development",
     "build": "yarn run clean && webpack --mode=production --optimize-minimize --optimize-dedupe",
     "eslint": "eslint 'src/**/*.js'",
