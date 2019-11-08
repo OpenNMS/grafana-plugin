@@ -1,9 +1,12 @@
 # This is an example with only required properties:
 version: 1
+allowed_updates:
+  - match:
+    update_type: "security"
 update_configs:
   - package_manager: "javascript"
     directory: "/"
-    update_schedule: "weekly"
+    update_schedule: "daily"
     default_reviewers:
       - "rangerrick"
       - "j-white"
