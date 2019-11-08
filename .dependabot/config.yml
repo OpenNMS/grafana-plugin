@@ -1,9 +1,8 @@
-# This is an example with only required properties:
 version: 1
 update_configs:
   - package_manager: "javascript"
     directory: "/"
-    update_schedule: "weekly"
+    update_schedule: "daily"
     default_reviewers:
       - "rangerrick"
       - "j-white"
@@ -12,3 +11,6 @@ update_configs:
     commit_message:
       prefix: "build"
       include_scope: true
+    allowed_updates:
+      - match:
+          update_type: "security"
