@@ -7,16 +7,16 @@ module.exports = function(grunt) {
 
     exec: {
       build: {
-        command: 'yarn run build',
+        command: 'npm run build',
       },
       eslint: {
-        command: 'yarn run eslint',
+        command: 'npm run eslint',
       },
       test: {
-        command: 'yarn run test',
+        command: 'npm run test',
       },
       watch: {
-        command: 'yarn run watch',
+        command: 'npm run watch',
       }
     }
   });
