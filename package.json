@@ -31,7 +31,7 @@
     "grunt": "^1.0.4",
     "grunt-contrib-clean": "~2.0.0",
     "grunt-exec": "^3.0.0",
-    "jsdom": "^15.2.0",
+    "jsdom": "^15.2.1",
     "jsdom-global": "^3.0.2",
     "mini-css-extract-plugin": "^0.8.0",
     "mocha": "^6.2.2",
