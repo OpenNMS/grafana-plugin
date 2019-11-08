@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "4.0.2-SNAPSHOT",
+  "version": "5.0.0-SNAPSHOT",
   "description": "A PM/FM console for Grafana",
   "repository": {
     "type": "git",
@@ -91,6 +91,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
+    "install-deps": "yarn install",
     "dev": "webpack --mode=development",
     "build": "yarn run clean && webpack --mode=production --optimize-minimize --optimize-dedupe",
     "eslint": "eslint 'src/**/*.js'",
