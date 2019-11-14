@@ -16,8 +16,8 @@ Compile the application:
 [source, shell]
 ----
 cd /var/lib/grafana/plugins/opennms-helm-app
-yarn
-yarn build
+npm install
+npm run build
 ----
 
 Restart Grafana:
