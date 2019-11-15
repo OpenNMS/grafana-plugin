@@ -98,7 +98,6 @@ export class FlowDatasource {
               };
             });
           }
-
         } else {
           if (applications && applications.length > 0) {
             return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex).then(table => {
@@ -251,7 +250,7 @@ export class FlowDatasource {
         "columns": columns,
         "rows": table.rows,
         "type": "table",
-        "vars": {
+        "meta": {
           metric: target.metric,
           toBits: toBits
         }
