@@ -151,9 +151,10 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
     getLabeledValues(data) {
         const dataElement = data[0];
+        const metric = dataElement && dataElement.meta ? dataElement.meta.metric : undefined;
         let labelFunc;
 
-        switch (dataElement.vars.metric) {
+        switch (metric) {
             case 'applications':
                 labelFunc = (column, row) => {
                     return row[column.indexOf('application')];
@@ -172,10 +173,16 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
                 break;
         }
 
-        let inByLabel = HelmHistogramCtrl.extractValueAndLabel(data, dataElement.vars.toBits ? 'Bits In' : 'Bytes In',
-            'In', labelFunc);
-        let outByLabel = HelmHistogramCtrl.extractValueAndLabel(data, dataElement.vars.toBits ? 'Bits Out' : 'Bytes Out',
-            'Out', labelFunc);
+        if (!metric) {
+            return {
+                inByLabel: 'unknown',
+                outByLabel: 'unknown',
+            };
+        }
+
+        const toBits = dataElement && dataElement.meta ? dataElement.meta.toBits : null;
+        let inByLabel = HelmHistogramCtrl.extractValueAndLabel(data, toBits ? 'Bits In' : 'Bytes In', 'In', labelFunc);
+        let outByLabel = HelmHistogramCtrl.extractValueAndLabel(data, toBits ? 'Bits Out' : 'Bytes Out', 'Out', labelFunc);
 
         // Map the values to rates (average over the given time interval) if selected
         if (this.panel.display === 'rate') {
@@ -474,40 +481,45 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
     static extractValueAndLabel(data, valueColumn, direction, labelFunc) {
         const values = [];
 
-        const columns = data[0].columns.map((e) => {
-            return e.text.toLowerCase();
-        });
+        if (!data || !data[0] || !data[0].columns) {
+            return values;
+        }
+
+        const columns = data[0].columns.map(col => col.text.toLowerCase());
         const valueColumnIndex = columns.indexOf(valueColumn.toLowerCase());
 
-        data[0].rows.forEach((row) => {
-            values.push({
-                key: labelFunc(columns, row),
-                value: row[valueColumnIndex]
+        if (data[0].rows) {
+            data[0].rows.forEach((row) => {
+                values.push({
+                    key: labelFunc(columns, row),
+                    value: row[valueColumnIndex]
+                });
             });
-        });
+        }
 
         return values;
     }
 
     static getUnits(data, panelUnits) {
         const dataElement = data[0];
+        const toBits = dataElement && dataElement.meta ? dataElement.meta.toBits : null;
         let divisor = 1;
         let units;
         switch (panelUnits) {
             case 'b':
-                units = dataElement.vars.toBits ? "Bits" : "Bytes";
+                units = toBits ? "Bits" : "Bytes";
                 break;
             case 'kb':
                 divisor = 1024;
-                units = dataElement.vars.toBits ? "Kb" : "KB";
+                units = toBits ? "Kb" : "KB";
                 break;
             case 'mb':
                 divisor = 1024 ** 2;
-                units = dataElement.vars.toBits ? "Mb" : "MB";
+                units = toBits ? "Mb" : "MB";
                 break;
             case 'gb':
                 divisor = 1024 ** 3;
-                units = dataElement.vars.toBits ? "Gb" : "GB";
+                units = toBits ? "Gb" : "GB";
                 break;
         }
 
