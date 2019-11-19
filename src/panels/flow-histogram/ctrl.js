@@ -167,8 +167,9 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
                 break;
             case 'conversations':
                 labelFunc = (column, row) => {
+                    const applicationName = row[column.indexOf('application')];
                     return row[column.indexOf('source')] + ' <-> ' +
-                        row[column.indexOf('dest.')] + ' [' + row[column.indexOf('application')] + ']';
+                        row[column.indexOf('dest.')] + ' [' + (applicationName? applicationName : 'Unknown') + ']';
                 };
                 break;
         }
