@@ -12,7 +12,7 @@ angular
       ' class="input-small tight-form-func-param"></input>';
 
     let funcControlsTemplate =
-      '<div class="tight-form-func-controls">' +
+      '<div class="flows-editor tight-form-func-controls" style="display: none">' +
       '<span class="pointer fa fa-arrow-left"></span>' +
       '<span class="pointer fa fa-remove" ></span>' +
       '<span class="pointer fa fa-arrow-right"></span>' +

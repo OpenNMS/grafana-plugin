@@ -1,3 +1,14 @@
+.flows-editor.tight-form-func-controls {
+  margin-top: -32px;
+  background-color: inherit;
+  padding: 8px 12px;
+  border-radius: 1em 1em 0 0;
+}
+
+.tight-form-func-controls .fa-remove {
+  margin: 0;
+}
+
 .generic-datasource-query-row .query-keyword {
   width: 75px;
 }
