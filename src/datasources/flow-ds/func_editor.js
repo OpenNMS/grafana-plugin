@@ -174,7 +174,7 @@ angular
             }
 
             let paramValue = templateSrv.highlightVariablesAsHtml(func.params[index]);
-            let $paramLink = $('<a ng-click="" class="graphite-func-param-link">' + paramValue + '</a>');
+            let $paramLink = $('<a ng-click="" class="flows-func-param-link">' + paramValue + '</a>');
             let $input = $(paramTemplate);
 
             paramCountAtLink++;
@@ -205,7 +205,7 @@ angular
           if ($scope.func.added) {
             $scope.func.added = false;
             setTimeout(function () {
-              elem.find('.graphite-func-param-link').first().click();
+              elem.find('.flows-func-param-link').first().click();
             }, 10);
           }
         }
