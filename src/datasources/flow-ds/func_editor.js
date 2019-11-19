@@ -9,7 +9,7 @@ angular
 
     let funcSpanTemplate = '<a ng-click="">{{func.def.name}}</a><span>(</span>';
     let paramTemplate = '<input type="text" style="display:none"' +
-      ' class="input-mini tight-form-func-param"></input>';
+      ' class="input-small tight-form-func-param"></input>';
 
     let funcControlsTemplate =
       '<div class="tight-form-func-controls">' +
@@ -21,23 +21,24 @@ angular
     return {
       restrict: 'A',
       link: function postLink($scope, elem) {
-        let $funcLink = $(funcSpanTemplate);
-        let $funcControls = $(funcControlsTemplate);
-        let ctrl = $scope.ctrl;
-        let func = $scope.func;
-        let funcDef = func.def;
+        const $funcLink = $(funcSpanTemplate);
+        const $funcControls = $(funcControlsTemplate);
+        const ctrl = $scope.ctrl;
+        const func = $scope.func;
         let scheduledRelink = false;
         let paramCountAtLink = 0;
+        let cancelBlur = null;
 
         function clickFuncParam(paramIndex) {
           /*jshint validthis:true */
 
-          let $link = $(this);
-          let $input = $link.next();
+          const $link = $(this);
+          const $comma = $link.prev('.comma');
+          const $input = $link.next();
 
           $input.val(func.params[paramIndex]);
-          $input.css('width', ($link.width() + 16) + 'px');
 
+          $comma.removeClass('query-part__last');
           $link.hide();
           $input.show();
           $input.focus();
@@ -64,31 +65,64 @@ angular
           }
         }
 
+        function paramDef(index) {
+          if (index < func.def.params.length) {
+            return func.def.params[index];
+          }
+          if (_.last(func.def.params).multiple) {
+            return _.assign({}, _.last(func.def.params), {optional: true});
+          }
+          return {};
+        }
+
+        function switchToLink(inputElem, paramIndex) {
+          /*jshint validthis:true */
+          var $input = $(inputElem);
+
+          clearTimeout(cancelBlur);
+          cancelBlur = null;
+
+          var $link = $input.prev();
+          var $comma = $link.prev('.comma');
+          var newValue = $input.val();
+
+          // remove optional empty params
+          if (newValue !== '' || paramDef(paramIndex).optional) {
+            func.updateParam(newValue, paramIndex);
+            $link.html(newValue ? templateSrv.highlightVariablesAsHtml(newValue) : '&nbsp;');
+          }
+
+          scheduledRelinkIfNeeded();
+
+          $scope.$apply(function() {
+            ctrl.targetChanged();
+          });
+
+          if ($link.hasClass('query-part__last') && newValue === '') {
+            $comma.addClass('query-part__last');
+          } else {
+            $link.removeClass('query-part__last');
+          }
+
+          $input.hide();
+          $link.show();
+        }
+
+        // this = input element
         function inputBlur(paramIndex) {
           /*jshint validthis:true */
-          let $input = $(this);
-          let $link = $input.prev();
-          let newValue = $input.val();
-
-          if (newValue !== '' || func.def.params[paramIndex].optional) {
-            $link.html(templateSrv.highlightVariablesAsHtml(newValue));
-
-            func.updateParam($input.val(), paramIndex);
-            scheduledRelinkIfNeeded();
-
-            $scope.$apply(function () {
-              ctrl.targetChanged();
-            });
-
-            $input.hide();
-            $link.show();
-          }
+          var inputElem = this;
+          // happens long before the click event on the typeahead options
+          // need to have long delay because the blur
+          cancelBlur = setTimeout(function() {
+            switchToLink(inputElem, paramIndex);
+          }, 200);
         }
 
         function inputKeyPress(paramIndex, e) {
           /*jshint validthis:true */
           if (e.which === 13) {
-            inputBlur.call(this, paramIndex);
+            $(this).blur();
           }
         }
 
@@ -105,9 +139,9 @@ angular
             options = [];
             $input.data('optionsUpdater', optionsUpdater);
           } else {
-            options = funcDef.params[paramIndex].options;
+            options = paramDef(paramIndex).options;
           }
-          if (funcDef.params[paramIndex].type === 'int') {
+          if (paramDef(paramIndex).type === 'int') {
             options = _.map(options, function (val) {
               return val.toString();
             });
@@ -118,9 +152,8 @@ angular
             minLength: 0,
             items: 20,
             updater: function (value) {
-              setTimeout(function () {
-                inputBlur.call($input[0], paramIndex);
-              }, 0);
+              $input.val(value);
+              switchToLink($input[0], paramIndex);
               return value;
             }
           });
@@ -164,18 +197,34 @@ angular
           $funcControls.appendTo(elem);
           $funcLink.appendTo(elem);
 
-          _.each(funcDef.params, function (param, index) {
-            if (param.optional && func.params.length <= index) {
-              return;
+          var defParams = _.clone(func.def.params);
+          var lastParam = _.last(func.def.params);
+
+          while (func.params.length >= defParams.length && lastParam && lastParam.multiple) {
+            defParams.push(_.assign({}, lastParam, {optional: true}));
+          }
+
+          _.each(defParams, function(param, index) {
+            if (param.optional && func.params.length < index) {
+              return false;
+            }
+
+            var paramValue = templateSrv.highlightVariablesAsHtml(func.params[index]);
+
+            var last = (index >= func.params.length - 1) && param.optional && !paramValue;
+            if (last && param.multiple) {
+              paramValue = '+';
             }
 
             if (index > 0) {
-              $('<span>, </span>').appendTo(elem);
+              $('<span class="comma' + (last ? ' query-part__last' : '') + '">, </span>').appendTo(elem);
             }
 
-            let paramValue = templateSrv.highlightVariablesAsHtml(func.params[index]);
-            let $paramLink = $('<a ng-click="" class="flows-func-param-link">' + paramValue + '</a>');
-            let $input = $(paramTemplate);
+            var $paramLink = $(
+              '<a ng-click="" class="flows-func-param-link' + (last ? ' query-part__last' : '') + '">'
+              + (paramValue || '&nbsp;') + '</a>');
+            var $input = $(paramTemplate);
+            $input.attr('placeholder', param.name);
 
             paramCountAtLink++;
 
@@ -187,9 +236,9 @@ angular
             $input.keypress(_.partial(inputKeyPress, index));
             $paramLink.click(_.partial(clickFuncParam, index));
 
-            if (funcDef.params[index].options) {
-              if (typeof funcDef.params[index].options === 'function') {
-                addTypeahead($input, index, funcDef.params[index].options);
+            if (param.options) {
+              if (typeof paramDef(index).options === 'function') {
+                addTypeahead($input, index, paramDef(index).options);
               }
               addTypeahead($input, index);
             }
@@ -201,7 +250,7 @@ angular
           $compile(elem.contents())($scope);
         }
 
-        function ifJustAddedFocusFistParam() {
+        function ifJustAddedFocusFirstParam() {
           if ($scope.func.added) {
             $scope.func.added = false;
             setTimeout(function () {
@@ -247,7 +296,7 @@ angular
           elem.children().remove();
 
           addElementsAndCompile();
-          ifJustAddedFocusFistParam();
+          ifJustAddedFocusFirstParam();
           registerFuncControlsToggle();
           registerFuncControlsActions();
         }
