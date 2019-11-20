@@ -20,8 +20,7 @@ angular
       },
       link: function ($scope, elem) {
         let ctrl = $scope.ctrl;
-        let graphiteVersion = ctrl.datasource.graphiteVersion;
-        let categories = Gfuncs.getCategories(graphiteVersion);
+        let categories = Gfuncs.getCategories();
         let allFunctions = getAllFunctionNames(categories);
 
         let renderFunction = (segmentValue, selectedFunctions) => {
