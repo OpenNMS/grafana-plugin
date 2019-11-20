@@ -254,7 +254,7 @@ export class Gfuncs {
     return index[name];
   }
 
-  static getCategories(/* graphiteVersion */) {
+  static getCategories() {
     let filteredCategories = {};
     _.each(categories, function (functions, category) {
       if (functions.length) {
