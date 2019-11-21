@@ -1,0 +1,23 @@
+<h3 class="page-heading">OpenNMS Helm</h3>
+
+<br>
+
+<div class="editor-row">
+    <div class="section gf-form-group">
+        <h5 class="section-heading">
+            Custom Actions
+            <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'These links will appear in the context menu when you right-click on an alarm.'" data-original-title="" title=""></i>
+        </h5>
+        <div class="gf-form" ng-repeat="action in ctrl.appModel.jsonData.actions">
+            <input type="text" class="gf-form-input width-13" ng-model="action.label" ng-change="editor.render()" ng-model-onblur placeholder="Label">
+            <input type="text" class="gf-form-input width-25" ng-model="action.url" ng-change="editor.render()" ng-model-onblur placeholder="http://">
+            <button class="btn btn-inverse gf-form-btn" ng-click="ctrl.removeAction($index)"><i class="fa fa-trash"></i> Remove Action</button>
+        </div>
+        <div class="gf-form">
+            <button class="btn btn-inverse gf-form-btn" ng-click="ctrl.addAction()">
+                <i class="fa fa-plus"></i>
+                Add&nbsp;Custom&nbsp;Action
+            </button>
+        </div>
+    </div>
+</div>

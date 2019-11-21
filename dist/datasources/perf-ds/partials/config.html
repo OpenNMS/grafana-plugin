@@ -1,0 +1,20 @@
+<datasource-http-settings current="ctrl.current">
+</datasource-http-settings>
+<onms-timeout-settings current="ctrl.current">
+</onms-timeout-settings>
+<h3 class="page-heading">OpenNMS PM Datasource Details</h3>
+<div class="section gf-form-group">
+    <div class="gf-form-inline">
+        <div class="gf-form">
+            <span class="gf-form-label">Min time interval</span>
+            <input type="text" class="gf-form-input width-6" ng-model="ctrl.current.jsonData.timeInterval" spellcheck='false' placeholder="10s"></input>
+            <info-popover mode="right-absolute">
+                A lower limit for the auto group by time interval. Recommended to be set to write frequency,
+                for example <code>1m</code> if your data is written every minute.
+
+                When using Newts as the Time Series Strategy, org.opennms.newts.query.minimum_step may end up
+                overriding this setting.
+            </info-popover>
+        </div>
+    </div>
+</div>

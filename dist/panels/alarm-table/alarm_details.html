@@ -1,0 +1,189 @@
+<div class="modal-body alarm-details" ng-class="'opennms-theme-' + (theme ? theme : 'helm')">
+    <div class="modal-header">
+        <h2 class="modal-header-title">
+            <a href="{{ alarm.detailsPage }}" target="_blank"><i class="fa fa-external-link"></i></a>
+            <span class="p-l-1">Alarm Details</span>
+        </h2>
+
+        <ul class="gf-tabs">
+            <li class="gf-tabs-item" ng-repeat="tab in tabs">
+                <a class="gf-tabs-link" ng-click="editor.index = $index" ng-class="{active: editor.index === $index}">
+                    {{::tab}}
+                </a>
+            </li>
+        </ul>
+
+        <a class="modal-header-close" ng-click="ctrl.dismiss();">
+            <i class="fa fa-remove"></i>
+        </a>
+    </div>
+
+    <div class="modal-content" dynamic-height>
+        <div ng-if="editor.index == 0">
+            <table class="filter-table gf-form-group alarm-details-table severity">
+                <tr>
+                    <th>UEI</th>
+                    <td class="wrap">{{alarm.uei}}</td>
+                </tr>
+                <tr ng-class="(severity === true || severity === 'row') && alarm.severity ? alarm.severity.label.toLowerCase() : ''">
+                    <th >Severity</th>
+                    <td class="wrap severity-icon"><span ng-class="severity === 'column' && alarm.severity ? alarm.severity.label.toLowerCase() : ''"><i class="icon fa" ng-class="severityIcon"></i> {{alarm.severity.label}}</span></td>
+                </tr>
+                <tr>
+                    <th>Last Event Time</th>
+                    <td>{{alarm.lastEvent.time}}</td>
+                </tr>
+                <tr>
+                    <th>First Event Time</th>
+                    <td>{{alarm.firstEventTime}}</td>
+                </tr>
+                <tr>
+                    <th>Log Message</th>
+                    <td class="wrap log-message" ng-bind-html="alarm.logMessage"></td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td class="wrap description" style="white-space: normal" ng-bind-html="alarm.description"></td>
+                </tr>
+                <tr ng-if="alarm.operatorInstructions">
+                    <th>Operator Instructions</th>
+                    <td class="wrap operator-instructions" ng-bind-html="alarm.operatorInstructions"></td>
+                </tr>
+            </table>
+            <table class="filter-table gf-form-group alarm-details-table">
+                <tr>
+                    <th>Count</th>
+                    <td>{{alarm.count}}</td>
+                </tr>
+                <tr>
+                    <th>Reduction Key</th>
+                    <td class="wrap reduction-key">{{alarm.reductionKey}}</td>
+                </tr>
+                <tr ng-if="alarm.managedObjectInstance">
+                    <th>Managed Object Instance</th>
+                    <td>{{alarm.managedObjectInstance}}</td>
+                </tr>
+                <tr ng-if="alarm.managedObjectType">
+                    <th>Managed Object Type</th>
+                    <td>{{alarm.managedObjectType}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div ng-hide="editor.index != 1">
+            <div class="row">
+                <div class="col-md-12">
+                  <h3>Sticky Memo</h3>
+                  <memo-editor alarm="alarm" type="sticky" source="source"></memo-editor>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 50px">
+                <div class="col-md-12">
+                    <h3>Journal Memo</h3>
+                    <memo-editor alarm="alarm" type="journal" source="source"></memo-editor>
+                </div>
+            </div>
+        </div>
+
+        <span ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow-wrap: normal; white-space: pre">{{ getAlarmString() }}</span>
+
+        <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
+            <table class="filter-table gf-form-group">
+                <tr>
+                    <td>Ticket ID</td>
+                    <td ng-if="!alarm.troubleTicketLink">{{(alarm.troubleTicket || 'N/A')}}</td>
+                    <td ng-if="alarm.troubleTicketLink"><a href="{{alarm.troubleTicketLink}}" target="_blank">{{alarm.troubleTicket || 'N/A'}}</a></td>
+                </tr>
+                <tr>
+                    <td>Ticket State</td>
+                    <td>{{alarm.troubleTicketState.label || 'N/A'}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
+            <table class="table-panel-table dense-table-panel-table alarm-table alarm-details-table">
+                <thead class="alarm-details-header">
+                    <th colspan="2">Label</th>
+                    <th>Log Message</th>
+                    <th ng-if="editFeedback" colspan="3" class="text-center">Correlation Feedback</th>
+                </thead>
+                <tbody ng-repeat-start="node in relatedAlarms">
+                    <tr class="alarm-details-node-spacer"><td colspan="{{editFeedback? 5 : 3 }}"><!-- {{node.label + ' / ' + node.$index}} --></td></tr>
+                </tbody>
+                <tbody ng-repeat-end class="severity" ng-class="node.label !== ''? 'alarm-details-node-group' : ''">
+                    <tr class="alarm-details-node-header">
+                        <td colspan="{{editFeedback? 5 : 3 }}"><span class="alarm-details-node-label">{{node.label}}</span></td>
+                    </tr>
+                    <tr ng-repeat="summary in node.alarms" ng-class="(severity === true || severity === 'row') ? summary.severity.toLowerCase() : ''">
+                        <td ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
+                            <a href="{{detailsLink}}={{summary.id}}" target="_blank">
+                                <i class="fa fa-external-link"></i>
+                            </a>
+                        </td>
+                        <td severity><div class=alarm-detail-logmessage>{{summary.label}}</div></td>
+                        <td severity title="{{summary.logMessage}}"><div class=alarm-detail-logmessage>{{summary.logMessage}}</div></td>
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markCorrect(summary.reductionKey)">Is Related</button>
+                            </div>
+                        </td>
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markIncorrect(summary.reductionKey)">Not Related</button>
+                            </div>
+                        </td>
+                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                            <div class="feedback-button-div">
+                                <button type="button" class="{{ctrl.detailFeedbackRootCauseButton(summary.reductionKey)}}"
+                                ng-click="ctrl.markRootCause(summary.reductionKey, ctrl.isRootCause(summary.reductionKey))">Root Cause</button>
+                            </div>
+                       </td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr ng-if="editFeedback">
+                        <td colspan="3" class="text-right feedback-button-td">Tally</td>
+                        <td class="text-center feedback-button-td">{{feedbackCorrectCount}}</td>
+                        <td class="text-center feedback-button-td">{{feedbackIncorrectCount}}</td>
+                        <td class="text-center feedback-button-td">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <div ng-if="submittedFeedback">
+                Feedback Submitted.
+            </div>
+
+            <div ng-show="editFeedback">
+                <div class="gf-from-group">
+                    <bootstrap-tagsinput  ng-model="ctrl.$scope.feedbackTags" data-role="tagsinput" name="tags-input"
+                        tagClass="feedback-tag-element"
+                        class="gf-form-input ng-pristine ng-valid ng-empty ng-touched feedback-tag-input" 
+                        focusClass="feedback-tag-element"
+                        placeholder="Tags...">
+                        <typeahead source="ctrl.tagsTypeAhead()" />
+                    </bootstrap-tagsinput>
+                </div>
+
+                <div class="gf-from-group">
+                    <div class="gf-form">
+                        <input class="gf-form-input ng-pristine ng-valid ng-empty ng-touched" type="text" ng-model="ctrl.$scope.feedbackReason" placeholder="Enter an optional comment">
+                        </input>
+                        <button class="btn btn-success" style="margin-left: 1em" ng-click="ctrl.submitEditedFeedback()">Save</button>
+                        <button class="btn btn-inverse" ng-click="ctrl.cancelEditedFeedback()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="situationFeebackEnabled && !editFeedback && hasSituationFeedback" class="text-right">
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Re-submit Feedback...</a>
+            </div>
+            <div ng-if="situationFeebackEnabled && !editFeedback && !hasSituationFeedback" class="text-right">
+                    <a class="btn btn-secondary" ng-click="ctrl.editSituationFeedback()"><i class="fa fa-bars"></i> Provide Feedback...</a>
+            </div>
+    </div>
+</div>
+

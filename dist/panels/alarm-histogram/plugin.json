@@ -1,0 +1,12 @@
+{
+  "type": "panel",
+  "name": "Alarm Histogram",
+  "id": "opennms-helm-alarm-histogram-panel",
+
+  "info": {
+    "logos": {
+      "small": "img/alarm-histogram.svg",
+      "large": "img/alarm-histogram.svg"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+<section class="grafana-metric-options" >
+    <div class="gf-form">
+        <span class="gf-form-label">
+		    <i class="fa fa-info-circle"></i>
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(1);" bs-tooltip="'click to show template variables info'" data-placement="bottom">
+                Template variables
+            </a>
+        </span>
+        <span class="gf-form-label">
+		    <i class="fa fa-info-circle"></i>
+            <a ng-click="ctrl.panelCtrl.toggleEditorHelp(2);" bs-tooltip="'click to show examples'" data-placement="bottom">
+                Examples
+            </a>
+        </span>
+    </div>
+</section>
+
+<div class="editor-row">
+    <div class="pull-left">
+        <div class="grafana-info-box" style="border: 0;"  ng-if="ctrl.panelCtrl.editorHelpIndex === 1">
+            <h5>Template variables</h5>
+            <ul ng-non-bindable>
+                <li>null = Set the value to null to do "is null" or "is not null" queries</li>
+                <li>$range_from = The from time range defined in the upper right</li>
+                <li>$range_to = The to time range defined in the upper right</li>
+            </ul>
+        </div>
+        <div class="grafana-info-box" style="border: 0;"  ng-if="ctrl.panelCtrl.editorHelpIndex === 2">
+            <h5>Examples</h5>
+            <div>
+                A new query can be created by clicking on one of the below examples.
+                <ul>
+                    <li ng-repeat="example in ctrl.examples">
+                        <a ng-click="ctrl.createQueryFromExample(example)">{{example.description}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
