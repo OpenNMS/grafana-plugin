@@ -54,6 +54,14 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v4.0.2
+
+This release fixes a bug with the Flow datasource and Grafana 6.4, as well as some other cosmetic changes to the Flow query interface.
+
+* [HELM-190: TypeError: Cannot read property 'toBits' of undefined](https://issues.opennms.org/browse/HELM-190)
+* [HELM-192: Rendering Bug in Flow Query Builder](https://issues.opennms.org/browse/HELM-192)
+* [HELM-193: Conversation Flow Histogram show "null" instead of Unknown/Other in legend](https://issues.opennms.org/browse/HELM-193)
+
 ### v4.0.1
 
 This is a small revision to 4.0.0 which contains dependency updates and a [fix for running under Grafana 6.4](https://issues.opennms.org/browse/JS-45).
