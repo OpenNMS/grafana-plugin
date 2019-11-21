@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "4.0.2-SNAPSHOT",
+  "version": "4.0.2",
   "description": "A PM/FM console for Grafana",
   "repository": {
     "type": "git",
