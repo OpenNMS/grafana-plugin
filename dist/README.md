@@ -173,6 +173,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2019-11-21T21:09:55.680Z
-- Git Revision: 48d183a7bb5d0f793e6a1ed1b7b4a9b6c666a292
+- Build Date: 2020-01-02T20:32:11.263Z
+- Git Revision: 3039499a6eb33215bc22016405fb6b14f355f735
 
