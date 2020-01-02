@@ -99,7 +99,7 @@ If the message indicates a failure, review the information that was entered and 
 [[bw-dash-setup]]
 == Dashboard Setup
 
-. Create a new Dashboard by click on the dashboard selector at the top of the page, and the clicking on `New Dashboard`.
+. Create a new Dashboard by clicking on the dashboard selector at the top of the page, and the clicking on `New Dashboard`.
 +
 image::gf-new-dashboard.png[New Dashboard, 500]
 
