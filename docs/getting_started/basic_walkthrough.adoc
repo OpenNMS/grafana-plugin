@@ -78,7 +78,7 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . Change the *Type* to `OpenNMS Entities`.
 
-. In the *Url* field enter the URL to your OpenNMS instance i.e. `http://localhost:8980/opennms`.
+. In the *Url* field enter the URL to your OpenNMS instance, i.e., `http://localhost:8980/opennms`.
 +
 [NOTE]
 ====
