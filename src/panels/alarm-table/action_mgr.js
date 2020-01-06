@@ -54,7 +54,7 @@ export class ActionMgr {
     });
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
       (row, callback) => {
-        var result = self.ctrl.clearAlarm(row.source, row.alarmId)
+        self.ctrl.clearAlarm(row.source, row.alarmId)
         callback(null)
       });
 
@@ -125,7 +125,7 @@ export class ActionMgr {
       click: () => {
         // Apply the action to each row in the selection
         // _.each(rows, row => action(row));
-        async.each(rows, (row, callback) => action(row, callback), (done, err) => {
+        async.each(rows, (row, callback) => action(row, callback), () => {
           this.ctrl.refreshDashboard();
         })
       }
