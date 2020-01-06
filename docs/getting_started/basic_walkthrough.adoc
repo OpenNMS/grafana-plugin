@@ -18,21 +18,26 @@ The tutorial assumes that you have:
 - an instance of OpenNMS that is reachable from the Grafana instance above.
 - one or mode nodes being monitored by OpenNMS.
 
+[NOTE]
+====
+If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {product-title} to interface with OpenNMS. 
+====
+
 [[bw-app-setup]]
 == Application Setup
 
-In this section, you will enable the {product-title} application in Grafana.
+In this section, you will enable the {product-title} application in Grafana and create <<Custom Actions>>.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
-In the top-left corner of the page, click on the Grafana icon, and then click *Plugins*:
+In the left menu, click on the Configuration icon, and then click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
 
-. Next, navigate to the `Apps` tab, and click on the `OpenNMS Helm` application.
+. Search for the `OpenNMS Helm` application and click on it.
 +
 [NOTE]
 ====
-If the `OpenNMS Helm` is application is not listed on the `Apps` tab, try restarting the Grafana server.
+If the `OpenNMS Helm` application is not listed on the `Plugins` tab, try restarting the Grafana server.
 If the issue persists, make sure the application is installed correctly.
 ====
 
@@ -40,14 +45,15 @@ If the issue persists, make sure the application is installed correctly.
 +
 [NOTE]
 ====
-If you see a `Disable` button, then the application is already enabled and you can skip to the next step.
+If you see a `Disable` button, then the application is already enabled and you can skip to the next step. You may also choose `Update` for the latest version of {product-title}. 
 ====
 
 === Custom Actions
 
 In the Helm Config tab, you can add custom actions.  These will (currently) show when you right-click an alarm in an alarm table.
 
-Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.  A list of the available properties can be seen at the http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation].
+Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.  See http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation] for a list of the available properties.
+
 
 [NOTE]
 ====
