@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {Model} from 'opennms';
 import {CustomAction} from '../../lib/custom_action';
+import async from 'async';
 
 export class ActionMgr {
   constructor(ctrl, rows, appConfig) {
@@ -52,7 +53,10 @@ export class ActionMgr {
       return severity.index > Model.Severities.CLEARED.index;
     });
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
-      (row) => self.ctrl.clearAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        var result = self.ctrl.clearAlarm(row.source, row.alarmId)
+        callback(null)
+      });
 
     // We should only create tickets for alarms that don't already have a ticket state, or where a previous create failed
     let createTicketRows = _.filter(this.rows, row => {
@@ -120,9 +124,11 @@ export class ActionMgr {
       text: text + this.getSuffix(rows),
       click: () => {
         // Apply the action to each row in the selection
-        _.each(rows, row => action(row));
+        // _.each(rows, row => action(row));
+        async.each(rows, (row, callback) => action(row, callback), (done, err) => {
+          this.ctrl.refreshDashboard();
+        })
       }
     });
   }
-
 }

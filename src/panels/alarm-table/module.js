@@ -696,14 +696,14 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         }
         return ds[action](alarmId);
       }
-    }).then(() => {
-      // Action was successful, remove any previous error
-      delete self.error;
-      // Refresh the dashboard
-      self.timeSrv.refreshDashboard();
     }).catch(err => {
       self.error = err.message || "Request Error";
     });
+  }
+
+  /* Refreshing Dashboard Panel */
+  refreshDashboard(){
+    this.timeSrv.refreshDashboard();
   }
 
   acknowledgeAlarm(source, alarmId) {
