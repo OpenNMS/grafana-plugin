@@ -54,8 +54,12 @@ export class ActionMgr {
     });
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
       (row, callback) => {
-        self.ctrl.clearAlarm(row.source, row.alarmId)
-        callback(null)
+        var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
+        clearAlarmPromise.then((success) => {
+          callback(null)
+        }, (error) => {
+          callback(error)
+        })
       });
 
     // We should only create tickets for alarms that don't already have a ticket state, or where a previous create failed
@@ -123,10 +127,15 @@ export class ActionMgr {
     this.options.push({
       text: text + this.getSuffix(rows),
       click: () => {
-        // Apply the action to each row in the selection
-        // _.each(rows, row => action(row));
-        async.each(rows, (row, callback) => action(row, callback), () => {
-          this.ctrl.refreshDashboard();
+        // Apply the action(s) to each row in the selection, one after another on success
+        async.eachLimit(rows, 1, (row, callback) => action(row, callback), (error) => {
+          if(error){
+            //Log Error and terminate action(s) for other row(s)
+            console.log('Row: ', row, '\nError in clearing: ', error)
+          }
+          else {
+            this.ctrl.refreshDashboard();
+          }
         })
       }
     });

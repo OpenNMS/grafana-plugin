@@ -184,7 +184,7 @@ export class ClientDelegate {
     }
 
     doClear(alarmId, user) {
-        return this.getAlarmDao()
+        this.getAlarmDao()
             .then(alarmDao => {
                 return alarmDao.clear(alarmId, user);
             }).catch(this.decorateError);

@@ -687,18 +687,29 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   performAlarmActionOnDatasource(source, action, alarmId) {
     let self = this;
-    this.datasourceSrv.get(source).then(ds => {
-      if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
-        throw {message: 'Only OpenNMS datasources are supported'};
-      } else {
-        if (!ds[action]) {
-          throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
+    
+    return new Promise((resolve, reject) => {
+      this.datasourceSrv.get(source).then(ds => {
+        if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
+          throw {message: 'Only OpenNMS datasources are supported'};
+        } 
+        else {
+          if (!ds[action]) {
+            throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
+          }
+
+          var actionPerfomed = ds[action](alarmId);
+          actionPerfomed.then((successObj) => {
+            resolve(successObj);
+          }, (error) => {
+            reject(error)
+          });
         }
-        return ds[action](alarmId);
-      }
-    }).catch(err => {
-      self.error = err.message || "Request Error";
-    });
+      }).catch(err => {
+        self.error = err.message || "Request Error";
+        reject(err)
+      });
+    })
   }
 
   /* Refreshing Dashboard Panel */
@@ -715,7 +726,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   clearAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'clearAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'clearAlarm', alarmId)
   }
 
   escalateAlarm(source, alarmId) {
