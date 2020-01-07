@@ -1,7 +1,7 @@
 = Upgrading from Older Versions
 
-In most cases, all you should need to upgrade is install the new package.
-However, major version releases can sometimes introduce breaking changes.
+Usually upgrading simply involves installing the new package.
+However, major version releases can sometimes introduce breaking changes, in which case you may need additonal steps to upgrade. 
 
 == Helm 3 to 4
 
