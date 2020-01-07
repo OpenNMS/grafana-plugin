@@ -55,7 +55,7 @@ export class ActionMgr {
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
       (row, callback) => {
         var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
-        clearAlarmPromise.then((success) => {
+        clearAlarmPromise.then(() => {
           callback(null)
         }, (error) => {
           callback(error)
@@ -131,7 +131,7 @@ export class ActionMgr {
         async.eachLimit(rows, 1, (row, callback) => action(row, callback), (error) => {
           if(error){
             //Log Error and terminate action(s) for other row(s)
-            console.log('Row: ', row, '\nError in clearing: ', error)
+            console.log('Error in clearing: ', error)
           }
           else {
             this.ctrl.refreshDashboard();
