@@ -26,7 +26,19 @@ export class TableModel {
     }
 
     var self = this;
-    this.rows.sort(function(a, b) {
+
+    // We need to sort both the rows and entity meta-data arrays the same way
+    // 1) combine the arrays:
+    let rowsAndMeta = [];
+    for (let i = 0; i < this.rows.length; i++) {
+      rowsAndMeta.push({'row': this.rows[i], 'meta': this.meta.entity_metadata[i]});
+    }
+
+    // 2) sort
+    rowsAndMeta.sort(function(combinedA, combinedB) {
+      // Only look at the row values when sorting
+      var a = combinedA.row;
+      var b = combinedB.row;
       const colInfo = self.columns[options.col];
 
       // by default just use the column as-is (a string)
@@ -56,14 +68,22 @@ export class TableModel {
       return 0;
     });
 
-    this.columns.forEach(col => col.sort = false);
-    this.columns[options.col].sort = true;
-
     if (options.desc) {
-      this.rows.reverse();
+      rowsAndMeta.reverse();
       this.columns[options.col].desc = true;
     } else {
       this.columns[options.col].desc = false;
     }
+
+    // 3) separate them back out:
+    for (let i = 0; i < this.rows.length; i++) {
+      this.rows[i] = rowsAndMeta[i].row;
+      this.meta.entity_metadata[i] = rowsAndMeta[i].meta;
+    }
+
+    this.columns.forEach(col => col.sort = false);
+    this.columns[options.col].sort = true;
+
+
   }
 }
