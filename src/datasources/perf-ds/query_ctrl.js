@@ -24,9 +24,9 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       'Label': 'label',
       'Foreign ID': 'foreignId',
       'sysName': 'sysName'
-    }, function (query) {
+    }, function (query, offset) {
       return self.datasource
-        .searchForNodes(query)
+        .searchForNodes(query, offset)
         .then(function (results) {
           return {
             'count': results.data.count,

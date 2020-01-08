@@ -43,7 +43,18 @@
     </div>
 
     <div class="modal-footer">
-        <p ng-show="!ctrl.searching && ctrl.rows.length" class="pull-left text-info">Showing <b>{{ ctrl.count }}</b> of <b>{{
+            
+        <button ng-disabled="ctrl.currentPage == 0" ng-click="ctrl.prevPage()">
+            Previous
+        </button>
+        
+        {{ctrl.currentPage + 1}}/{{ctrl.numberOfPages}}
+        
+        <button ng-disabled="ctrl.currentPage >= ctrl.numberOfPages" ng-click="ctrl.nextPage()">
+            Next
+        </button>
+
+        <p ng-show="!ctrl.searching && ctrl.rows.length" class="pull-left text-info">Showing <b>{{ ctrl.count + ctrl.offset }}</b> of <b>{{
             ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.</p>
         <button type="button" class="btn btn-success" ng-click="ctrl.cancel();">Cancel</button>
         <button type="button" class="btn btn-success" ng-click="ctrl.ok()" ng-disabled="ctrl.selectedRow == null">
