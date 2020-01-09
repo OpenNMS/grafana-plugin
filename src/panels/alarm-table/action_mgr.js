@@ -58,7 +58,8 @@ export class ActionMgr {
         clearAlarmPromise.then(() => {
           callback(null)
         }, (error) => {
-          callback(error)
+          //Continue other actions even if there's any error
+          callback(null)
         })
       });
 
@@ -127,13 +128,9 @@ export class ActionMgr {
     this.options.push({
       text: text + this.getSuffix(rows),
       click: () => {
-        // Apply the action(s) to each row in the selection, one after another on success
-        async.eachLimit(rows, 1, (row, callback) => action(row, callback), (error) => {
-          if(error){
-            //Log Error and terminate action(s) for other row(s)
-            console.log('Error in clearing: ', error)
-          }
-          else {
+        // Apply the action(s) to each row in the selection
+        async.each(rows, (row, callback) => action(row, callback), (error) => {
+            //Refresh after all actions are completed
             this.ctrl.refreshDashboard();
           }
         })
