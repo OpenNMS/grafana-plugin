@@ -43,22 +43,21 @@
     </div>
 
     <div class="modal-footer">
-            
-        <button ng-disabled="ctrl.currentPage == 0" ng-click="ctrl.prevPage()">
-            Previous
-        </button>
-        
-        {{ctrl.currentPage + 1}}/{{ctrl.numberOfPages}}
-        
-        <button ng-disabled="ctrl.currentPage >= ctrl.numberOfPages" ng-click="ctrl.nextPage()">
-            Next
-        </button>
+        <div class="row">
+            <div ng-show="!ctrl.searching && ctrl.rows.length" class="col-md-4 page-detail-text">Showing <b>{{ ctrl.count + ctrl.offset }}</b> of <b>{{
+                ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.
+            </div>
 
-        <p ng-show="!ctrl.searching && ctrl.rows.length" class="pull-left text-info">Showing <b>{{ ctrl.count + ctrl.offset }}</b> of <b>{{
-            ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.</p>
-        <button type="button" class="btn btn-success" ng-click="ctrl.cancel();">Cancel</button>
-        <button type="button" class="btn btn-success" ng-click="ctrl.ok()" ng-disabled="ctrl.selectedRow == null">
-            Select
-        </button>
+            <div class="col-md-4 change-page-div">
+                <button ng-disabled="ctrl.currentPage == 0" ng-click="ctrl.prevPage()" class="change-page-btn">Previous</button>
+                {{ctrl.currentPage + 1}}/{{ctrl.numberOfPages}}
+                <button ng-disabled="ctrl.currentPage >= ctrl.numberOfPages" ng-click="ctrl.nextPage()" class="change-page-btn">Next</button>
+            </div>
+
+            <div class="col-md-4">
+                <button type="button" class="btn btn-success" ng-click="ctrl.cancel();">Cancel</button>
+                <button type="button" class="btn btn-success" ng-click="ctrl.ok()" ng-disabled="ctrl.selectedRow == null">Select</button>
+            </div>
+        </div>
     </div>
 </div>
