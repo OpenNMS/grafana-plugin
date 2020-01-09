@@ -57,7 +57,7 @@ export class ActionMgr {
         var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
         clearAlarmPromise.then(() => {
           callback(null)
-        }, (error) => {
+        }, () => {
           //Continue other actions even if there's any error
           callback(null)
         })
@@ -129,7 +129,7 @@ export class ActionMgr {
       text: text + this.getSuffix(rows),
       click: () => {
         // Apply the action(s) to each row in the selection
-        async.each(rows, (row, callback) => action(row, callback), (error) => {
+        async.each(rows, (row, callback) => action(row, callback), () => {
             //Refresh after all actions are completed
             this.ctrl.refreshDashboard();
         })
