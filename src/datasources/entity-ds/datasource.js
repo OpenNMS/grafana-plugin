@@ -361,14 +361,12 @@ export class OpenNMSEntityDatasource {
     }
 
     clearAlarm(alarmId) {
-        const clearAlarmDefer = this.q.defer();
-        this.q.when(this.opennmsClient.doClear(alarmId, this.user)).then(() => {
-            clearAlarmDefer.resolve({status: true})
+        return this.q.when(this.opennmsClient.doClear(alarmId, this.user)).then(() => {
+            return {status: true};
         }, (error) => {
             console.log("DataSource Clear Alarm Error: ", error)
-            clearAlarmDefer.reject({status: false, error: error})
+            return {status: false, error: error}
         });
-        return clearAlarmDefer.promise;
     }
 
     escalateAlarm(alarmId) {
