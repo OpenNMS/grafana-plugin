@@ -132,7 +132,6 @@ export class ActionMgr {
         async.each(rows, (row, callback) => action(row, callback), (error) => {
             //Refresh after all actions are completed
             this.ctrl.refreshDashboard();
-          }
         })
       }
     });
