@@ -51,7 +51,7 @@
             <div class="col-md-4 change-page-div">
                 <button ng-disabled="ctrl.currentPage == 0" ng-click="ctrl.prevPage()" class="change-page-btn">Previous</button>
                 {{ctrl.currentPage + 1}}/{{ctrl.numberOfPages}}
-                <button ng-disabled="ctrl.currentPage >= ctrl.numberOfPages" ng-click="ctrl.nextPage()" class="change-page-btn">Next</button>
+                <button ng-disabled="(ctrl.currentPage + 1) >= ctrl.numberOfPages" ng-click="ctrl.nextPage()" class="change-page-btn">Next</button>
             </div>
 
             <div class="col-md-4">

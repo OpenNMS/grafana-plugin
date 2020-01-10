@@ -54,7 +54,7 @@ class ModalCtrl {
     if((this.currentPage + 1) == this.$scope.ctrl.numberOfPages){
       return;
     }
-    this.offset += 25;
+    this.offset += this.pageSize;
     this.currentPage++;
     this.searchForRows();
   }
@@ -63,7 +63,7 @@ class ModalCtrl {
     if(this.currentPage == 0){
       return;
     }
-    this.offset -= 25;
+    this.offset -= this.pageSize;
     this.currentPage--;
     this.searchForRows();
   }
