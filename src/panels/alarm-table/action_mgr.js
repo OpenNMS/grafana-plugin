@@ -34,10 +34,10 @@ export class ActionMgr {
     this.addOptionToContextMenu('General', 'Acknowledge', acknowledgeableRows,
         (row, callback) => {
           self.ctrl.acknowledgeAlarm(row.source, row.alarmId).then(() => {
-            callback(null)
+            callback(null);
           }, () => {
             //Continue other actions even if there's any error
-            callback(null)
+            callback(null);
           })
         });
 
@@ -46,10 +46,10 @@ export class ActionMgr {
     this.addOptionToContextMenu('General', 'Unacknowledge', unacknowledgeableRows,
       (row, callback) => {
         self.ctrl.unacknowledgeAlarm(row.source, row.alarmId).then(() => {
-          callback(null)
+          callback(null);
         }, () => {
           //Continue other actions even if there's any error
-          callback(null)
+          callback(null);
         })
       });
 
@@ -61,10 +61,10 @@ export class ActionMgr {
     this.addOptionToContextMenu('General', 'Escalate', escalatableRows,
       (row, callback) => {
         self.ctrl.escalateAlarm(row.source, row.alarmId).then(() => {
-          callback(null)
+          callback(null);
         }, () => {
           //Continue other actions even if there's any error
-          callback(null)
+          callback(null);
         })
       });
 
@@ -77,10 +77,10 @@ export class ActionMgr {
       (row, callback) => {
         var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
         clearAlarmPromise.then(() => {
-          callback(null)
+          callback(null);
         }, () => {
           //Continue other actions even if there's any error
-          callback(null)
+          callback(null);
         })
       });
 

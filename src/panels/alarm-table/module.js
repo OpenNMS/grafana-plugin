@@ -702,12 +702,12 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
           actionPerfomed.then((successObj) => {
             resolve(successObj);
           }, (error) => {
-            reject(error)
+            reject(error);
           });
         }
       }).catch(err => {
         self.error = err.message || "Request Error";
-        reject(err)
+        reject(err);
       });
     })
   }
