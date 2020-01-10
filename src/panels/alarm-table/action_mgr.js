@@ -32,12 +32,26 @@ export class ActionMgr {
     // We should only ack alarms that are not already acked
     let acknowledgeableRows = _.filter(this.rows, row => row.alarm.ackTime === void 0);
     this.addOptionToContextMenu('General', 'Acknowledge', acknowledgeableRows,
-        (row) => self.ctrl.acknowledgeAlarm(row.source, row.alarmId));
+        (row, callback) => {
+          self.ctrl.acknowledgeAlarm(row.source, row.alarmId).then(() => {
+            callback(null)
+          }, () => {
+            //Continue other actions even if there's any error
+            callback(null)
+          })
+        });
 
     // We should only nack alarms that ARE already acked
     let unacknowledgeableRows = _.filter(this.rows, row => row.alarm.ackTime);
     this.addOptionToContextMenu('General', 'Unacknowledge', unacknowledgeableRows,
-      (row) => self.ctrl.unacknowledgeAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        self.ctrl.unacknowledgeAlarm(row.source, row.alarmId).then(() => {
+          callback(null)
+        }, () => {
+          //Continue other actions even if there's any error
+          callback(null)
+        })
+      });
 
     // We should only escalate alarms that have a severity < CRITICAL
     let escalatableRows = _.filter(this.rows, row => {
@@ -45,7 +59,14 @@ export class ActionMgr {
       return severity.index >= Model.Severities.CLEARED.index && severity.index < Model.Severities.CRITICAL.index;
     });
     this.addOptionToContextMenu('General', 'Escalate', escalatableRows,
-      (row) => self.ctrl.escalateAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        self.ctrl.escalateAlarm(row.source, row.alarmId).then(() => {
+          callback(null)
+        }, () => {
+          //Continue other actions even if there's any error
+          callback(null)
+        })
+      });
 
     // We should only clear alarms that have a severity > CLEARED
     let cleareableRows = _.filter(this.rows, row => {

@@ -718,11 +718,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   acknowledgeAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'acknowledgeAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'acknowledgeAlarm', alarmId);
   }
 
   unacknowledgeAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'unacknowledgeAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'unacknowledgeAlarm', alarmId);
   }
 
   clearAlarm(source, alarmId) {
@@ -730,7 +730,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
   }
 
   escalateAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'escalateAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'escalateAlarm', alarmId);
   }
 
   createTicketForAlarm(source, alarmId) {

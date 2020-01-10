@@ -353,11 +353,11 @@ export class OpenNMSEntityDatasource {
     }
 
     acknowledgeAlarm(alarmId) {
-        return this.opennmsClient.doAck(alarmId, this.user);
+        return this.q.when(this.opennmsClient.doAck(alarmId, this.user));
     }
 
     unacknowledgeAlarm(alarmId) {
-        return this.opennmsClient.doUnack(alarmId, this.user);
+        return this.q.when(this.opennmsClient.doUnack(alarmId, this.user));
     }
 
     clearAlarm(alarmId) {
@@ -365,7 +365,7 @@ export class OpenNMSEntityDatasource {
     }
 
     escalateAlarm(alarmId) {
-        return this.opennmsClient.doEscalate(alarmId, this.user);
+        return this.q.when(this.opennmsClient.doEscalate(alarmId, this.user));
     }
 
     createTicketForAlarm(alarmId) {
