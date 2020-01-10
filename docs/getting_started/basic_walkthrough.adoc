@@ -1,6 +1,7 @@
 :imagesdir: images
+:!figure-caption:
 [[getting-started-basic-walkthrough]]
-= Basic Walkthrough
+= Basic walkthrough
 :toc: macro
 :toc-title:
 :data-uri:
@@ -10,13 +11,19 @@ toc::[]
 
 == Overview
 
-This guide demonstrates how to create a simple dashboard with {product-title}.
+This guide demonstrates how to create a simple dashboard with {product-title} by doing the following:
+
+* xref:bw-app-setup[setting up the application and custom actions]
+* xref:bw-ds-setup[setting up datasources]
+* xref:bw-dash-setup[creating a dashboard]
+* xref:bw-panel-setup[creating a panel]
+
 
 The tutorial assumes that you have:
 
-- an instance of Grafana with the {product-title} application installed.
-- an instance of OpenNMS that is reachable from the Grafana instance above.
-- one or mode nodes being monitored by OpenNMS.
+* an instance of Grafana with the {product-title} application installed
+* an instance of OpenNMS that is reachable from the Grafana instance above
+* one or mode nodes being monitored by OpenNMS
 
 [NOTE]
 ====
@@ -29,7 +36,7 @@ If you are already using the OpenNMS Data Source plugin with Grafana, see xref:m
 In this section, you will enable the {product-title} application in Grafana and create <<Custom Actions>>.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
-In the left menu, click on the Configuration icon, and then click *Plugins*:
+. In the left menu, click on the Configuration icon, and click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
 
@@ -50,9 +57,12 @@ If you see a `Disable` button, then the application is already enabled and you c
 
 === Custom Actions
 
-In the Helm Config tab, you can add custom actions.  These will (currently) show when you right-click an alarm in an alarm table.
+In the Helm Config tab, you can add custom actions. 
+These will (currently) show when you right-click an alarm in an alarm table.
 
-Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.  See http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation] for a list of the available properties.
+A custom action is ... such as linking a parameter or viewing an alarm link.
+Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.
+See http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation] for a list of the available properties.
 
 
 [NOTE]
@@ -67,6 +77,17 @@ Variables will be URL-encoded when they are injected into the URL.
 .Create action URLs using parameters.
 image::gf-custom-actions.png[Custom Actions, 500]
 
+To create a custom action, follow these steps:
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+. In the top-left corner of the page, click on the Grafana icon, and then click *Plugins*.
+. Select OpenNMS Helm. 
+. On the Confg tab, click *+Add Custom Action*:
+
+image::gf-add-cust-action.png[Custom Action, 500]
+
+. Specify a label and add  
+
 
 [[bw-ds-setup]]
 == Data Source Setup
@@ -74,7 +95,7 @@ image::gf-custom-actions.png[Custom Actions, 500]
 In this section, you will configure the _Entities_ data source.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
-In the top-left corner of the page, click on the Grafana icon, and then click *Data Sources*:
+. In the top-left corner of the page, click on the Grafana icon, and then click *Data Sources*:
 +
 image::gf-data-sources.png[Data Sources, 100]
 
@@ -125,3 +146,5 @@ image::gf-edit-panel.png[Edit Panel, 200]
 
 That's it! Now, you have your first dashboard.
 Try changing the time range at the top right of the screen, or try performing actions against the alarms by right clicking on any of the alarm rows.
+
+[[bw-panel-setup]]

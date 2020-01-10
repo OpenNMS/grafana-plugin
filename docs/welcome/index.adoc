@@ -40,7 +40,7 @@ a|[none]
 .^|[big]#Getting started with {product-title}#
 a|[none]
 * xref:../getting_started/index.adoc#getting-started-index[Overview]
-* xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[Basic Walkthrough]
+* xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[Basic walkthrough]
 * xref:../getting_started/migrating_from_opennms_datasource#getting-started-migrating-from-opennms-datasource[Migrating from the OpenNMS Data Source plugin]
 |===
 
