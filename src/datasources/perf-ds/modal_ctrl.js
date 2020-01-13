@@ -31,7 +31,7 @@ class ModalCtrl {
         }
         else {
           self.rows = results.rows;  // When paginated or limited result received
-          self.count = results.count + self.offset;
+          self.count = (results.count ? results.count : self.rows.length) + self.offset;
         }
 
         self.totalCount = results.totalCount;

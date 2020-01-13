@@ -118,7 +118,6 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
           });
 
           return {
-            'count': namedAttributes.length,
             'totalCount': namedAttributes.length,
             'rows': namedAttributes
           };
@@ -140,7 +139,6 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         .getAvailableFilters()
         .then(function (results) {
           return {
-            'count': results.data.length,
             'totalCount': results.data.length,
             'rows': results.data
           };
