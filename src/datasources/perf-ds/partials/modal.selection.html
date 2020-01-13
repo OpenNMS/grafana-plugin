@@ -44,7 +44,7 @@
 
     <div class="modal-footer">
         <div class="row">
-            <div ng-show="!ctrl.searching && ctrl.rows.length" class="col-md-4 page-detail-text">Showing <b>{{ ctrl.count }}</b> of <b>{{
+            <div ng-show="!ctrl.searching && ctrl.rows.length" class="col-md-4 page-detail-text"><b>{{ ctrl.offset + 1 }} - {{ ctrl.count }}</b> of <b>{{
                 ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.
             </div>
 
