@@ -7,6 +7,7 @@ class ModalCtrl {
     this.selectedRow = null;
     this.currentPage = 0;
     this.pageSize = 25;
+    this.selfPagination = false; // Flag for client-side pagination
     this.searchForRows();
   }
 
@@ -18,10 +19,21 @@ class ModalCtrl {
       .then(function (results) {
         // Reset the selected row
         self.selectedRow = null;
+
         // Add the results to the scope
-        self.rows = results.rows;
-        self.allRows = results.rows;
-        self.count = results.count;
+        self.allResult = results.rows;
+
+        // Apply client-side pagination if result is > pageSize
+        if(results.rows.length > self.pageSize){
+          self.selfPagination = true;
+          self.count = 0;
+          self.updateSelfPageinatedData();
+        }
+        else {
+          self.rows = results.rows;  // When paginated or limited result received
+          self.count = results.count + self.offset;
+        }
+
         self.totalCount = results.totalCount;
         self.numberOfPages= Math.ceil(self.totalCount/self.pageSize);                
 
@@ -32,8 +44,9 @@ class ModalCtrl {
       });
   }
 
-  getPageData(rows, startFrom){
-    return rows.slice(startFrom)
+  updateSelfPageinatedData(){
+    this.rows =  this.allResult.slice(this.offset, (this.offset + this.pageSize));
+    this.count += this.rows.length;
   }
 
   startFrom(currentPage, pageSize) {
@@ -52,11 +65,18 @@ class ModalCtrl {
 
   nextPage(){
     if((this.currentPage + 1) == this.$scope.ctrl.numberOfPages){
-      return;
+      return; // Maximum pages reached
     }
+
     this.offset += this.pageSize;
     this.currentPage++;
-    this.searchForRows();
+    
+    if(this.selfPagination){
+      this.updateSelfPageinatedData();
+    }
+    else{
+      this.searchForRows();
+    }
   }
 
   prevPage(){

@@ -59,13 +59,9 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         });
       }
 
-      // Limit the results - it takes along time to render if there are too many
-      var totalCount = filteredResources.length;
-      filteredResources = _.take(filteredResources, self.datasource.searchLimit);
-
+      // Passing All Filtered Resources to Modal - Pagination will be applied
       return {
-        'count': filteredResources.length,
-        'totalCount': totalCount,
+        'totalCount': filteredResources.length,
         'rows': filteredResources
       };
     }
