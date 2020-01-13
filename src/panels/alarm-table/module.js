@@ -687,39 +687,50 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
   performAlarmActionOnDatasource(source, action, alarmId) {
     let self = this;
-    this.datasourceSrv.get(source).then(ds => {
-      if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
-        throw {message: 'Only OpenNMS datasources are supported'};
-      } else {
-        if (!ds[action]) {
-          throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
+    
+    return new Promise((resolve, reject) => {
+      this.datasourceSrv.get(source).then(ds => {
+        if (ds.type && ds.type.indexOf("entity-datasource") < 0) {
+          throw {message: 'Only OpenNMS datasources are supported'};
+        } 
+        else {
+          if (!ds[action]) {
+            throw {message: 'Action ' + action + ' not implemented by datasource ' + ds.name + " of type " + ds.type};
+          }
+
+          var actionPerfomed = ds[action](alarmId);
+          actionPerfomed.then((successObj) => {
+            resolve(successObj);
+          }, (error) => {
+            reject(error);
+          });
         }
-        return ds[action](alarmId);
-      }
-    }).then(() => {
-      // Action was successful, remove any previous error
-      delete self.error;
-      // Refresh the dashboard
-      self.timeSrv.refreshDashboard();
-    }).catch(err => {
-      self.error = err.message || "Request Error";
-    });
+      }).catch(err => {
+        self.error = err.message || "Request Error";
+        reject(err);
+      });
+    })
+  }
+
+  /* Refreshing Dashboard Panel */
+  refreshDashboard(){
+    this.timeSrv.refreshDashboard();
   }
 
   acknowledgeAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'acknowledgeAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'acknowledgeAlarm', alarmId);
   }
 
   unacknowledgeAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'unacknowledgeAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'unacknowledgeAlarm', alarmId);
   }
 
   clearAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'clearAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'clearAlarm', alarmId)
   }
 
   escalateAlarm(source, alarmId) {
-    this.performAlarmActionOnDatasource(source, 'escalateAlarm', alarmId);
+    return this.performAlarmActionOnDatasource(source, 'escalateAlarm', alarmId);
   }
 
   createTicketForAlarm(source, alarmId) {
