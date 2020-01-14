@@ -2,21 +2,23 @@
 = Overview
 
 [.lead]
-{product-title} is a https://grafana.com[Grafana] application that allows users to create flexible dashboards to interact with data stored by OpenNMS.
+{product-title} is an application that allows users to create flexible dashboards to interact with data stored by OpenNMS. 
+{product-title} works with https://grafana.com[Grafana], an analytics platform, to display information like alarms, outages, and key performance indicators.
 
-In order to be able to leverage all of the features {product-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana.
+To leverage all of the features {product-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana. 
+In-depth documentation about OpenNMS and Grafana is beyond the scope of this guide, but check out the following for a primer: 
 
-Check out the following topics to get started with OpenNMS:
+* https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[OpenNMS 101 training videos]
 
-* Step through the https://www.opennms.org/en/install[*installation*]
-* Watch the https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[*OpenNMS 101 training videos*]
+* http://docs.grafana.org/guides/basic_concepts/[Grafana concepts and terminology]
+* http://docs.grafana.org/tutorials/screencasts/[Grafana screencasts]
 
-Check out the following topics to get started with Grafana:
+[TIP]
+====
+Consider taking the time to decide what information you want to include in the dashboard and how you want to organize it. xref:../getting_started/dashboard_planning.adoc#[Planning your dashboard] can make {product-title} setup easier.
+====
 
-* Review the http://docs.grafana.org/guides/basic_concepts/[*concepts and terminology*]
-* Watch the http://docs.grafana.org/tutorials/screencasts/[*screencasts*]
+Once you have a good handle on both OpenNMS and Grafana, and a plan for your dashboard, you can get started with {product-title}:
 
-Once you have a good handle on both OpenNMS and Grafana, you can get started with {product-title}:
-
-* Step through a xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[*basic walkthrough*]
+* Step through a xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[basic walkthrough]
 using the web interface and create your first dashboard
