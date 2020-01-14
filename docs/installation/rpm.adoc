@@ -61,4 +61,4 @@ sudo systemctl enable grafana-server.service
 
 == Next Steps
 
-See xref:../getting_started/index.adoc#[Getting Started] for help in setting up your first dashboard.
+See xref:../getting_started/index.adoc#[Getting Started with Helm] for help in setting up your first dashboard.
