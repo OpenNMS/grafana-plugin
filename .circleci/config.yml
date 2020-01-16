@@ -111,6 +111,52 @@ jobs:
             - project/public
             - project/build
 
+  create-develop-to-master-branch:
+    <<: *defaults
+    <<: *docker_container_config
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "6d:74:e2:57:ca:3b:47:ed:48:c2:8d:aa:43:23:47:f6"
+      - checkout
+      - run:
+          name: Create git identity
+          command: |
+            git config user.email "cicd-system@opennms.com"
+            git config user.name "CI/CD System"
+      - run:
+          name: Checkout master and merge from develop
+          command: |
+            export GIT_MERGE_AUTOEDIT=no
+            git checkout master
+            git merge origin/develop
+      - run:
+          name: Push to develop-to-master branch
+          command: git push -f origin master:merge/develop-to-master
+
+  merge-develop-to-master-branch:
+    <<: *defaults
+    <<: *docker_container_config
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "6d:74:e2:57:ca:3b:47:ed:48:c2:8d:aa:43:23:47:f6"
+      - checkout
+      - run:
+          name: Create git identity
+          command: |
+            git config user.email "cicd-system@opennms.com"
+            git config user.name "CI/CD System"
+      - run:
+          name: Checkout master and merge with develop-to-master
+          command: |
+            export GIT_MERGE_AUTOEDIT=no
+            git checkout master
+            git merge origin/merge/develop-to-master
+      - run:
+          name: Push to master
+          command: git push origin master:master
+
   make-tarball:
     executor: build-executor-centos
     steps:
@@ -329,6 +375,18 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - create-develop-to-master-branch:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - merge-develop-to-master-branch:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /^merge\/develop-to-master/
       - make-tarball:
           requires:
             - build
