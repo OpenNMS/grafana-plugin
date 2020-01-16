@@ -11,7 +11,8 @@ toc::[]
 
 == Overview
 
-{product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. Panel configuration is available in the bottom half of a panel in editing mode:
+{product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
+Panel configuration is available in the bottom half of a panel in editing mode:
 
 image::../getting_started/images/gf-edit-panel.png[Edit Panel, 500]
 
@@ -24,7 +25,8 @@ This section describes how to do the following:
 [[pc-forecasting]]
 == Using Filters to Forecast Metrics
 
-OpenNMS includes several pre-defined filters, that {product-title} can use to display forecast metrics in a panel. Adding a forecast filter can help you anticipate when you might need to make changes to your network depending, for example, on anticipated bandwidth usage, disk space capacity, network traffic, and so on. 
+OpenNMS includes several pre-defined filters, that {product-title} can use to display forecast metrics in a panel. 
+Adding a forecast filter can help you anticipate when you might need to make changes to your network depending, for example, on anticipated bandwidth usage, disk space capacity, network traffic, and so on. 
 
 To use filters to forecast metrics, follow these steps:
 
@@ -44,7 +46,8 @@ To use filters to forecast metrics, follow these steps:
 
 [TIP]
 ====
-The time range you select should be logical for the number of periods and period size specified in your filter. As a guideline, you need at least three times the period to get historical data for a forecast. 
+The time range you select should be logical for the number of periods and period size specified in your filter. 
+As a guideline, you need at least three times the period to get historical data for a forecast. 
 ====
 
 
