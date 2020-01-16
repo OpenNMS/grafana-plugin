@@ -7,7 +7,7 @@ Every network is unique, with different monitoring requirements.
 A dashboard you create in {product-title} will contain multiple panels, each of which displays specific data. 
 For example, the following sample dashboard displays performance metrics collected via SNMP. 
 
-image::helm-sample-dash.png[Dash, 800] 
+image::../welcome/images/helm-sample-dash.png[Dash, 800] 
 
 Another dashboard might display traffic flows:
 

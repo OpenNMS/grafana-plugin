@@ -40,9 +40,9 @@ Topics:
       File: rpm
     - Name: Installing on Debian / Ubuntu
       File: debian
-    - Name: Installing via plugin (for existing Grafana installations)
+    - Name: Installing via Plugin (for existing Grafana installations)
       File: plugin
-    - Name: Installing from source
+    - Name: Installing from Source
       File: source
     - Name: Upgrading from Older Versions
       File: upgrading
@@ -52,12 +52,19 @@ Dir: getting_started
 Topics:
     - Name: Overview
       File: index
-    - Name: Planning your dashboard
+    - Name: Planning your Dashboard
       File: dashboard_planning
-      Name: Basic walkthrough
+    - Name: Basic Walkthrough
       File: basic_walkthrough
-    - Name: Migrating from the OpenNMS Data Source plugin
+    - Name: Migrating from the OpenNMS Data Source Plugin
       File: migrating_from_opennms_datasource
+---
+Name: Panel Configuration
+Dir: panel_configuration
+Topics:
+    - Name: Overview
+      File: panel_config
+
 ---
 Name: Datasources
 Dir: datasources
@@ -76,7 +83,7 @@ Topics:
     File: index
   - Name: Developing
     File: developing
-  - Name: How to build the docs
+  - Name: How to Build the Docs
     File: how-to-build-docs
 ---
 Name: Reference
@@ -84,5 +91,5 @@ Dir: reference
 Topics:
   - Name: Severities
     File: severities
-  - Name: How to build with Docker
+  - Name: How to Build with Docker
     File: how-to-build-with-docker

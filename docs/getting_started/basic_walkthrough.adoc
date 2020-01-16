@@ -57,7 +57,9 @@ If you see a `Disable` button, then the application is already enabled and you c
 
 === Custom Actions
 
-A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that can help users obtain a deeper diagnosis of an alarm. Once created, custom actions appear when you right-click an alarm in an alarms table.
+A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that can help users obtain a deeper diagnosis of an alarm. Once created, custom actions appear when you right-click an alarm in an alarms table:
+
+image::gf-cust-action-context.png[Custom Actions, 300]
 
 Created in the Helm Config tab, a custom action includes a label and URL.  
 Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.
