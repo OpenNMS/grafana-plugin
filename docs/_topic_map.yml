@@ -64,7 +64,6 @@ Dir: panel_configuration
 Topics:
     - Name: Overview
       File: panel_config
-
 ---
 Name: Datasources
 Dir: datasources

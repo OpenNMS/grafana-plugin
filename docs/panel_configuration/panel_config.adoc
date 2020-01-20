@@ -14,13 +14,9 @@ toc::[]
 {product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
 Panel configuration is available in the bottom half of a panel in editing mode:
 
-image::../getting_started/images/gf-edit-panel.png[Edit Panel, 500]
+image::gf-panel-config.png[Panel config, 500]
 
 The types of configuration options available depend on the type of datasoource associated with the panel. 
-
-This section describes how to do the following:
-
-* xref:pc-forecasting[use filters to forecast metrics]
 
 [[pc-forecasting]]
 == Using Filters to Forecast Metrics
@@ -28,39 +24,72 @@ This section describes how to do the following:
 OpenNMS includes several pre-defined filters, that {product-title} can use to display forecast metrics in a panel. 
 Adding a forecast filter can help you anticipate when you might need to make changes to your network depending, for example, on anticipated bandwidth usage, disk space capacity, network traffic, and so on. 
 
-To use filters to forecast metrics, follow these steps:
+This procedure describes how to create forecast metrics on network usage, using the `ifHCOutOctets` attribute (the number of octets sent by the interface).  
 
-. Open the panel where you want to create a filter. 
-.. This panel should be using a xref:../datasources/performance_datasource.adoc#[performance datasource]. 
+[[pc-create-panel]]
+=== Create a Network Usage Panel
+
+. In your dashboard, click the `Add panel` icon.
+
+. Click *Add Query*. 
+
+. In the *Query* drop-down, select the datasource.
+
+.. You need to select a xref:../datasources/performance_datasource.adoc#[performance datasource].
+
+. In the *Type* drop-down, choose *Attribute*.
+. Specify the node you want to monitor. 
+. Specify the resource ID. 
+. In the *Attribute* field label, click the tag icon to display the list of available attributes and select `ifHCOutOctets`.
+
+To display this information in bytes, create an expression:
+
+. Click *Add Query*. 
+. In the *Type* drop-down, choose *Expression*.
+. In the *Expression* field, add the following: `ifHCOutOctets *8`.
+. Add a label. 
+. Hide the `ifHCOutOctets` attribute you configured by clicking the disable/enable (eye) icon beside it. 
+
+=== Create a Filter
+
 . Click *Add Query*. 
 . In the *Type* drop-down, choose *Filter*.
 . Click the Filter type label, select `HoltWinters` from the pop-up screen, and click *Select*.
 .. Note that the far right column displays requirements on the node being queried, e.g., R, Java. 
-. For the Input column, specify *In* [why?].
-. [What to specify in Output]?
+. For the Input column, specify the name of the attribute or expresssion you wish to forecast, in this case, `Out`.
+. Specify an output, or accept the default (`HW`).
+.. The output is the prefix for the lower and upper fit (how successfully the forecast method fits to your data).
 . Specify the number of periods to forecast, the size of the period in seconds, and the desired probability in the appropriate fields. 
-.. Note that the size of period should match the seasonality of the data (i.e., you may not want weekend network usage to be included in a forecast of usage during regular business hours). 
-. If you have noisy or spiky data, forecasting does not work as well. You should also the Chomp and Outlier filters, and move them so that they appear before the HoltWinters filter in the list of queries.
+
+.. Note that the number of periods to forecast, the size of the period, and the time range are interdependent.  
+For example, the following specifies a three-hour forecast:
++
+image::pc-periods.png[Periods, 300]
+
+.. The size of a period should also match the seasonality of the data (i.e., you may not want weekend network usage to be included in a forecast of usage during regular business hours).
+You  
+ 
+. If you have noisy or spiky data, forecasting does not work as well. 
+You should also add the Chomp and Outlier filters, and move them so that they appear before the HoltWinters filter in the list of queries.
+You must specify an input for the Outlier filter. 
 . Save the dashboard. 
-. In the upper right menu, change the time range, as desired. 
+
+=== Display Forecast Data
+Since a panel returns data from the past up to the present, you need to create a custom 
+time range to display forecast data beyond the current time. 
+
+. In the upper-right of the dashboard, select *Custom time range* from the time range menu. 
+. Specify the start time of your data range. 
+. For the end time, specify a time in the future, as in the following:
++ 
+image::pc-time-range.png[Range, 400] 
 
 [TIP]
 ====
-The time range you select should be logical for the number of periods and period size specified in your filter. 
-As a guideline, you need at least three times the period to get historical data for a forecast. 
+The time range you select should be logical for the number of periods and period size specified in your filter. For example, if you specify a date range of six hours, but your forecast period is only four hours, you will see data for only the four hour period specified in the filter. 
 ====
 
+The graph displays the forecast you specified:
 
-
-
-
-
-
-
-
-
-
-
-
-
+image::pc-forecast.png[Periods, 600] 
 
