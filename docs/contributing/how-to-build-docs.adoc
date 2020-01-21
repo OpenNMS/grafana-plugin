@@ -184,7 +184,7 @@ This is better done with a CI system (like Jenkins) that can rebuild the docs in
 
 For information on how to configure a site, refer to the Maintainer’s Guide.
 
-== Cleaning Out Build & Package Artifacts
+== Cleaning Out Build and Package Artifacts
 
 To clean up the the contents of the `_preview` and `_package` directories and start fresh, you can run:
 

@@ -2,13 +2,13 @@
 
 == General
 
-The _Performance Datasource_ can be used to retrieve performance metrics (i.e. data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
+The _Performance Datasource_ can be used to retrieve performance metrics (i.e., data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
 
 The query editor provides the ability to build queries of the following types:
 
 === Attribute Queries
 
-Used to extract data points from time series data that is collected and stored by OpenNMS.
+Used to extract data points from time series data that OpenNMS collects and stores.
 The query is used to identify which attribute (or series) is being queried.
 
 [options="header, autowidth"]
@@ -18,7 +18,7 @@ The query is used to identify which attribute (or series) is being queried.
 | Resource           | Resource ID containing the requested attribute.
 | Attribute          | Name of the attribute to query.
 | Sub-Attribute      | Name of the sub-attribute to query.
-                       This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e. StrafePing).
+                       This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
 | Fallback Attribute | Name of the attribute to query if the requested attribute was not available.
 | Aggregation        | RRD aggregation to use when exporting the metrics.
                        Possible values are `Average`, `Min`, `Max` or `Last`.

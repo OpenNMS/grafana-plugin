@@ -22,7 +22,7 @@ The query editor supports the following functions:
 | Transform | `onlyIngress`           | Only display ingress traffic.
 | Transform | `onlyEgress`            | Only display egress traffic.
 | Transform | `withGroupByInterval`   | Changes the resolution of the returned datapoints grouping by the given time
-interval (in the format of: 10s, 5m, 1h etc...)
+interval (in the format of: 10s, 5m, 1h, etc.)
 |===
 
 == Template Queries
@@ -68,4 +68,4 @@ interfacesOnExporterNodeWithFlows(FS:FID)
 
 == Limitations
 
-The Flow Datasource only supports a single query per panel.
+The flow datasource only supports a single query per panel.
