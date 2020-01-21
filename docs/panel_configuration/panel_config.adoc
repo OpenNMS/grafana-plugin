@@ -16,7 +16,7 @@ Panel configuration is available in the bottom half of a panel in editing mode:
 
 image::gf-panel-config.png[Panel config, 500]
 
-The types of configuration options available depend on the type of datasoource associated with the panel. 
+The types of configuration options available depend on the type of datasource associated with the panel. 
 
 [[pc-forecasting]]
 == Using Filters to Forecast Metrics
