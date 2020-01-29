@@ -34,6 +34,7 @@ const baseconfig = {
     path: distdir,
   },
   externals: [
+    '@grafana/data',
     '@grafana/ui',
     'angular',
     'jquery',

@@ -1,6 +1,9 @@
 import _ from 'lodash';
-import { getValueFormat, getColorFromHexRgbOrName } from '@grafana/ui';
-import { stringToJsRegex } from '@grafana/data';
+import { grafanaResource } from '../../lib/grafana_resource';
+
+const getValueFormat = grafanaResource('getValueFormat');
+const getColorFromHexRgbOrName = grafanaResource('getColorFromHexRgbOrName');
+const stringToJsRegex = grafanaResource('stringToJsRegex');
 
 // Grafana 6.3+ uses `dateTime` from @grafana/data but we're staying compatible with 6.0+
 // so always use `moment` (for now).

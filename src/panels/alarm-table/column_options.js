@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
-import { getValueFormats } from '@grafana/ui';
+import { grafanaResource } from '../../lib/grafana_resource';
+const getValueFormats = grafanaResource('getValueFormats');
+
 import { defaultColors } from './module';
 
 export class ColumnOptionsCtrl {
