@@ -5,6 +5,13 @@ const getValueFormats = grafanaResource('getValueFormats');
 
 import { defaultColors } from './module';
 
+export const alignTypesEnum = [
+  { text: 'auto', value: '' },
+  { text: 'left', value: 'left' },
+  { text: 'center', value: 'center' },
+  { text: 'right', value: 'right' },
+];
+
 export class ColumnOptionsCtrl {
   /** @ngInject */
   constructor($scope) {
@@ -38,7 +45,11 @@ export class ColumnOptionsCtrl {
       {text: 'relative', value: 'relative'},
       {text: 'relative (short)', value: 'relative-short'}
     ];
-    this.mappingTypes = [{ text: 'Value to text', value: 1 }, { text: 'Range to text', value: 2 }];
+    this.mappingTypes = [
+      { text: 'Value to text', value: 1 },
+      { text: 'Range to text', value: 2 },
+    ];
+    this.alignTypes = _.cloneDeep(alignTypesEnum);
 
     this.getColumnNames = () => {
       if (!this.panelCtrl.table) {
@@ -72,6 +83,8 @@ export class ColumnOptionsCtrl {
       pattern: '',
       dateFormat: 'YYYY-MM-DD HH:mm:ss',
       thresholds: [],
+      mappingType: 1,
+      align: 'auto',
       width: "",
       clip: false
     };

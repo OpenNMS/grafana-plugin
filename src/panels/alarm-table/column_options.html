@@ -170,20 +170,24 @@
             <h5 class="section-heading">Display</h5>
             <div class="gf-form-inline">
                 <div class="gf-form">
-                    <label class="gf-form-label width-8">Width</label>
+                    <label class="gf-form-label width-10">Width</label>
                     <input type="text" placeholder="CSS Width" class="gf-form-input width-8" ng-model="style.width" ng-model-options='{ debounce: 250 }' bs-tooltip="'Specify a custom width'" ng-change="editor.render()" data-min-length=0 data-items=100 data-placement="right">
                 </div>
             </div>
-            <div class="gf-form-inline">
+            <div ng-if="style.type !== 'hidden'">
                 <div class="gf-form">
-                    <label class="gf-form-label width-8">Align</label>
-                    <div class="gf-form-select-wrapper width-8">
-                        <select class="gf-form-input" ng-model="style.align" ng-model-options='{ debounce: 250 }' ng-options="align as align for align in [ 'left', 'center', 'right' ]" ng-change="editor.render()"></select>
-                    </div>
+                    <label class="gf-form-label width-10">Align</label>
+                    <gf-form-dropdown model="style.align"
+                                    css-class="gf-form-input width-8"
+                                    lookup-text="true"
+                                    get-options="editor.alignTypes"
+                                    allow-custom="false"
+                                    on-change="editor.render()"
+                                    allow-custom="false"/>
                 </div>
             </div>
             <div class="gf-form-inline">
-                <gf-form-switch class="gf-form" label-class="width-8" switch-class="max-width-8" label="Clip" checked="style.clip" on-change="editor.render()"></gf-form-switch>
+                <gf-form-switch class="gf-form" label-class="width-10" switch-class="max-width-10" label="Clip" checked="style.clip" on-change="editor.render()"></gf-form-switch>
             </div>
         </div>
 

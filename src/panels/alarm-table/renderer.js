@@ -1,12 +1,20 @@
 import _ from 'lodash';
 import { grafanaResource } from '../../lib/grafana_resource';
 
+const dateTime = grafanaResource('dateTime');
+const escapeStringForRegex = grafanaResource('escapeStringForRegex');
+const formattedValueToString = grafanaResource('formattedValueToString');
 const getValueFormat = grafanaResource('getValueFormat');
 const getColorFromHexRgbOrName = grafanaResource('getColorFromHexRgbOrName');
+const sanitizeUrl = grafanaResource('sanitizeUrl');
+const stringStartsAsRegEx = grafanaResource('stringStartsAsRegEx');
 const stringToJsRegex = grafanaResource('stringToJsRegex');
+const unEscapeStringFromRegex = grafanaResource('unEscapeStringFromRegex');
 
-// Grafana 6.3+ uses `dateTime` from @grafana/data but we're staying compatible with 6.0+
-// so always use `moment` (for now).
+import { alignTypesEnum } from './column_options';
+
+// Grafana 6.3+ uses `dateTime` from @grafana/data for date values, but
+// we still need to load `moment` for now to define our custom locale.
 import moment from 'moment';
 
 import {Model} from 'opennms';
@@ -62,7 +70,14 @@ export class TableRenderer {
       for (let i = 0; i < this.panel.styles.length; i++) {
         const style = this.panel.styles[i];
 
-        const regex = stringToJsRegex(style.pattern);
+        let escapedPattern = style.pattern;
+        // Grafana 6.4+ uses `stringStartsAsRegEx`, fall back to `stringToJsRegex` if it's not found
+        if (stringStartsAsRegEx && escapeStringForRegex && unEscapeStringFromRegex) {
+          escapedPattern = stringStartsAsRegEx(style.pattern)
+            ? style.pattern
+            : escapeStringForRegex(unEscapeStringFromRegex(style.pattern));
+        }
+        const regex = stringToJsRegex(escapedPattern);
         if (column.text.match(regex)) {
           column.style = style;
 
@@ -79,7 +94,7 @@ export class TableRenderer {
   }
 
   getColorForValue(value, style) {
-    if (!style.thresholds) {
+    if (!style.thresholds || !style.colors) {
       return null;
     }
     for (let i = style.thresholds.length; i > 0; i--) {
@@ -130,7 +145,7 @@ export class TableRenderer {
           v = parseInt(v, 10);
         }
 
-        let date = moment(v);
+        let date = dateTime ? dateTime(v) : moment(v);
 
         if (this.isUtc) {
           date = date.utc();
@@ -214,7 +229,12 @@ export class TableRenderer {
         }
 
         this.setColorState(v, column.style);
-        return valueFormatter(v, column.style.decimals, null);
+        const ret = valueFormatter(v, column.style.decimals, null);
+        // Grafana 6.6+, `valueFormatter` returns an object
+        if (formattedValueToString) {
+          return formattedValueToString(ret);
+        }
+        return ret;
       };
     }
 
@@ -279,7 +299,11 @@ export class TableRenderer {
   }
 
   formatColumnValue(colIndex, value) {
-    return this.formatters[colIndex] ? this.formatters[colIndex](value) : value;
+    const fmt = this.formatters[colIndex];
+    if (fmt) {
+      return fmt(value);
+    }
+    return value;
   }
 
   renderCell(columnIndex, rowIndex, value, addWidthHack, columnClasses) {
@@ -314,7 +338,7 @@ export class TableRenderer {
     }
 
     if (value === undefined) {
-      cellStyle = ' style="display:none;"';
+      cellStyles.push('display:none');
       column.hidden = true;
     } else {
       column.hidden = false;
@@ -329,7 +353,10 @@ export class TableRenderer {
     }
 
     if (column.style && column.style.align) {
-      cellClasses.push('text-' + column.style.align);
+      const textAlign = _.find(alignTypesEnum, ['text', column.style.align]);
+      if (textAlign && textAlign['value']) {
+        cellStyles.push(`text-align:${textAlign['value']}`);
+      }
     }
 
     if (column.style && column.style.width) {
@@ -348,6 +375,10 @@ export class TableRenderer {
       }
     }
 
+    if (cellStyles.length) {
+      cellStyle = ' style="' + cellStyles.join(';') + '"';
+    }
+
     if (textStyles.length) {
       textStyle = ' style="' + textStyles.join(';') + '"';
     }
@@ -358,13 +389,15 @@ export class TableRenderer {
       scopedVars['__cell'] = { value: value, text: value ? value.toString() : '' };
 
       const cellLink = this.templateSrv.replace(column.style.linkUrl, scopedVars, encodeURIComponent);
+      const sanitizedCellLink = sanitizeUrl ? sanitizeUrl(cellLink) : cellLink;
+
       const cellLinkTooltip = this.templateSrv.replace(column.style.linkTooltip, scopedVars);
       const cellTarget = column.style.linkTargetBlank ? '_blank' : '';
 
       cellClasses.push('table-panel-cell-link');
 
       columnHtml += `
-        <a href="${cellLink}" target="${cellTarget}" data-link-tooltip data-original-title="${cellLinkTooltip}" data-placement="right"${textStyle}>
+        <a href="${sanitizedCellLink}" target="${cellTarget}" data-link-tooltip data-original-title="${cellLinkTooltip}" data-placement="right"${textStyle}>
           ${value}
         </a>
       `;
@@ -482,17 +515,20 @@ export class TableRenderer {
 
   render_values() {
     const rows = [];
+    const visibleColumns = this.table.columns.filter(column => !column.hidden);
 
     for (let y = 0; y < this.table.rows.length; y++) {
       const row = this.table.rows[y];
       const newRow = [];
       for (let i = 0; i < this.table.columns.length; i++) {
-        newRow.push(this.formatColumnValue(i, row[i]));
+        if (!this.table.columns[i].hidden) {
+          newRow.push(this.formatColumnValue(i, row[i]));
+        }
       }
       rows.push(newRow);
     }
     return {
-      columns: this.table.columns,
+      columns: visibleColumns,
       rows: rows,
     };
   }
