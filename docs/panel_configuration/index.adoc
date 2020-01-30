@@ -1,0 +1,15 @@
+[[pc-index]]
+= Overview
+
+[.lead]
+{product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
+Panel configuration is available in the bottom half of a panel in editing mode:
+
+image::gf-panel-config.png[Panel config, 500]
+
+The types of configuration options available depend on the type of datasource associated with the panel. 
+
+This section describes the following types of panel configuration:
+
+* xref:../panel_configuration/forecasting.adoc#[forecast metrics]
+* xref:../panel_configuration/dynamic-dashboard.adoc#[dynamic dashboards]

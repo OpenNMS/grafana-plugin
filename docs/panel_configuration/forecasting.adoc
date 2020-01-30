@@ -1,25 +1,6 @@
-:imagesdir: images
-:!figure-caption:
-[[panel-configuration-panel-comfig]]
-= Panel Configuration
-:toc: macro
-:toc-title:
-:data-uri:
-:prewrap!:
-
-toc::[]
-
-== Overview
-
-{product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
-Panel configuration is available in the bottom half of a panel in editing mode:
-
-image::gf-panel-config.png[Panel config, 500]
-
-The types of configuration options available depend on the type of datasource associated with the panel. 
-
+[.lead]
 [[pc-forecasting]]
-== Using Filters to Forecast Metrics
+= Using Filters to Forecast Metrics
 
 OpenNMS includes several pre-defined filters that {product-title} can use to display forecast metrics in a panel. 
 Adding a forecast filter can help you anticipate when you might need to make changes to your network depending, for example, on anticipated bandwidth usage, disk space capacity, network traffic, and so on. 
@@ -27,7 +8,7 @@ Adding a forecast filter can help you anticipate when you might need to make cha
 This procedure describes how to create forecast metrics on network usage, using the `ifHCOutOctets` attribute (the number of octets sent by the interface).  
 
 [[pc-create-panel]]
-=== Create a Network Usage Panel
+== Create a Network Usage Panel
 
 . In your dashboard, click the `Add panel` icon.
 
@@ -50,7 +31,7 @@ To display this information in bytes, create an expression:
 . Add a label, for example, `Out`. 
 . Hide the `ifHCOutOctets` attribute you configured by clicking the disable/enable (eye) icon beside it. 
 
-=== Create a Forecast Filter
+== Create a Forecast Filter
 
 . Click *Add Query*. 
 . In the *Type* drop-down, choose *Filter*.
@@ -75,9 +56,8 @@ You should also add the Chomp and Outlier filters, and move them so that they ap
 You must specify an input for the Outlier filter. 
 . Save the dashboard. 
 
-=== Display Forecast Data
-Since the default time range for a panel returns data from the past to the present, you need to create a custom 
-time range to display forecast data beyond the current time. 
+=== Displaying Forecast Data
+Since the default time range for a panel returns data from the past to the present, you need to create a custom time range to display forecast data beyond the current time. 
 
 . In the upper-right of the dashboard, select *Custom time range* from the time range drop-down. 
 . Specify the start of your data range in the *From* field (for example, `now-6h`). 
@@ -89,4 +69,6 @@ The panel displays the forecast you specified:
 +
 image::pc-forecast.png[Periods, 600] 
 
-. Experiment with changing the time range and forecast results. The further into the future you forecast, the less authoritative the forecast will be. 
+. Experiment with changing the time range and forecast results. 
+The further into the future you forecast, the less authoritative the forecast will be. 
+
