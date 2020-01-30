@@ -63,7 +63,11 @@ Name: Panel Configuration
 Dir: panel_configuration
 Topics:
     - Name: Overview
-      File: panel_config
+      File: index
+    - Name: Using Filters to Forecast Metrics
+      File: forecasting
+    - Name: Creating Dynamic Dashboards
+      File: dynamic-dashboard
 ---
 Name: Datasources
 Dir: datasources
