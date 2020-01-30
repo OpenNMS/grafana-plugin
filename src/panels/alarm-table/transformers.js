@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {TableModel} from './table_model';
 
-let transformers = {};
+const transformers = {};
 
 transformers.table = {
   description: 'Table',

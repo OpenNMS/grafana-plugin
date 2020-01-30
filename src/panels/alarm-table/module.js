@@ -14,6 +14,9 @@ import {loadPluginCss} from 'app/plugins/sdk';
 import {SelectionMgr} from "./selection_mgr";
 import {ActionMgr} from "./action_mgr";
 
+import { grafanaResource } from '../../lib/grafana_resource';
+const PanelEvents = grafanaResource('PanelEvents');
+
 import moment from 'moment';
 import * as XLSX from 'xlsx';
 
@@ -208,11 +211,11 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
     let self = this;
     this.selectionMgr = new SelectionMgr((from,to) => self.getRowsInRange(from,to), () => self.render());
-    this.events.on('data-received', this.onDataReceived.bind(this));
-    this.events.on('data-error', this.onDataError.bind(this));
-    this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
-    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-    this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
+    this.events.on(PanelEvents ? PanelEvents.dataReceived        : 'data-received', this.onDataReceived.bind(this));
+    this.events.on(PanelEvents ? PanelEvents.dataError           : 'data-error', this.onDataError.bind(this));
+    this.events.on(PanelEvents ? PanelEvents.dataSnapshotLoad    : 'data-snapshot-load', this.onDataReceived.bind(this));
+    this.events.on(PanelEvents ? PanelEvents.editModeInitialized : 'init-edit-mode', this.onInitEditMode.bind(this));
+    this.events.on(PanelEvents ? PanelEvents.initPanelActions    : 'init-panel-actions', this.onInitPanelActions.bind(this));
 
     if (this.panel.severity === true) {
       this.panel.severity = 'row';
@@ -525,7 +528,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       unbindDestroy();
     });
 
-    ctrl.events.on('render', renderData => {
+    ctrl.events.on(PanelEvents ? PanelEvents.render : 'render', renderData => {
       data = renderData || data;
       if (data) {
         renderPanel();
