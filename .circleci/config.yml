@@ -1,38 +1,41 @@
-version: 2.0
-defaults: &defaults
+version: 2.1
 
-  working_directory: &working_directory
-    /home/circleci/opennms-helm
+executors:
 
-  attach_workspace: &attach_workspace
-    attach_workspace:
-      at: *working_directory
-
-references:
-  centos_container_config: &centos_container_config
+  build-executor:
     docker:
       - image: opennmsbamboo/node-centos
 
-  node_container_config: &node_container_config
+  node-executor:
     docker:
       - image: circleci/node:11
 
-  docker_container_config: &docker_container_config
+  docker-executor:
     docker:
-      - image: docker:18.06.0-ce-git
+      - image: docker:19.03.0-git
 
-  dockerhub_login: &dockerhub_login
-    run:
-      name: DockerHub Login
-      command: |
-        docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
-jobs:
-  build:
-    <<: *defaults
-    <<: *node_container_config
+commands:
+  docker-registry-login:
+    description: "Connect to Docker Registry"
     steps:
-      - *attach_workspace
+      - run:
+          name: DockerHub Login
+          command: |
+            docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+jobs:
+  pre-build:
+    executor: build-executor
+    steps:
       - checkout
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+  build:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get version number
           command: ./get-version.sh
@@ -68,31 +71,31 @@ jobs:
       - store_artifacts:
           path: reports
       - persist_to_workspace:
-          root: *working_directory
+          root: ~/
           paths:
-            - ./
+            - project
 
   make-tarball:
-      <<: *defaults
-      <<: *centos_container_config
-      steps:
-        - *attach_workspace
-        - run:
-            name: Create tarball
-            command: mkdir -p ./dist/packages && tar --exclude='package-lock.json' --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
-        - store_artifacts:
-            path: ./dist/packages
-        - persist_to_workspace:
-            root: *working_directory
-            paths:
-              - ./dist/packages
-  
+    executor: build-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Create tarball
+          command: mkdir -p ./dist/packages && tar --exclude='package-lock.json' --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
+      - store_artifacts:
+          path: ./dist/packages
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/packages
+
   make-docker-image:
-    <<: *defaults
-    <<: *docker_container_config
+    executor: docker-executor
     steps:
       - setup_remote_docker
-      - *attach_workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Build Docker Image
           command: |
@@ -106,17 +109,17 @@ jobs:
       - store_artifacts:
           path: ./helm-docker-image
       - persist_to_workspace:
-          root: *working_directory
+          root: ~/
           paths:
-            - ./helm-docker-image
+            - ./project/helm-docker-image
 
   publish-docker-image-latest:
-    <<: *defaults
-    <<: *docker_container_config
+    executor: docker-executor
     steps:
       - setup_remote_docker
-      - *dockerhub_login
-      - *attach_workspace
+      - attach_workspace:
+          at: ~/
+      - docker-registry-login
       - run:
           name: Load Docker Container Image file
           command: |
@@ -154,12 +157,12 @@ jobs:
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
 
   publish-docker-image-bleeding:
-    <<: *defaults
-    <<: *docker_container_config
+    executor: docker-executor
     steps:
       - setup_remote_docker
-      - *dockerhub_login
-      - *attach_workspace
+      - attach_workspace:
+          at: ~/
+      - docker-registry-login
       - run:
           name: Load Docker Container Image file
           command: |
@@ -198,7 +201,13 @@ workflows:
   version: 2
   build-workflow:
     jobs:
+      - pre-build:
+          filters:
+            tags:
+              only: /^v.*/
       - build:
+          requires:
+            - pre-build
           filters:
             tags:
               only: /^v.*/
