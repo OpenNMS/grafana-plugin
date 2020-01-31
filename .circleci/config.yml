@@ -14,6 +14,10 @@ executors:
     docker:
       - image: docker:19.03.0-git
 
+  docs-executor:
+    docker:
+      - image: opennms/asciibinder
+
 commands:
   docker-registry-login:
     description: "Connect to Docker Registry"
@@ -75,6 +79,15 @@ jobs:
           paths:
             - project
 
+  build-docs:
+    executor: docs-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Generate documentation as static HTML
+          command: asciibinder package -l debug docs
+      
   make-tarball:
     executor: build-executor
     steps:
@@ -206,6 +219,12 @@ workflows:
             tags:
               only: /^v.*/
       - build:
+          requires:
+            - pre-build
+          filters:
+            tags:
+              only: /^v.*/
+      - build-docs:
           requires:
             - pre-build
           filters:
