@@ -9,3 +9,6 @@ helm:
     master:
       name: Latest
       dir: latest
+    jira/HELM-216:
+      name: jira/helm-216
+      dir: helm-216

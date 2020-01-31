@@ -87,14 +87,26 @@ jobs:
       - run:
           name: Generate documentation as static HTML
           command: asciibinder package -l debug docs
-      
+      - run:
+          name: Create docs tarball 
+          command: |
+            export HELM_VERSION=$(cat version.tag)
+            mkdir -p ./dist/docs
+            tar -czf "./dist/docs/opennms-helm_${HELM_VERSION}.tar.gz" -C docs/_package .
+      - store_artifacts:
+          path: ./dist/docs
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/docs
+
   make-tarball:
     executor: build-executor
     steps:
       - attach_workspace:
           at: ~/
       - run:
-          name: Create tarball
+          name: Create plugin tarball
           command: mkdir -p ./dist/packages && tar --exclude='package-lock.json' --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
       - store_artifacts:
           path: ./dist/packages
