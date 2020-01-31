@@ -1,14 +1,14 @@
 ---
 helm:
   name: Helm
-  author: OpenNMS Docs Team <opennms-docs@lists.sourceforge.net>
+  author: OpenNMS Community <https://opennms.discourse.group>
   site: helm
   site_name: Helm
-  site_url: https://docs.opennms.org/helm
+  site_url: https://opennms-helm-doc.netlify.com
   branches:
     master:
       name: Latest
       dir: latest
     jira/HELM-216:
       name: jira/helm-216
-      dir: helm-216
+      dir: latest

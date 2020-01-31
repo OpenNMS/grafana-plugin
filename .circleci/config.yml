@@ -18,6 +18,10 @@ executors:
     docker:
       - image: opennms/asciibinder
 
+  netlify-cli-executor:
+    docker:
+      - image: opennms/netlify-cli:2.8.3-b1
+
 commands:
   docker-registry-login:
     description: "Connect to Docker Registry"
@@ -222,6 +226,18 @@ jobs:
             docker tag helm:$(cat version.tag) ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
 
+  publish-docs:
+    executor: netlify-cli-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Extract docs from artifacts
+          command: cd ~/project/dist/docs && tar xzf *.tar.gz
+      - run:
+          name: Deploy docs to Netlify
+          command: netlify deploy --prod -d dist/docs/helm -s ${NETLIFY_SITE_ID}
+
 workflows:
   version: 2
   build-workflow:
@@ -268,5 +284,15 @@ workflows:
           filters:
             branches:
               only: master
+            tags:
+              ignore: /^v.*/
+      - publish-docs:
+          requires:
+            - build-docs
+          filters:
+            branches:
+              only: 
+                - master
+                - jira/HELM-216
             tags:
               ignore: /^v.*/
