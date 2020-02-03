@@ -32,9 +32,12 @@ commands:
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
 jobs:
   pre-build:
-    executor: build-executor
+    executor: node-executor
     steps:
       - checkout
+      - run:
+          name: Get version number
+          command: ./get-version.sh
       - persist_to_workspace:
           root: ~/
           paths:
@@ -44,9 +47,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - run:
-          name: Get version number
-          command: ./get-version.sh
       - restore_cache:
           name: Restore Package Cache
           keys:
