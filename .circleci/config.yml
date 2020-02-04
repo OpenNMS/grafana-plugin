@@ -14,6 +14,14 @@ executors:
     docker:
       - image: docker:19.03.0-git
 
+  docs-executor:
+    docker:
+      - image: opennms/asciibinder
+
+  netlify-cli-executor:
+    docker:
+      - image: opennms/netlify-cli:2.8.3-b1
+
 commands:
   docker-registry-login:
     description: "Connect to Docker Registry"
@@ -24,9 +32,12 @@ commands:
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
 jobs:
   pre-build:
-    executor: build-executor
+    executor: node-executor
     steps:
       - checkout
+      - run:
+          name: Get version number
+          command: ./get-version.sh
       - persist_to_workspace:
           root: ~/
           paths:
@@ -36,9 +47,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - run:
-          name: Get version number
-          command: ./get-version.sh
       - restore_cache:
           name: Restore Package Cache
           keys:
@@ -75,13 +83,34 @@ jobs:
           paths:
             - project
 
+  build-docs:
+    executor: docs-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Generate documentation as static HTML
+          command: asciibinder package -l debug docs
+      - run:
+          name: Create docs tarball 
+          command: |
+            export HELM_VERSION=$(cat version.tag)
+            mkdir -p ./dist/docs
+            tar -czf "./dist/docs/opennms-helm_${HELM_VERSION}.tar.gz" -C docs/_package .
+      - store_artifacts:
+          path: ./dist/docs
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/docs
+
   make-tarball:
     executor: build-executor
     steps:
       - attach_workspace:
           at: ~/
       - run:
-          name: Create tarball
+          name: Create plugin tarball
           command: mkdir -p ./dist/packages && tar --exclude='package-lock.json' --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(cat version.tag).tar.gz" .
       - store_artifacts:
           path: ./dist/packages
@@ -197,6 +226,18 @@ jobs:
             docker tag helm:$(cat version.tag) ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
 
+  publish-docs:
+    executor: netlify-cli-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Extract docs from artifacts
+          command: cd ~/project/dist/docs && tar xzf *.tar.gz
+      - run:
+          name: Deploy docs to Netlify
+          command: netlify deploy --prod -d dist/docs/helm -s ${NETLIFY_SITE_ID}
+
 workflows:
   version: 2
   build-workflow:
@@ -206,6 +247,12 @@ workflows:
             tags:
               only: /^v.*/
       - build:
+          requires:
+            - pre-build
+          filters:
+            tags:
+              only: /^v.*/
+      - build-docs:
           requires:
             - pre-build
           filters:
@@ -237,5 +284,14 @@ workflows:
           filters:
             branches:
               only: master
+            tags:
+              ignore: /^v.*/
+      - publish-docs:
+          requires:
+            - build-docs
+          filters:
+            branches:
+              only: 
+                - master
             tags:
               ignore: /^v.*/
