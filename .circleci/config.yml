@@ -91,7 +91,7 @@ jobs:
       - run:
           name: Generate HTML output for documentation
           command: |
-            antora generate site.yml
+            antora generate local-site.yml
 
       - store_artifacts:
           path: build/site.zip
@@ -231,11 +231,8 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Extract docs from artifacts
-          command: cd ~/project/dist/docs && tar xzf *.tar.gz
-      - run:
           name: Deploy docs to Netlify
-          command: netlify deploy --prod -d dist/docs/helm -s ${NETLIFY_SITE_ID}
+          command: netlify deploy --prod -d public -s ${NETLIFY_SITE_ID}
 
 workflows:
   version: 2

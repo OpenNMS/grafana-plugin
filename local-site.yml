@@ -1,12 +1,11 @@
 site: 
   title: OpenNMS Helm Documentation
   url: https://opennms-helm-doc.netlify.com
-  start_page: helm:index.adoc
+  start_page: helm::index.adoc
 content: 
   sources: 
   - url: .
     branches: HEAD
-    tags: v*
     start_path: docs
 ui:
   bundle:
