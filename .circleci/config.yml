@@ -16,7 +16,7 @@ executors:
 
   docs-executor:
     docker:
-      - image: opennms/asciibinder
+      - image: antora/antora:2.2.0
 
   netlify-cli-executor:
     docker:
@@ -89,20 +89,19 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Generate documentation as static HTML
-          command: asciibinder package -l debug docs
-      - run:
-          name: Create docs tarball 
+          name: Generate HTML output for documentation
           command: |
-            export HELM_VERSION=$(cat version.tag)
-            mkdir -p ./dist/docs
-            tar -czf "./dist/docs/opennms-helm_${HELM_VERSION}.tar.gz" -C docs/_package .
+            antora generate site.yml
+
       - store_artifacts:
-          path: ./dist/docs
+          path: build/site.zip
+          destination: site.zip
+
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/dist/docs
+            - project/public
+            - project/build
 
   make-tarball:
     executor: build-executor
