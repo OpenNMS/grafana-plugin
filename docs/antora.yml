@@ -1,0 +1,5 @@
+name: helm
+version: '5.0.0-SNAPSHOT'
+title: HELM
+nav:
+  - modules/ROOT/nav.adoc
