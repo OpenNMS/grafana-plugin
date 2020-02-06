@@ -1,21 +1,16 @@
 = Write and Build Documentation
 
-If you want to contribute documentation to this project which manages the docs with AsciiBinder, you’ve come to the right place.
+If you want to contribute documentation to this project which manages the docs with Antora, you’ve come to the right place.
 
-== Installing AsciiBinder
+== Installing Antora
 
-AsciiBinder is distributed as a Ruby gem, use the `gem` command to install it:
+Antora is a documenation site generator based around the AsciiDoc format. 
+To install Antora, follow the https://docs.antora.org/antora/2.2/install/install-antora/[instructions] on the Antora website.  
 
 [source, shell]
 ----
 gem install ascii_binder
 ----
-
-But be aware of one additional prerequisite:
-
-*Java*: AsciiBinder bundles http://ditaa.sourceforge.net/[ditaa] for ASCII-based diagramming support.
-However, ditaa depends upon a Java runtime to transform ASCII diagrams into image files.
-So, make sure you have a JVM installed (http://openjdk.java.net/[OpenJDK] works fine) and set the `$\{JAVA_HOME}` environment variable so that ditaa can find the JVM.
 
 == Making a Copy of the OpenNMS Docs Repo
 
@@ -41,34 +36,28 @@ Each main section is structured in directories and contain the text `.adoc` file
 The text files need to be written in the http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc] format.
 
 Every new created directory or text file needs to be included in the general structure of the documentation.
-Within the `_topic_map.yml` the generic layout is defined.
+The `nav.adoc` file in the ROOT direcory defines the content hierarchy.
 
-.Structure of the _topic_map.yml file
+.Structure of the nav.adoc file
 [source]
 ----
 ---
-Name: Project Info <1>
-Dir: project-info <2>
-Topics: <3>
-  - Name: Welcome <4>
-    File: index <5>
-  - Name: How to Build the Docs
-    File: how-to-build-docs
----
-Name: Architecture <6>
-Dir: architecture
-Topics:
-    - Name: Overview
-      File: index
-----
-<1> Friendly section name _Project Info_ which is used in the left navigation
-<2> Directory name with the files which are shown under _Project Info_
-<3> Each topic in _Project Info_
-<4> Friendly name in the left navigation
-<5> Text file with the content, the `.adoc` extension is automatically appended
-<6> Second second _Architecture_ with a reference to a directory which contains the topics
 
-In case images needs to be included, use a directory `images` inside a topic folder.
+.About <1>
+* xref:about:welcome.adoc[Welcome] <2>
+* xref:about:legal_notice.adoc[Legal Notice]<2>
+
+.Installation <3>
+* xref:installation:requirements.adoc[Requirements]<4>
+* xref:installation:rpm.adoc[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]<4>
+* xref:installation:debian.adoc[Installing on Debian/Ubuntu]<4>
+----
+<1> Friendly directory name _About_ which is used in the left navigation
+<2> Each topic in the _About_ section; written as a cross reference to the directory, file name, and friendly name that appears in the left navigation. 
+<3> Second section _Installation_.
+<4> Each topic in the _Installation_ section. 
+
+In case images needs to be included, use a directory `assests/images` inside each module folder.
 Within the text file images are included as the following:
 
 [source]
