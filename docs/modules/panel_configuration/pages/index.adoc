@@ -2,7 +2,7 @@
 = Overview
 
 [.lead]
-{page-component-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
+{product-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters. 
 Panel configuration is available in the bottom half of a panel in editing mode:
 
 image::gf-panel-config.png[Panel config, 500]

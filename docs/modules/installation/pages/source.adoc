@@ -1,4 +1,4 @@
-= Installing from Source
+= Installing from source
 
 == Building
 

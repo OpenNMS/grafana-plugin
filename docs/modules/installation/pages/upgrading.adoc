@@ -7,7 +7,7 @@ However, major version releases can sometimes introduce breaking changes, in whi
 
 [IMPORTANT]
 ====
-Helm 4 introduced a breaking change, renaming the FM (Fault Management) datasource to the Entity datasource.
+Helm 4 introduced a breaking change, renaming the FM (Fault Management) datasource to the Entities datasource.
 You will need to follow a few steps to upgrade your dashboards.
 ====
 

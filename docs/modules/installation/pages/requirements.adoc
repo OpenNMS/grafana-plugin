@@ -3,7 +3,7 @@
 == Runtime Requirements
 
 * http://docs.grafana.org/installation[Grafana]
-The required Grafana-Server version is *6.0.0* or later.
+The required Grafana-Server version is *6.3* or later.
 
 == Build Requirements
 

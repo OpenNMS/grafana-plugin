@@ -10,7 +10,7 @@ toc::[]
 
 == Overview
 
-This guide helps migrate an existing installation of Grafana from using the OpenNMS Data Source plugin to using {page-component-title} to interface with OpenNMS.
+This guide helps migrate an existing installation of Grafana from using the OpenNMS Data Source plugin to using {product-title} to interface with OpenNMS.
 
 The tutorial assumes that you have:
 
@@ -20,15 +20,15 @@ The tutorial assumes that you have:
 [[mig-install]]
 == Installation
 
-Both the OpenNMS Data Source plugin and {page-component-title} can be installed at the same time while you complete the migration.
+Both the OpenNMS Data Source plugin and {product-title} can be installed at the same time while you complete the migration.
 
-If you have not already done so, you may install {page-component-title} using your prefered method.
-See xref:../welcome/index.adoc#welcome-installing[Installing {page-component-title}] for detailed instructions.
+If you have not already done so, you may install {product-title} using your prefered method.
+See xref:../welcome/index.adoc#welcome-installing[Installing {product-title}] for detailed instructions.
 
 [[mig-app-setup]]
 == Application Setup
 
-Once {page-component-title} is installed, you need to enable the application in Grafana to make the provided panels and data sources available:
+Once {product-title} is installed, you need to enable the application in Grafana to make the provided panels and data sources available:
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 In the top-left corner of the page, click on the Grafana icon, and then click *Plugins*:
@@ -53,10 +53,10 @@ If you see a `Disable` button, then the application is already enabled and you c
 [[mig-convert-ds]]
 == Migrating Data Sources
 
-Once the {page-component-title} application is enabled, you can convert your existing `OpenNMS` data sources to use the `OpenNMS Perfomance` type.
+Once the {product-title} application is enabled, you can convert your existing `OpenNMS` data sources to use the `OpenNMS Perfomance` type.
 When switching the type, you may need to re-enter the URL and authentication details.
 
-NOTE: {page-component-title} provides two data source types.
+NOTE: {product-title} provides two data source types.
 The `OpenNMS Performance` type is equivalent to the previous `OpenNMS` data source.
 
 [[mig-verify]]

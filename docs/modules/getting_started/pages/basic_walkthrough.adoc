@@ -11,7 +11,7 @@ toc::[]
 
 == Overview
 
-This guide demonstrates how to create a simple dashboard with {page-component-title} by doing the following:
+This guide demonstrates how to create a simple dashboard with {product-title} by doing the following:
 
 * xref:bw-app-setup[setting up the application and custom actions]
 * xref:bw-ds-setup[setting up datasources]
@@ -21,19 +21,19 @@ This guide demonstrates how to create a simple dashboard with {page-component-ti
 
 The tutorial assumes that you have:
 
-* an instance of Grafana with the {page-component-title} application installed
+* an instance of Grafana with the {product-title} application installed
 * an instance of OpenNMS that is reachable from the Grafana instance above
 * one or mode nodes being monitored by OpenNMS
 
 [NOTE]
 ====
-If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {page-component-title} to interface with OpenNMS. 
+If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {product-title} to interface with OpenNMS. 
 ====
 
 [[bw-app-setup]]
 == Application Setup
 
-In this section, you will enable the {page-component-title} application in Grafana and create <<Custom Actions>>.
+In this section, you will enable the {product-title} application in Grafana and create <<Custom Actions>>.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Plugins*:
@@ -52,7 +52,7 @@ If the issue persists, make sure the application is installed correctly.
 +
 [NOTE]
 ====
-If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {page-component-title}. 
+If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {product-title}. 
 ====
 
 === Custom Actions
@@ -95,10 +95,10 @@ image::gf-add-cust-action.png[Custom Action, 500]
 == Datasource Setup
 
 The type of data you can display in your dashboard depends on the datasource you select. 
-Before creating a dashboard, you need to set up the datasource. OpenNMS datasources include performance, flow, and entities. 
+Before creating a dashboard, you need to set up the datasource. OpenNMS datasources include performance, flow, and entity. 
 For more information on OpenNMS datasources, see  xref:../datasources/performance_datasource.adoc#[Datasources].
 
-In this section, you will configure the _Entities_ datasource.
+In this section, you will configure the _Entity_ datasource.
 
 . Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Data Sources*:
@@ -187,4 +187,37 @@ Options are dependent on the type of datasource selected.
 .. You can further customize the graph by specifying information in the bottom half of the panel. 
 . In the left menu, click the *General* icon to change the name of the panel and specify additional information. 
 
+. In the top-right menu, click the `Save dashboard` icon. 
+
+[[bw-alarm-panel]]
+== Creating an Alarm Panel
+An alarm panel displays alarms from an xref:../datasources/entity_datasource.adoc#[entity datasource]. 
+Visualization of entity datasource information (currently nodes and alarms) is normally done in tables. 
+
+This procedure creates an alarm panel using an alarm table visualization. 
+
+. In your dashboard, click the `Add panel` icon.
+
+. Click *Add Query*. 
+
+. In the *Query* drop-down, select an entity datasource.
+
+. From *SELECT*, choose `Alarms`. 
+
+. Create filters and conditions to specify the nodes/alarms to display:
+.. Note that you can use nested "and/or" logic.
+.. You can order by ascending (oldest alarms first) or descending (most recent alarms) and limit the number of alarms displayed.
+.. Toggle featured attributes on to display select attributes. Toggle it off to display all attributes in the drop-downs. 
+
++
+.Sample alarm table configuration
+image::gf-alarm-table.png[Alarm table, 500]
+
+. In the left menu, click the visualization icon. 
+. In the *Visualization* drop-down, select *Graph*.
+. Select an `Alarm Table` graph.
+.. With alarms, you can also choose `Table` or `Alarm histogram`; with nodes, choose `Table` 
+.. The graph appears in the top of the panel.
+.. You can further customize the graph by specifying information in the bottom half of the screen. 
+. In the left menu, click the *General* icon to change the name of the panel and specify additional information. 
 . In the top-right menu, click the `Save dashboard` icon. 

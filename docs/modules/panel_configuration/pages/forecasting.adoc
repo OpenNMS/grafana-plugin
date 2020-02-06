@@ -2,7 +2,7 @@
 [[pc-forecasting]]
 = Using Filters to Forecast Metrics
 
-OpenNMS includes several pre-defined filters that {page-component-title} can use to display forecast metrics in a panel. 
+OpenNMS includes several pre-defined filters that {product-title} can use to display forecast metrics in a panel. 
 Adding a forecast filter can help you anticipate when you might need to make changes to your network depending, for example, on anticipated bandwidth usage, disk space capacity, network traffic, and so on. 
 
 This procedure describes how to create forecast metrics on network usage, using the `ifHCOutOctets` attribute (the number of octets sent by the interface).  
