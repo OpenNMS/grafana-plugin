@@ -58,7 +58,7 @@ jobs:
           command: npm install mocha-junit-reporter
       - run:
           name: Install Dependencies
-          command: npm --prefer-offline --no-progress install
+          command: npm --pure-lockfile --prefer-offline --no-progress install
       - save_cache:
           name: Save Package Cache
           key: npm-packages-{{ .Branch }}-{{ checksum "package-lock.json" }}
