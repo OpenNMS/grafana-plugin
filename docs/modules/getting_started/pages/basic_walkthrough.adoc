@@ -1,0 +1,190 @@
+:imagesdir: images
+:!figure-caption:
+[[getting-started-basic-walkthrough]]
+= Basic Walk-Through
+:toc: macro
+:toc-title:
+:data-uri:
+:prewrap!:
+
+toc::[]
+
+== Overview
+
+This guide demonstrates how to create a simple dashboard with {page-component-title} by doing the following:
+
+* xref:bw-app-setup[setting up the application and custom actions]
+* xref:bw-ds-setup[setting up datasources]
+* xref:bw-dash-setup[creating a dashboard]
+* xref:bw-panel-create[creating a panel]
+
+
+The tutorial assumes that you have:
+
+* an instance of Grafana with the {page-component-title} application installed
+* an instance of OpenNMS that is reachable from the Grafana instance above
+* one or mode nodes being monitored by OpenNMS
+
+[NOTE]
+====
+If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {page-component-title} to interface with OpenNMS. 
+====
+
+[[bw-app-setup]]
+== Application Setup
+
+In this section, you will enable the {page-component-title} application in Grafana and create <<Custom Actions>>.
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+. In the left menu, click on the Configuration icon, and click *Plugins*:
++
+image::gf-plugins.png[Plugins, 100]
+
+. Search for the `OpenNMS Helm` application and click on it.
++
+[NOTE]
+====
+If the `OpenNMS Helm` application is not listed on the `Plugins` tab, try restarting the Grafana server.
+If the issue persists, make sure the application is installed correctly.
+====
+
+. Enable the application by clicking the `Enable` button.
++
+[NOTE]
+====
+If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {page-component-title}. 
+====
+
+=== Custom Actions
+
+A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that can help users obtain a deeper diagnosis of an alarm. Once created, custom actions appear when you right-click an alarm in an alarms table:
+
+image::gf-cust-action-context.png[Custom Actions, 300]
+
+Created in the Helm Config tab, a custom action includes a label and URL.  
+Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.
+See http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation] for a list of the available properties.
+
+[NOTE]
+====
+Special case: event parameters on the alarm can be accessed either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
+====
+
+If a variable can't be matched against the row, the action will not appear in the context menu.
+
+Variables will be URL-encoded when they are injected into the URL.
+
+.Action URLs using parameters
+image::gf-custom-actions.png[Custom Actions, 500]
+
+To create a custom action, follow these steps:
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+. In the left menu, click on the Configuration icon and click *Plugins*:
+. Select *OpenNMS Helm*. 
+. On the Confg tab, click *+Add Custom Action*:
++
+image::gf-add-cust-action.png[Custom Action, 500]
+
+. Specify a label and enter a URL.
+.. In most cases the URL will be your OpenNMS instance, e.g., `http://localhost:8980/opennms/`, appended with the $variable that references a property of an OpenNMS alarm.
+. Repeat for each custom action you want to create.
+. Click *Update*. 
+
+[[bw-ds-setup]]
+== Datasource Setup
+
+The type of data you can display in your dashboard depends on the datasource you select. 
+Before creating a dashboard, you need to set up the datasource. OpenNMS datasources include performance, flow, and entities. 
+For more information on OpenNMS datasources, see  xref:../datasources/performance_datasource.adoc#[Datasources].
+
+In this section, you will configure the _Entities_ datasource.
+
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
+. In the left menu, click on the Configuration icon, and click *Data Sources*:
++
+image::gf-data-sources.png[Data Sources, 100]
+
+. Click on *Add data source*.
+
+. In the search field enter *OpenNMS Entities*.
+
+. Beside the OpenNMS Entities datasource, click *Select*.
+
+. In the *URL* field, enter the URL to your OpenNMS instance, i.e., `http://localhost:8980/opennms`.
++
+[NOTE]
+====
+The URL to your OpenNMS instance should normally end with `/opennms`.
+====
+
+. Click the toggle switch next to *Basic Auth*.
+
+. Enter the credentials for an OpenNMS user in the *User* and *Password* fields.
+
+. Click *Save & Test*.
++
+image::gf-data-source-is-working.png[Data source is working, 500]
+
+If the datasource is configured correctly you should see a message indicating that the `Data source is working`.
+If the message indicates a failure, review the information you entered and click *Save & Test* to test the datasource again.
+
+[[bw-dash-setup]]
+== Dashboard Setup
+
+This section describes how to create a dashboard with an alarm table. For information on displaying additional or different types of data, see xref:bw-panel-create[creating a panel].
+
+. Create a new dashboard by clicking the *+* sign in the left menu and chooosing *Create>Dashboard*.
++
+image::gf-new-dashboard.png[New Dashboard, 100]
+
+. To add an alarm table, in the top right, click the `Add panel` icon:
++
+image::gf-add-panel.png[Add Panel, 50]
+
+. Click *Add Query*. A screen similar to the following appears. The lower half of the screen is where you configure your panel:
+
++
+image::gf-panel-config.png[Configure Panel, 500]
+
+. In the *Query* drop-down, select the datasource we previously created in xref:bw-ds-setup[Datasource Setup].
+
+. Select *Alarms* in the *SELECT* drop-down.
++
+.. Configure addtional information and add filters as desired. 
+
+. In the left menu, click the visualization icon. 
+. In the *Visualization* drop-down, select *Graph*.
+. Click *Alarm Table*. The graph appears in the top of the panel.
++
+.. You can further customize the graph by specifying information in the bottom half of the panel. 
+. In the left menu, click the *General* icon to change the name of the panel and specify additional information. 
+
+. In the top-right menu, click the `Save dashboard` icon. 
+
+That's it! Now, you have your first dashboard.
+Try changing the time range at the top right of the screen, or try performing actions against the alarms by right clicking on any of the alarm rows. You can also display other data by creating more panels.
+
+[[bw-panel-create]]
+== Creating a Panel
+A panel is the part of your dashboard that displays the fault and performance management data you specify. 
+Before adding a panel, determine what type of data you want to display (performance, metrics, alarms/nodes), and make sure that you have xref:bw-ds-setup[setup the associated datasource].
+Default graph types in Grafana work only with the appropriate data source (i.e., an alarm table visualization will not display data if a flow datasource is specified.)
+
+. In your dashboard, click the `Add panel` icon.
+
+. Click *Add Query*. 
+
+. In the *Query* drop-down, select the datasource.
+
+. Configure addtiional information as appropriate. 
+Options are dependent on the type of datasource selected. 
+
+. In the left menu, click the visualization icon. 
+. In the *Visualization* drop-down, select *Graph*.
+. Select a graph type. The graph appears in the top of the panel.
++
+.. You can further customize the graph by specifying information in the bottom half of the panel. 
+. In the left menu, click the *General* icon to change the name of the panel and specify additional information. 
+
+. In the top-right menu, click the `Save dashboard` icon. 

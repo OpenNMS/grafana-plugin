@@ -1,0 +1,32 @@
+= Entities Datasource
+
+== General
+
+The _Entities Datasource_ can be used to retrieve various entity model objects from OpenNMS.
+It currently supports alarms and nodes.
+
+(For an example of the entities datasource in action, see xref:../panel_configuration/dynamic-dashboard.adoc#ppc-filter-pane[Creating a Filter Panel]).
+
+== Datasource Queries
+
+The behavior of this datasource changes depending on which entity is chosen.
+Attributes and values will change depending on the entity type.
+
+NOTE: Currently the entities datasource only allows a single target.
+Subsequent targets in the query editor will be ignored.
+
+== Template Queries
+
+To change the behavior of a template query (like a datasource variable), you can pass a function to the `query` field, with an optional attribute argument.
+
+If no attribute argument is given, the query will return the `id` attribute of the entity.
+
+The default if the `query` field is empty is `alarms()` (return a list of alarm IDs).
+
+=== alarms([attribute])
+
+The `alarms()` function will query the OpenNMS alarms ReST API.
+
+=== nodes([attribute])
+
+The `nodes()` function will query the OpenNMS node ReST API.

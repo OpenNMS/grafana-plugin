@@ -1,0 +1,5 @@
+# Contributing
+
+* Fork me on https://github.com/OpenNMS/opennms-helm[GitHub]
+
+* Open an https://issues.opennms.org/projects/HELM/summary[issue in JIRA]

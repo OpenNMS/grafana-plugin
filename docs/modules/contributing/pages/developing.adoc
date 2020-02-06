@@ -1,0 +1,7 @@
+# Development and Production Versions
+
+Development is done in the `develop` (default GitHub) branch.
+
+Commits to the `develop` branch are automatically compiled and committed to the `master` branch.
+
+Releases will be tagged from the `master` branch and submitted to the https://github.com/grafana/grafana-plugin-repository[Grafana plugin repository].

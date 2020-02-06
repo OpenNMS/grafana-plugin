@@ -1,0 +1,66 @@
+= Installing from Source
+
+== Building
+
+Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory i.e.:
+
+[source, shell]
+----
+mkdir -p /var/lib/grafana/plugins
+cd /var/lib/grafana/plugins
+git clone https://github.com/OpenNMS/opennms-helm.git opennms-helm-app
+----
+
+Compile the application:
+
+[source, shell]
+----
+cd /var/lib/grafana/plugins/opennms-helm-app
+npm install
+npm run build
+----
+
+Restart Grafana:
+
+[source, shell]
+----
+systemctl restart grafana-server
+----
+
+== Build Docker Image from source
+
+The source code needs to be compiled as described in section "Building".
+Create a tarball artifact from compiled source code:
+
+[source, shell]
+----
+mkdir -p ./dist/packages
+tar --exclude='.git' \
+    --exclude='.circleci' \
+    --exclude='./dist/packages' \
+    -czf "./dist/packages/opennms-helm.tar.gz" .
+----
+
+Build Docker image and install the plugin from the tarball artifact.
+
+[source, shell]
+----
+docker build \
+    --build-arg OPENNMS_HELM_PKG=opennms-helm.tar.gz \
+    --build-arg GRAFANA_VERSION=latest \
+    --build-arg OPENNMS_HELM_VERSION=SNAPSHOT \
+    -t myhelm:snapshot .
+----
+
+Run the build Docker image with:
+
+[source, shell]
+----
+docker run -p 3000:3000 myhelm:snapshot
+----
+
+To build the Docker image the following conventions for build arguments are set:
+
+* OPENNMS_HELM_PKG: the name of the tarball archive in dist/packages
+* GRAFANA_VERSION: The version number of Grafana, default is `latest`
+* OPENNMS_HELM_VERSION: Used as in label `org.opennms.helm.version` in the Docker image to identify the running version

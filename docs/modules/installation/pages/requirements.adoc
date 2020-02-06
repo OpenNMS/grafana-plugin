@@ -1,0 +1,13 @@
+= Requirements
+
+== Runtime Requirements
+
+* http://docs.grafana.org/installation[Grafana]
+The required Grafana-Server version is *6.0.0* or later.
+
+== Build Requirements
+
+* https://nodejs.org/en/download[Node.js >= 10.x]
+
+== And of course ...
+* https://www.opennms.org[OpenNMS Horizon] and/or https://www.opennms.com[OpenNMS Meridian] 
