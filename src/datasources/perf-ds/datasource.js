@@ -454,11 +454,12 @@ export class OpenNMSDatasource {
     return OpenNMSDatasource.getNodeResource(nodeId) + "." + resourceId;
   }
 
-  searchForNodes(query) {
+  searchForNodes(query, offset) {
     return this.doOpenNMSRequest({
       url: '/rest/nodes',
       method: 'GET',
       params: {
+        offset: offset,
         limit: this.searchLimit,
         match: 'any',
         comparator: 'ilike',
