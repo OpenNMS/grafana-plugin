@@ -1,0 +1,78 @@
+%define name {{name}}
+%define version {{version}}
+%define release {{release}}
+%define buildroot %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+
+Name: %{name}
+Version: %{version}
+{{#dist}}
+%define dist {{dist}}
+Release: %{release}.%{?dist}
+{{/dist}}
+{{^dist}}
+Release: %{release}
+{{/dist}}
+Summary: {{description}}
+
+Group: Installation Script
+License: {{license}}
+Source: %{name}.tar.gz
+BuildRoot: %{buildroot}
+{{#noarch}}
+BuildArch: noarch
+%global __strip /bin/true
+%define __spec_build_post true
+{{/noarch}}
+{{#requires}}
+Requires: {{{.}}}
+{{/requires}}
+{{#buildRequires}}
+BuildRequires: {{{.}}}
+{{/buildRequires}}
+AutoReqProv: no
+
+%description
+{{description}}
+
+%prep
+%setup -q -c -n %{name}
+
+%build
+{{#buildCommands}}
+{{.}}
+{{/buildCommands}}
+{{#prune}}
+rm -rf .git
+rm -rf node_modules
+rm -rf dist/packages
+rm -rf dist/spec
+rm -rf dist/test
+{{/prune}}
+{{#noarch}}
+# skip npm rebuild
+{{/noarch}}
+{{^noarch}}
+npm rebuild
+{{/noarch}}
+
+%install
+mkdir -p %{buildroot}{{installDir}}/{{name}}-app
+cp -r ./* %{buildroot}{{installDir}}/{{name}}-app
+
+%post
+{{#postInstallCommands}}
+{{.}}
+{{/postInstallCommands}}
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(644, grafana, grafana, 755)
+{{installDir}}/{{name}}-app
+{{#hasExecutableFiles}}
+%defattr(755, grafana, grafana, 755)
+{{#executableFiles}}
+{{.}}
+{{/executableFiles}}
+{{/hasExecutableFiles}}
