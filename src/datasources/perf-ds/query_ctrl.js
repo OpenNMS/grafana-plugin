@@ -184,6 +184,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   validateTarget(targetId, required) {
+    // console.log('validateTarget(' + targetId + ',' + required + ')', this.target);
     if (this.target.type === QueryType.Attribute || this.target.type === QueryType.Expression) {
       var messages = {
         'nodeId': "You must supply a node id.",
@@ -199,9 +200,11 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         return targetId + ' is a required field.';
       }
     } else if (this.target.type === QueryType.Filter) {
-      if (targetId == 'filterName' && (!this.target.filter || !this.target.filter.name)) {
-        return "You must select a filter.";
-      } else if (required && (!this.target.filterParameters || !(targetId in this.target.filterParameters) || !this.target.filterParameters[targetId])) {
+      if (targetId === 'filterName') {
+        if (!this.target.filter || this.target.filter && (!this.target.filter.name || this.target.filter.name.trim().length === 0)) {
+          return "You must select a filter.";
+        }
+      } else if (targetId !== 'type' && required && (!this.target.filterParameters || !(targetId in this.target.filterParameters) || !this.target.filterParameters[targetId])) {
         return targetId + ' is a required field.';
       }
     }
