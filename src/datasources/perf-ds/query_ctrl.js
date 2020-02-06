@@ -24,9 +24,9 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       'Label': 'label',
       'Foreign ID': 'foreignId',
       'sysName': 'sysName'
-    }, function (query) {
+    }, function (query, offset) {
       return self.datasource
-        .searchForNodes(query)
+        .searchForNodes(query, offset)
         .then(function (results) {
           return {
             'count': results.data.count,
@@ -59,13 +59,9 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         });
       }
 
-      // Limit the results - it takes along time to render if there are too many
-      var totalCount = filteredResources.length;
-      filteredResources = _.take(filteredResources, self.datasource.searchLimit);
-
+      // Passing All Filtered Resources to Modal - Pagination will be applied
       return {
-        'count': filteredResources.length,
-        'totalCount': totalCount,
+        'totalCount': filteredResources.length,
         'rows': filteredResources
       };
     }
@@ -122,7 +118,6 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
           });
 
           return {
-            'count': namedAttributes.length,
             'totalCount': namedAttributes.length,
             'rows': namedAttributes
           };
@@ -144,7 +139,6 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         .getAvailableFilters()
         .then(function (results) {
           return {
-            'count': results.data.length,
             'totalCount': results.data.length,
             'rows': results.data
           };

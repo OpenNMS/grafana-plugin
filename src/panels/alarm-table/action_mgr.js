@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {Model} from 'opennms';
 import {CustomAction} from '../../lib/custom_action';
+import async from 'async';
 
 export class ActionMgr {
   constructor(ctrl, rows, appConfig) {
@@ -31,12 +32,26 @@ export class ActionMgr {
     // We should only ack alarms that are not already acked
     let acknowledgeableRows = _.filter(this.rows, row => row.alarm.ackTime === void 0);
     this.addOptionToContextMenu('General', 'Acknowledge', acknowledgeableRows,
-        (row) => self.ctrl.acknowledgeAlarm(row.source, row.alarmId));
+        (row, callback) => {
+          self.ctrl.acknowledgeAlarm(row.source, row.alarmId).then(() => {
+            callback(null);
+          }, () => {
+            //Continue other actions even if there's any error
+            callback(null);
+          })
+        });
 
     // We should only nack alarms that ARE already acked
     let unacknowledgeableRows = _.filter(this.rows, row => row.alarm.ackTime);
     this.addOptionToContextMenu('General', 'Unacknowledge', unacknowledgeableRows,
-      (row) => self.ctrl.unacknowledgeAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        self.ctrl.unacknowledgeAlarm(row.source, row.alarmId).then(() => {
+          callback(null);
+        }, () => {
+          //Continue other actions even if there's any error
+          callback(null);
+        })
+      });
 
     // We should only escalate alarms that have a severity < CRITICAL
     let escalatableRows = _.filter(this.rows, row => {
@@ -44,7 +59,14 @@ export class ActionMgr {
       return severity.index >= Model.Severities.CLEARED.index && severity.index < Model.Severities.CRITICAL.index;
     });
     this.addOptionToContextMenu('General', 'Escalate', escalatableRows,
-      (row) => self.ctrl.escalateAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        self.ctrl.escalateAlarm(row.source, row.alarmId).then(() => {
+          callback(null);
+        }, () => {
+          //Continue other actions even if there's any error
+          callback(null);
+        })
+      });
 
     // We should only clear alarms that have a severity > CLEARED
     let cleareableRows = _.filter(this.rows, row => {
@@ -52,7 +74,15 @@ export class ActionMgr {
       return severity.index > Model.Severities.CLEARED.index;
     });
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
-      (row) => self.ctrl.clearAlarm(row.source, row.alarmId));
+      (row, callback) => {
+        var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
+        clearAlarmPromise.then(() => {
+          callback(null);
+        }, () => {
+          //Continue other actions even if there's any error
+          callback(null);
+        })
+      });
 
     // We should only create tickets for alarms that don't already have a ticket state, or where a previous create failed
     let createTicketRows = _.filter(this.rows, row => {
@@ -119,10 +149,12 @@ export class ActionMgr {
     this.options.push({
       text: text + this.getSuffix(rows),
       click: () => {
-        // Apply the action to each row in the selection
-        _.each(rows, row => action(row));
+        // Apply the action(s) to each row in the selection
+        async.each(rows, (row, callback) => action(row, callback), () => {
+            //Refresh after all actions are completed
+            this.ctrl.refreshDashboard();
+        })
       }
     });
   }
-
 }

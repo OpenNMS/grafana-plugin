@@ -53,6 +53,7 @@
     "@babel/runtime": "^7.6.3",
     "@grafana/data": "^6.6.0",
     "@grafana/ui": "^6.6.0",
+    "async": "3.1.0",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "crypto-js": "^3.1.9-1",

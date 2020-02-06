@@ -43,11 +43,21 @@
     </div>
 
     <div class="modal-footer">
-        <p ng-show="!ctrl.searching && ctrl.rows.length" class="pull-left text-info">Showing <b>{{ ctrl.count }}</b> of <b>{{
-            ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.</p>
-        <button type="button" class="btn btn-success" ng-click="ctrl.cancel();">Cancel</button>
-        <button type="button" class="btn btn-success" ng-click="ctrl.ok()" ng-disabled="ctrl.selectedRow == null">
-            Select
-        </button>
+        <div class="row">
+            <div ng-show="!ctrl.searching && ctrl.rows.length" class="col-md-4 page-detail-text"><b>{{ ctrl.offset + 1 }} - {{ ctrl.count }}</b> of <b>{{
+                ctrl.totalCount }}</b> {{ ctrl.$scope.label }}.
+            </div>
+
+            <div ng-show="!ctrl.searching && ctrl.rows.length" class="col-md-4 change-page-div">
+                <button ng-disabled="ctrl.currentPage == 0" ng-click="ctrl.prevPage()" class="change-page-btn">Previous</button>
+                {{ctrl.currentPage + 1}}/{{ctrl.numberOfPages}}
+                <button ng-disabled="(ctrl.currentPage + 1) >= ctrl.numberOfPages" ng-click="ctrl.nextPage()" class="change-page-btn">Next</button>
+            </div>
+
+            <div ng-class="!ctrl.searching && ctrl.rows.length ? 'col-md-4' : 'no-result-found'">
+                <button type="button" class="btn btn-success" ng-click="ctrl.cancel();">Cancel</button>
+                <button type="button" class="btn btn-success" ng-click="ctrl.ok()" ng-show="!ctrl.searching && ctrl.rows.length" ng-disabled="ctrl.selectedRow == null">Select</button>
+            </div>
+        </div>
     </div>
 </div>
