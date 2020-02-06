@@ -3,7 +3,7 @@
 [pc-dyanmic-dash]
 = Creating Dynamic Dashboards
 
-Instead of hard-coding specific information (such as node names or resource IDs) in a panel, {product-title} has several ways to create more dynamic and interactive dashboards:
+Instead of hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} has several ways to create more dynamic and interactive dashboards:
 
 * xref:pc-template-filters[template variables]
 * xref:pc-filter-panel[filter panels]

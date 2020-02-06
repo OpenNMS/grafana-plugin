@@ -8,7 +8,7 @@ If you do not have an existing instance of https://grafana.com[Grafana], refer t
 
 == Install the application
 
-Use the `grafana-cli` tool to install {product-title} from the command line:
+Use the `grafana-cli` tool to install {page-component-title} from the command line:
 
 [source, shell]
 ----

@@ -2,10 +2,10 @@
 = Overview
 
 [.lead]
-{product-title} is an application that allows users to create flexible dashboards to interact with data stored by OpenNMS. 
-{product-title} works with https://grafana.com[Grafana], an analytics platform, to display information like alarms, outages, and key performance indicators.
+{page-component-title} is an application that allows users to create flexible dashboards to interact with data stored by OpenNMS. 
+{page-component-title} works with https://grafana.com[Grafana], an analytics platform, to display information like alarms, outages, and key performance indicators.
 
-To leverage all of the features {product-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana. 
+To leverage all of the features {page-component-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana. 
 In-depth documentation about OpenNMS and Grafana is beyond the scope of this guide, but check out the following for a primer: 
 
 * https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[OpenNMS 101 training videos]
@@ -15,10 +15,10 @@ In-depth documentation about OpenNMS and Grafana is beyond the scope of this gui
 
 [TIP]
 ====
-Consider taking the time to decide what information you want to include in the dashboard and how you want to organize it. xref:../getting_started/dashboard_planning.adoc#[Planning your dashboard] can make {product-title} setup easier.
+Consider taking the time to decide what information you want to include in the dashboard and how you want to organize it. xref:../getting_started/dashboard_planning.adoc#[Planning your dashboard] can make {page-component-title} setup easier.
 ====
 
-Once you have a good handle on both OpenNMS and Grafana, and a plan for your dashboard, you can get started with {product-title}:
+Once you have a good handle on both OpenNMS and Grafana, and a plan for your dashboard, you can get started with {page-component-title}:
 
 * Step through a xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough[basic walkthrough]
 using the web interface and create your first dashboard
