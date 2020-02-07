@@ -2,9 +2,13 @@ version: 2.1
 
 executors:
 
-  build-executor:
+  build-executor-centos:
     docker:
       - image: opennmsbamboo/node-centos
+
+  build-executor-debian:
+    docker:
+      - image: opennmsbamboo/node-debian
 
   node-executor:
     docker:
@@ -105,7 +109,7 @@ jobs:
             - ./project/dist/docs
 
   make-tarball:
-    executor: build-executor
+    executor: build-executor-centos
     steps:
       - attach_workspace:
           at: ~/
@@ -142,7 +146,7 @@ jobs:
           paths:
             - ./project/helm-docker-image
   make-rpm:
-    executor: build-executor
+    executor: build-executor-centos
     steps:
       - attach_workspace:
           at: ~/
@@ -158,7 +162,7 @@ jobs:
             - ./project/dist/packages
 
   make-deb:
-    executor: build-executor
+    executor: build-executor-debian
     steps:
       - attach_workspace:
           at: ~/
