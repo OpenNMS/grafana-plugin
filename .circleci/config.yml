@@ -91,7 +91,7 @@ jobs:
       - run:
           name: Generate HTML output for documentation
           command: |
-            antora generate local-site.yml
+            antora --stacktrace generate local-site.yml
 
       - store_artifacts:
           path: build/site.zip
