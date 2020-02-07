@@ -150,6 +150,12 @@ jobs:
           name: Create RPM package
           command: |
             ./makerpm.js
+      - store_artifacts:
+          path: ./dist/packages
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/packages
 
   publish-docker-image-latest:
     executor: docker-executor
