@@ -141,7 +141,7 @@ jobs:
           root: ~/
           paths:
             - ./project/helm-docker-image
-  make-rpm-package:
+  make-rpm:
     executor: build-executor
     steps:
       - attach_workspace:
@@ -150,6 +150,22 @@ jobs:
           name: Create RPM package
           command: |
             ./makerpm.js
+      - store_artifacts:
+          path: ./dist/packages
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/packages
+
+  make-deb:
+    executor: build-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Create DEB package
+          command: |
+            ./makedeb.js
       - store_artifacts:
           path: ./dist/packages
       - persist_to_workspace:
@@ -285,7 +301,13 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - make-rpm-package:
+      - make-rpm:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+      - make-deb:
           requires:
             - build
           filters:
