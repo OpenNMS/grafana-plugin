@@ -15,3 +15,7 @@ Welcome to the {page-component-title} {page-version} documentation: information 
 Use the left navigation bar to browse the documentation or the links below to access some highlights.
 ====
 
+[big]*Need help?*
+
+* Talk to us in https://chat.opennms.com/opennms[chat]
+* Join our https://wiki.opennms.org/wiki/Mailing_lists[mailing lists]

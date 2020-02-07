@@ -17,3 +17,7 @@ grafana-cli plugins install opennms-helm-app
 
 The plugin will be installed into your grafana plugins directory. 
 The default is /var/lib/grafana/plugins. http://docs.grafana.org/plugins/installation/[More information on the cli tool].
+
+== Next Steps
+
+See xref:getting_started:index.adoc#[Getting Started with Helm] for help in setting up your first dashboard.

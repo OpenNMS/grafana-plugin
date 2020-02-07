@@ -1,4 +1,4 @@
-= Installing from source
+= Installing from Source
 
 == Building
 
@@ -64,3 +64,7 @@ To build the Docker image the following conventions for build arguments are set:
 * OPENNMS_HELM_PKG: the name of the tarball archive in dist/packages
 * GRAFANA_VERSION: The version number of Grafana, default is `latest`
 * OPENNMS_HELM_VERSION: Used as in label `org.opennms.helm.version` in the Docker image to identify the running version
+
+== Next Steps
+
+See xref:getting_started:index.adoc#[Getting Started with Helm] for help in setting up your first dashboard.

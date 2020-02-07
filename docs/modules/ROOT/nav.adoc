@@ -1,5 +1,5 @@
 .About
-* xref:about:welcome.adoc[Welcome]
+* xref:about:introduction.adoc[What is Helm?]
 * xref:about:legal_notice.adoc[Legal Notice]
 
 .Installation
@@ -12,9 +12,9 @@
 
 .Getting Started with Helm
 * xref:getting_started:index.adoc[Overview]
-* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
 * xref:getting_started:dashboard_planning.adoc[Planning Your Dashboard]
-*xref:getting_started:migrating_from_opennms_datasource.adoc[Migrating from the OpenNMS Datasource Plugin]
+* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
+* xref:getting_started:migrating_from_opennms_datasource.adoc[Migrating from the OpenNMS Datasource Plugin]
 
 .Panel Configuration
 * xref:panel_configuration:index.adoc[Overview]

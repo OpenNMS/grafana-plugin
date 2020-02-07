@@ -8,11 +8,6 @@ If you want to contribute documentation to this project which manages the docs w
 Antora is a documenation site generator based around the AsciiDoc format. 
 To install Antora, follow the https://docs.antora.org/antora/2.2/install/install-antora/[instructions] on the Antora website.  
 
-[source, shell]
-----
-gem install ascii_binder
-----
-
 == Making a Copy of the OpenNMS Docs Repo
 
 If you already know how to use https://git-scm.com/[git], then this is going to sound very familiar.
@@ -42,41 +37,40 @@ The `nav.adoc` file in the ROOT direcory defines the content hierarchy.
 .Structure of the nav.adoc file
 [source]
 ----
----
 
-.About <1>
+.About  <1>
 * xref:about:welcome.adoc[Welcome] <2>
-* xref:about:legal_notice.adoc[Legal Notice]<2>
+* xref:about:legal_notice.adoc[Legal Notice]  <2>
 
-.Installation <3>
-* xref:installation:requirements.adoc[Requirements]<4>
-* xref:installation:rpm.adoc[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]<4>
-* xref:installation:debian.adoc[Installing on Debian/Ubuntu]<4>
+.Installation  <3>
+* xref:installation:requirements.adoc[Requirements]  <4>
+* xref:installation:rpm.adoc[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]  <4>
+* xref:installation:debian.adoc[Installing on Debian/Ubuntu]  <4>
 ----
-<1> Friendly directory name _About_ which is used in the left navigation
-<2> Each topic in the _About_ section; written as a cross reference to the directory, file name, and friendly name that appears in the left navigation. 
+<1> Friendly directory name _About_ which appears in the left navigation.
+<2> Each topic in the _About_ section, written as a cross reference to the directory, file name, and friendly name that appears in the left navigation. 
 <3> Second section _Installation_.
 <4> Each topic in the _Installation_ section. 
 
-In case images needs to be included, use a directory `assests/images` inside each module folder.
+IF images needs to be included, use a directory `assests/images` inside each module folder.
 Within the text file images are included as the following:
 
 [source]
 ----
 // At the beginning of the .adoc text file
-:imagesdir: ./images<1>
+:imagesdir: ./images  <1>
 
-.Overview of the structure of Helm<2>
-image::helm-diagram.svg[Helm Diagram, 600]<3>
+.Overview of the structure of Helm  <2>
+image::helm-diagram.svg[Helm Diagram, 600]  <3>
 ----
 
-<1> Lookup directory for images for this text file
-<2> Description of the image
-<3> Include the image with an alternative text and a proportional with of 600 pixels
+<1> Lookup directory for images for this text file.
+<2> Description of the image.
+<3> Include the image with an alternative text and a proportional width of 600 pixels.
 
-The `_distro_map.yml` is used to control the overall behavior how docs are generated for different branches and distributions.
-It is normally not necessary to touch this file just by creating or changing existing content.
-Anyways the file is described as the following:
+The `_distro_map.yml` controls the overall behavior of how docs are generated for different branches and distributions.
+It is normally not necessary to touch this file when just creating or changing existing content.
+The file is described as the following:
 
 [source]
 ----
@@ -95,90 +89,30 @@ helm: <1>
 ----
 <1> System name of distro, used when conditionalizing content on a per-distro basis.
 <2> System name of site, used to pick up the correct index file and organize the included distros.
-<3> Git branch name that represents a version of this distro
-<4> User-readable name of this version of this distro
-<5> Directory on the site where this version of this distro should go
+<3> Git branch name that represents a version of this distro.
+<4> User-readable name of this version of this distro.
+<5> Directory on the site where this version of this distro should go.
 
 == Building the Docs
 
 The documentation is located in the `docs` directory.
-Transforming an AsciiBinder repo into a bunch of documentation is pretty easy:
+Transforming an Antora repo into a documentation site is pretty easy:
 
 [source, shell]
 ----
-asciibinder build <docs_dir>
+antora generate local-site.yml
 ----
-
-NOTE: Running just the `asciibinder` binary command in the `docs` directory is equivalent to `asciibinder build`.
 
 === Build Output
 
-AsciiBinder starts by reading the distro config file and then it processes docs multiple times - once for every distribution defined in the distro config file, multiplied by every branch.
-You can see the HTML produced by this process under the `_preview` directory in the `docs` directory.
+Antora creates a .zip file of the documentation site in the `build` directory. 
+Unzipping the file reveals the HTML content in the `site` directory. 
 
-Previews are organized by distro and then by branch; the generic path to a given version of the docs is:
-
-[source, shell]
-----
-<docs_repo_dir>/_preview/<distro>/<branch_dir_name>
-----
-
-The `branch_dir_name`, which comes from the distro config file, is not necessarily identical to the branch name.
-Following on this build behavior, the simplest way to inspect the output of your build is to open a web browser and navigate to the file that you want, in the distro / branch path that you are working with.
-However, have a look at the section on Instant Preview for information on how to get instant feedback on your modifications.
-
-=== Instant Preview with LiveReload
-
-If you are interested in seeing instant feedback on your changes to an AsciiDoc file, you can take advantage of AsciiBinder’s live preview capability by running:
+The generic path to a given version of the docs is:
 
 [source, shell]
 ----
-asciibinder watch
+<docs_repo_dir>/build/site/<distro>/<branch_dir_name>
 ----
 
-When you do this, you are starting a Guard process that runs in the foreground on that terminal.
-To gain the full effects of the guard, first you will need to prepare your web browser with a http://livereload.com/[LiveReload] plugin - http://livereload.com/extensions/[check here for the most up-to-date plugins and instructions].
 
-=== Working with Instant Preview
-
-With `asciibinder watch` running in a terminal, and an HTML file from your `_preview` area open in a webbrowser, you can enable LiveReload in the browser.
-Once you have done that, any time you save the source `.adoc` file for the HTML page that you are watching, AsciiBinder will automatically rebuild the page and your browser will update with the changes.
-If you are new to AsciiDoc, or if you are trying out a new layout, this is a helpful way of getting instant feedback on your work.
-
-=== Exiting Instant Preview
-
-To stop the `asciibinder watch` process, you can either:
-
-* Type `exit` and hit `<ENTER>`` or
-* Press `<CTRL>+C` to break out of the Guard shell
-
-== Packaging Sites for Publication
-
-The site packaging action performs three distinct operations:
-
-1. Clean out previously generated content from the `_preview` and `_package` directories
-2. Build the docs as per `asciibinder build`
-3. Based on rules in the `_distro_map.yml` file, selectively copy content from the `_preview` area into the `_package` area on a site-by-site basis.
-
-The result of this is that the `_package` are will contain a subdirectory for each site that is being built, and all of the files in those site directories will be ready for direct copying onto the site’s web server.
-
-Invoking the package action is very simple:
-
-[source, shell]
-----
-asciibinder package
-----
-
-Presently, AsciiBinder does not include logic to actually push the files out to the hosting server.
-This is better done with a CI system (like Jenkins) that can rebuild the docs in response to changes in the source code and then automatically redeploy the websites using something like `rsync`.
-
-For information on how to configure a site, refer to the Maintainer’s Guide.
-
-== Cleaning Out Build and Package Artifacts
-
-To clean up the the contents of the `_preview` and `_package` directories and start fresh, you can run:
-
-[source, shell]
-----
-asciibinder clean
-----
