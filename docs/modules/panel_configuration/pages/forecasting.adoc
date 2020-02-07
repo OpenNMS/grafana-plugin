@@ -17,7 +17,7 @@ This procedure describes how to create forecast metrics on network usage, using 
 
 . In the *Query* drop-down, select the datasource.
 
-.. You need to select a xref:../datasources/performance_datasource.adoc#[performance datasource].
+.. You need to select a xref:datasources:performance_datasource.adoc[performance datasource].
 
 . In the *Type* drop-down, choose *Attribute*.
 . Specify the node you want to monitor. 

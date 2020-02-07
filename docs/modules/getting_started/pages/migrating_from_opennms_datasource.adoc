@@ -23,7 +23,7 @@ The tutorial assumes that you have:
 Both the OpenNMS Data Source plugin and {page-component-title} can be installed at the same time while you complete the migration.
 
 If you have not already done so, you may install {page-component-title} using your prefered method.
-See xref:../welcome/index.adoc#welcome-installing[Installing {page-component-title}] for detailed instructions.
+See xref:installation:requirements.adoc[Installation] for detailed instructions.
 
 [[mig-app-setup]]
 == Application Setup
