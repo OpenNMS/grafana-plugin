@@ -1,3 +1,4 @@
+:imagesdir: ../assets/images
 = Planning your dashboard
 
 [.lead]

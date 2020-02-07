@@ -1,4 +1,4 @@
-:imagesdir: images
+:imagesdir: ../assets/images
 :!figure-caption:
 = What is {page-component-title}?
 

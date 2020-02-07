@@ -1,3 +1,4 @@
+:imagesdir: ../assets/images
 = Write and Build Documentation
 
 If you want to contribute documentation to this project which manages the docs with Antora, you’ve come to the right place.

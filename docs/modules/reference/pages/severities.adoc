@@ -1,4 +1,5 @@
-:imagesdir: images
+
+:imagesdir: ../assets/images
 = Severities
 
 The severities in OpenNMS are defined as follows:

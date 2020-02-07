@@ -1,4 +1,4 @@
-:imagesdir: images
+:imagesdir: ../assets/images
 [[getting-started-migrating-from-opennms-datasource]]
 = Migrating from the OpenNMS Data Source plugin
 :toc: macro
