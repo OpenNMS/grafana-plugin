@@ -141,6 +141,15 @@ jobs:
           root: ~/
           paths:
             - ./project/helm-docker-image
+  make-rpm-package:
+    executor: build-executor
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Create RPM package
+          command: |
+            ./makerpm.js
 
   publish-docker-image-latest:
     executor: docker-executor
@@ -267,6 +276,12 @@ workflows:
       - make-docker-image:
           requires:
             - make-tarball
+          filters:
+            tags:
+              only: /^v.*/
+      - make-rpm-package:
+          requires:
+            - build
           filters:
             tags:
               only: /^v.*/
