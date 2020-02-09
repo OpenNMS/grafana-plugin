@@ -153,7 +153,7 @@ jobs:
       - run:
           name: Create RPM package
           command: |
-            ./makerpm.js
+            ./makerpm.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
       - store_artifacts:
           path: ./dist/packages
       - persist_to_workspace:
@@ -169,7 +169,7 @@ jobs:
       - run:
           name: Create DEB package
           command: |
-            ./makedeb.js
+            ./makedeb.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
       - store_artifacts:
           path: ./dist/packages
       - persist_to_workspace:
