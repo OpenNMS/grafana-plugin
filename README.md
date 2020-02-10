@@ -54,6 +54,20 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v5.0.0
+
+This release fixes a number of issues, most notably compatibility with newer Grafana releases.
+These fixes necessitated dropping compatibility with Grafana versions older than 6.3, so we have bumped the major version of Helm to 5.
+
+Additionally, documentation has been improved and a number of behind-the-scenes changes have been made related to continuous integration and build system.
+
+* [HELM-64: Node search allows only to select the first 25 nodes](https://issues.opennms.org/browse/HELM-64)
+* [HELM-196: Alarm table rendering failures with Grafana 6.5.2](https://issues.opennms.org/browse/HELM-196)
+* [HELM-201: Panel Refreshes After Each Request When Clearing Multiple Alarms](https://issues.opennms.org/browse/HELM-201)
+* [HELM-202: Alarms details modal shows wrong alarm when table is sorted](https://issues.opennms.org/browse/HELM-202)
+* [HELM-208: Error appears when selecting filter type](https://issues.opennms.org/browse/HELM-208)
+* [HELM-212: number (count) columns render wrong in Grafana 6.5 and 6.6](https://issues.opennms.org/browse/HELM-212)
+
 ### v4.0.2
 
 This release fixes a bug with the Flow datasource and Grafana 6.4, as well as some other cosmetic changes to the Flow query interface.
