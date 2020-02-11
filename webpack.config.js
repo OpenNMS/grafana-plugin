@@ -112,7 +112,7 @@ function createConfig(options) {
 
   if (options.type === 'root') {
     config.entry = {
-      'module': 'src/module.js',
+      'module': [ '@grafana/ui', '@grafana/data', 'src/module.js' ],
       'datasources/perf-ds/css/opennms.dark': 'src/datasources/perf-ds/sass/opennms.dark.scss',
       'datasources/perf-ds/css/opennms.light': 'src/datasources/perf-ds/sass/opennms.light.scss',
       'panels/alarm-table/css/table.dark': 'src/panels/alarm-table/sass/table.dark.scss',
@@ -197,7 +197,7 @@ function createConfig(options) {
     config.output.libraryTarget = 'amd';
 
     for (let plugin of plugins) {
-      config.entry[plugin] = path.resolve(rootdir, 'src', plugin, 'module.js');
+      config.entry[plugin] = ['@grafana/ui', '@grafana/data', 'angular', path.resolve(rootdir, 'src', plugin, 'module.js')];
     }
   } else {
     console.log('unhandled type: ' + options.type);
