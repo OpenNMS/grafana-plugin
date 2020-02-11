@@ -54,6 +54,11 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v5.0.1
+
+This small release works around a module-loading bug in some Grafana versions.
+It also bumps the Grafana provided by our Docker images to `6.6.1`.
+
 ### v5.0.0
 
 This release fixes a number of issues, most notably compatibility with newer Grafana releases.
