@@ -378,7 +378,6 @@ workflows:
             branches:
               only: 
                 - master
-                - jira/HELM-214
             tags:
               ignore: /^v.*/
       - publish-rpm:
@@ -388,6 +387,5 @@ workflows:
             branches:
               only: 
                 - master
-                - jira/HELM-214
             tags:
               ignore: /^v.*/
