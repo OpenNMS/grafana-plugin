@@ -26,6 +26,9 @@ executors:
     docker:
       - image: opennms/netlify-cli:2.8.3-b1
 
+orbs:
+  cloudsmith: cloudsmith/cloudsmith@1.0.3
+
 commands:
   docker-registry-login:
     description: "Connect to Docker Registry"
@@ -273,6 +276,32 @@ jobs:
           name: Deploy docs to Netlify
           command: netlify deploy --prod -d dist/docs/helm -s ${NETLIFY_SITE_ID}
 
+  publish-rpm:
+    executor: cloudsmith/default
+    steps:
+      - attach_workspace:
+          at: ~/
+      - cloudsmith/ensure-api-key
+      - cloudsmith/install-cli
+      - cloudsmith/publish:
+          cloudsmith-repository: opennms/common
+          package-format: rpm
+          package-distribution: any-distro/any-version
+          package-path: dist/packages/*.rpm
+
+  publish-deb:
+    executor: cloudsmith/default
+    steps:
+      - attach_workspace:
+          at: ~/
+      - cloudsmith/ensure-api-key
+      - cloudsmith/install-cli
+      - cloudsmith/publish:
+          cloudsmith-repository: opennms/common
+          package-format: deb
+          package-distribution: any-distro/any-version
+          package-path: dist/packages/*.deb
+
 workflows:
   version: 2
   build-workflow:
@@ -340,5 +369,25 @@ workflows:
             branches:
               only: 
                 - master
+            tags:
+              ignore: /^v.*/
+      - publish-deb:
+          requires:
+            - make-deb
+          filters:
+            branches:
+              only: 
+                - master
+                - jira/HELM-214
+            tags:
+              ignore: /^v.*/
+      - publish-rpm:
+          requires:
+            - make-rpm
+          filters:
+            branches:
+              only: 
+                - master
+                - jira/HELM-214
             tags:
               ignore: /^v.*/
