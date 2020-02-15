@@ -4,11 +4,11 @@ executors:
 
   build-executor-centos:
     docker:
-      - image: opennmsbamboo/node-centos
+      - image: opennms/build-env:11.0.5.10-3.6.3-b3976
 
   build-executor-debian:
     docker:
-      - image: opennmsbamboo/node-debian
+      - image: opennms/build-env:debian-jdk11-b3982
 
   node-executor:
     docker:
@@ -28,6 +28,7 @@ executors:
 
 orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.3
+  sign-packages: opennms/sign-packages@0.0.8
 
 commands:
   docker-registry-login:
@@ -157,6 +158,11 @@ jobs:
           name: Create RPM package
           command: |
             ./makerpm.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
+      - sign-packages/install-rpm-dependencies
+      - sign-packages/setup-env
+      - sign-packages/sign-rpms:
+          gpgname: opennms@opennms.org
+          packages: dist/packages/*.rpm
       - store_artifacts:
           path: ./dist/packages
       - persist_to_workspace:
@@ -173,6 +179,11 @@ jobs:
           name: Create DEB package
           command: |
             ./makedeb.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
+      - sign-packages/install-deb-dependencies
+      - sign-packages/setup-env
+      - sign-packages/sign-debs:
+          gpgname: opennms@opennms.org
+          packages: dist/packages/*.deb
       - store_artifacts:
           path: ./dist/packages
       - persist_to_workspace:
