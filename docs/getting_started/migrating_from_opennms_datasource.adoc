@@ -11,6 +11,7 @@ toc::[]
 == Overview
 
 This guide helps migrate an existing installation of Grafana from using the OpenNMS Data Source plugin to using {product-title} to interface with OpenNMS.
+The OpenNMS Data Source plugin has been deprecated. 
 
 The tutorial assumes that you have:
 
