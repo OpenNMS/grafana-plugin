@@ -73,3 +73,42 @@ image::pc-forecast.png[Periods, 600]
 . Experiment with changing the time range and forecast results. 
 The further into the future you forecast, the less authoritative the forecast will be. 
 
+=== Pre-defined Filters
+
+The following table describes the pre-defined filters from OpenNMS that Helm provides for forecast metrics:
+
+[cols="20%,40%,40%"]
+|===
+|Filter |Description |Use 
+
+|Chomp
+| Strips leading and trailing rows that contain nothing but NaNs/null values.
+|This filter is useful when the values from the data source do not cover the entire time interval the report uses.
+
+|HoltWinters
+|Performs Holt-Winters forecasting, a way to model and predict the behavior of a sequence of values over time. 
+|Creates forecasts of your data based on the parameters you specify. 
+
+|Outlier
+|Removes data points that differ significantly from other data and replaces them with interpolated values. 
+|Helps to smooth the data to improve forecasting results. 
+
+|Trend
+|Fits a trend line or polynomial to a given column.
+|Displays upwards or downwards changes in the forecast data. 
+
+|JEXL
+|Generic JEXL expression filter
+|Filters on mathematical and conditional operators provided by JEXL. 
+For example, you could specify a filter to display the SUM of certain data. 
+
+|Percentile
+|Calculates percentiles.
+|Displays the percentage of data under the specified percentile. 
+
+|Derivative
+|Calculates the derivative (rate of change) between rows.
+|Displays the rate of change during the forecast period. 
+
+|===
+
