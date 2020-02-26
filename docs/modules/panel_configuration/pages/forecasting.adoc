@@ -77,7 +77,7 @@ The further into the future you forecast, the less authoritative the forecast wi
 
 The following table describes the pre-defined filters from OpenNMS that Helm provides for forecast metrics:
 
-[cols="20%,40%,40%"]
+[cols="15%,40%,45%"]
 |===
 |Filter |Description |Use 
 
