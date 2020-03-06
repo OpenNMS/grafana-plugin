@@ -380,6 +380,7 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-deb:
+          context: Service Principal
           requires:
             - make-deb
           filters:
@@ -389,6 +390,7 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-rpm:
+          context: Service Principal
           requires:
             - make-rpm
           filters:
