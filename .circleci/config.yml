@@ -2,9 +2,13 @@ version: 2.1
 
 executors:
 
-  build-executor:
+  build-executor-centos:
     docker:
-      - image: opennmsbamboo/node-centos
+      - image: opennms/build-env:11.0.5.10-3.6.3-b3976
+
+  build-executor-debian:
+    docker:
+      - image: opennms/build-env:debian-jdk11-b3982
 
   node-executor:
     docker:
@@ -21,6 +25,10 @@ executors:
   netlify-cli-executor:
     docker:
       - image: opennms/netlify-cli:2.8.3-b1
+
+orbs:
+  cloudsmith: cloudsmith/cloudsmith@1.0.3
+  sign-packages: opennms/sign-packages@0.0.8
 
 commands:
   docker-registry-login:
@@ -104,7 +112,7 @@ jobs:
             - project/build
 
   make-tarball:
-    executor: build-executor
+    executor: build-executor-centos
     steps:
       - attach_workspace:
           at: ~/
@@ -140,6 +148,47 @@ jobs:
           root: ~/
           paths:
             - ./project/helm-docker-image
+  make-rpm:
+    executor: build-executor-centos
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Create RPM package
+          command: |
+            ./makerpm.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
+      - sign-packages/install-rpm-dependencies
+      - sign-packages/setup-env
+      - sign-packages/sign-rpms:
+          gpgname: opennms@opennms.org
+          packages: dist/packages/*.rpm
+      - store_artifacts:
+          path: ./dist/packages
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/packages
+
+  make-deb:
+    executor: build-executor-debian
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Create DEB package
+          command: |
+            ./makedeb.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
+      - sign-packages/install-deb-dependencies
+      - sign-packages/setup-env
+      - sign-packages/sign-debs:
+          gpgname: opennms@opennms.org
+          packages: dist/packages/*.deb
+      - store_artifacts:
+          path: ./dist/packages
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./project/dist/packages
 
   publish-docker-image-latest:
     executor: docker-executor
@@ -234,6 +283,32 @@ jobs:
           name: Deploy docs to Netlify
           command: netlify deploy --prod -d public -s ${NETLIFY_SITE_ID}
 
+  publish-rpm:
+    executor: cloudsmith/default
+    steps:
+      - attach_workspace:
+          at: ~/
+      - cloudsmith/ensure-api-key
+      - cloudsmith/install-cli
+      - cloudsmith/publish:
+          cloudsmith-repository: opennms/common
+          package-format: rpm
+          package-distribution: any-distro/any-version
+          package-path: dist/packages/*.rpm
+
+  publish-deb:
+    executor: cloudsmith/default
+    steps:
+      - attach_workspace:
+          at: ~/
+      - cloudsmith/ensure-api-key
+      - cloudsmith/install-cli
+      - cloudsmith/publish:
+          cloudsmith-repository: opennms/common
+          package-format: deb
+          package-distribution: any-distro/any-version
+          package-path: dist/packages/*.deb
+
 workflows:
   version: 2
   build-workflow:
@@ -266,6 +341,18 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - make-rpm:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+      - make-deb:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
       - publish-docker-image-latest:
           requires:
             - make-docker-image
@@ -289,6 +376,24 @@ workflows:
             branches:
               only: 
                 - master
+                - develop
+            tags:
+              ignore: /^v.*/
+      - publish-deb:
+          requires:
+            - make-deb
+          filters:
+            branches:
+              only: 
+                - develop
+            tags:
+              ignore: /^v.*/
+      - publish-rpm:
+          requires:
+            - make-rpm
+          filters:
+            branches:
+              only: 
                 - develop
             tags:
               ignore: /^v.*/
