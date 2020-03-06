@@ -388,7 +388,7 @@ workflows:
           filters:
             branches:
               only: 
-                - master
+                - develop
             tags:
               ignore: /^v.*/
       - publish-rpm:
@@ -397,6 +397,6 @@ workflows:
           filters:
             branches:
               only: 
-                - master
+                - develop
             tags:
               ignore: /^v.*/
