@@ -289,6 +289,6 @@ workflows:
             branches:
               only: 
                 - master
-                - jira/HELM-218
+                - develop
             tags:
               ignore: /^v.*/
