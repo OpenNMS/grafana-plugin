@@ -1,0 +1,31 @@
+:imagesdir: ../assets/images
+= Planning your dashboard
+
+[.lead]
+Every network is unique, with different monitoring requirements. 
+{page-component-title} has the flexibility to enable users to customize dashboards to display data in a way that best meets their needs and workflow. 
+
+A dashboard you create in {page-component-title} will contain multiple panels, each of which displays specific data. 
+For example, the following sample dashboard displays performance metrics collected via SNMP. 
+
+image::gf-helm-sample-dash.png[Dash, 800] 
+
+Another dashboard might display traffic flows:
+
+image::gf-flows.png[Flows, 800]
+
+Taking the time to consider what data you want to display and how to organize it can save time and effort when creating dashboards in {page-component-title}.
+
+When planning your dashboard, consider the following:
+
+* type of data (faults, performance, flows, inventory)
+* workflow (What is the best way to organize the data? By type, location, devices, staff responsibility, etc.?)
+* staff (Who is responsible and how are issues addressed? Who should have access to what data?)
+
+[TIP]
+====
+Check out https://grafana.com/grafana/dashboards?search=opennms[existing OpenNMS dashboards] for inspiration.
+====
+
+You're ready to xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough [create your first dashboard].
+

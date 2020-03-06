@@ -1,0 +1,36 @@
+.About
+* xref:about:introduction.adoc[What is Helm?]
+* xref:about:legal_notice.adoc[Legal Notice]
+
+.Installation
+* xref:installation:requirements.adoc[Requirements]
+* xref:installation:rpm.adoc[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
+* xref:installation:debian.adoc[Installing on Debian/Ubuntu]
+* xref:installation:plugin.adoc[Installing via Plugin (for existing Grafana installations)]
+* xref:installation:source.adoc[Installing from Source]
+* xref:installation:upgrading.adoc[Upgrading from Older Versions]
+
+.Getting Started with Helm
+* xref:getting_started:index.adoc[Overview]
+* xref:getting_started:dashboard_planning.adoc[Planning Your Dashboard]
+* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
+* xref:getting_started:migrating_from_opennms_datasource.adoc[Migrating from the OpenNMS Datasource Plugin]
+
+.Panel Configuration
+* xref:panel_configuration:index.adoc[Overview]
+* xref:panel_configuration:forecasting.adoc[Using Filters to Forecast Metrics]
+* xref:panel_configuration:dynamic-dashboard.adoc[Creating Dynamic Dashboards]
+
+.Datasources
+* xref:datasources:performance_datasource.adoc[Performance Datasource]
+* xref:datasources:entity_datasource.adoc[Entities Datasource]
+* xref:datasources:flow_datasource.adoc[Flow Datasource]
+
+.Contributing
+* xref:contributing:index.adoc[Contributing]
+* xref:contributing:developing.adoc[Developing]
+* xref:contributing:how-to-build-docs.adoc[How to Build the Docs]
+
+.Reference
+* xref:reference:severities.adoc[Severities]
+* xref:reference:how-to-build-with-docker.adoc[How to Build with Docker]

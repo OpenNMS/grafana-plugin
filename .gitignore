@@ -37,9 +37,9 @@ profile.cov
 grafana
 .notouch
 
-# AsciiBinder documentation preview and package
-docs/_preview
-docs/_package
+# Antora documentation
+public/
+build/
 
 # Not ready yet
 /SPECS
