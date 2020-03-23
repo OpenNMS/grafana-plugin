@@ -28,7 +28,29 @@ executors:
 
 orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.3
-  sign-packages: opennms/sign-packages@0.0.8
+  sign-packages: opennms/sign-packages@2.1.0
+
+defaults: &defaults
+  parameters:
+    from_branch:
+      description: the auto-merge source branch
+      type: string
+      default: jira/HELM-233
+    from_branch_label:
+      description: the auto-merge source branch (escaped, no slashes)
+      type: string
+      default: jira-HELM-233
+    to_branch:
+      description: the auto-merge target branch
+      type: string
+      default: jira/HELM-233-master
+    to_branch_label:
+      description: the auto-merge target branch (escaped, no slashes)
+      type: string
+      default: jira-HELM-233-master
+
+docker_container_config: &docker_container_config
+  executor: docker-executor
 
 commands:
   docker-registry-login:
@@ -111,13 +133,13 @@ jobs:
             - project/public
             - project/build
 
-  create-develop-to-master-branch:
+  create-merge-branch:
     <<: *defaults
     <<: *docker_container_config
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "6d:74:e2:57:ca:3b:47:ed:48:c2:8d:aa:43:23:47:f6"
+            - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
       - checkout
       - run:
           name: Create git identity
@@ -125,22 +147,22 @@ jobs:
             git config user.email "cicd-system@opennms.com"
             git config user.name "CI/CD System"
       - run:
-          name: Checkout master and merge from develop
+          name: Checkout target branch and merge from source
           command: |
             export GIT_MERGE_AUTOEDIT=no
-            git checkout master
-            git merge origin/develop
+            git checkout << parameters.to_branch >>
+            git merge origin/<< parameters.from_branch >>
       - run:
-          name: Push to develop-to-master branch
-          command: git push -f origin master:merge/develop-to-master
+          name: Push to github
+          command: git push -f origin << parameters.to_branch >>:merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
 
-  merge-develop-to-master-branch:
+  merge-branch:
     <<: *defaults
     <<: *docker_container_config
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "6d:74:e2:57:ca:3b:47:ed:48:c2:8d:aa:43:23:47:f6"
+            - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
       - checkout
       - run:
           name: Create git identity
@@ -148,14 +170,14 @@ jobs:
             git config user.email "cicd-system@opennms.com"
             git config user.name "CI/CD System"
       - run:
-          name: Checkout master and merge with develop-to-master
+          name: Checkout target and merge with merge branch
           command: |
             export GIT_MERGE_AUTOEDIT=no
-            git checkout master
-            git merge origin/merge/develop-to-master
+            git checkout << parameters.to_branch >>
+            git merge origin/merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
       - run:
-          name: Push to master
-          command: git push origin master:master
+          name: Push to github
+          command: git push origin << parameters.to_branch >>:<< parameters.to_branch >>
 
   make-tarball:
     executor: build-executor-centos
@@ -203,10 +225,13 @@ jobs:
           name: Create RPM package
           command: |
             ./makerpm.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
-      - sign-packages/install-rpm-dependencies
-      - sign-packages/setup-env
+      - sign-packages/install-rpm-dependencies:
+          skip_if_forked_pr: true
+      - sign-packages/setup-env:
+          skip_if_forked_pr: true
       - sign-packages/sign-rpms:
-          gpgname: opennms@opennms.org
+          skip_if_forked_pr: true
+          gnupg_key: opennms@opennms.org
           packages: dist/packages/*.rpm
       - store_artifacts:
           path: ./dist/packages
@@ -224,10 +249,13 @@ jobs:
           name: Create DEB package
           command: |
             ./makedeb.js --release "$(git log --pretty=format:%cd --date=short -1 | sed -e s,-,,g).${CIRCLE_BUILD_NUM}"
-      - sign-packages/install-deb-dependencies
-      - sign-packages/setup-env
+      - sign-packages/install-deb-dependencies:
+          skip_if_forked_pr: true
+      - sign-packages/setup-env:
+          skip_if_forked_pr: true
       - sign-packages/sign-debs:
-          gpgname: opennms@opennms.org
+          skip_if_forked_pr: true
+          gnupg_key: opennms@opennms.org
           packages: dist/packages/*.deb
       - store_artifacts:
           path: ./dist/packages
@@ -270,7 +298,7 @@ jobs:
                 DOCKERHUB_PROJECT_NAME=$(echo "${DOCKERHUB_PROJECT_NAME}" | tr '[:upper:]' '[:lower:]')
                 echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
                 echo "Overwrite DOCKERHUB_PROJECT_NAME with ${DOCKERHUB_PROJECT_NAME}."
-            fi            
+            fi
       - run:
           name: Tag Docker Container Images for release and publish to DockerHub
           command: |
@@ -313,7 +341,7 @@ jobs:
                 DOCKERHUB_PROJECT_NAME=$(echo "${DOCKERHUB_PROJECT_NAME}" | tr '[:upper:]' '[:lower:]')
                 echo "export DOCKERHUB_PROJECT_NAME=${DOCKERHUB_PROJECT_NAME}" >> ${BASH_ENV}
                 echo "Overwrite DOCKERHUB_PROJECT_NAME with ${DOCKERHUB_PROJECT_NAME}."
-            fi            
+            fi
       - run:
           name: Tag Docker Container Images for bleeding and publish to DockerHub
           command: |
@@ -358,6 +386,7 @@ jobs:
 workflows:
   version: 2
   build-workflow:
+    <<: *defaults
     jobs:
       - pre-build:
           filters:
@@ -375,18 +404,18 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - create-develop-to-master-branch:
+      - create-merge-branch:
           requires:
             - build
           filters:
             branches:
-              only: develop
-      - merge-develop-to-master-branch:
+              only: << parameters.from_branch >>
+      - merge-branch:
           requires:
             - build
           filters:
             branches:
-              only: /^merge\/develop-to-master/
+              only: merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
       - make-tarball:
           requires:
             - build
@@ -432,7 +461,7 @@ workflows:
             - build-docs
           filters:
             branches:
-              only: 
+              only:
                 - master
                 - develop
             tags:
@@ -443,7 +472,7 @@ workflows:
             - make-deb
           filters:
             branches:
-              only: 
+              only:
                 - develop
             tags:
               ignore: /^v.*/
@@ -453,7 +482,7 @@ workflows:
             - make-rpm
           filters:
             branches:
-              only: 
+              only:
                 - develop
             tags:
               ignore: /^v.*/
