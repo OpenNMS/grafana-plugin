@@ -30,24 +30,26 @@ orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.3
   sign-packages: opennms/sign-packages@2.1.0
 
+# NOTE: the "_label" versions of these are for the case when your source or target
+# branches have slashes in them, that way the merge branch gets created properly
 defaults: &defaults
   parameters:
     from_branch:
       description: the auto-merge source branch
       type: string
-      default: jira/HELM-233
+      default: develop
     from_branch_label:
       description: the auto-merge source branch (escaped, no slashes)
       type: string
-      default: jira-HELM-233
+      default: develop
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: jira/HELM-233-master
+      default: master
     to_branch_label:
       description: the auto-merge target branch (escaped, no slashes)
       type: string
-      default: jira-HELM-233-master
+      default: master
 
 docker_container_config: &docker_container_config
   executor: docker-executor
