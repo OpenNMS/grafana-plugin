@@ -60,7 +60,7 @@
     "flot": "^0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.13",
-    "opennms": "2.0.1",
+    "opennms": "2.0.2",
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.4.0",
     "q": "^1.5.1",
