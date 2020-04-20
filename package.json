@@ -12,6 +12,8 @@
     "url": "https://issues.opennms.org/projects/HELM/summary"
   },
   "devDependencies": {
+    "@antora/cli": "^2.2.0",
+    "@antora/site-generator-default": "^2.2.0",
     "@babel/core": "^7.6.4",
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/polyfill": "^7.4.4",
@@ -93,6 +95,7 @@
     "clean": "rimraf dist",
     "install-deps": "npm --prefer-offline --no-progress install",
     "dev": "webpack --mode=development",
+    "docs": "antora generate local-site.yml",
     "build": "npm run clean && webpack --mode=production --optimize-minimize --optimize-dedupe",
     "eslint": "eslint 'src/**/*.js'",
     "eslint-circleci": "eslint 'src/**/*.js' --format junit --output-file reports/eslint/eslint.xml",
