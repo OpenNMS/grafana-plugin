@@ -54,6 +54,23 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v5.0.2
+
+This release contains significant documentation updates, as well as a few bug fixes including Grafana 6.7 support.
+It also bumps the Grafana provided by our Docker images to `6.7.2`.
+
+# Release 5.0.2
+
+* Document how to use the filter panel (Issue [HELM-206](http://issues.opennms.org/browse/HELM-206))
+* Document how to use the entity data-source (Issue [HELM-207](http://issues.opennms.org/browse/HELM-207))
+* Publish build artifacts with CircleCI to Cloudsmith (Issue [HELM-214](http://issues.opennms.org/browse/HELM-214))
+* Convert docs from Asciibinder to Antora (Issue [HELM-217](http://issues.opennms.org/browse/HELM-217))
+* Integrate Antora documentation into CircleCI (Issue [HELM-218](http://issues.opennms.org/browse/HELM-218))
+* Sign RPM and DEB packages with GPG key (Issue [HELM-222](http://issues.opennms.org/browse/HELM-222))
+* Some filter could be documented (Issue [HELM-227](http://issues.opennms.org/browse/HELM-227))
+* Cannot add an Alarm Table widget when using Grafana 6.6.x (Issue [HELM-229](http://issues.opennms.org/browse/HELM-229))
+* Support Grafana 6.7.x for our Helm plugin (Issue [HELM-232](http://issues.opennms.org/browse/HELM-232))
+
 ### v5.0.1
 
 This small release works around a module-loading bug in some Grafana versions.
@@ -191,6 +208,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2020-03-24T20:37:39.925Z
-- Git Revision: 0c141936682bb59b000dfc6767fb10abe6db6b19
+- Build Date: 2020-04-23T19:03:33.076Z
+- Git Revision: 7110ec3bd50901e99b9a86226cf45e5069769ab3
 
