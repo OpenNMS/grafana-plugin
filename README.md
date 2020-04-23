@@ -59,8 +59,6 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 This release contains significant documentation updates, as well as a few bug fixes including Grafana 6.7 support.
 It also bumps the Grafana provided by our Docker images to `6.7.2`.
 
-# Release 5.0.2
-
 * Document how to use the filter panel (Issue [HELM-206](http://issues.opennms.org/browse/HELM-206))
 * Document how to use the entity data-source (Issue [HELM-207](http://issues.opennms.org/browse/HELM-207))
 * Publish build artifacts with CircleCI to Cloudsmith (Issue [HELM-214](http://issues.opennms.org/browse/HELM-214))
