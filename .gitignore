@@ -51,3 +51,6 @@ build/
 *.tar.gz
 *.deb
 *.changes
+
+# don't ever persist the binary packages
+/dist/packages
