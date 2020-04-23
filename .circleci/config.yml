@@ -62,6 +62,7 @@ commands:
           name: DockerHub Login
           command: |
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+
 jobs:
   pre-build:
     executor: node-executor
@@ -123,7 +124,7 @@ jobs:
       - run:
           name: Generate HTML output for documentation
           command: |
-            antora --stacktrace generate local-site.yml
+            npm run docs
 
       - store_artifacts:
           path: build/site.zip
@@ -158,9 +159,9 @@ jobs:
           name: Push to github
           command: git push -f origin << parameters.to_branch >>:merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
 
-  merge-branch:
+  build-and-merge-branch:
+    executor: node-executor
     <<: *defaults
-    <<: *docker_container_config
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -177,6 +178,25 @@ jobs:
             export GIT_MERGE_AUTOEDIT=no
             git checkout << parameters.to_branch >>
             git merge origin/merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
+      - restore_cache:
+          name: Restore Package Cache
+          keys:
+            - npm-packages-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-packages-{{ .Branch }}
+            - npm-packages-
+      - run:
+          name: Install Dependencies
+          command: npm --pure-lockfile --prefer-offline --no-progress install
+      - run:
+          name: Run Build
+          command: npm run build
+      - run:
+          name: Commit Build Output
+          command: |
+            git add -A
+            if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
+              git commit -a -m 'build output for << parameters.to_branch_label >> branch'
+            fi
       - run:
           name: Push to github
           command: git push origin << parameters.to_branch >>:<< parameters.to_branch >>
@@ -400,6 +420,8 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - build-docs:
           requires:
             - pre-build
@@ -412,9 +434,9 @@ workflows:
           filters:
             branches:
               only: << parameters.from_branch >>
-      - merge-branch:
+      - build-and-merge-branch:
           requires:
-            - build
+            - pre-build
           filters:
             branches:
               only: merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
