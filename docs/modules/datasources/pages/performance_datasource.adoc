@@ -2,7 +2,7 @@
 
 == General
 
-The _Performance Datasource_ can be used to retrieve performance metrics (i.e., data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
+Use the _Performance Datasource_ to retrieve performance metrics (i.e., data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
 
 (For an example of the perfomrance datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards]).
 

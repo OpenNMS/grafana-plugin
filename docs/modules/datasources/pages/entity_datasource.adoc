@@ -2,7 +2,7 @@
 
 == General
 
-The _Entities Datasource_ can be used to retrieve various entity model objects from OpenNMS.
+Use the _Entities Datasource_ to retrieve entity model objects from OpenNMS.
 It currently supports alarms and nodes.
 
 (For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).

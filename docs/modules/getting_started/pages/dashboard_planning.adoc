@@ -28,4 +28,3 @@ Check out https://grafana.com/grafana/dashboards?search=opennms[existing OpenNMS
 ====
 
 You're ready to xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough [create your first dashboard].
-

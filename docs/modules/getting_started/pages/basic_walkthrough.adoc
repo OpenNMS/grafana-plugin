@@ -1,5 +1,6 @@
 :imagesdir: ../assets/images
 :!figure-caption:
+
 [[getting-started-basic-walkthrough]]
 = Basic Walk-Through
 :toc: macro
@@ -95,10 +96,14 @@ image::gf-add-cust-action.png[Custom Action, 500]
 == Datasource Setup
 
 The type of data you can display in your dashboard depends on the datasource you select. 
-Before creating a dashboard, you need to set up the datasource. OpenNMS datasources include performance, flow, and entity. 
+Before creating a dashboard, you need to set up the datasource. 
+OpenNMS datasources include performance, flow, and entity. 
 For more information on OpenNMS datasources, see  xref:datasources:performance_datasource.adoc[Datasources].
 
 In this section, you will configure the _Entity_ datasource.
+Follow the same process to configure a Flow or Performance datasource. 
+The only fields you *need* to configure are the following: `URL`, `Basic auth`, `Basic Auth Details` (user and password).
+Refer to the Grafana documentation for information on configuring the other fields.  
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Data Sources*:
@@ -109,7 +114,13 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . In the search field enter *OpenNMS Entities*.
 
-. Beside the OpenNMS Entities datasource, click *Select*.
+. Beside the OpenNMS Entities datasource, click *Select*:
++
+image::gf-select-datasource.png[select data, 300]
++
+The settings screen appears:
++
+image::gf-data-config.png[data config, 300]
 
 . In the *URL* field, enter the URL to your OpenNMS instance, i.e., `http://localhost:8980/opennms`.
 +
@@ -126,7 +137,7 @@ The URL to your OpenNMS instance should normally end with `/opennms`.
 +
 image::gf-data-source-is-working.png[Data source is working, 500]
 
-If the datasource is configured correctly you should see a message indicating that the `Data source is working`.
+If the datasource is configured correctly a message indicating that the `Data source is working` appears.
 If the message indicates a failure, review the information you entered and click *Save & Test* to test the datasource again.
 
 [[bw-dash-setup]]

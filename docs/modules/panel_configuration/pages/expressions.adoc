@@ -1,0 +1,41 @@
+:imagesdir: ../assets/images
+[.lead]
+[[pc-expressions]]
+= Expressions
+
+{page-component-title} supports xref:https://commons.apache.org/proper/commons-jexl/index.html [JEXL] mathematical and conditional operators.
+Use them to combine or otherwise transform one or more series into a new series.
+For example, you could specify a filter to display the SUM of certain data.
+
+This section illustrates how to use expressions by providing some examples.  
+For detailed documentation on expressiions, see the following:
+
+* https://docs.opennms.org/opennms/releases/26.1.0/guide-development/guide-development.html#_measurements_api[Measurements API documentation] of your OpenNMS version
+* xref:https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL syntax]
+
+== Adding a Series
+
+== Adding a Series with Null Value Expression
+
+In situations where a value returned in a series is not a number (NA), using a null value will ensure your expression returns a number and not NA. 
+
+For example, if you are adding `Series A` plus `Series B`, and `Series B` is NA, but `Series A` is a number (e.g., "5"), then it becomes 5+NA, which equals NA. 
+An expression that treats NA as a null value means the result would be 5+0, which provides a numeric answer, as in the following expression: 
+
+`(A == null ? 0 : A) + (B == null ? 0 : B)`
+
+In fact, JEXL has an abbreviation for non-null non-false ternary: 
+
+`(A ?: 0) + (B ?: 0)`
+
+== Value in Bits
+OpenNMS performance data is collected in bytes. 
+A simple expression to multiply the value of the attribute on which you are querying by 8 displays the value in bits:
+
+`ifHCOutOctets * 8`
+
+(`ifHCOutOctets` collects the total number of octets transmitted out of the interface)
+
+== Changing a Value to a Negative Number
+
+OutPos * -1
