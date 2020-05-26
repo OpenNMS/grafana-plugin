@@ -20,6 +20,7 @@
 * xref:panel_configuration:index.adoc[Overview]
 * xref:panel_configuration:forecasting.adoc[Using Filters to Forecast Metrics]
 * xref:panel_configuration:dynamic-dashboard.adoc[Creating Dynamic Dashboards]
+* xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
 * xref:datasources:performance_datasource.adoc[Performance Datasource]
