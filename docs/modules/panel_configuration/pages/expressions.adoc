@@ -10,7 +10,7 @@ For example, you could specify a filter to display the SUM of data from differen
 This section provides sample expressions to illustrate how to use them.  
 For additional documentation on expressions, see the following:
 
-* https://docs.opennms.org/opennms/releases/26.1.0/guide-development/guide-development.html#_measurements_api[Measurements API documentation] of your OpenNMS version
+* https://docs.opennms.org/opennms/releases/latest/guide-development/guide-development.html#_measurements_api[Measurements API documentation] of your OpenNMS version
 * xref:https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL syntax]
 
 == Creating an Expression

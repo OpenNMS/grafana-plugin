@@ -27,13 +27,15 @@ This procedure explains how to use variables in a query for a category of nodes 
 
 . Select or xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]. 
 For this procedure, we created a panel that displays active TCP connections:
+
 +
-image::pc-tcp-panel.png[TCP, 300]
+image::pc-TCP-panel.png[TCP, 300]
 
 . In the top right of the panel, click the dashboard settings icon and choose *Variables>Add variable*.
 
 . Specify the appropriate information, similar to the following. 
 A preview of the values returned appears at the bottom of the screen:
+
 +
 image::pc-variables.png[Variable, 400]
 
@@ -65,7 +67,7 @@ While xref:pc-template-filters[template variables] work with the performance dat
 
 Before creating a filter panel, make sure you have a panel on the dashboard that uses an entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]).
 
-For this procedure, we created a panel that xref:getting_started:basic_walkthrough.adoc#bw-alarm-panel[displays alarms].
+This procedure creates a panel that xref:getting_started:basic_walkthrough.adoc#bw-alarm-panel[displays alarms].
 
 To create a filter panel, follow these steps:
 
@@ -77,11 +79,15 @@ To create a filter panel, follow these steps:
 
 . In the *Filter Columns* area, choose an entities datasource. 
 
++
+image::pc-filter-ds.png[]
+
 . Choose `Alarms` or `Nodes`.
 
 . Click the `+`` sign and choose an attribute from the drop-down. 
 
 . Specify information about the appearance of your filter field, including whether it is a drop-down list or a text field, and a custom label, if desired:
+
 +
 image::pc-filter-panel-cust.png[Filter Panel, 300]
 
