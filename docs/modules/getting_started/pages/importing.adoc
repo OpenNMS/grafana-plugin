@@ -1,0 +1,31 @@
+:imagesdir: ../assets/images
+[.lead]
+
+[[gs-dashboard-import]]
+= Importing a Dashboard
+
+There are a number of xref:https://grafana.com/grafana/dashboards?search=opennms&orderBy=name&direction=asc[official- and community-built OpenNMS dashboards] available for import, that display the following:
+
+* SNMP data collected by Linux hosts
+* Business service availability
+* Cassandra performance
+* Generic UPS statitstics
+* Network interfaces
+* And more ...
+
+You can edit these pre-designed dashboards to meet your needs or to learn more about how to build your own dashboards. 
+
+To import an existing dashboard, follow these steps:
+
+. Go to the xref:https://grafana.com/grafana/dashboardsGrafana[dashboards page] and search for OpenNMS. 
+. Click on the dashboard you want to import. 
+. Copy the dashboard ID. 
+. In {page-component-title}, click on the plus sign and choose *Import*.
+. In the *Grafana.com Dashboard* field, enter the dashboard ID and click *Load*. 
+
++
+image:gf-dash-import.png[]
+
+. Change information as desired and click *Import*. 
+. Go to *Dashboards>Manage* and view/edit the imported dashboard. 
+

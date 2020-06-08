@@ -174,7 +174,8 @@ image::gf-panel-config.png[Configure Panel, 500]
 . In the top-right menu, click the `Save dashboard` icon. 
 
 That's it! Now, you have your first dashboard.
-Try changing the time range at the top right of the screen, or try performing actions against the alarms by right clicking on any of the alarm rows. You can also display other data by creating more panels.
+Try changing the time range at the top right of the screen, or try performing actions against the alarms by right clicking on any of the alarm rows. 
+You can also display other data by creating more panels, or xref:importing.adoc#gs-dashboard-import[import] an existing dashboard to learn more about how to design your own. 
 
 [[bw-panel-create]]
 == Creating a Panel

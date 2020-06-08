@@ -17,7 +17,9 @@ For additional documentation on expressions, see the following:
 
 Before creating an expression, you need to define one or more attribute queries on a performance datasource. 
 You can then use the attribute name or the series label (attribute alias) as part of the expression you create.
-The following shows a query on the total number of octets transmitted out of an interface, with an expression to change the value to a negative number.
+
+The following queries on the total number of octets transmitted out of an interface, with an expression to change the value to a negative number.
+Since traffic in and out values might be similar, and therefore overlap on a graph, setting the "out" value to a negative number will avoid this overlap, making the graph easier to read.
 Note that the expression uses the "OutPos" series label as the alias for `IfHCOutOctets`:
 
 image::pc-outpos3.png[out3,300]
@@ -60,9 +62,3 @@ In fact, JEXL has an abbreviation for non-null, non-false ternary:
 
 `(A ?: 0) + (B ?: 0)`
 
-== JEXL Expression Filter
-
-{page-component-title} provides seven types of xref:forecasting.adoc#predefined-filters[filter query], including a JEXL filter. 
-This is a generic JEXL expression filter that filters on mathematical and conditional operators provided by JEXL.
-
-#todo: example of JEXL expression filter#

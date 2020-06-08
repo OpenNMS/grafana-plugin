@@ -10,17 +10,18 @@ Instead of hard-coding specific information (such as node names or resource IDs)
 * xref:pc-filter-panel[filter panels]
 
 [[pc-template-filters]]
-== Using Template Variables to Create Dynamic Dashboards
+== Using Variables to Create Dynamic Dashboards
 
-Template variables are available in metric queries and panel titles and appear as a drop-down list at the top of the dashboard.
-Select from the list to change the data the panel displays.
+Template variables are available in metric queries and panel titles and appear as a drop-down list at the top of the dashboard. 
+Select from the list to filter the data the panel displays:
 
 image::pc-variable-drop.png[Variable Drop, 300]
 
-There are two queries you can customize:
+Each datasource has different template queries avaialble. Refer to xref:datasources[Datasources] for more information. 
+
+There are two queries you can customize with the xref:datasources/performance_datasource.adoc#ds-perf-template[performance datasource]:
 
 * specific node(s): `nodeFilter(NODEFILTERSTRING)`
-
 * specific resource(s) on a node: `nodeResources(NODEID)`
 
 This procedure explains how to use variables in a query for a category of nodes (switches). 
@@ -45,6 +46,10 @@ In this case, we used the `nodeFilter` variable to specify the nodes in the cate
 . Click *Add*.
 . Click *Save*. 
 
+For more examples of variables in template queries, import the xref:https://grafana.com/grafana/dashboards/5053[OpenNMS Network Interfaces Report] sample dashboard. 
+
+TODO: add procedure on how to import a dashboard. 
+
 === Specify a Node Variable in the Panel
 After creating the template variable, you need to update the panel to make sure data is available from all the nodes rather than a specific one, as originally configured.
 
@@ -67,7 +72,7 @@ While xref:pc-template-filters[template variables] work with the performance dat
 
 Before creating a filter panel, make sure you have a panel on the dashboard that uses an entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]).
 
-This procedure creates a panel that xref:getting_started:basic_walkthrough.adoc#bw-alarm-panel[displays alarms].
+This procedure creates a panel that will allow you to filter on alarm type and alarms that are acknowledged or in a situation.   
 
 To create a filter panel, follow these steps:
 
@@ -82,9 +87,12 @@ To create a filter panel, follow these steps:
 +
 image::pc-filter-ds.png[]
 
-. Choose `Alarms` or `Nodes`.
+. Choose `Alarms`.
+.. Choose `Nodes` to filter on nodes. 
 
-. Click the `+`` sign and choose an attribute from the drop-down. 
+. Click the `+` sign and choose an attribute to filter on from the drop-down (e.g., Alarm Type, "Is Acknowledged"):
++
+image::pc-alarm-attributes.png[]
 
 . Specify information about the appearance of your filter field, including whether it is a drop-down list or a text field, and a custom label, if desired:
 
@@ -97,7 +105,10 @@ image::pc-filter-panel-cust.png[Filter Panel, 300]
 
 . In the top-right menu, click the `Save dashboard` icon. 
 
-The filter panel appears on the dashboard. 
-Selections made here will impact all panels in the dashboard that use an entities datasource. 
-You can drag it to appear anywhwere on your dashboard. 
+The filter panel appears on the dashboard.
+
+image::pc-filter-panel2.png[Panel,400]
+
+Selections made here will impact all panels in the dashboard that use an entities datasource.
+You can drag the filter panel to appear anywhere on your dashboard. 
 

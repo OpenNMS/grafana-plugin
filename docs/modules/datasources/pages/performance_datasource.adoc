@@ -55,6 +55,11 @@ The datapoints are replaced with interpolated values.
 
 == Template Queries
 
+Use template queries in metric queries and panel titles.
+The results will appear as a drop-down list at the top of the dashboard. 
+You can then select from the list to change the data the panel displays.
+See xref:panel_configuration/dyanmic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for examples. 
+
 === nodeFilter
 
 The `nodeFilter()` query will return a list of nodes which match the given filter expression.
