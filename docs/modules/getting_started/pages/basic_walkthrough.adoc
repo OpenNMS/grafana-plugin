@@ -103,7 +103,7 @@ For more information on OpenNMS datasources, see  xref:datasources:performance_d
 In this section, you will configure the _Entity_ datasource.
 Follow the same process to configure a Flow or Performance datasource. 
 The only fields you *need* to configure are the following: `URL`, `Basic auth`, `Basic Auth Details` (user and password).
-Refer to the Grafana documentation for information on configuring the other fields.  
+Refer to Grafana's https://grafana.com/docs/grafana/latest/features/datasources/[documentation] for information on configuring the other fields.  
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Data Sources*:

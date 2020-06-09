@@ -27,4 +27,4 @@ When planning your dashboard, consider the following:
 Check out https://grafana.com/grafana/dashboards?search=opennms[existing OpenNMS dashboards] for inspiration.
 ====
 
-You're ready to xref:../getting_started/basic_walkthrough.adoc#getting-started-basic-walkthrough [create your first dashboard].
+You're ready to xref:basic_walkthrough.adoc[create your first dashboard].

@@ -53,12 +53,13 @@ The option provided depend on the selected filter.
 Used to remove datapoints from the series that fall outside of the configured quantile, defaults to 95%.
 The datapoints are replaced with interpolated values.
 
+[[ds-perf-template]]
 == Template Queries
 
 Use template queries in metric queries and panel titles.
 The results will appear as a drop-down list at the top of the dashboard. 
 You can then select from the list to change the data the panel displays.
-See xref:panel_configuration/dyanmic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for examples. 
+See xref:panel_configuration/dyanmic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example. 
 
 === nodeFilter
 

@@ -3,7 +3,7 @@
 [[pc-expressions]]
 = Expressions
 
-{page-component-title} supports xref:https://commons.apache.org/proper/commons-jexl/index.html [JEXL] mathematical and conditional operators in performance data queries.
+{page-component-title} supports https://commons.apache.org/proper/commons-jexl/index.html[JEXL] mathematical and conditional operators in performance data queries.
 Use them to combine or otherwise transform one or more series into a new series.
 For example, you could specify a filter to display the SUM of data from different attribute queries (e.g., available memory on two nodes).
 
@@ -11,7 +11,7 @@ This section provides sample expressions to illustrate how to use them.
 For additional documentation on expressions, see the following:
 
 * https://docs.opennms.org/opennms/releases/latest/guide-development/guide-development.html#_measurements_api[Measurements API documentation] of your OpenNMS version
-* xref:https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL syntax]
+* https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL syntax]
 
 == Creating an Expression
 
@@ -61,4 +61,3 @@ An expression that treats NA as a null value means the result would be 5+0, whic
 In fact, JEXL has an abbreviation for non-null, non-false ternary: 
 
 `(A ?: 0) + (B ?: 0)`
-

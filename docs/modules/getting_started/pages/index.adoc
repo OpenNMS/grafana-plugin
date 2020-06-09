@@ -10,8 +10,8 @@ In-depth documentation about OpenNMS and Grafana is beyond the scope of this gui
 
 * https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[OpenNMS 101 training videos]
 
-* http://docs.grafana.org/guides/basic_concepts/[Grafana concepts and terminology]
-* http://docs.grafana.org/tutorials/screencasts/[Grafana screencasts]
+* https://grafana.com/docs/grafana/latest/getting-started/what-is-grafana/[Grafana documentation]
+* https://docs.huihoo.com/grafana/2.6/guides/screencasts/index.html[Grafana screencasts]
 
 [TIP]
 ====

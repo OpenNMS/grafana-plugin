@@ -1,7 +1,7 @@
 :imagesdir: ../assets/images
 [.lead]
 
-[pc-dyanmic-dash]
+[[pc-dyanmic-dash]]
 = Creating Dynamic Dashboards
 
 Instead of hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} has several ways to create more dynamic and interactive dashboards:
@@ -17,12 +17,13 @@ Select from the list to filter the data the panel displays:
 
 image::pc-variable-drop.png[Variable Drop, 300]
 
-Each datasource has different template queries avaialble. Refer to xref:datasources[Datasources] for more information. 
-
-There are two queries you can customize with the xref:datasources/performance_datasource.adoc#ds-perf-template[performance datasource]:
+Each datasource has different template queries available.
+For example, the xref:datasources:performance_datasource.adoc#ds-perf-template[performance datasource] has two available template queries:
 
 * specific node(s): `nodeFilter(NODEFILTERSTRING)`
 * specific resource(s) on a node: `nodeResources(NODEID)`
+
+See the following for xref:datasources:entity_datasource#ds-entity-template[entities datasource] andc xref:datasources:flow_datasource#ds-flow-template[flow datasource] template queries. 
 
 This procedure explains how to use variables in a query for a category of nodes (switches). 
 
@@ -46,9 +47,7 @@ In this case, we used the `nodeFilter` variable to specify the nodes in the cate
 . Click *Add*.
 . Click *Save*. 
 
-For more examples of variables in template queries, import the xref:https://grafana.com/grafana/dashboards/5053[OpenNMS Network Interfaces Report] sample dashboard. 
-
-TODO: add procedure on how to import a dashboard. 
+For more examples of variables in template queries, xref:getting_started:importing.adoc[import] the https://grafana.com/grafana/dashboards/5053[OpenNMS Network Interfaces Report] sample dashboard. 
 
 === Specify a Node Variable in the Panel
 After creating the template variable, you need to update the panel to make sure data is available from all the nodes rather than a specific one, as originally configured.

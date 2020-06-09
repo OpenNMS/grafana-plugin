@@ -25,6 +25,8 @@ The query editor supports the following functions:
 interval (in the format of: 10s, 5m, 1h, etc.)
 |===
 
+
+[[ds-flow-template]]
 == Template Queries
 
 === exporterNodesWithFlows
