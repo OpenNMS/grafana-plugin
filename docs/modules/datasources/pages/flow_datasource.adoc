@@ -2,7 +2,7 @@
 
 == General
 
-Use the _Flow Datasource_ to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
+The _Flow Datasource_ can be used to retrieve application and conversation related metrics derived from flow data stored by OpenNMS.
 
 The query editor supports the following functions:
 
@@ -25,8 +25,6 @@ The query editor supports the following functions:
 interval (in the format of: 10s, 5m, 1h, etc.)
 |===
 
-
-[[ds-flow-template]]
 == Template Queries
 
 === exporterNodesWithFlows
