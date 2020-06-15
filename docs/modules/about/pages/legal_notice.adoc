@@ -6,7 +6,7 @@
 :icons:
 
 [.lead]
-Copyright © 2017 The OpenNMS Group, Inc.
+Copyright © {docyear} The OpenNMS Group, Inc.
 
 OpenNMS is a registered trademark of The OpenNMS Group, Inc.
 
