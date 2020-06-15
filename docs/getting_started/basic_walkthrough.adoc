@@ -1,4 +1,4 @@
-:imagesdir: ../assets/images
+:imagesdir: images
 :!figure-caption:
 [[getting-started-basic-walkthrough]]
 = Basic Walk-Through
@@ -11,7 +11,7 @@ toc::[]
 
 == Overview
 
-This guide demonstrates how to create a simple dashboard with {page-component-title} by doing the following:
+This guide demonstrates how to create a simple dashboard with {product-title} by doing the following:
 
 * xref:bw-app-setup[setting up the application and custom actions]
 * xref:bw-ds-setup[setting up datasources]
@@ -21,21 +21,21 @@ This guide demonstrates how to create a simple dashboard with {page-component-ti
 
 The tutorial assumes that you have:
 
-* an instance of Grafana with the {page-component-title} application installed
+* an instance of Grafana with the {product-title} application installed
 * an instance of OpenNMS that is reachable from the Grafana instance above
 * one or mode nodes being monitored by OpenNMS
 
 [NOTE]
 ====
-If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {page-component-title} to interface with OpenNMS. 
+If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {product-title} to interface with OpenNMS. 
 ====
 
 [[bw-app-setup]]
 == Application Setup
 
-In this section, you will enable the {page-component-title} application in Grafana and create <<Custom Actions>>.
+In this section, you will enable the {product-title} application in Grafana and create <<Custom Actions>>.
 
-. Navigate to the home page of your Grafana instance.
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
@@ -52,7 +52,7 @@ If the issue persists, make sure the application is installed correctly.
 +
 [NOTE]
 ====
-If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {page-component-title}. 
+If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {product-title}. 
 ====
 
 === Custom Actions
@@ -79,7 +79,7 @@ image::gf-custom-actions.png[Custom Actions, 500]
 
 To create a custom action, follow these steps:
 
-. Navigate to the home page of your Grafana instance.
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 . In the left menu, click on the Configuration icon and click *Plugins*:
 . Select *OpenNMS Helm*. 
 . On the Confg tab, click *+Add Custom Action*:
@@ -96,11 +96,11 @@ image::gf-add-cust-action.png[Custom Action, 500]
 
 The type of data you can display in your dashboard depends on the datasource you select. 
 Before creating a dashboard, you need to set up the datasource. OpenNMS datasources include performance, flow, and entity. 
-For more information on OpenNMS datasources, see  xref:datasources:performance_datasource.adoc[Datasources].
+For more information on OpenNMS datasources, see  xref:../datasources/performance_datasource.adoc#[Datasources].
 
-In this section, you will configure the _Entity_ datasource.
+In this section, you will configure the _Entities_ datasource.
 
-. Navigate to the home page of your Grafana instance.
+. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Data Sources*:
 +
 image::gf-data-sources.png[Data Sources, 100]
@@ -191,7 +191,7 @@ Options are dependent on the type of datasource selected.
 
 [[bw-alarm-panel]]
 == Creating an Alarm Panel
-An alarm panel displays alarms from an xref:datasources:entity_datasource.adoc#[entities datasource]. 
+An alarm panel displays alarms from an xref:../datasources/entity_datasource.adoc#[entity datasource]. 
 Visualization of entity datasource information (currently nodes and alarms) is normally done in tables. 
 
 This procedure creates an alarm panel using an alarm table visualization. 
@@ -200,7 +200,7 @@ This procedure creates an alarm panel using an alarm table visualization.
 
 . Click *Add Query*. 
 
-. In the *Query* drop-down, select an entity datasource.
+. In the *Query* drop-down, select an entities datasource.
 
 . From *SELECT*, choose `Alarms`. 
 

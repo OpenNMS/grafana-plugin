@@ -1,6 +1,6 @@
 [[welcome-legal-notice]]
 = Legal Notice
-{}
+
 {page-version}
 :data-uri:
 :icons:

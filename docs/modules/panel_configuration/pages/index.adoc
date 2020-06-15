@@ -12,6 +12,5 @@ The types of configuration options available depend on the type of datasource as
 
 This section describes the following types of panel configuration:
 
-* xref:forecasting.adoc[forecast metrics]
-* xref:dynamic-dashboard.adoc[dynamic dashboards]
-* xref:expressions.adoc[working with expressions]
+* xref:forecasting.adoc#[forecast metrics]
+* xref:dynamic-dashboard.adoc#[dynamic dashboards]

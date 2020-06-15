@@ -2,7 +2,7 @@
 
 == General
 
-Use the _Entities Datasource_ to retrieve entity model objects from OpenNMS.
+The _Entities Datasource_ can be used to retrieve various entity model objects from OpenNMS.
 It currently supports alarms and nodes.
 
 (For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).
@@ -15,7 +15,6 @@ Attributes and values will change depending on the entity type.
 NOTE: Currently the entities datasource only allows a single target.
 Subsequent targets in the query editor will be ignored.
 
-[[ds-entity-template]]
 == Template Queries
 
 To change the behavior of a template query (like a datasource variable), you can pass a function to the `query` field, with an optional attribute argument.

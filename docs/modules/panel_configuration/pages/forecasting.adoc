@@ -24,7 +24,7 @@ This procedure describes how to create forecast metrics on network usage, using 
 . Specify the resource ID. 
 . In the *Attribute* field label, click the tag icon to display the list of available attributes and select `ifHCOutOctets`.
 
-To display this information in bits, create an expression:
+To display this information in bytes, create an expression:
 
 . Click *Add Query*. 
 . In the *Type* drop-down, choose *Expression*.
@@ -73,7 +73,6 @@ image::pc-forecast.png[Periods, 600]
 . Experiment with changing the time range and forecast results. 
 The further into the future you forecast, the less authoritative the forecast will be. 
 
-[[predefined-filters]]
 === Pre-defined Filters
 
 The following table describes the pre-defined filters from OpenNMS that Helm provides for forecast metrics:
