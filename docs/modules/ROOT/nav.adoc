@@ -15,11 +15,13 @@
 * xref:getting_started:dashboard_planning.adoc[Planning Your Dashboard]
 * xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
 * xref:getting_started:migrating_from_opennms_datasource.adoc[Migrating from the OpenNMS Datasource Plugin]
+* xref:getting_started:importing.adoc[Importing a Dashboard]
 
 .Panel Configuration
 * xref:panel_configuration:index.adoc[Overview]
 * xref:panel_configuration:forecasting.adoc[Using Filters to Forecast Metrics]
 * xref:panel_configuration:dynamic-dashboard.adoc[Creating Dynamic Dashboards]
+* xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
 * xref:datasources:performance_datasource.adoc[Performance Datasource]
