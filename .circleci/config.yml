@@ -387,7 +387,7 @@ jobs:
       - cloudsmith/ensure-api-key
       - cloudsmith/install-cli
       - cloudsmith/publish:
-          cloudsmith-repository: opennms/common
+          cloudsmith-repository: opennms/common-testing
           package-format: rpm
           package-distribution: any-distro/any-version
           package-path: dist/packages/*.rpm
@@ -400,7 +400,7 @@ jobs:
       - cloudsmith/ensure-api-key
       - cloudsmith/install-cli
       - cloudsmith/publish:
-          cloudsmith-repository: opennms/common
+          cloudsmith-repository: opennms/common-testing
           package-format: deb
           package-distribution: any-distro/any-version
           package-path: dist/packages/*.deb
