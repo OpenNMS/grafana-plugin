@@ -9,6 +9,9 @@ class ModalCtrl {
     this.pageSize = 25;
     this.selfPagination = false; // Flag for client-side pagination
     this.searchForRows();
+
+    // make sure the search input selects, and the first refresh happens
+    $('[name="perf-modal-query"]').select();
   }
 
   searchForRows() {
@@ -36,11 +39,10 @@ class ModalCtrl {
 
         self.totalCount = results.totalCount;
         self.numberOfPages= Math.ceil(self.totalCount/self.pageSize);                
-
-        // We're done
-        self.searching = false;
-      }, function () {
-        self.searching = false;
+      }).finally(() => {
+        self.$scope.$evalAsync(() => {
+          self.searching = false;
+        });
       });
   }
 

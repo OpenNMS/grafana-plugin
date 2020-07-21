@@ -166,7 +166,9 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       scope: scope,
       keyboard: false
     });
-    this.$q.when(modal).then(function (modalEl) { modalEl.modal('show'); });
+    return this.$q.when(modal).then((modalEl) => {
+      return modalEl.modal('show');
+    });
   }
 
   targetBlur(targetId, required) {
