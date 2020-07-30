@@ -1,0 +1,1392 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_OPENNMS-PERFORMANCE",
+      "label": "opennms-performance",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "opennms-helm-performance-datasource",
+      "pluginName": "OpenNMS Performance"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "6.3.6"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "opennms-helm-performance-datasource",
+      "name": "OpenNMS Performance",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1596136523296,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 18,
+      "repeat": null,
+      "title": "Node-Level Performance Data: $node",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "Number of context switches\n\nSource: UCD-SNMP-MIB::ssRawContexts",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "SysRawContext",
+          "label": "Context Switches",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "label": "Context Switches",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "nodeId": "$node",
+          "refId": "C",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Context Switches",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Switches / sec",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "The number of process contexts currently loaded or running on this system.\n\nSource: HOST-RESOURCES-MIB::hrSystemProcesses",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "hrSystemProcesses",
+          "label": "Processes",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Processes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "The number of TCP connections for which the current state is either ESTABLISHED or CLOSE-WAIT.\n\nSource: RFC1213-MIB::tcpCurrEstab",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "tcpCurrEstab",
+          "label": "Current Connections",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "TCP Connections",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "Net-SNMP server CPU statistics on a single graph\n\nSource: UCD-SNMP-MIB\nssCpuRawInterrupt\nssCpuRawUser\nssCpuRawWait\nssCpuRawNice\nssCpuRawSystem\nssCpuRawKernel\nssCpuRawSoftIRQ\nssCpuRawSteal\nssCpuRawGuest\nssCpuRawGuestNice",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 0,
+        "y": 7
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "hideEmpty": false,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "CpuRawInterrupt",
+          "hide": false,
+          "label": "Interrupt",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawUser",
+          "hide": false,
+          "label": "User",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawWait",
+          "hide": false,
+          "label": "Wait",
+          "nodeId": "$node",
+          "refId": "C",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawNice",
+          "hide": false,
+          "label": "Nice",
+          "nodeId": "$node",
+          "refId": "D",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawSystem",
+          "hide": false,
+          "label": "System",
+          "nodeId": "$node",
+          "refId": "E",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawKernel",
+          "hide": false,
+          "label": "Kernel",
+          "nodeId": "$node",
+          "refId": "F",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawSoftIRQ",
+          "hide": false,
+          "label": "Soft IRQ",
+          "nodeId": "$node",
+          "refId": "G",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawSteal",
+          "hide": true,
+          "label": "Steal",
+          "nodeId": "$node",
+          "refId": "H",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawGuest",
+          "hide": false,
+          "label": "Guest",
+          "nodeId": "$node",
+          "refId": "I",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "CpuRawGuestNice",
+          "hide": false,
+          "label": "Guest Nice",
+          "nodeId": "$node",
+          "refId": "J",
+          "resourceId": "nodeSnmp[]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU Usage Breakdown",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 10,
+      "panels": [],
+      "repeat": "interface",
+      "title": "Interface: $interface",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+        "In": "blue",
+        "Out": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "The total number of octets received and transmitted on the interface, including framing characters.\n\nSource: IF-MIB::ifHCInOctets, ifHCOutOctets\n(Fallback to ifInOctets, ifOutOctets)",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "ifHCInOctets",
+          "fallbackAttribute": "ifInOctets",
+          "hide": true,
+          "label": "inOctets",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ifHCOutOctets",
+          "fallbackAttribute": "ifOutOctets",
+          "hide": true,
+          "label": "outOctets",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        },
+        {
+          "expression": "inOctets * 8",
+          "label": "In",
+          "refId": "C",
+          "type": "expression"
+        },
+        {
+          "expression": "outOctets * 8",
+          "label": "Out",
+          "refId": "D",
+          "type": "expression"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Bits In/Out",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "In": "blue",
+        "Out": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "Source: IF-MIB::ifInDiscards, ifOutDiscards, ifInErrors, ifOutErrors",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 9,
+        "y": 16
+      },
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "ifInDiscards",
+          "fallbackAttribute": "",
+          "label": "Discards In",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ifOutDiscards",
+          "fallbackAttribute": "",
+          "label": "Discards Out",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ifInErrors",
+          "fallbackAttribute": "",
+          "label": "Errors In",
+          "nodeId": "$node",
+          "refId": "C",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ifOutErrors",
+          "fallbackAttribute": "",
+          "label": "Errors Out",
+          "nodeId": "$node",
+          "refId": "D",
+          "resourceId": "interfaceSnmp[$interface]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Discards & Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 220
+      },
+      "id": 14,
+      "panels": [],
+      "repeat": "disk",
+      "title": "Disk I/O: $disk",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "The 1, 5, and 15 minute average load of disk (%)\nSource: UCD-DISKIO-MIB::diskIOLA1, diskIOLA5, diskIOLA15",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 0,
+        "y": 221
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "diskIOLA1",
+          "label": "1 min",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "diskIOIndex[$disk]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "diskIOLA5",
+          "label": "5 min",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "diskIOIndex[$disk]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "diskIOLA15",
+          "label": "15 min",
+          "nodeId": "$node",
+          "refId": "C",
+          "resourceId": "diskIOIndex[$disk]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk I/O Load Average",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "Read": "blue",
+        "Reads": "blue",
+        "Writes": "green",
+        "Written": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "The number of bytes read / written from this device since boot.\n\nSource: UCD-DISKIO-MIB::diskIONReadX, diskIONWrittenX\nFallback: diskIONRead, diskIONWritten",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 9,
+        "y": 221
+      },
+      "id": 16,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "diskIONReadX",
+          "fallbackAttribute": "diskIONRead",
+          "label": "Read",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "diskIOIndex[$disk]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "diskIONWrittenX",
+          "fallbackAttribute": "diskIONRead",
+          "label": "Written",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "diskIOIndex[$disk]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Bytes Read / Written",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": "Bytes / sec",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1478
+      },
+      "id": 21,
+      "panels": [],
+      "repeat": "filesystem",
+      "title": "Filesystem: $filesystem",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+        "Inodes": "green",
+        "Read": "blue",
+        "Reads": "blue",
+        "Space": "blue",
+        "Writes": "green",
+        "Written": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "Percentage of space / inodes used on disk\n\nSource: UCD-SNMP-MIB::dskPercent, dskPercentNode",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 0,
+        "y": 1479
+      },
+      "id": 15,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "ns-dskPercent",
+          "fallbackAttribute": "",
+          "label": "Space",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ns-dskPercentNode",
+          "fallbackAttribute": "",
+          "label": "Inodes",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Filesystem Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": "Utilization",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "Inodes": "green",
+        "Read": "blue",
+        "Reads": "blue",
+        "Space": "blue",
+        "Total Capacity": "green",
+        "Used": "blue",
+        "Writes": "green",
+        "Written": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_OPENNMS-PERFORMANCE}",
+      "description": "Used / Available space on the disk (kBytes)\n\nSource: UCD-SNMP-MIB::dskUsedHigh, dskUsedLow, dskAvailHigh, dskAvailLow",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 9,
+        "y": 1479
+      },
+      "id": 22,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxDataPoints": "",
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "attribute": "ns-dskUsedHigh",
+          "fallbackAttribute": "",
+          "hide": true,
+          "label": "usedhigh",
+          "nodeId": "$node",
+          "refId": "A",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ns-dskUsedLow",
+          "fallbackAttribute": "",
+          "hide": true,
+          "label": "usedlow",
+          "nodeId": "$node",
+          "refId": "B",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        },
+        {
+          "expression": "4294967296 * usedhigh + usedlow",
+          "label": "Used",
+          "refId": "C",
+          "type": "expression"
+        },
+        {
+          "attribute": "ns-dskTotalHigh",
+          "fallbackAttribute": "",
+          "hide": true,
+          "label": "totalhigh",
+          "nodeId": "$node",
+          "refId": "D",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        },
+        {
+          "attribute": "ns-dskTotalLow",
+          "fallbackAttribute": "",
+          "hide": true,
+          "label": "totallow",
+          "nodeId": "$node",
+          "refId": "E",
+          "resourceId": "dskIndex[$filesystem]",
+          "type": "attribute"
+        },
+        {
+          "expression": "4294967296 * totalhigh + totallow",
+          "label": "Total Capacity",
+          "refId": "F",
+          "type": "expression"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Filesystem Bytes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "deckbytes",
+          "label": "Bytes",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "schemaVersion": 19,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_OPENNMS-PERFORMANCE}",
+        "definition": "nodeFilter(nodeSysOID LIKE '.1.3.6.1.4.1.8072.%')",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Node",
+        "multi": false,
+        "name": "node",
+        "options": [],
+        "query": "nodeFilter(nodeSysOID LIKE '.1.3.6.1.4.1.8072.%')",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_OPENNMS-PERFORMANCE}",
+        "definition": "nodeResources($node)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Interface",
+        "multi": true,
+        "name": "interface",
+        "options": [],
+        "query": "nodeResources($node)",
+        "refresh": 1,
+        "regex": "^interfaceSnmp\\[((eth|en|tun).*)\\]$",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_OPENNMS-PERFORMANCE}",
+        "definition": "nodeResources($node)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Disk",
+        "multi": true,
+        "name": "disk",
+        "options": [],
+        "query": "nodeResources($node)",
+        "refresh": 1,
+        "regex": "^diskIOIndex\\[(.*)\\]$",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_OPENNMS-PERFORMANCE}",
+        "definition": "nodeResources($node)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Filesystem",
+        "multi": true,
+        "name": "filesystem",
+        "options": [],
+        "query": "nodeResources($node)",
+        "refresh": 1,
+        "regex": "^dskIndex\\[(.*)\\]$",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Net-SNMP Server Overview | OpenNMS Helm",
+  "uid": "LJ13Cx4Mz",
+  "version": 13
+}
