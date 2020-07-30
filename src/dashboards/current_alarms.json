@@ -60,7 +60,7 @@
           "id": "7VM5VtsBi5T5Qsu2TybX",
           "text": "Category: Name",
           "label": "Node Category",
-          "datasource": "opennms-entity",
+          "datasource": "${DS_OPENNMS-ENTITY}",
           "resource": "category.name",
           "inputType": "multi",
           "entityType": {
@@ -69,7 +69,7 @@
             "queryFunction": "alarms"
           },
           "selected": {
-            "datasource": "opennms-entity",
+            "datasource": "${DS_OPENNMS-ENTITY}",
             "entityType": {
               "id": "alarm",
               "label": "Alarms",
@@ -87,7 +87,7 @@
           "id": "oZF0CsfaTbARufEUIemG",
           "text": "Node: Label",
           "label": "Node Label",
-          "datasource": "opennms-entity",
+          "datasource": "${DS_OPENNMS-ENTITY}",
           "resource": "node.label",
           "inputType": "text",
           "entityType": {
@@ -96,7 +96,7 @@
             "queryFunction": "alarms"
           },
           "selected": {
-            "datasource": "opennms-entity",
+            "datasource": "${DS_OPENNMS-ENTITY}",
             "entityType": {
               "id": "alarm",
               "label": "Alarms",
