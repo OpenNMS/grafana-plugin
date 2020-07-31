@@ -36,6 +36,8 @@
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
+    {"type": "dashboard", "name": "Current Alarms | OpenNMS Helm", "path": "dashboards/current_alarms.json"}
+    {"type": "dashboard", "name": "Net-SNMP Server Overview | OpenNMS Helm", "path": "dashboards/net_snmp_server_overview.json"}
   ],
   "dependencies": {
     "grafanaVersion": ">=6.3.0",
