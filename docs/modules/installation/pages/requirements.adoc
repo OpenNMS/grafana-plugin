@@ -3,7 +3,7 @@
 == Runtime Requirements
 
 * http://docs.grafana.org/installation[Grafana]
-The required Grafana-Server version is *6.3* or later.
+{page-component-title} works with Grafana Server version *6.3 through 6.7*.
 
 == Build Requirements
 
