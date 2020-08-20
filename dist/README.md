@@ -206,6 +206,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2020-08-20T17:44:36.534Z
-- Git Revision: 840a44f05cb8aa06f27493f763f5eb2c6c390066
+- Build Date: 2020-08-20T17:46:54.709Z
+- Git Revision: a0ac3a24e5827d937f030657ed8892f15acc1a5e
 
