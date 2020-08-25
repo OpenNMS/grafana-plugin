@@ -24,8 +24,8 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "5.0.3-SNAPSHOT",
-    "updated": "2020-04-23"
+    "version": "5.0.3",
+    "updated": "2020-08-25"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
