@@ -6,14 +6,17 @@ import {FilterColumn} from '../../lib/filter_column';
 
 class FilterCtrl extends MetricsPanelCtrl {
     /** @ngInject */
-    constructor($scope, $q, $injector, datasourceSrv, templateSrv, variableSrv, timeSrv) {
+    constructor($scope, $q, $injector, datasourceSrv, templateSrv, timeSrv) {
         super($scope, $injector);
 
         this.datasourceSrv = datasourceSrv;
         this.templateSrv = templateSrv;
-        this.variableSrv = variableSrv;
         this.timeSrv = timeSrv;
         this.$q = $q;
+
+        if (this.$injector.has('variableSrv')) {
+            this.variableSrv = this.$injector.get('variableSrv');
+        }
 
         _.defaults(this.panel, {
             columns: []
@@ -59,9 +62,10 @@ class FilterCtrl extends MetricsPanelCtrl {
 
     onRender() {
         const self = this;
-        this.$scope.columns = this.panel.columns.map(column => this.enrichColumn(column));
-        this.updateVariables().then(() => {
-            self.ctrl.renderingCompleted();
+        this.panel.columns = this.panel.columns.map(column => this.enrichColumn(column));
+        this.$scope.columns = this.panel.columns;
+        return this.updateVariables().then(() => {
+            return self.ctrl.renderingCompleted();
         });
     }
 
@@ -74,13 +78,14 @@ class FilterCtrl extends MetricsPanelCtrl {
 
     variableChanged(col) {
         if (col && col.text) {
-            this.updateVariables().then(() => {
-                this.render();
-            });
+            this.doPanelRefresh();
         }
     }
 
     enrichColumn(obj) {
+        if (obj instanceof FilterColumn) {
+            return obj;
+        }
         return new FilterColumn(obj.text, obj.label, obj.datasource, obj.resource, obj.inputType, obj.entityType, obj.id, obj.selected);
     }
 
@@ -88,10 +93,18 @@ class FilterCtrl extends MetricsPanelCtrl {
         const label = column.text;
         const resource = column.resource;
 
-        const c = Object.assign({}, column);
-        c.type = column.inputType === 'text' ? 'textbox' : 'query';
-        c.multi = column.inputType === 'multi' || column.inputType === undefined;
-        const query = this.variableSrv.createVariableFromModel(c);
+        let query;
+
+        const filterColumn = this.enrichColumn(column);
+        if (this.variableSrv) {
+            filterColumn.type = column.inputType === 'text' ? 'textbox' : 'query';
+            filterColumn.multi = column.inputType === 'multi' || column.inputType === undefined;
+            query = this.variableSrv.createVariableFromModel(filterColumn);
+        } else {
+            // grafana 7
+            query = filterColumn.toModel(this.$injector);
+        }
+        query = filterColumn.toModel(this.$injector);
 
         const selected = column.selected;
         if (selected) {
@@ -129,16 +142,16 @@ class FilterCtrl extends MetricsPanelCtrl {
         query.resource = resource;
         query.id = column.id;
 
-        // console.log('getVariable: querying:', query);
-        return query.updateOptions().then(function() {
+        return query.updateOptions().then(() => {
+            if (selected) {
+                query.setValue(selected);
+            }
             return query;
         });
     }
 
     variableUpdated(variable, index) {
-        const self = this;
-
-        variable.updateOptions().then(() => {
+        return variable.updateOptions().then(() => {
             if (variable.current) {
                 variable.current.resource = variable.resource;
                 variable.current.datasource = variable.datasource;
@@ -146,11 +159,20 @@ class FilterCtrl extends MetricsPanelCtrl {
                 variable.current.entityType = variable.entityType;
             }
             this.panel.columns[index].selected = variable.current;
-            self.dashboard.panels.forEach(panel => {
-                if (panel !== self.panel) {
-                    panel.refresh();
-                }
-            });
+
+            return this.doPanelRefresh();
+        });
+    }
+
+    doPanelRefresh() {
+        const self = this;
+        return this.$q.all(this.dashboard.panels.filter(panel => panel !== self.panel).map(panel => {
+            return panel.refresh();
+        })).then(() => {
+            return this.$q.all(
+                this.render(),
+                this.dashboard.render(),
+            );
         });
     }
 }
