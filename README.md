@@ -54,6 +54,22 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v5.0.3
+
+This release does not yet fix Grafana 7 support (it's complicated...) but it fixes a few more bugs while
+we work on Grafana 7 support.
+
+Also note, the docs that used to be included in the archive are now published at https://docs.opennms.com/ -- our
+future home for all OpenNMS documentation.
+
+* Make Helm docs publicly available (Issue [HELM-221](http://issues.opennms.org/browse/HELM-221))
+* "How to configure the data sources in Grafana" docs are missing (Issue [HELM-231](http://issues.opennms.org/browse/HELM-231))
+* Enhance HELM documentation (Issue [HELM-240](http://issues.opennms.org/browse/HELM-240))
+* Add expression examples (Issue [HELM-241](http://issues.opennms.org/browse/HELM-241))
+* JEXL expressions (Issue [HELM-242](http://issues.opennms.org/browse/HELM-242))
+* Cannot see list of nodes and resources when editing a panel. (Issue [HELM-243](http://issues.opennms.org/browse/HELM-243))
+* update requirements (Issue [HELM-251](http://issues.opennms.org/browse/HELM-251))
+
 ### v5.0.2
 
 This release contains significant documentation updates, as well as a few bug fixes including Grafana 6.7 support.
