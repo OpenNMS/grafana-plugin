@@ -190,7 +190,7 @@ export class OpenNMSDatasource {
       _.each(response.data.children.resource, function (resource) {
         var resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
         if (resourceWithoutNodePrefix) {
-          results.push({text: resourceWithoutNodePrefix[2], expandable: true});
+          results.push({text: resource.label, value: resourceWithoutNodePrefix[2], expandable: true});
         }
       });
       return results;
