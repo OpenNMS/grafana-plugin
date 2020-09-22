@@ -72,7 +72,9 @@ nodeFilter(catincProduction & catincLinux)
 
 === nodeResources
 
-The `nodeResources()` query will return the list of resource IDs  which are available on the given node.
+The `nodeResources()` query will return the list of resource IDs which are available on the given node.
+An optional second argument specifies whether to show the resource's ID (the default), label, or name in the template value chooser and elsewhere.
+An optional third argument specifies an exact resource-type name (e.g. `interfaceSnmp`); a value of `*` makes explicit the default behavior of returning resources of all types.
 Regular expressions in the template query can then be used to filter which resource IDs are used.
 
 To query a specific node by ID, you can use an expression similar to:
@@ -83,6 +85,11 @@ nodeResources(123)
 To query a specific node by foreign source and foreign id, you can use an expression similar to:
 ```
 nodeResources(FS:FID)
+```
+
+To query only SNMP interface resources on the node with ID 42, and to display the interfaces resources' labels rather than their often-cryptic IDs, you might use:
+```
+nodeResources(123, label, interfaceSnmp)
 ```
 
 == Label Formatters
