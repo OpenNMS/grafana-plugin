@@ -89,7 +89,7 @@ nodeResources(FS:FID)
 
 To query only SNMP interface resources on the node with ID 42, and to display the interfaces resources' labels rather than their often-cryptic IDs, you might use:
 ```
-nodeResources(123, label, interfaceSnmp)
+nodeResources(42, label, interfaceSnmp)
 ```
 
 == Label Formatters
