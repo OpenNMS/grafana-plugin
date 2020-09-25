@@ -21,7 +21,7 @@ Each datasource has different template queries available.
 For example, the xref:datasources:performance_datasource.adoc#ds-perf-template[performance datasource] has two available template queries:
 
 * specific node(s): `nodeFilter(NODEFILTERSTRING)`
-* specific resource(s) on a node: `nodeResources(NODEID)`
+* specific resource(s) on a node: `nodeResources(NODEID[, id|label|name[, resource-type-name|*]])`
 
 See the following for xref:datasources:entity_datasource#ds-entity-template[entities datasource] andc xref:datasources:flow_datasource#ds-flow-template[flow datasource] template queries. 
 

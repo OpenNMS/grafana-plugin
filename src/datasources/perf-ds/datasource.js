@@ -178,7 +178,14 @@ export class OpenNMSDatasource {
     });
   }
 
-  metricFindNodeResourceQuery(query) {
+  metricFindNodeResourceQuery(query, ...options) {
+    var textProperty = "id", resourceType = '*';
+    if (options.length > 0) {
+      textProperty = options[0];
+    }
+    if (options.length > 1) {
+      resourceType = options[1];
+    }
     return this.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
       method: 'GET',
@@ -189,8 +196,23 @@ export class OpenNMSDatasource {
       var results = [];
       _.each(response.data.children.resource, function (resource) {
         var resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
-        if (resourceWithoutNodePrefix) {
-          results.push({text: resourceWithoutNodePrefix[2], expandable: true});
+        var textValue;
+        switch (textProperty) {
+          case "id":
+            textValue = resourceWithoutNodePrefix[2];
+            break;
+          case "label":
+            textValue = resource.label;
+            break;
+          case "name":
+            textValue = resource.name;
+            break;
+          default:
+            textValue = resourceWithoutNodePrefix[2];
+            console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
+        }
+        if ((resourceType === '*' && resourceWithoutNodePrefix) || (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) {
+          results.push({text: textValue, value: resourceWithoutNodePrefix[2], expandable: true});
         }
       });
       return results;
