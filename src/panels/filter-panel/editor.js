@@ -157,7 +157,7 @@ export class FilterPanelEditorCtrl {
         if (this.srcIndex !== undefined && this.destIndex !== undefined) {
           this.$scope.$apply(() => {
             this.panel.columns.splice(this.destIndex, 0, this.panel.columns.splice(this.srcIndex, 1)[0]);
-            this.panelCtrl.render();
+            this.render();
           });
           console.log('dropped "' + this.panel.columns[this.srcIndex].text + '" onto "' + this.panel.columns[this.destIndex].text + '"');
         } else {
@@ -263,6 +263,7 @@ export class FilterPanelEditorCtrl {
   }
 
   render() {
+    this.panel.render();
     this.panelCtrl.render();
   }
 
@@ -327,6 +328,7 @@ export class FilterPanelEditorCtrl {
   removeColumn(column, index) {
     console.debug('removing column:', column);
     this.panel.columns.splice(index, 1);
+    this.render();
     return this.reset();
   }
 }
