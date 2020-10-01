@@ -111,7 +111,7 @@ const styles = {
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
   /** @ngInject */
-  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, templateSrv, timeSrv, variableSrv) {
+  constructor($scope, $injector, $rootScope, annotationsSrv, $sanitize, $compile, backendSrv, datasourceSrv, templateSrv, timeSrv) {
     super($scope, $injector);
     this.$rootScope = $rootScope;
     this.annotationsSrv = annotationsSrv;
@@ -121,7 +121,10 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.datasourceSrv = datasourceSrv;
     this.templateSrv = templateSrv;
     this.timeSrv = timeSrv;
-    this.variableSrv = variableSrv;
+
+    if ($injector.has('variableSrv')) {
+      this.variableSrv = $injector.get('variableSrv');
+    }
 
     let panelDefaults = {
       targets: [{}],
@@ -340,7 +343,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
     this.renderer = new TableRenderer(
       this.panel,
       this.table,
-      this.dashboard.isTimezoneUtc(),
+      this.dashboard.getTimezone() === 'utc',
       this.$sanitize,
       this.selectionMgr,
       this.templateSrv,
@@ -505,6 +508,15 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
       selector: '[data-link-tooltip]',
     });
 
+    function setFilter(options) {
+      if (this.variableSrv) {
+        ctrl.variableSrv.setAdhocFilter(options);
+      } else {
+        // assume grafana 7+
+        this.$rootScope.appEvent('alert-error', ['Ad-Hoc Filters Not Supported', 'Ad-hoc alarm table filters are not supported on Grafana 7.']);
+      }
+    }
+
     function addFilterClicked(e) {
       const filterData = $(e.currentTarget).data();
       const options = {
@@ -514,7 +526,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
         operator: filterData.operator,
       };
 
-      ctrl.variableSrv.setAdhocFilter(options);
+      setFilter(options);
     }
 
     elem.on('click', '.table-panel-page-link', switchPage);
