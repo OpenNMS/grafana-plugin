@@ -7,5 +7,5 @@ Standards-Version: 3.7.3
 
 Package: opennms-helm
 Architecture: all
-Depends: grafana (>= 5)
+Depends: grafana (>= 6.7)
 Description: An OpenNMS Console for Grafana
