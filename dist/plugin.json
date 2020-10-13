@@ -24,8 +24,8 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "5.0.4-SNAPSHOT",
-    "updated": "2020-08-25"
+    "version": "5.1.0-SNAPSHOT",
+    "updated": "2020-10-13"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
@@ -38,8 +38,8 @@
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=6.3.0 <7.0.0",
-    "grafanaVersion": "6.3.0",
+    "grafanaDependency": ">=7.0.0",
+    "grafanaVersion": "7.0.0",
     "plugins": []
   }
 }

@@ -222,6 +222,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2020-10-01T16:50:06.904Z
-- Git Revision: 9ab5f8798db02210a218a98cfc6913d9c1e8ff7b
+- Build Date: 2020-10-13T20:57:36.081Z
+- Git Revision: c8435bc2ae658f24884580b1d242d8ea8bebf8fb
 
