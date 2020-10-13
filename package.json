@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "5.0.4-SNAPSHOT",
+  "version": "5.1.0-SNAPSHOT",
   "description": "A PM/FM console for Grafana",
   "repository": {
     "type": "git",
@@ -88,7 +88,7 @@
     "specTemplate": "src/rpm/spec.mustache",
     "installDir": "/var/lib/grafana/plugins",
     "requires": [
-      "grafana >= 6.3.0"
+      "grafana >= 7.0.0"
     ]
   },
   "scripts": {
