@@ -54,6 +54,14 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v6.0.0
+
+OpenNMS Helm now supports Grafana 7, and has dropped support for versions older than 7.
+
+* the `nodeResources()` function has been enhanced to support
+  displaying the resource label (Issue [HELM-95](https://issues.opennms.org/browse/HELM-95))
+* the Filter and Alarm Table panels have been updated to work with Grafana 7 (Issue [HELM-247](https://issues.opennms.org/browse/HELM-247))
+
 ### v5.0.3
 
 This release does not yet fix Grafana 7 support (it's complicated...) but it fixes a few more bugs while
@@ -222,6 +230,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2020-10-13T20:57:36.081Z
-- Git Revision: c8435bc2ae658f24884580b1d242d8ea8bebf8fb
+- Build Date: 2020-10-14T20:00:04.120Z
+- Git Revision: a51f6bcbcaeab8f1e55b78d0b87c055850471b5c
 
