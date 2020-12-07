@@ -80,23 +80,41 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - add_ssh_keys:
+          fingerprints:
+            - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
       - restore_cache:
           name: Restore Package Cache
           keys:
-            - npm-packages-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-{{ .Branch }}
-            - npm-packages-
+            - npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-packages-v2-{{ .Branch }}
+            - npm-packages-v2-
+      - run:
+          name: Clean Old Cache Entries
+          command: |
+              if [ -d ~/.npm ]; then
+                find ~/.npm -type d -maxdepth 2 -ctime +14 -exec rm -rf {} \;
+              fi
+      - run:
+          name: Set Up Github Host Key
+          command: |
+              mkdir -p ~/.ssh
+              chmod 700 ~/.ssh
+              echo "|1|+eDL4BFAY1JfZjrxrJX0cahBtVU=|g91UxzJnqBKdJvCxPmTD59vtPV4= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
+              echo "|1|SZ/U1VP2X+BY4ewvW3j9yIQDXTU=|34DiVLA+NU6P9Acg0Fk5LSbxIdg= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
+              echo "|1|jopvDXD+uqD0jpXcT1YtIRhc8jQ=|KkoqYK0ZpHiiNZE6GBiYlI3cRmQ= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
+              chmod 600 ~/.ssh/known_hosts
+      - run:
+          name: Install Dependencies
+          command: npm --no-progress ci
       - run:
           name: Install Test Dependencies
           command: npm install mocha-junit-reporter
-      - run:
-          name: Install Dependencies
-          command: npm --pure-lockfile --prefer-offline --no-progress install
       - save_cache:
           name: Save Package Cache
-          key: npm-packages-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules/
+            - ~/.npm
       - run:
           name: Run Build
           command: npm run build
@@ -181,12 +199,12 @@ jobs:
       - restore_cache:
           name: Restore Package Cache
           keys:
-            - npm-packages-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-{{ .Branch }}
-            - npm-packages-
+            - npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-packages-v2-{{ .Branch }}
+            - npm-packages-v2-
       - run:
           name: Install Dependencies
-          command: npm --pure-lockfile --prefer-offline --no-progress install
+          command: npm --no-progress ci
       - run:
           name: Run Build
           command: npm run build
