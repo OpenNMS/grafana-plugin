@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
-import kbn from 'app/core/utils/kbn';
+import {intervalToMs} from '../../lib/utils';
 
 export class FlowDatasource {
   /** @ngInject */
@@ -47,7 +47,7 @@ export class FlowDatasource {
     let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
     let step;
     if (groupByInterval) {
-      step = kbn.interval_to_ms(groupByInterval);
+      step = intervalToMs(groupByInterval);
     } else {
       step = Math.floor((end - start) / options.maxDataPoints);
     }
