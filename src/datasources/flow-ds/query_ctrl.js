@@ -55,8 +55,7 @@ export class FlowDatasourceQueryCtrl extends QueryCtrl {
       {value: 'applications'},
       {value: 'conversations'},
       {value: 'hosts'},
-      {value: 'dscps'},
-      {value: 'ecns'}
+      {value: 'dscps'}
     ]);
   }
 
