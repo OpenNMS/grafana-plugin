@@ -211,25 +211,18 @@ export class FlowDatasource {
     }
     query = this.templateSrv.replace(query);
 
-    let exporterNodesRegex = /exporterNodesWithFlows\(\s*([^,]+),\s*([^\s]+\s*)\)/;
-    let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\(\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/;
+    let exporterNodesRegex = /exporterNodesWithFlows\((.*)\)/;
+    let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\((.*)\)/;
     let dscpOnExporterNodeAndInterfaceRegex = /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/;
 
     let exporterNodesQuery = query.match(exporterNodesRegex);
     if (exporterNodesQuery) {
-      return this.metricFindExporterNodes(
-          exporterNodesQuery[1], // start millis
-          exporterNodesQuery[2], // end millis
-      );
+      return this.metricFindExporterNodes(exporterNodesQuery[1]);
     }
 
     let interfacesOnExporterNodeQuery = query.match(interfacesOnExporterNodeRegex);
     if (interfacesOnExporterNodeQuery) {
-      return this.metricFindInterfacesOnExporterNode(
-          interfacesOnExporterNodeQuery[1], // node
-          interfacesOnExporterNodeQuery[2], // start millis
-          interfacesOnExporterNodeQuery[3], // end millis
-      );
+      return this.metricFindInterfacesOnExporterNode(interfacesOnExporterNodeQuery[1]);
     }
 
     let dscpOnExporterNodeAndInterfaceQuery = query.match(dscpOnExporterNodeAndInterfaceRegex);
@@ -245,8 +238,8 @@ export class FlowDatasource {
     return this.$q.resolve([]);
   }
 
-  metricFindExporterNodes(start, end) {
-    return this.client.getExporters(start, end).then(exporters => {
+  metricFindExporterNodes(/* query */) {
+    return this.client.getExporters().then(exporters => {
       let results = [];
       _.each(exporters, function (exporter) {
         results.push({text: exporter.label, value: exporter.id, expandable: true});
@@ -255,8 +248,8 @@ export class FlowDatasource {
     });
   }
 
-  metricFindInterfacesOnExporterNode(query, start, end) {
-    return this.client.getExporter(query, start, end).then(exporter => {
+  metricFindInterfacesOnExporterNode(query) {
+    return this.client.getExporter(query).then(exporter => {
       let results = [];
       _.each(exporter.interfaces, function (iff) {
         results.push({text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true});

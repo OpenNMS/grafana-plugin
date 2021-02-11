@@ -432,19 +432,19 @@ export class ClientDelegate {
             }).catch(this.decorateError);
     }
 
-    getExporters(start, end) {
+    getExporters() {
         let searchLimit = this.searchLimit;
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporters(searchLimit, start, end);
+                return flowDao.getExporters(searchLimit);
             }).catch(this.decorateError);
     }
 
-    getExporter(nodeCriteria, start, end) {
+    getExporter(nodeCriteria) {
         let searchLimit = this.searchLimit;
         return this.getFlowDao()
             .then(function(flowDao) {
-                return flowDao.getExporter(nodeCriteria, searchLimit, start, end);
+                return flowDao.getExporter(nodeCriteria, searchLimit);
             }).catch(this.decorateError);
     }
 
