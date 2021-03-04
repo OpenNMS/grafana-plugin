@@ -32,3 +32,5 @@ global.window = dom.window;
 chai.should();
 global.assert = chai.assert;
 global.expect = chai.expect;
+
+require("@babel/register")({ extensions: ['.js', '.jsx', '.ts', '.tsx'] });

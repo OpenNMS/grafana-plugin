@@ -25,7 +25,7 @@ const plugins = [
 ];
 
 const baseconfig = {
-  devtool: isProduction ? 'source-map' : 'eval',
+  devtool: 'source-map',
   entry: {},
   output: {
     filename: '[name].js',
@@ -59,7 +59,7 @@ const baseconfig = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -101,6 +101,7 @@ const baseconfig = {
   plugins: [
   ],
   resolve: {
+    extensions: [ '.ts', '.js' ],
     alias: {
       src: srcdir,
     },
