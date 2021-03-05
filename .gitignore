@@ -41,7 +41,7 @@ grafana
 public/
 build/
 
-# Not ready yet
+# only applies to `main`
 /dist
 /SPECS
 /SOURCES
@@ -55,3 +55,6 @@ build/
 
 # don't ever persist the binary packages
 /dist/packages
+
+# test droppings
+/reports
