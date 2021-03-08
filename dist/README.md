@@ -54,6 +54,11 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
+### v6.0.1
+
+This release contains a few dependency updates, an internal change to support TypeScript,
+and one small change to fix loading the flow datasource.
+
 ### v6.0.0
 
 OpenNMS Helm now supports Grafana 7, and has dropped support for versions older than 7.
@@ -230,6 +235,6 @@ In the future this will be enhanced to do more complicated set operations than a
 
 ## Build Information
 
-- Build Date: 2021-03-08T19:23:09.061Z
-- Git Revision: c7f6432035c30c672af0180da23afa246dee2ffe
+- Build Date: 2021-03-08T19:33:13.531Z
+- Git Revision: a73dacb7670ed9e78f343d068d9c767470215d00
 
