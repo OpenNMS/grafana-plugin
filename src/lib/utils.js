@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import kbn from 'app/core/utils/kbn';
 
 export function assignModelProperties(target, source, defaults) {
   for (const key in defaults) {
@@ -209,11 +208,6 @@ export function containsVariable(...args) {
       : false;
 
   return !!isMatchingVariable;
-}
-
-export function intervalToMs(arg) {
-  const func = kbn.intervalToMs || kbn.internal_to_ms;
-  return func(arg);
 }
 
 /*

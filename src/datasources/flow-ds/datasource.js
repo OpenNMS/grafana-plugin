@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import {ClientDelegate} from '../../lib/client_delegate';
-import {intervalToMs} from '../../lib/utils';
+import kbn from 'app/core/utils/kbn';
+
+export function intervalToMs(arg) {
+  const func = kbn.intervalToMs || kbn.interval_to_ms;
+  return func(arg);
+}
 
 export class FlowDatasource {
   /** @ngInject */
