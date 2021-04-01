@@ -4,7 +4,7 @@
 
 Use the _Performance Datasource_ to retrieve performance metrics (i.e., data collection and/or response time metrics) from the _Measurements API_ in  OpenNMS.
 
-(For an example of the performance datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards]).
+(For an example of the performance datasource in action, see xref:panel_configuration/dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards]).
 
 The query editor provides the ability to build queries of the following types:
 
@@ -59,7 +59,7 @@ The datapoints are replaced with interpolated values.
 Use template queries in metric queries and panel titles.
 The results will appear as a drop-down list at the top of the dashboard. 
 You can then select from the list to change the data the panel displays.
-See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
+See xref:panel_configuration?dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
 
 === nodeFilter
 
