@@ -9,10 +9,7 @@
         "$": true
     },
     "extends": "eslint:recommended",
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint"
-    ],
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 2017,
         "sourceType": "module"
@@ -299,19 +296,5 @@
             "error",
             "never"
         ]
-    },
-
-    "overrides": [
-        {
-            "files": ["src/**/*.ts"],
-            "rules": {
-                // note you must disable the base rule as it can report incorrect errors
-                "no-unused-vars": "off",
-                "@typescript-eslint/no-unused-vars": "error",
-                // note you must disable the base rule as it can report incorrect errors
-                "no-useless-constructor": "off",
-                "@typescript-eslint/no-useless-constructor": ["error"]
-            }
-        }
-    ]
+    }
 }
