@@ -1,23 +1,23 @@
-import {interpolate} from "../datasources/perf-ds/interpolate";
+const {interpolate} = require("../datasources/perf-ds/interpolate");
 
 describe('OpenNMSPMDatasource :: interpolate', function () {
   let query = {'resource': '$node', 'metric': '$x.$y'};
 
   it('should return the same object when the list of attributes is empty', function () {
-    expect(interpolate(query, [], [])).to.deep.equal([query]);
+    expect(interpolate(query, [], [])).toStrictEqual([query]);
   });
 
   it('should return the same object when the list of variables is empty', function () {
-    expect(interpolate(query, ['resource'], [])).to.deep.equal([query]);
+    expect(interpolate(query, ['resource'], [])).toStrictEqual([query]);
   });
 
   it('should return the same object when no matching variables are referenced', function () {
-    expect(interpolate(query, ['resource'], [{name: '!node', value: ['1']}])).to.deep.equal([query]);
+    expect(interpolate(query, ['resource'], [{name: '!node', value: ['1']}])).toStrictEqual([query]);
   });
 
   it('should be able to interpolate a single variable in a single attribute', function () {
     let interpolated = interpolate(query, ['resource'], [{name: 'node', value: ['1', '2']}]);
-    expect(interpolated).to.deep.equal([
+    expect(interpolated).toStrictEqual([
       {'resource': '1', 'metric': '$x.$y'},
       {'resource': '2', 'metric': '$x.$y'}
     ]);
@@ -28,7 +28,7 @@ describe('OpenNMSPMDatasource :: interpolate', function () {
       {name: 'x', value: ['x1', 'x2']},
       {name: 'y', value: ['y1', 'y2']}
     ]);
-    expect(interpolated).to.deep.equal([
+    expect(interpolated).toStrictEqual([
       {'resource': '$node', 'metric': 'x1.y1'},
       {'resource': '$node', 'metric': 'x1.y2'},
       {'resource': '$node', 'metric': 'x2.y1'},
@@ -42,7 +42,7 @@ describe('OpenNMSPMDatasource :: interpolate', function () {
       {name: 'x', value: ['x1', 'x2']},
       {name: 'y', value: ['y1', 'y2']}
     ]);
-    expect(interpolated).to.deep.equal([
+    expect(interpolated).toStrictEqual([
       {'resource': '1', 'metric': 'x1.y1'},
       {'resource': '1', 'metric': 'x1.y2'},
       {'resource': '1', 'metric': 'x2.y1'},
@@ -62,7 +62,7 @@ describe('OpenNMSPMDatasource :: interpolate', function () {
       {name: 'y', value: ['y1', 'y2']}
     ]);
 
-    expect(interpolated).to.deep.equal([
+    expect(interpolated).toStrictEqual([
       {'resource': 'node', 'metric': 'x1.y1', 'label': 'idx0'},
       {'resource': 'node', 'metric': 'x1.y2', 'label': 'idx1'},
       {'resource': 'node', 'metric': 'x2.y1', 'label': 'idx2'},
@@ -75,7 +75,7 @@ describe('OpenNMSPMDatasource :: interpolate', function () {
     let interpolated = interpolate(queryWithMultipleVariables, ['resource', 'metric'], [
       {name: 'x-var', value: ['x1', 'x2']},
     ]);
-    expect(interpolated).to.deep.equal([
+    expect(interpolated).toStrictEqual([
       {'resource': '$node', 'metric': 'x1 + x1'},
       {'resource': '$node', 'metric': 'x2 + x2'}
     ]);

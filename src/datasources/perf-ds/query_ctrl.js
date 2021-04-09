@@ -1,13 +1,15 @@
 import './modal_ctrl';
 import {QueryType} from './constants';
 import {QueryCtrl} from 'app/plugins/sdk';
-import appEvents from 'app/core/app_events';
+import { EventBusSrv } from '@grafana/data';
 import _ from 'lodash';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
   /** @ngInject */
   constructor($rootScope, $scope, $injector, $q, $modal) {
     super($scope, $injector);
+
+    this.appEvents = new EventBusSrv();
 
     this.types = QueryType;
 
@@ -177,7 +179,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     }
     var errorMessage = this.validateTarget(targetId, required);
     if (errorMessage) {
-      appEvents.emit('alert-error', ['Error', errorMessage]);
+      this.appEvents.emit('alert-error', ['Error', errorMessage]);
       this.error = errorMessage;
     } else {
       // Only send valid requests to the API

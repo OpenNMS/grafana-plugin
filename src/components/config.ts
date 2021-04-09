@@ -1,4 +1,8 @@
 export class OpenNMSHelmAppConfigCtrl {
+  appModel: any;
+  data: any;
+  static templateUrl: string;
+
   /** @ngInject */
   constructor() {
     if (!this.appModel.jsonData) {
@@ -11,13 +15,13 @@ export class OpenNMSHelmAppConfigCtrl {
   }
 
   addAction() {
-    this.data.actions.push({url:''});
+    this.data.actions.push({ url: '' });
   }
 
-  removeAction(actionIndex) {
+  removeAction(actionIndex: number) {
     if (this.data.actions[actionIndex]) {
       console.log('removing action ' + this.data.actions[actionIndex].label + '(' + actionIndex + ')');
-      this.data.actions.splice(actionIndex,1);
+      this.data.actions.splice(actionIndex, 1);
     } else {
       console.warn('no action at index ' + actionIndex);
     }

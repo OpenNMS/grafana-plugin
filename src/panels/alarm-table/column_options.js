@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { grafanaResource } from '../../lib/grafana_resource';
 const getValueFormats = grafanaResource('getValueFormats');
 
-import { defaultColors } from './module';
+import { defaultColors } from './alarmTableCtrl';
 
 export const alignTypesEnum = [
   { text: 'auto', value: '' },
