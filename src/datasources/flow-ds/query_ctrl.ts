@@ -1,19 +1,35 @@
-import {QueryCtrl} from 'app/plugins/sdk';
 import _ from 'lodash';
+
+// @ts-ignore
+import { QueryCtrl } from 'app/plugins/sdk';
+// @ts-ignore
+import { auto } from 'angular';
 
 import './add_opennms_func';
 import './func_editor';
-import {Gfuncs} from "./flow_functions";
+import { Gfuncs } from './flow_functions';
 import './css/query-editor.css';
 
 export class FlowDatasourceQueryCtrl extends QueryCtrl {
+  static templateUrl = 'datasources/flow-ds/partials/query.editor.html';
+
+  error: any;
+  functions = [] as any[];
+  panelCtrl: any;
+  segments = [] as any[];
+  target = {} as any;
+
+  scope: any;
+
   /** @ngInject */
-  constructor($scope, $injector, uiSegmentSrv) {
+  constructor($scope: any, $injector: auto.IInjectorService, public uiSegmentSrv) {
     super($scope, $injector);
 
-    this.scope = $scope;
-    this.uiSegmentSrv = uiSegmentSrv;
     this.parseTarget();
+  }
+
+  refresh() {
+    super.refresh();
   }
 
   parseTarget() {
@@ -51,15 +67,11 @@ export class FlowDatasourceQueryCtrl extends QueryCtrl {
   }
 
   getAltSegments() {
-    return Promise.resolve([
-      {value: 'applications'},
-      {value: 'conversations'},
-      {value: 'hosts'}
-    ]);
+    return Promise.resolve([{ value: 'applications' }, { value: 'conversations' }, { value: 'hosts' }]);
   }
 
   addFunction(funcDef) {
-    let newFunc = Gfuncs.createFuncInstance(funcDef, {withDefaultParams: true});
+    let newFunc = Gfuncs.createFuncInstance(funcDef, { withDefaultParams: true });
     newFunc.added = true;
     this.functions.push(newFunc);
     this.targetChanged();
@@ -92,5 +104,3 @@ export class FlowDatasourceQueryCtrl extends QueryCtrl {
     this.panelCtrl.refresh(); // Asks the panel to refresh data.
   }
 }
-
-FlowDatasourceQueryCtrl.templateUrl = 'datasources/flow-ds/partials/query.editor.html';
