@@ -1,20 +1,36 @@
-import {QueryCtrl} from 'app/plugins/sdk';
-import './css/query-editor.css';
 import _ from 'lodash';
-import {API} from 'opennms';
-import {Mapping} from './Mapping';
-import {UI} from './UI';
+
+// @ts-ignore
+import { QueryCtrl } from 'app/plugins/sdk';
+// @ts-ignore
+import { auto } from 'angular';
+
+import { API } from 'opennms';
+
+import { Mapping } from './Mapping';
+import { UI } from './UI';
+import { entityTypes, getEntity } from './datasource';
 import './query-directive';
 
-import {entityTypes, getEntity} from './datasource';
+import './css/query-editor.css';
 
 export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
+  static templateUrl = 'datasources/entity-ds/partials/query.editor.html';
+
+  datasource: any;
+  entity: any;
+  entityTypes: any;
+  error: any;
+  featuredAttributes: boolean;
+  filterMapping: any;
+  panelCtrl: any;
+  target = {} as any;
+  uiFilter: any;
+
   /** @ngInject */
-  constructor($scope, $injector, $q, uiSegmentSrv)  {
+  constructor($scope: any, $injector: auto.IInjectorService, public $q: any, public uiSegmentSrv) {
     super($scope, $injector);
-    this.$q = $q;
-    this.$scope = $scope;
-    this.uiSegmentSrv = uiSegmentSrv;
+
     this.featuredAttributes = true; // limits the selection to the featured attributes
     this.entityTypes = entityTypes;
 
@@ -48,15 +64,15 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   }
 
   _getEntity() {
-    if (!this.entity || !this.target.entityType || this.target.entityType.id !== this.entity.type) {
-      this.entity = getEntity(this.target.entityType.id, undefined, this.datasource);
+    if (this.target?.entityType?.id !== this.entity?.type) {
+      this.entity = getEntity(this.target?.entityType?.id, undefined, this.datasource);
     }
     return this.entity;
   }
 
   _getFilterMapping() {
     const entity = this._getEntity();
-    if (!this.filterMapping || !this.filterMapping.entity || this.filterMapping.entity.type !== entity.type) {
+    if (this.filterMapping?.entity?.type !== entity?.type) {
       this.filterMapping = new Mapping.FilterMapping(this.uiSegmentSrv, entity);
     }
     return this.filterMapping;
@@ -65,20 +81,20 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   _getUiFilter() {
     const filterMapping = this._getFilterMapping();
     if (!this.uiFilter) {
-      this.uiFilter = filterMapping.getUiFilter(this.target.filter);
-    } else if (!this.uiFilter.entity || this.uiFilter.entity.type !== filterMapping.entity.type) {
+      this.uiFilter = filterMapping.getUiFilter(this.target?.filter);
+    } else if (this.uiFilter?.entity?.type !== filterMapping.entity?.type) {
       this.uiFilter.entity = filterMapping.entity;
     }
     return this.uiFilter;
   }
 
   toggleEditorMode() {
-    this.target.rawQuery = !this.target.rawQuery;
+    this.target.rawQuery = !this.target?.rawQuery;
   }
 
   onChangeEntityType() {
     const filterMapping = this._getFilterMapping();
-    this.uiFilter.entity = filterMapping.entity;
+    this.uiFilter.entity = filterMapping?.entity;
     this.clearRestrictions();
   }
 
@@ -88,17 +104,20 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
 
   showClearRestrictions(query = this._getUiFilter().query) {
     const self = this;
-    const booleanList = _.map(query.clauses, clause => {
+    const booleanList = _.map(query.clauses, (clause) => {
       if (clause.restriction instanceof UI.Query) {
         return self.showClearRestrictions(clause.restriction);
       }
       return new UI.Controls.RemoveControl().filter(query, clause);
     });
 
-    return _.reduce(booleanList, (overall, current) => {
-      return overall || current;
-    }, false);
-
+    return _.reduce(
+      booleanList,
+      (overall, current) => {
+        return overall || current;
+      },
+      false
+    );
   }
 
   clearRestrictions() {
@@ -124,5 +143,3 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
     return [];
   }
 }
-
-OpenNMSEntityDatasourceQueryCtrl.templateUrl = 'datasources/entity-ds/partials/query.editor.html';
