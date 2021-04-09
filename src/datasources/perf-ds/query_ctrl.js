@@ -1,8 +1,10 @@
-import './modal_ctrl';
-import {QueryType} from './constants';
-import {QueryCtrl} from 'app/plugins/sdk';
-import { EventBusSrv } from '@grafana/data';
 import _ from 'lodash';
+
+import { QueryCtrl } from 'app/plugins/sdk';
+import { EventBusSrv } from '@grafana/data';
+
+import {QueryType} from './constants';
+import './modal_ctrl';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
   /** @ngInject */
