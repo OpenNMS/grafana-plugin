@@ -1,8 +1,0 @@
-{
-  "sourceType": "module",
-  "plugins": [
-    "@babel/plugin-transform-runtime",
-    "angularjs-annotate",
-  ],
-  "presets": ["@babel/preset-env"]
-}

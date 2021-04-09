@@ -1,5 +1,5 @@
-import {transformers} from '../panels/alarm-table/transformers';
-import {TableModel} from '../panels/alarm-table/table_model';
+const {transformers} = require('../panels/alarm-table/transformers');
+const {TableModel} = require('../panels/alarm-table/table_model');
 
 describe('Table transformer', function() {
   let transformer;
@@ -10,18 +10,18 @@ describe('Table transformer', function() {
 
   describe('Listing the columns', function() {
     it('should return an empty list of columns when no data is present', function() {
-      expect(transformer.getColumns([])).to.have.length(0);
+      expect(transformer.getColumns([])).toHaveLength(0);
     });
 
     it('should return an empty list of columns when the given table has no columns', function() {
       let table = new TableModel();
-      expect(transformer.getColumns([table])).to.have.length(0);
+      expect(transformer.getColumns([table])).toHaveLength(0);
     });
 
     it('should return the list of columns when a table has columns', function() {
       let table = new TableModel();
       table.columns = ['col1', 'col2', 'col3'];
-      expect(transformer.getColumns([table])).to.eql(['col1', 'col2', 'col3']);
+      expect(transformer.getColumns([table])).toEqual(['col1', 'col2', 'col3']);
     });
 
     it('should return the intersection of all columns names when given multiple tables', function() {
@@ -29,7 +29,7 @@ describe('Table transformer', function() {
       t1.columns = ['col1', 'col2', 'col3'];
       let t2 = new TableModel();
       t2.columns = ['col1', 'col2', 'colx'];
-      expect(transformer.getColumns([t1,t2])).to.eql(['col1', 'col2']);
+      expect(transformer.getColumns([t1,t2])).toEqual(['col1', 'col2']);
     });
   });
 
@@ -45,8 +45,8 @@ describe('Table transformer', function() {
       let model = new TableModel();
 
       transformer.transform([table], panel, model);
-      expect(model.columns).to.eql(table.columns);
-      expect(model.rows).to.eql(table.rows);
+      expect(model.columns).toEqual(table.columns);
+      expect(model.rows).toEqual(table.rows);
     });
 
     it('should filter the columns if one or more are specified in the panel definition', function() {
@@ -57,7 +57,7 @@ describe('Table transformer', function() {
       let metadata = {
         'alarm': 'abc'
       };
-      actualRow.meta = metadata;
+      (actualRow as any).meta = metadata;
       table.rows.push(actualRow);
 
       let panel = {columns: [{
@@ -70,10 +70,10 @@ describe('Table transformer', function() {
       // The meta-data that was on the original row should also be present on the
       // transformed row
       let expectedRow = [2];
-      expectedRow.meta = metadata;
+      (expectedRow as any).meta = metadata;
 
-      expect(model.columns).to.eql(panel.columns);
-      expect(model.rows).to.eql([expectedRow]);
+      expect(model.columns).toEqual(panel.columns);
+      expect(model.rows).toEqual([expectedRow]);
     });
 
     it('should re-order the columns according the order specified in the panel definition', function() {
@@ -90,8 +90,8 @@ describe('Table transformer', function() {
 
       transformer.transform([table], panel, model);
 
-      expect(model.columns).to.eql(panel.columns);
-      expect(model.rows).to.eql([[3, 2]]);
+      expect(model.columns).toEqual(panel.columns);
+      expect(model.rows).toEqual([[3, 2]]);
     });
 
     it('should use an undefined value when a column is present in the panel definition, but not in any of the tables', function() {
@@ -110,8 +110,8 @@ describe('Table transformer', function() {
 
       transformer.transform([table], panel, model);
 
-      expect(model.columns).to.eql(panel.columns);
-      expect(model.rows).to.eql([[3, undefined, 2]]);
+      expect(model.columns).toEqual(panel.columns);
+      expect(model.rows).toEqual([[3, undefined, 2]]);
     });
 
     it('should combine multiple tables into a single table', function() {
@@ -127,8 +127,8 @@ describe('Table transformer', function() {
       let model = new TableModel();
 
       transformer.transform([t1,t2], panel, model);
-      expect(model.columns).to.eql(t1.columns);
-      expect(model.rows).to.eql([[1], [2]]);
+      expect(model.columns).toEqual(t1.columns);
+      expect(model.rows).toEqual([[1], [2]]);
     });
 
     it('should deduplicate alarms originating from the same datasource', function() {
@@ -164,11 +164,11 @@ describe('Table transformer', function() {
       let model = new TableModel();
 
       transformer.transform([t1,t2], panel, model);
-      expect(model.columns).to.eql(t1.columns);
+      expect(model.columns).toEqual(t1.columns);
       // alarm_from_ds1_as_row should only appear once
-      expect(model.rows).to.eql([alarm_from_ds1_as_row, alarm_from_ds2_as_row]);
+      expect(model.rows).toEqual([alarm_from_ds1_as_row, alarm_from_ds2_as_row]);
       // alarm_from_ds1_as_row_meta should only appear once
-      expect(model.meta.entity_metadata).to.eql([alarm_from_ds1_as_row_meta, alarm_from_ds2_as_row_meta]);
+      expect(model.meta.entity_metadata).toEqual([alarm_from_ds1_as_row_meta, alarm_from_ds2_as_row_meta]);
     });
   });
 

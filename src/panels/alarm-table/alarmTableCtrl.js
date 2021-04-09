@@ -1,16 +1,14 @@
 import _ from 'lodash';
 import $ from 'jquery';
+
+import {isTableData} from '@grafana/data';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
-import config from 'app/core/config';
+
+import {config} from '@grafana/runtime';
 import {transformDataToTable} from './transformers';
 import {tablePanelEditor} from './editor';
 import {columnOptionsTab} from './column_options';
 import {TableRenderer} from './renderer';
-import coreModule from 'app/core/core_module';
-import {alarmDetailsAsDirective} from './alarm_details';
-import {memoEditorAsDirective} from "./memo_editor"
-import {contextMenuAsDirective} from "./context_menu";
-import {loadPluginCss} from 'app/plugins/sdk';
 import {SelectionMgr} from "./selection_mgr";
 import {ActionMgr} from "./action_mgr";
 
@@ -20,16 +18,8 @@ const PanelEvents = grafanaResource('PanelEvents');
 import moment from 'moment';
 import * as XLSX from 'xlsx';
 
-loadPluginCss({
-  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
-  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css'
-});
-
 export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'];
 const doubleClickDelay = 250;
-
-// replace this with `import {isTableData} from '@grafana/data'` if we end up requiring grafana 6.3+
-const isTableData = (data) => data && data.hasOwnProperty('columns');
 
 const styles = {
   ack: {
@@ -804,25 +794,5 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
 
 AlarmTableCtrl.templateUrl = 'panels/alarm-table/module.html';
 
-export { AlarmTableCtrl, AlarmTableCtrl as PanelCtrl };
+export { AlarmTableCtrl };
 
-coreModule.directive('alarmDetailsAsModal',  alarmDetailsAsDirective);
-coreModule.directive('memoEditor',  memoEditorAsDirective);
-coreModule.directive('contextMenu', contextMenuAsDirective());
-
-coreModule.directive('dynamicHeight', function($window) {
-  // Used to dynamically size the alarm details modal window
-  return{
-    link: function(scope, element /*, attrs */) {
-      const doResize = () => {
-        element.css('max-height', $window.innerHeight * 0.8 + 'px');
-      };
-
-      doResize();
-      element.on('$destroy', () => {
-        $window.removeEventListener('resize', doResize);
-      });
-      $window.addEventListener('resize', doResize);
-    }
-  }
-});

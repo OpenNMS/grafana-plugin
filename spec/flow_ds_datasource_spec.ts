@@ -1,4 +1,4 @@
-import {FlowDatasource} from '../datasources/flow-ds/datasource';
+const {FlowDatasource} = require('../datasources/flow-ds/datasource');
 
 describe("OpenNMS_Flow_Datasource", function () {
 
@@ -52,7 +52,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(expectedResponse).to.eql(actualResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
 
@@ -78,7 +78,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(expectedResponse).to.eql(actualResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
 
@@ -112,7 +112,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(expectedResponse).to.eql(actualResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
 
@@ -137,7 +137,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(expectedResponse).to.eql(actualResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
 
@@ -162,7 +162,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(expectedResponse).to.eql(actualResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
   });

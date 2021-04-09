@@ -1,8 +1,8 @@
-import {Datasource} from "../datasources/perf-ds/module";
+const {Datasource} = require("../datasources/perf-ds/module");
 import Q from "q";
 
 describe('OpenNMSPMDatasource', function () {
-  let ctx = {};
+  let ctx = {} as any;
 
   beforeEach(function () {
     ctx.$q = Q;
@@ -47,9 +47,9 @@ describe('OpenNMSPMDatasource', function () {
       };
 
       ctx.ds.query(query).then(function (result) {
-        expect(result.data).to.have.length(1);
-        expect(result.data[0].target).to.equal('loadavg1');
-        expect(result.data[0].datapoints).to.have.length(1);
+        expect(result.data).toHaveLength(1);
+        expect(result.data[0].target).toEqual('loadavg1');
+        expect(result.data[0].datapoints).toHaveLength(1);
         done();
       });
     });
@@ -91,7 +91,7 @@ describe('OpenNMSPMDatasource', function () {
       };
 
       ctx.ds.query(query).then(function (result) {
-        expect(result.data).to.have.length(0);
+        expect(result.data).toHaveLength(0);
         done();
       });
     });
@@ -100,7 +100,7 @@ describe('OpenNMSPMDatasource', function () {
   describe('testing for connectivity', function () {
     it('should make a request to /rest/info', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {
-        expect(request.url).to.equal('/rest/info');
+        expect(request.url).toEqual('/rest/info');
         return ctx.$q.when({
           status: 200
         });
@@ -131,8 +131,8 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.source.length).to.equal(1);
-      expect(query.source[0].attribute).to.equal("loadavg1");
+      expect(query.source.length).toEqual(1);
+      expect(query.source[0].attribute).toEqual("loadavg1");
     });
 
     it('should support scoped variables', function () {
@@ -158,8 +158,8 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.source.length).to.equal(1);
-      expect(query.source[0].attribute).to.equal("loadavg5");
+      expect(query.source.length).toEqual(1);
+      expect(query.source[0].attribute).toEqual("loadavg5");
     });
 
     it('should use node[] or nodeSource[] based on the contents of the variable', function () {
@@ -181,9 +181,9 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.source.length).to.equal(2);
-      expect(query.source[0].resourceId).to.equal("node[1].nodeSnmp[]");
-      expect(query.source[1].resourceId).to.equal("nodeSource[FS:FID].nodeSnmp[]");
+      expect(query.source.length).toEqual(2);
+      expect(query.source[0].resourceId).toEqual("node[1].nodeSnmp[]");
+      expect(query.source[1].resourceId).toEqual("nodeSource[FS:FID].nodeSnmp[]");
     });
 
     it('should generate multiple sources for multi-valued template variables', function () {
@@ -205,11 +205,11 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.source.length).to.equal(4);
-      expect(query.source[0].attribute).to.equal("1-x");
-      expect(query.source[1].attribute).to.equal("1-y");
-      expect(query.source[2].attribute).to.equal("2-x");
-      expect(query.source[3].attribute).to.equal("2-y");
+      expect(query.source.length).toEqual(4);
+      expect(query.source[0].attribute).toEqual("1-x");
+      expect(query.source[1].attribute).toEqual("1-y");
+      expect(query.source[2].attribute).toEqual("2-x");
+      expect(query.source[3].attribute).toEqual("2-y");
     });
 
     it('should handle substituting "All" with all of the available values', function () {
@@ -240,11 +240,11 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.source.length).to.equal(4);
-      expect(query.source[0].attribute).to.equal("a");
-      expect(query.source[1].attribute).to.equal("b");
-      expect(query.source[2].attribute).to.equal("c");
-      expect(query.source[3].attribute).to.equal("d");
+      expect(query.source.length).toEqual(4);
+      expect(query.source[0].attribute).toEqual("a");
+      expect(query.source[1].attribute).toEqual("b");
+      expect(query.source[2].attribute).toEqual("c");
+      expect(query.source[3].attribute).toEqual("d");
     });
 
     it('should perform variable substitution on all filter parameters', function () {
@@ -277,20 +277,20 @@ describe('OpenNMSPMDatasource', function () {
       };
       let [query,] = ctx.ds.buildQuery(options);
 
-      expect(query.filter.length).to.equal(2);
-      expect(query.filter[0].name).to.equal("some-filter");
-      expect(query.filter[0].parameter.length).to.equal(2);
-      expect(query.filter[0].parameter[0].key).to.equal("param1");
-      expect(query.filter[0].parameter[0].value).to.equal(1);
-      expect(query.filter[0].parameter[1].key).to.equal("param2");
-      expect(query.filter[0].parameter[1].value).to.equal("x");
+      expect(query.filter.length).toEqual(2);
+      expect(query.filter[0].name).toEqual("some-filter");
+      expect(query.filter[0].parameter.length).toEqual(2);
+      expect(query.filter[0].parameter[0].key).toEqual("param1");
+      expect(query.filter[0].parameter[0].value).toEqual(1);
+      expect(query.filter[0].parameter[1].key).toEqual("param2");
+      expect(query.filter[0].parameter[1].value).toEqual("x");
 
-      expect(query.filter[1].name).to.equal("some-filter");
-      expect(query.filter[1].parameter.length).to.equal(2);
-      expect(query.filter[1].parameter[0].key).to.equal("param1");
-      expect(query.filter[1].parameter[0].value).to.equal(1);
-      expect(query.filter[1].parameter[1].key).to.equal("param2");
-      expect(query.filter[1].parameter[1].value).to.equal("y");
+      expect(query.filter[1].name).toEqual("some-filter");
+      expect(query.filter[1].parameter.length).toEqual(2);
+      expect(query.filter[1].parameter[0].key).toEqual("param1");
+      expect(query.filter[1].parameter[0].value).toEqual(1);
+      expect(query.filter[1].parameter[1].key).toEqual("param2");
+      expect(query.filter[1].parameter[1].value).toEqual("y");
     });
   });
 
@@ -310,8 +310,8 @@ describe('OpenNMSPMDatasource', function () {
 
           let [,labels] = ctx.ds.buildQuery(options);
 
-          expect(labels.length).to.equal(1);
-          expect(labels[0]).to.equal("loadavg1");
+          expect(labels.length).toEqual(1);
+          expect(labels[0]).toEqual("loadavg1");
       });
 
       it('should preserve multiple labels', function () {
@@ -336,9 +336,9 @@ describe('OpenNMSPMDatasource', function () {
 
           let [,labels] = ctx.ds.buildQuery(options);
 
-          expect(labels.length).to.equal(2);
-          expect(labels[0]).to.equal("loadavg1");
-          expect(labels[1]).to.equal("loadavg5");
+          expect(labels.length).toEqual(2);
+          expect(labels[0]).toEqual("loadavg1");
+          expect(labels[1]).toEqual("loadavg5");
       });
 
       it('should preserve multiple labels (reverse)', function () {
@@ -365,9 +365,9 @@ describe('OpenNMSPMDatasource', function () {
 
           let [,labels] = ctx.ds.buildQuery(options);
 
-          expect(labels.length).to.equal(2);
-          expect(labels[0]).to.equal("loadavg5");
-          expect(labels[1]).to.equal("loadavg1");
+          expect(labels.length).toEqual(2);
+          expect(labels[0]).toEqual("loadavg5");
+          expect(labels[1]).toEqual("loadavg1");
       });
 
       it('should reorder the series', async function () {
@@ -438,13 +438,13 @@ describe('OpenNMSPMDatasource', function () {
           };
 
           var result = await ctx.ds.query(query);
-          expect(result.data.length).to.equal(3);
-          expect(result.data[0].target).to.equal('a');
-          expect(result.data[0].datapoints).to.deep.equal([[1, 0], [2, 5], [3, 10]]);
-          expect(result.data[1].target).to.equal('b');
-          expect(result.data[1].datapoints).to.deep.equal([[3, 0], [2, 5], [1, 10]]);
-          expect(result.data[2].target).to.equal('c');
-          expect(result.data[2].datapoints).to.deep.equal([[9, 0], [9, 5], [9, 10]]);
+          expect(result.data.length).toEqual(3);
+          expect(result.data[0].target).toEqual('a');
+          expect(result.data[0].datapoints).toStrictEqual([[1, 0], [2, 5], [3, 10]]);
+          expect(result.data[1].target).toEqual('b');
+          expect(result.data[1].datapoints).toStrictEqual([[3, 0], [2, 5], [1, 10]]);
+          expect(result.data[2].target).toEqual('c');
+          expect(result.data[2].datapoints).toStrictEqual([[9, 0], [9, 5], [9, 10]]);
       });
 
   });
