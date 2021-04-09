@@ -27,9 +27,13 @@ class OnmsTimeoutCtrl {
 }
 
 if (typeof angular !== 'undefined') {
-  angular.module('grafana.directives')
+  const injector = angular.injector();
+  if (!injector.has('onmstimeoutSettingsDirective')) {
+    // only register it once
+    angular.module('grafana.directives')
     .directive('onmsTimeoutSettings', directive)
     .controller('OnmsTimeoutCtrl', OnmsTimeoutCtrl);
+  }
 } else {
   console.warn('Angular not found!  <onms-timeout> will not work!');
 }
