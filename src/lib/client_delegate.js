@@ -449,10 +449,14 @@ export class ClientDelegate {
     }
 
     getDscpValues(nodeCriteria, interfaceId, start, end) {
-        return this.getFlowDao()
-            .then(function(flowDao) {
-                return flowDao.getDscpValues(nodeCriteria, interfaceId, start, end);
-            }).catch(this.decorateError);
+        return this.getClientWithMetadata().then(function(c) {
+            const metadata = c.http.server.metadata;
+            if (metadata.tosSupport()) {
+                return c.flows().getDscpValues(nodeCriteria, interfaceId, start, end);
+            } else {
+                return Promise.resolve([]);
+            }
+        }).catch(this.decorateError);
     }
 
     getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp) {

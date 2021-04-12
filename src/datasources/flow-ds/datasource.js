@@ -212,12 +212,12 @@ export class FlowDatasource {
     query = this.templateSrv.replace(query);
 
     let exporterNodesRegex = /exporterNodesWithFlows\((.*)\)/;
-    let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\((.*)\)/;
+    let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/; // just pick the first arg and ignore anything else
     let dscpOnExporterNodeAndInterfaceRegex = /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/;
 
     let exporterNodesQuery = query.match(exporterNodesRegex);
     if (exporterNodesQuery) {
-      return this.metricFindExporterNodes(exporterNodesQuery[1]);
+      return this.metricFindExporterNodes();
     }
 
     let interfacesOnExporterNodeQuery = query.match(interfacesOnExporterNodeRegex);
