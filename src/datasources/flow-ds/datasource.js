@@ -292,13 +292,13 @@ export class FlowDatasource {
       table.rows = _.map(table.rows, (row) => {
         let label;
         switch(row[ecnIndex]) {
-          // all flows used enc capable transports / no congestions were reported
+          // all flows used ecn capable transports / no congestions were reported
           case 0: label = 'ect / no ce'; break;
-          // at least some flows used non-enc-capable-transports / no congestions were reported
+          // at least some flows used non-ecn-capable transports / no congestions were reported
           case 1: label = 'non-ect / no ce'; break;
-          // all flows used enc capable transports / congestions were reported
+          // all flows used ecn capable transports / congestions were reported
           case 2: label = 'ect / ce'; break;
-          // at least some flows used non-enc-capable-transports / congestions were reported
+          // at least some flows used non-ecn-capable transports / congestions were reported
           case 3: label = 'non-ect / ce'; break;
         }
         if (label) {
