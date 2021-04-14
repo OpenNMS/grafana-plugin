@@ -15,7 +15,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   datasource: any;
   error: any;
   nodeResources = [] as any[] | undefined;
-  target = {} as any;
+  target: any;
   types: typeof QueryType;
 
   /** @ngInject */
@@ -33,6 +33,11 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     this.types = QueryType;
 
     this.error = this.validateTarget();
+
+    if (!this.target) {
+      this.target = {};
+    }
+
     /*
     this.$rootScope = $rootScope;
     this.$q = $q;

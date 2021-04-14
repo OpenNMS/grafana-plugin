@@ -24,7 +24,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   featuredAttributes: boolean;
   filterMapping: any;
   panelCtrl: any;
-  target = {} as any;
+  target: any;
   uiFilter: any;
 
   /** @ngInject */
