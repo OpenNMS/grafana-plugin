@@ -17,7 +17,7 @@ export class FlowDatasourceQueryCtrl extends QueryCtrl {
   functions = [] as any[];
   panelCtrl: any;
   segments = [] as any[];
-  target = {} as any;
+  target: any;
 
   scope: any;
 
