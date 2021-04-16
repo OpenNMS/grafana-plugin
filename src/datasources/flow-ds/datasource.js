@@ -190,7 +190,7 @@ export class FlowDatasource {
   // Used by template queries
   metricFindQuery(query) {
     if (query === null || query === undefined || query === "") {
-      return this.$q.resolve([]);
+      return this.q.resolve([]);
     }
     query = this.templateSrv.replace(query);
 
@@ -207,7 +207,7 @@ export class FlowDatasource {
       return this.metricFindInterfacesOnExporterNode(interfacesOnExporterNodeQuery[1]);
     }
 
-    return this.$q.resolve([]);
+    return this.q.resolve([]);
   }
 
   metricFindExporterNodes(/* query */) {
