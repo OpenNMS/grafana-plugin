@@ -61,6 +61,9 @@ export class ClientDelegate {
         if (!ret.message) {
             ret.message = ret.statusText || statusText;
         }
+        if (ret.message && ret.message.indexOf('too_many_buckets_exception') !== -1) {
+            ret.message = ret.message + '; - alternatively you can edit the "Query options" of this panel\'s query and set "Max data points" to a smaller value.';
+        }
         if (!ret.status) {
             ret.status = 'error';
         }
