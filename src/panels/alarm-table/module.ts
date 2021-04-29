@@ -1,6 +1,6 @@
-// @ts-ignore
-import coreModule from 'app/core/core_module';
+import coreModule from 'grafana/app/core/core_module';
 import { loadPluginCss } from '@grafana/runtime';
+import { PanelPlugin } from '@grafana/data';
 
 import { AlarmTableCtrl } from './alarmTableCtrl';
 import { alarmDetailsAsDirective } from './alarm_details';
@@ -8,11 +8,16 @@ import { memoEditorAsDirective } from './memo_editor';
 import { contextMenuAsDirective } from './context_menu';
 
 loadPluginCss({
-  dark: 'plugins/opennms-helm-app/panels/alarm-table/css/table.dark.css',
-  light: 'plugins/opennms-helm-app/panels/alarm-table/css/table.light.css',
+  dark: 'plugins/opennms-helm-app/styles/dark.css',
+  light: 'plugins/opennms-helm-app/styles/light.css',
 });
 
-export { AlarmTableCtrl, AlarmTableCtrl as PanelCtrl };
+// export { AlarmTableCtrl, AlarmTableCtrl as PanelCtrl };
+
+// @ts-ignore
+export const plugin = new PanelPlugin(null as unknown);
+plugin.angularPanelCtrl = AlarmTableCtrl;
+plugin.setNoPadding();
 
 coreModule.directive('alarmDetailsAsModal', alarmDetailsAsDirective);
 coreModule.directive('memoEditor', memoEditorAsDirective);

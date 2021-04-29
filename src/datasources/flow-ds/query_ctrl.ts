@@ -1,9 +1,6 @@
 import _ from 'lodash';
 
-// @ts-ignore
-import { QueryCtrl } from 'app/plugins/sdk';
-// @ts-ignore
-import { auto } from 'angular';
+import { QueryCtrl } from 'grafana/app/plugins/sdk';
 
 import './add_opennms_func';
 import './func_editor';
@@ -22,7 +19,7 @@ export class FlowDatasourceQueryCtrl extends QueryCtrl {
   scope: any;
 
   /** @ngInject */
-  constructor($scope: any, $injector: auto.IInjectorService, public uiSegmentSrv) {
+  constructor($scope: any, $injector: any, public uiSegmentSrv) {
     super($scope, $injector);
 
     this.parseTarget();

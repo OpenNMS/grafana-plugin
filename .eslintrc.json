@@ -1,0 +1,6 @@
+{
+  "extends": ["@grafana/eslint-config"],
+  "rules": {
+    "prettier/prettier": "off"
+  }
+}

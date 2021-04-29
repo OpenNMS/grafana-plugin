@@ -1,11 +1,7 @@
 import _ from 'lodash';
-
-// @ts-ignore
-import { QueryCtrl } from 'app/plugins/sdk';
-// @ts-ignore
-import { auto } from 'angular';
-
 import { API } from 'opennms';
+
+import { QueryCtrl } from 'grafana/app/plugins/sdk';
 
 import { Mapping } from './Mapping';
 import { UI } from './UI';
@@ -28,7 +24,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   uiFilter: any;
 
   /** @ngInject */
-  constructor($scope: any, $injector: auto.IInjectorService, public $q: any, public uiSegmentSrv) {
+  constructor($scope: any, $injector: any, public $q: any, public uiSegmentSrv) {
     super($scope, $injector);
 
     this.featuredAttributes = true; // limits the selection to the featured attributes

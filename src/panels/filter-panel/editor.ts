@@ -279,7 +279,7 @@ export class FilterPanelEditorCtrl {
             const match = res.filter((col) => col.name === label)[0];
             if (match) {
               const label = match.name;
-              const column = new FilterColumn(label, undefined, ds.name, match.id, 'multi', entityType);
+              const column = new FilterColumn(label, undefined, ds.name, match.id, 'multi', entityType, undefined, undefined);
               console.debug('adding column:', column);
               self.panel.columns.push(column);
             }

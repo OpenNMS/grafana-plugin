@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import { isTableData } from '@grafana/data';
+import { PanelEvents, isTableData } from '@grafana/data';
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 
 import { config } from '@grafana/runtime';
@@ -12,9 +12,6 @@ import { columnOptionsTab } from './column_options';
 import { TableRenderer } from './renderer';
 import { SelectionMgr } from './selection_mgr';
 import { ActionMgr } from './action_mgr';
-
-import { grafanaResource } from '../../lib/grafana_resource';
-const PanelEvents = grafanaResource('PanelEvents');
 
 import moment from 'moment';
 import * as XLSX from 'xlsx';
