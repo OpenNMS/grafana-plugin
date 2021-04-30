@@ -19,7 +19,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     public $q: any,
     public $modal: any,
     public $scope: any,
-    public $injector: auto.IInjectorService,
+    $injector: auto.IInjectorService,
   ) {
     super($scope, $injector);
 
