@@ -1,23 +1,13 @@
 import _ from 'lodash';
 import { auto } from 'angular';
 
-// import { QueryCtrl } from 'grafana/app/plugins/sdk';
+import { QueryCtrl } from 'grafana/app/plugins/sdk';
 import { EventBusSrv } from '@grafana/data';
 
 import { QueryType } from './constants';
 import './modal_ctrl';
 
-export class OpenNMSQueryCtrl {
-  /* BEGIN: from plugins/sdk QueryCtrl; doing manually to make this testable :/ */
-  target!: any;
-  datasource!: any;
-  panelCtrl!: any;
-  panel: any;
-  hasRawMode!: boolean;
-  error?: string | null;
-  isLastQuery: boolean;
-  /* END: from plugins/sdk */
-
+export class OpenNMSQueryCtrl extends QueryCtrl {
   static templateUrl = 'datasources/perf-ds/partials/query.editor.html';
   appEvents: EventBusSrv;
   nodeResources = [] as any[] | undefined;
@@ -31,11 +21,7 @@ export class OpenNMSQueryCtrl {
     public $scope: any,
     public $injector: auto.IInjectorService,
   ) {
-    // super($scope, $injector);
-    /* BEGIN: from plugins/sdk */
-    this.panel = this.panelCtrl.panel;
-    this.isLastQuery = _.indexOf(this.panel.targets, this.target) === this.panel.targets.length - 1;
-    /* END: from plugins/sdk */
+    super($scope, $injector);
 
     this.appEvents = new EventBusSrv();
 
@@ -46,19 +32,6 @@ export class OpenNMSQueryCtrl {
     if (!this.target) {
       this.target = {};
     }
-
-    /*
-    this.$rootScope = $rootScope;
-    this.$q = $q;
-    this.$modal = $modal;
-    */
-  }
-
-  refresh() {
-    // super.refresh();
-    /* BEGIN: from plugins/sdk */
-    this.panelCtrl.refresh();
-    /* END: from plugins/sdk */
   }
 
   openNodeSelectionModal() {
