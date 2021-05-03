@@ -20,7 +20,7 @@ executors:
 
   docs-executor:
     docker:
-      - image: antora/antora:2.2.0
+      - image: opennms/antora:2.3.4-b6293
 
   netlify-cli-executor:
     docker:
@@ -118,14 +118,11 @@ jobs:
       - run:
           name: Run Tests
           command: |
-              mkdir -p reports/mocha
-              mkdir -p reports/eslint
-              npm run test-circleci
-              npm run eslint-circleci
+              npm run test
       - store_test_results:
-          path: reports
+          path: coverage
       - store_artifacts:
-          path: reports
+          path: coverage
       - persist_to_workspace:
           root: ~/
           paths:
@@ -137,10 +134,13 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
+          name: Validate Xrefs in docs
+          command: |
+            NODE_PATH="$(npm -g root)" antora --generator @antora/xref-validator local-site.yml
+      - run:
           name: Generate HTML output for documentation
           command: |
-            npm run docs
-
+            NODE_PATH="$(npm -g root)" antora --stacktrace generate local-site.yml
       - store_artifacts:
           path: build/site.zip
           destination: site.zip

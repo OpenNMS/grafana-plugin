@@ -23,10 +23,10 @@ export function dscpTypeAheadOptions(codes: number[]): string[] {
  *
  * Duplicates are removed, the result is ordered lexicographically according to the text of the selection options.
  */
-export function dscpSelectOptions(codes: number[]): { text: string, value: string }[] {
+export function dscpSelectOptions(codes: number[]): Array<{ text: string, value: string }> {
     const mappedCodes = codes.map(c => ((c >= 0 && c < dscpCodes.length) ? [dscpCodes[c]] : []))
     const uniqueCodes = ([] as DscpCode[]).concat(...mappedCodes).filter(isFirst)
-    const precedences = uniqueCodes.map(c => c.ipPrecedence).filter(p => p != undefined).filter(isFirst)
+    const precedences = uniqueCodes.map(c => c.ipPrecedence).filter(p => p !== undefined).filter(isFirst)
     return [
         ...uniqueCodes.map(c => ({ text: c.label, value: `${c.code}` }))
             .sort((a, b) => a.text.localeCompare(b.text)),
@@ -43,7 +43,7 @@ export function dscpLabel(code: string): string {
 
 export class DscpCode {
     constructor(
-        public readonly code: number,
+        readonly code: number,
         public symbolicName?: string,
         public ipPrecedence?: number,
     ) {}
@@ -64,7 +64,7 @@ export class DscpCode {
     get inputOptions(): string[] {
         return [`${this.code}`,
             ...(this.symbolicName ? [this.symbolicName] : []),
-            ...(this.ipPrecedence != undefined ? [`P${this.ipPrecedence}`] : [])]
+            ...(this.ipPrecedence !== undefined ? [`P${this.ipPrecedence}`] : [])]
     }
 }
 

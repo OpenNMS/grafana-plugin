@@ -34,14 +34,14 @@ public/css/*.min.css
 conf/custom.ini
 fig.yml
 profile.cov
-grafana
+/grafana
 .notouch
 
 # Antora documentation
 public/
 build/
 
-# only applies to `main`
+# Not ready yet
 /dist
 /SPECS
 /SOURCES
@@ -55,6 +55,3 @@ build/
 
 # don't ever persist the binary packages
 /dist/packages
-
-# test droppings
-/reports
