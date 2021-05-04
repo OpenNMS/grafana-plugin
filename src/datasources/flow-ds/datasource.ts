@@ -5,7 +5,7 @@ import { rangeUtil } from '@grafana/data';
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
-import { processSelectionVariables } from 'lib/utils2';
+import { processSelectionVariables } from 'lib/utils';
 
 export class FlowDatasource {
   type?: string;

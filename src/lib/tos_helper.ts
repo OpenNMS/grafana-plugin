@@ -1,4 +1,4 @@
-import {isFirst} from "./utils2";
+import { isFirst } from './utils';
 
 /**
  * Returns type-ahead options for the given DSCP codes.
