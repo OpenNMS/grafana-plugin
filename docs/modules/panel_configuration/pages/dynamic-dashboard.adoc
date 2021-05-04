@@ -1,7 +1,7 @@
 :imagesdir: ../assets/images
 [.lead]
 
-[[pc-dynanmic-dash]]
+[[pc-dynamic-dash]]
 = Creating Dynamic Dashboards
 
 Instead of hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} has several ways to create more dynamic and interactive dashboards:
@@ -110,4 +110,3 @@ image::pc-filter-panel2.png[Panel,400]
 
 Selections made here will impact all panels in the dashboard that use an entities datasource.
 You can drag the filter panel to appear anywhere on your dashboard. 
-
