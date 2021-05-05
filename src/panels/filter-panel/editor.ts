@@ -97,7 +97,7 @@ export class FilterPanelEditorCtrl {
 
     self.$scope.$evalAsync(() => {
       const current = self.$scope.current;
-      const dsName = current.datasource && current.datasource.name ? current.datasource.name : undefined;
+      const dsName = current?.datasource?.name;
 
       self
         .setDatasource(dsName)
@@ -261,7 +261,7 @@ export class FilterPanelEditorCtrl {
     return self.getDatasource($scope.current.datasource).then((ds) => {
       const deferred = self.$q.defer();
 
-      // make sure the other scoped variables are updated before evaluating everything else
+      // make sure the other scoped variables are updated before evaluating anything else
       $scope.$evalAsync(() => {
         const entityType = ds.type === 'opennms-helm-entity-datasource' ? $scope.current.entityType : undefined;
 
@@ -299,6 +299,7 @@ export class FilterPanelEditorCtrl {
   initializeMetricSegment() {
     this.addColumnSegment = this.uiSegmentSrv.newPlusButton();
     const section = $('#alarm-filter-editor-add-column');
+    section.find('#alarm-filter-editor-choose-datasource').remove();
     section.find('metric-segment').remove();
     section.append(metricSegmentHtml);
     this.$compile(section.contents())(this.$scope);
@@ -338,33 +339,44 @@ export class FilterPanelEditorCtrl {
 
   getDatasources() {
     const sources = this.datasourceSrv.getMetricSources();
+    console.debug('getDatasources(): sources=', sources);
     const configuredDatasource = this.getConfiguredDatasource();
+    console.debug('getDatasources(): configured:', configuredDatasource);
     const filtered = sources.filter((ds) => {
       if (configuredDatasource) {
         return ds.name === configuredDatasource;
       }
-      return ds.meta.id === 'opennms-helm-entity-datasource' && ds.value !== null;
+      return ds.meta.id === 'opennms-helm-entity-datasource'; // && ds.value !== null; <-- what is this for?!
     });
+    console.debug('getDatasources(): filtered=', filtered);
     return filtered;
   }
 
   reset() {
     const self = this;
-    self.$scope.datasources = self.getDatasources();
-    const current = self.$scope.current;
+    const deferred = self.$q.defer();
 
-    const resetDatasource = self.getConfiguredDatasource() || self.panel.datasource || undefined;
+    self.$scope.$evalAsync(() => {
+      self.$scope.datasources = self.getDatasources();
+      const current = self.$scope.current;
+  
+      const resetDatasource = self.getConfiguredDatasource() || self.panel.datasource || undefined;
+  
+      const ret = self.getDatasource(resetDatasource).then((ds) => {
+        const datasource = self.$scope.datasources.filter((existing) => {
+          return ds.name === existing.name;
+        })[0];
+  
+        console.debug('reset(): panel datasource "' + self.panel.datasource + '" matched:', datasource);
+        current.datasource = datasource;
+        current.entityType = undefined;
+        return self.updateCurrent();
+      });
 
-    return self.getDatasource(resetDatasource).then((ds) => {
-      const datasource = self.$scope.datasources.filter((existing) => {
-        return ds.name === existing.name;
-      })[0];
-
-      console.debug('reset(): panel datasource "' + self.panel.datasource + '" matched:', datasource);
-      current.datasource = datasource;
-      current.entityType = undefined;
-      return self.updateCurrent();
+      deferred.resolve(ret);
     });
+
+    return deferred.promise;
   }
 
   removeColumn(column, index) {

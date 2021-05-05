@@ -80,7 +80,7 @@ export class OpenNMSDatasource {
     if (!ret.status) {
       ret.status = 'error';
     }
-    return ret;
+    return this.$q.reject(ret);
   }
 
   query(options: any) {

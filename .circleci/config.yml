@@ -113,12 +113,8 @@ jobs:
           paths:
             - ~/.npm
       - run:
-          name: Run Build
-          command: npm run build
-      - run:
-          name: Run Tests
-          command: |
-              npm run test
+          name: Run Build & Tests
+          command: npm run build && npm run sign
       - store_test_results:
           path: coverage
       - store_artifacts:
@@ -203,8 +199,8 @@ jobs:
           name: Install Dependencies
           command: npm --no-progress ci
       - run:
-          name: Run Build
-          command: npm run build
+          name: Run Build & Tests
+          command: npm run build && npm run sign
       - run:
           name: Commit Build Output
           command: |
