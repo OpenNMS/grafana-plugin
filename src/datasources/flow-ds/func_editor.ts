@@ -28,9 +28,6 @@ angular
     return {
       restrict: 'A',
       link: function postLink($scope: any, elem: any) {
-        // @ts-ignore
-        const self = this;
-
         const $funcLink = $(funcSpanTemplate);
         const $funcControls = $(funcControlsTemplate);
         const ctrl = $scope.ctrl;
@@ -39,8 +36,8 @@ angular
         let paramCountAtLink = 0;
         let cancelBlur = null as null | number;
 
-        function clickFuncParam(paramIndex) {
-          const $link = $(self);
+        function clickFuncParam(this: any, paramIndex) {
+          const $link = $(this);
           const $comma = $link.prev('.comma');
           const $input = $link.next();
 
@@ -137,9 +134,8 @@ angular
           }
         }
 
-        function inputKeyDown() {
-          const me = self as any;
-          me.style.width = (3 + me.value.length) * 8 + 'px';
+        function inputKeyDown(this: any) {
+          this.style.width = (3 + this.value.length) * 8 + 'px';
         }
 
         function addTypeahead($input: any, paramIndex: number, optionsUpdater?: any) {
@@ -170,8 +166,8 @@ angular
           });
 
           let typeahead = $input.data('typeahead');
-          typeahead.lookup = () => {
-            const me = self as any;
+          typeahead.lookup = function (this: any) {
+            const me = this;
             me.query = me.$element.val() || '';
 
             if (me.$element.data('optionsUpdater')) {
