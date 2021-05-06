@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import _ from 'lodash';
 import { IPromise, IQService } from 'angular';
 import { stringToJsRegex } from '@grafana/data';

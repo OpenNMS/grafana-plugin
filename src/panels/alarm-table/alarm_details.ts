@@ -90,7 +90,7 @@ export class AlarmDetailsCtrl {
           })
         .catch(
           function (reason) {
-            console.log("Situation Feedback not supported error: ", reason);
+            console.warn('Situation Feedback not supported error: ', reason);
           });
     }
 
@@ -186,7 +186,7 @@ export class AlarmDetailsCtrl {
   }
 
   loadtags(prefix) {
-    console.log("Load tags: " + prefix);
+    console.debug(`Load tags: ${prefix}`);
     return this.$scope.tagArray;
   }
 
@@ -258,7 +258,7 @@ export class AlarmDetailsCtrl {
         })
       .catch(
         function (reason) {
-          console.log("Got POST error: ", reason);
+          console.warn('Got POST error:', reason);
           self.$scope.editFeedback = false;
         });
   }
@@ -338,7 +338,7 @@ export class AlarmDetailsCtrl {
   tagsTypeAhead(query) {
     // TODO - query rest endpoint for tags on the first time and then further filter them as typing continues
     // or hit rest endpoint each time...
-    console.log("TYPEAHEAD: " + query);
+    console.debug(`TYPEAHEAD: ${query}`);
   }
 
 }

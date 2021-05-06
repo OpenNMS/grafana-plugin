@@ -113,7 +113,7 @@ angular.module('grafana.directives')
                     });
                     // In case no comparator was found, fall back to the 1st one in the list
                     if (comparators.length >= 1 && (!comparator || comparator === void 0)) {
-                        console.log("Comparator " + clause.restriction.getComparator() + " is selected but not supported. Falling back to " + comparators[0]);
+                        console.debug(`Comparator ${clause.restriction.getComparator()} is selected but not supported. Falling back to ${comparators[0]}`);
                         clause.restriction.setComparator(comparators[0]);
                     }
                 }).then(() => {
@@ -149,7 +149,7 @@ angular.module('grafana.directives')
                 }));
             }
 
-            console.log('getOrderSuggestions: unknown segment type :(');
+            console.debug('getOrderSuggestions: unknown segment type :(');
             return $q.when([]);
         };
 

@@ -128,12 +128,12 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
 
     if (this.elem.width() === 0 || height === 0 || height === undefined) {
       if (this._renderRetries > this.retryTimes) {
-        console.log('onRender: still unable to determine height, and we ran out of retries');
+        console.debug('onRender: still unable to determine height, and we ran out of retries');
         return false;
       }
       this._renderRetries++;
 
-      console.log('onRender: unable to determine height, retrying again in ' + this.retryDelay + 'ms');
+      console.debug(`onRender: unable to determine height, retrying again in ${this.retryDelay}ms`);
       this.$timeout(() => {
         this.onRender();
       }, this.retryDelay);

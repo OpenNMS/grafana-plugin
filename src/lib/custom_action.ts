@@ -142,7 +142,7 @@ export class CustomAction {
 
   open(model?: any) {
     const interpolated = this.interpolate(model);
-    console.log('opening: ' + interpolated);
+    console.debug('opening: ' + interpolated);
     window.open(interpolated, '_blank');
   }
 }

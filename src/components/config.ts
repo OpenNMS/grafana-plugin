@@ -20,7 +20,7 @@ export class OpenNMSHelmAppConfigCtrl {
 
   removeAction(actionIndex: number) {
     if (this.data.actions[actionIndex]) {
-      console.log('removing action ' + this.data.actions[actionIndex].label + '(' + actionIndex + ')');
+      console.info('removing action ' + this.data.actions[actionIndex].label + '(' + actionIndex + ')');
       this.data.actions.splice(actionIndex, 1);
     } else {
       console.warn('no action at index ' + actionIndex);

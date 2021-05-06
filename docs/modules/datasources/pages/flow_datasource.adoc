@@ -6,7 +6,7 @@ Use the _Flow Datasource_ to retrieve application- and conversation-related metr
 
 The query editor supports the following functions:
 
-[options="header, autowidth"]
+[options="header, %autowidth"]
 |===
 | Category  | Name                    | Description
 | Combine   | `topN`                  | Limit the results to the Top N conversations/applications when sorted by total bytes.
@@ -47,7 +47,7 @@ The `interfacesOnExporterNodeWithFlows()` query will return a list of interface 
 The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
 
 The available arguments are as follows:
-[options="header, autowidth"]
+[options="header, %autowidth"]
 |===
 | Name                 | Default     | Description
 | nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node on which to enumerate the interfaces.
