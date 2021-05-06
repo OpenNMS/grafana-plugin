@@ -222,7 +222,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   validateTarget(targetId?: string, required?: boolean) {
-    // console.log('validateTarget(' + targetId + ',' + required + ')', this.target);
+    // console.debug('validateTarget(' + targetId + ',' + required + ')', this.target);
     if (this.target.type === QueryType.Attribute || this.target.type === QueryType.Expression) {
       var messages = {
         nodeId: 'You must supply a node id.',

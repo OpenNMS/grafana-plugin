@@ -256,7 +256,7 @@ export class OpenNMSEntityDatasource {
   _getQueryEntity(query) {
     const q = query && query.hasOwnProperty('query') ? query.query : query;
     if (q === undefined || q === null || q.trim().length === 0) {
-        console.log('_getQueryEntity: no query defined, assuming "alarm" entity type.');
+        console.debug('_getQueryEntity: no query defined, assuming "alarm" entity type.');
         return new AlarmEntity(this.opennmsClient, this);
     }
 
@@ -304,7 +304,7 @@ export class OpenNMSEntityDatasource {
     }
 
     if (attribute === undefined || attribute === null || attribute === '') {
-        console.log('entity-ds: metricFindQuery: no attribute specified');
+        console.warn('entity-ds: metricFindQuery: no attribute specified');
         return this.q.when([]);
     }
 
@@ -322,7 +322,7 @@ export class OpenNMSEntityDatasource {
     }
 
     return this.searchForValues(e, attribute).then(values => {
-        console.log('entity-ds: searchForValues (' + attribute + '):', values);
+        console.debug('entity-ds: searchForValues (' + attribute + '):', values);
         return values;
     });
   }

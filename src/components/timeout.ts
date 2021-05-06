@@ -22,7 +22,7 @@ class OnmsTimeoutCtrl {
     };
 
     if (!this.current) {
-      console.log('no current controller!');
+      console.warn('no current controller!');
       return;
     }
 

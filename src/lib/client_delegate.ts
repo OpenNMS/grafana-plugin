@@ -149,7 +149,7 @@ export class ClientDelegate {
                         return comparators;
                     }
                 }
-                console.log("No comparators found for property with id '" + propertyId + "'. Falling back to EQ.");
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
                 // This may be the case when the user entered a property, which does not exist
                 // therefore fallback to EQ
                 return [ API.Comparators.EQ ];
@@ -273,7 +273,7 @@ export class ClientDelegate {
                         return comparators;
                     }
                 }
-                console.log("No comparators found for property with id '" + propertyId + "'. Falling back to EQ.");
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
                 // This may be the case when the user entered a property, which does not exist
                 // therefore fallback to EQ
                 return [ API.Comparators.EQ ];

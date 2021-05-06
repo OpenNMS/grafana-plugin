@@ -36,7 +36,7 @@ export class FunctionFormatter {
                 if (entry.arguments.length < 2) {
                     entry.arguments = FunctionFormatter.getArguments(entry.arguments[0]);
                 } else {
-                    console.log('unexpected arguments, expected a single string:', entry);
+                    console.warn('unexpected arguments, expected a single string:', entry);
                 }
             }
             return entry;
@@ -88,7 +88,7 @@ export class FunctionFormatter {
                     ret += ')';
                 }
             } else {
-                console.log('this should not happen... token=', token);
+                console.warn('this should not happen... token=', token);
             }
         });
         return ret;
@@ -222,12 +222,12 @@ export class FunctionFormatter {
                         // argument is a function
                         ret.push(res);
                     } else {
-                        console.log('cannot reach here (result)', prev, res, result);
+                        console.warn('cannot reach here (result)', prev, res, result);
                         throw new Error('cannot reach here (result)');
                     }
                 });
             } else {
-                console.log('cannot reach here (args)', arg, args);
+                console.warn('cannot reach here (args)', arg, args);
                 throw new Error('cannot reach here (args)');
             }
         });
