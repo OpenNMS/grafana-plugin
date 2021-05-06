@@ -50,7 +50,7 @@
     "crypto-js": "^3.1.9-1",
     "flot": "^0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "opennms": "^2.1.1",
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.4.0",
