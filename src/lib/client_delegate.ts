@@ -443,7 +443,7 @@ export class ClientDelegate {
     getDscpValues(nodeCriteria, interfaceId, start, end) {
         return this.getClientWithMetadata().then(function(c) {
             const metadata = c.http.server.metadata;
-            if (metadata.tosSupport()) {
+            if (metadata.tos()) {
                 return c.flows().getDscpValues(nodeCriteria, interfaceId, start, end);
             } else {
                 return Promise.resolve([]);
