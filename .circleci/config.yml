@@ -113,19 +113,12 @@ jobs:
           paths:
             - ~/.npm
       - run:
-          name: Run Build
-          command: npm run build
-      - run:
-          name: Run Tests
-          command: |
-              mkdir -p reports/mocha
-              mkdir -p reports/eslint
-              npm run test-circleci
-              npm run eslint-circleci
+          name: Run Build & Tests
+          command: npm run build && npm run sign
       - store_test_results:
-          path: reports
+          path: coverage
       - store_artifacts:
-          path: reports
+          path: coverage
       - persist_to_workspace:
           root: ~/
           paths:
@@ -206,8 +199,8 @@ jobs:
           name: Install Dependencies
           command: npm --no-progress ci
       - run:
-          name: Run Build
-          command: npm run build
+          name: Run Build & Tests
+          command: npm run build && npm run sign
       - run:
           name: Commit Build Output
           command: |

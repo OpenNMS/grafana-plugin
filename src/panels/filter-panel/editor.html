@@ -29,11 +29,11 @@
         <div class="gf-form" id="alarm-filter-editor-add-column">
             <div class="gf-form">
                 <span class="gf-form-label gf-size-auto">Data source entity:</span>
-                <div class="gf-form-select-wrapper" ng-if="!editor.panel.columns || editor.panel.columns.length === 0">
+                <div id="alarm-filter-editor-choose-datasource" class="gf-form-select-wrapper" ng-if="!editor.panel.columns || editor.panel.columns.length === 0">
                     <select class="gf-form-input gf-size-auto"
                         ng-model="current.datasource"
                         ng-change="editor.updateCurrent()"
-                        ng-options="f.value for f in datasources track by f.name"
+                        ng-options="f.name for f in datasources track by f.name"
                         required>
                         <option value="" ng-if="false"></option>
                     </select>

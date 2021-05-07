@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         command: 'npm run build',
       },
       eslint: {
-        command: 'npm run eslint',
+        command: 'npm run lint',
       },
       test: {
         command: 'npm run test',
