@@ -54,6 +54,7 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -436,6 +437,7 @@
     },
     {
       "collapsed": true,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -443,549 +445,551 @@
         "y": 9
       },
       "id": 10,
-      "panels": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$perfds",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 14,
+            "x": 0,
+            "y": 10
+          },
+          "hiddenSeries": false,
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "avg",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/In/",
+              "stack": "A"
+            },
+            {
+              "alias": "/Out/",
+              "stack": "B",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "attribute": "ifHCInOctets",
+              "fallbackAttribute": "ifInOctets",
+              "label": "In",
+              "nodeId": "$node",
+              "refId": "A",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            },
+            {
+              "attribute": "ifHCOutOctets",
+              "fallbackAttribute": "ifOutOctets",
+              "hide": false,
+              "label": "Out",
+              "nodeId": "$node",
+              "refId": "B",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Interface Throughput",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "bytes/sec",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$perfds",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 10
+          },
+          "hiddenSeries": false,
+          "id": 8,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "avg",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "aggregation": "MAX",
+              "attribute": "ifInErrors",
+              "label": "Errors In",
+              "nodeId": "$node",
+              "refId": "A",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            },
+            {
+              "aggregation": "MAX",
+              "attribute": "ifOutErrors",
+              "label": "Errors Out",
+              "nodeId": "$node",
+              "refId": "B",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            },
+            {
+              "aggregation": "MAX",
+              "attribute": "ifInDiscards",
+              "label": "Discards In",
+              "nodeId": "$node",
+              "refId": "C",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            },
+            {
+              "aggregation": "MAX",
+              "attribute": "ifOutDiscards",
+              "label": "Discards Out",
+              "nodeId": "$node",
+              "refId": "D",
+              "resourceId": "interfaceSnmpByIfIndex[$interface]",
+              "type": "attribute"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Errors and Discards",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "packets/sec",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
       "repeat": null,
       "title": "SNMP Interface Statistics",
       "type": "row"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$perfds",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 14,
-        "x": 0,
-        "y": 10
-      },
-      "hiddenSeries": false,
-      "id": 2,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": true,
-        "min": true,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/In/",
-          "stack": "A"
-        },
-        {
-          "alias": "/Out/",
-          "stack": "B",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "attribute": "ifHCInOctets",
-          "fallbackAttribute": "ifInOctets",
-          "label": "In",
-          "nodeId": "$node",
-          "refId": "A",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        },
-        {
-          "attribute": "ifHCOutOctets",
-          "fallbackAttribute": "ifOutOctets",
-          "hide": false,
-          "label": "Out",
-          "nodeId": "$node",
-          "refId": "B",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Interface Throughput",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "bytes/sec",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$perfds",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 10,
-        "x": 14,
-        "y": 10
-      },
-      "hiddenSeries": false,
-      "id": 8,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": true,
-        "min": true,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "aggregation": "MAX",
-          "attribute": "ifInErrors",
-          "label": "Errors In",
-          "nodeId": "$node",
-          "refId": "A",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        },
-        {
-          "aggregation": "MAX",
-          "attribute": "ifOutErrors",
-          "label": "Errors Out",
-          "nodeId": "$node",
-          "refId": "B",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        },
-        {
-          "aggregation": "MAX",
-          "attribute": "ifInDiscards",
-          "label": "Discards In",
-          "nodeId": "$node",
-          "refId": "C",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        },
-        {
-          "aggregation": "MAX",
-          "attribute": "ifOutDiscards",
-          "label": "Discards Out",
-          "nodeId": "$node",
-          "refId": "D",
-          "resourceId": "interfaceSnmpByIfIndex[$interface]",
-          "type": "attribute"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Errors and Discards",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "none",
-          "label": "packets/sec",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 10
       },
       "id": 11,
-      "panels": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$flowds",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 14,
+            "x": 0,
+            "y": 11
+          },
+          "hiddenSeries": false,
+          "id": 5,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "avg",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/In/",
+              "stack": "A"
+            },
+            {
+              "alias": "/Out/",
+              "stack": "B",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "topN",
+                  "parameters": [
+                    "10"
+                  ]
+                },
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "perSecond",
+                  "parameters": []
+                }
+              ],
+              "metric": "conversations",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Throughput by Conversation (Top N)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "bytes/sec",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": "$flowds",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": null,
+                "filterable": false
+              },
+              "decimals": 2,
+              "displayName": "",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Bytes In"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": null
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "In"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Bytes Out"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": null
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Out"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 11
+          },
+          "id": 7,
+          "links": [],
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "topN",
+                  "parameters": [
+                    "10"
+                  ]
+                },
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "asTableSummary",
+                  "parameters": []
+                }
+              ],
+              "hide": false,
+              "metric": "conversations",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Usage by Conversation (Top N)",
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {
+                "reducers": []
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Location": true,
+                  "Protocol": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "Application": "",
+                  "Bytes In": "",
+                  "Bytes Out": "",
+                  "Dest.": "",
+                  "Location": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
       "repeat": null,
       "title": "Conversation (Flows)",
       "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$flowds",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 14,
-        "x": 0,
-        "y": 19
-      },
-      "hiddenSeries": false,
-      "id": 5,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": true,
-        "min": true,
-        "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": false,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/In/",
-          "stack": "A"
-        },
-        {
-          "alias": "/Out/",
-          "stack": "B",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "functions": [
-            {
-              "name": "topN",
-              "parameters": [
-                "10"
-              ]
-            },
-            {
-              "name": "withExporterNode",
-              "parameters": [
-                "$node"
-              ]
-            },
-            {
-              "name": "withIfIndex",
-              "parameters": [
-                "$interface"
-              ]
-            },
-            {
-              "name": "perSecond",
-              "parameters": []
-            }
-          ],
-          "metric": "conversations",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Throughput by Conversation (Top N)",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "bytes/sec",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": "$flowds",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 2,
-          "displayName": "",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes In"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              },
-              {
-                "id": "displayName",
-                "value": "In"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes Out"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              },
-              {
-                "id": "displayName",
-                "value": "Out"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 10,
-        "x": 14,
-        "y": 19
-      },
-      "id": 7,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "targets": [
-        {
-          "functions": [
-            {
-              "name": "topN",
-              "parameters": [
-                "10"
-              ]
-            },
-            {
-              "name": "withExporterNode",
-              "parameters": [
-                "$node"
-              ]
-            },
-            {
-              "name": "withIfIndex",
-              "parameters": [
-                "$interface"
-              ]
-            },
-            {
-              "name": "asTableSummary",
-              "parameters": []
-            }
-          ],
-          "hide": false,
-          "metric": "conversations",
-          "refId": "A"
-        }
-      ],
-      "title": "Data Usage by Conversation (Top N)",
-      "transformations": [
-        {
-          "id": "merge",
-          "options": {
-            "reducers": []
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Location": true,
-              "Protocol": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "Application": "",
-              "Bytes In": "",
-              "Bytes Out": "",
-              "Dest.": "",
-              "Location": ""
-            }
-          }
-        }
-      ],
-      "type": "table"
     }
   ],
   "refresh": "",
@@ -995,7 +999,7 @@
   "templating": {
     "list": [
       {
-        "current": { },
+        "current": {},
         "description": null,
         "error": null,
         "hide": 0,
