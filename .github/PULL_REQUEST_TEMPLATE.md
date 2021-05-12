@@ -26,4 +26,4 @@ Thanks for taking time to contribute!
 # External References
 
 * JIRA (Issue Tracker): http://issues.opennms.org/browse/${JIRA-ISSUE-NUMBER}
-* Continuous Integration: [Bamboo](https://bamboo.opennms.org/), [CircleCI](https://circleci.com/gh/OpenNMS/opennms-js)
+* Continuous Integration: [Bamboo](https://bamboo.opennms.org/), [CircleCI](https://circleci.com/gh/OpenNMS/opennms-helm)
