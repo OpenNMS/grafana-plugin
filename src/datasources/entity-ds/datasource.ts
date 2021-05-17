@@ -349,7 +349,7 @@ export class OpenNMSEntityDatasource {
                           }
                       }));
               }
-              return property.findValues({limit: 1000}).then(values => {
+              return property.findValues({limit: 0}).then(values => {
                   return values.filter(value => value !== null).map(value => {
                       return {id: value, label: value, text: value ? String(value) : value, value: value}
                   });
