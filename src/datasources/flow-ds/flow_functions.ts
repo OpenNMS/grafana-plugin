@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import angular from 'angular';
 
+import { dscpTypeAheadOptions } from "../../lib/tos_helper";
+
 let index = [] as any[];
 let categories = {
   Combine: [] as any[],
@@ -31,14 +33,16 @@ addFuncDef({
   category: categories.Combine,
   cardinality: Cardinality.SINGLE,
   mutuallyExcludes: ['withApplication', 'withHost', 'withConversation'],
-  params: [{name: "n", type: "int",}],
+  appliesToSegments: ['applications', 'conversations', 'hosts'],
+  params: [{name: "n", type: "int"}],
   defaultParams: [10]
 });
 
 addFuncDef({
   name: 'includeOther',
   cardinality: Cardinality.SINGLE,
-  category: categories.Combine
+  category: categories.Combine,
+  appliesToSegments: ['applications', 'conversations', 'hosts'],
 });
 
 // Filter
@@ -57,6 +61,20 @@ addFuncDef({
   params: [{name: "ifIndex", type: "int"}]
 });
 
+addFuncDef({
+  name: 'withDscp',
+  category: categories.Filter,
+  cardinality: Cardinality.MULTIPLE,
+  params: [{
+    name: "dscp",
+    type: "string",
+    options: (input, ctx) => {
+      return ctx.client
+          .getDscpValues(ctx.getNodeCriteria(), ctx.getInterfaceId(), ctx.getStartTime(), ctx.getEndTime())
+          .then(codes => dscpTypeAheadOptions(codes).filter(str => str.toUpperCase().startsWith(input.toUpperCase())));
+    }
+  }]
+});
 
 addFuncDef({
   name: 'withApplication',
@@ -68,7 +86,7 @@ addFuncDef({
     type: "string",
     options: (input, ctx) => {
       return ctx.client.getApplications(input, ctx.getStartTime(), ctx.getEndTime(), ctx.getNodeCriteria(),
-          ctx.getInterfaceId());
+          ctx.getInterfaceId(), ctx.getDscp());
     }
   }]
 });
@@ -83,7 +101,7 @@ addFuncDef({
     type: "string",
     options: (input, ctx) => {
       return ctx.client.getHosts(input, ctx.getStartTime(), ctx.getEndTime(), ctx.getNodeCriteria(),
-          ctx.getInterfaceId());
+          ctx.getInterfaceId(), ctx.getDscp());
     }
   }]
 });

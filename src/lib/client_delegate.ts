@@ -310,42 +310,42 @@ export class ClientDelegate {
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getApplications(prefix, start, end, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getApplications(prefix, start, end, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
             .then((dao) => this.$q.when(dao.getSeriesForTopNConversations({
                     N: N,
@@ -354,20 +354,21 @@ export class ClientDelegate {
                     step: step,
                     exporterNode: nodeCriteria,
                     ifIndex: interfaceId,
-                    includeOther: includeOther
+                    dscp: dscp,
+                    includeOther: includeOther,
                 }))
             ).catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
             .then((dao) => this.$q.when(dao.getSummaryForTopNConversations({
                     N: N,
@@ -375,50 +376,51 @@ export class ClientDelegate {
                     end: end,
                     exporterNode: nodeCriteria,
                     ifIndex: interfaceId,
+                    dscp: dscp,
                     includeOther: includeOther
                 }))
             ).catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getHosts(prefix, start, end, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getHosts(prefix, start, end, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getHosts(prefix + '.*', start, end, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getHosts(prefix + '.*', start, end, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowSeries>
-    getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
     // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId): angular.IPromise<any> {
+    getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId)))
+            .then((dao) => this.$q.when(dao.getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
             .catch(this.decorateError);
     }
 
@@ -437,4 +439,30 @@ export class ClientDelegate {
             .then((dao) => this.$q.when(dao.getExporter(nodeCriteria, searchLimit)))
             .catch(this.decorateError);
     }
+
+    getDscpValues(nodeCriteria, interfaceId, start, end) {
+        return this.getClientWithMetadata().then(function(c) {
+            const metadata = c.http.server.metadata;
+            if (metadata.tos()) {
+                return c.flows().getDscpValues(nodeCriteria, interfaceId, start, end);
+            } else {
+                return Promise.resolve([]);
+            }
+        }).catch(this.decorateError);
+    }
+
+    getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp) {
+      return this.getFlowDao()
+          .then(function(flowDao) {
+            return flowDao.getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp);
+          }).catch(this.decorateError);
+    }
+
+    getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp) {
+      return this.getFlowDao()
+          .then(function(flowDao) {
+            return flowDao.getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp);
+          }).catch(this.decorateError);
+    }
+
 }

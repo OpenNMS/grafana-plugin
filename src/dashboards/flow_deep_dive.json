@@ -1,37 +1,4 @@
 {
-  "__inputs": [],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.5.0"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": "5.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "opennms-helm-flow-datasource",
-      "name": "OpenNMS Flow",
-      "version": "7.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "opennms-helm-performance-datasource",
-      "name": "OpenNMS Performance",
-      "version": "7.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": "5.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -49,12 +16,11 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1620763637568,
+  "iteration": 1526376312346,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -73,19 +39,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$flowds",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 14,
         "x": 0,
         "y": 1
       },
-      "hiddenSeries": false,
       "id": 3,
       "legend": {
         "alignAsTable": true,
@@ -103,24 +63,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/In/",
-          "stack": "A"
-        },
-        {
-          "alias": "/Out/",
-          "stack": "B",
-          "transform": "negative-Y"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": true,
       "steppedLine": false,
@@ -151,6 +98,12 @@
               ]
             },
             {
+              "name": "withDscp",
+              "parameters": [
+                "$dscp"
+              ]
+            },
+            {
               "name": "perSecond",
               "parameters": []
             }
@@ -164,7 +117,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Throughput by Application",
       "tooltip": {
@@ -204,185 +156,9 @@
       }
     },
     {
+      "columns": [],
       "datasource": "$flowds",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 2,
-          "displayName": "",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Time"
-              },
-              {
-                "id": "unit",
-                "value": "time: YYYY-MM-DD HH:mm:ss"
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Protocol"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Location"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Source Port"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "S.Prt"
-              },
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Dest. Port"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "D.Prt"
-              },
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes In"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "In"
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes Out"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Out"
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              },
-              {
-                "id": "custom.align",
-                "value": null
-              }
-            ]
-          }
-        ]
-      },
+      "fontSize": "100%",
       "gridPos": {
         "h": 8,
         "w": 10,
@@ -391,9 +167,125 @@
       },
       "id": 6,
       "links": [],
-      "options": {
-        "showHeader": true
+      "pageSize": 5,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": 7,
+        "desc": true
       },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "Protocol",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "Location",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "S.Prt",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "pattern": "Source Port",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "D.Prt",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "pattern": "Dest. Port",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "In",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "Bytes In",
+          "thresholds": [],
+          "type": "number",
+          "unit": "decbytes"
+        },
+        {
+          "alias": "Out",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "Bytes Out",
+          "thresholds": [],
+          "type": "number",
+          "unit": "decbytes"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
       "targets": [
         {
           "functions": [
@@ -416,6 +308,12 @@
               ]
             },
             {
+              "name": "withDscp",
+              "parameters": [
+                "$dscp"
+              ]
+            },
+            {
               "name": "asTableSummary",
               "parameters": []
             }
@@ -425,19 +323,11 @@
         }
       ],
       "title": "Data Usage by Application",
-      "transformations": [
-        {
-          "id": "merge",
-          "options": {
-            "reducers": []
-          }
-        }
-      ],
+      "transform": "table",
       "type": "table"
     },
     {
       "collapsed": true,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -452,19 +342,13 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$perfds",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
-          "fillGradient": 0,
           "gridPos": {
             "h": 8,
             "w": 14,
             "x": 0,
             "y": 10
           },
-          "hiddenSeries": false,
           "id": 2,
           "legend": {
             "alignAsTable": true,
@@ -482,31 +366,17 @@
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/In/",
-              "stack": "A"
-            },
-            {
-              "alias": "/Out/",
-              "stack": "B",
-              "transform": "negative-Y"
-            }
-          ],
+          "seriesOverrides": [],
           "spaceLength": 10,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
               "attribute": "ifHCInOctets",
-              "fallbackAttribute": "ifInOctets",
               "label": "In",
               "nodeId": "$node",
               "refId": "A",
@@ -515,18 +385,22 @@
             },
             {
               "attribute": "ifHCOutOctets",
-              "fallbackAttribute": "ifOutOctets",
-              "hide": false,
-              "label": "Out",
+              "hide": true,
+              "label": "OutPos",
               "nodeId": "$node",
               "refId": "B",
               "resourceId": "interfaceSnmpByIfIndex[$interface]",
               "type": "attribute"
+            },
+            {
+              "expression": "OutPos * -1",
+              "label": "Out",
+              "refId": "C",
+              "type": "expression"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
-          "timeRegions": [],
           "timeShift": null,
           "title": "Interface Throughput",
           "tooltip": {
@@ -559,11 +433,7 @@
               "min": null,
               "show": true
             }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
+          ]
         },
         {
           "aliasColors": {},
@@ -571,19 +441,13 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$perfds",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
-          "fillGradient": 0,
           "gridPos": {
             "h": 8,
             "w": 10,
             "x": 14,
             "y": 10
           },
-          "hiddenSeries": false,
           "id": 8,
           "legend": {
             "alignAsTable": true,
@@ -601,9 +465,6 @@
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -652,7 +513,6 @@
           ],
           "thresholds": [],
           "timeFrom": null,
-          "timeRegions": [],
           "timeShift": null,
           "title": "Errors and Discards",
           "tooltip": {
@@ -685,11 +545,7 @@
               "min": null,
               "show": true
             }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
+          ]
         }
       ],
       "repeat": null,
@@ -698,7 +554,6 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -713,19 +568,13 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$flowds",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "fill": 1,
-          "fillGradient": 0,
           "gridPos": {
             "h": 8,
             "w": 14,
             "x": 0,
-            "y": 11
+            "y": 3
           },
-          "hiddenSeries": false,
           "id": 5,
           "legend": {
             "alignAsTable": true,
@@ -743,27 +592,217 @@
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/In/",
-              "stack": "A"
-            },
-            {
-              "alias": "/Out/",
-              "stack": "B",
-              "transform": "negative-Y"
-            }
-          ],
+          "seriesOverrides": [],
           "spaceLength": 10,
           "stack": true,
           "steppedLine": false,
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "topN",
+                  "parameters": [
+                    "10"
+                  ]
+                },
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "perSecond",
+                  "parameters": []
+                }
+              ],
+              "metric": "conversations",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Throughput by Conversation (Top N)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "bytes/sec",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "columns": [],
+          "datasource": "$flowds",
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 3
+          },
+          "id": 7,
+          "links": [],
+          "pageSize": 5,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 7,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Protocol",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Location",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "S.Prt",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Source Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "D.Prt",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Dest. Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "In",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes In",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "Out",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes Out",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
           "targets": [
             {
               "functions": [
@@ -786,7 +825,13 @@
                   ]
                 },
                 {
-                  "name": "perSecond",
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
+                  "name": "asTableSummary",
                   "parameters": []
                 }
               ],
@@ -794,11 +839,117 @@
               "refId": "A"
             }
           ],
+          "title": "Data Usage by Conversation (Top N)",
+          "transform": "table",
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "title": "Conversation (Flows)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 13,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$flowds",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 14,
+            "x": 0,
+            "y": 4
+          },
+          "hiddenSeries": false,
+          "id": 14,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "avg",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.2.0",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "topN",
+                  "parameters": [
+                    "10"
+                  ]
+                },
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "perSecond",
+                  "parameters": []
+                }
+              ],
+              "metric": "hosts",
+              "refId": "A"
+            }
+          ],
           "thresholds": [],
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Throughput by Conversation (Top N)",
+          "title": "Throughput by Host (Top N)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -836,97 +987,150 @@
           }
         },
         {
+          "columns": [],
           "datasource": "$flowds",
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": null,
-                "filterable": false
-              },
-              "decimals": 2,
-              "displayName": "",
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "short"
+              "custom": {}
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Bytes In"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "decbytes"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": null
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "In"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Bytes Out"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "decbytes"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": null
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Out"
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
+          "fontSize": "100%",
           "gridPos": {
             "h": 8,
             "w": 10,
             "x": 14,
-            "y": 11
+            "y": 4
           },
-          "id": 7,
+          "id": 15,
           "links": [],
-          "options": {
-            "showHeader": true,
-            "sortBy": []
+          "pageSize": 5,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 7,
+            "desc": true
           },
+          "styles": [
+            {
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Protocol",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Location",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "S.Prt",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Source Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "D.Prt",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Dest. Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "In",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes In",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "Out",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes Out",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
           "targets": [
             {
               "functions": [
@@ -949,94 +1153,376 @@
                   ]
                 },
                 {
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
                   "name": "asTableSummary",
                   "parameters": []
                 }
               ],
-              "hide": false,
-              "metric": "conversations",
+              "metric": "hosts",
               "refId": "A"
             }
           ],
-          "title": "Data Usage by Conversation (Top N)",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {
-                "reducers": []
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Location": true,
-                  "Protocol": true
-                },
-                "indexByName": {},
-                "renameByName": {
-                  "Application": "",
-                  "Bytes In": "",
-                  "Bytes Out": "",
-                  "Dest.": "",
-                  "Location": ""
-                }
-              }
-            }
-          ],
-          "type": "table"
+          "title": "Data Usage by Host (Top N)",
+          "transform": "table",
+          "type": "table-old"
         }
       ],
-      "repeat": null,
-      "title": "Conversation (Flows)",
+      "title": "Hosts (Flows)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 17,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$flowds",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 14,
+            "x": 0,
+            "y": 5
+          },
+          "hiddenSeries": false,
+          "id": 18,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "avg",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.2.0",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "perSecond",
+                  "parameters": []
+                }
+              ],
+              "metric": "dscps",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Throughput by DSCP",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "bytes/sec",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "columns": [],
+          "datasource": "$flowds",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 5
+          },
+          "id": 19,
+          "links": [],
+          "pageSize": 5,
+          "scroll": false,
+          "showHeader": true,
+          "sort": {
+            "col": 7,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Protocol",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Location",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "S.Prt",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Source Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "D.Prt",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Dest. Port",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "alias": "In",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes In",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "Out",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "Bytes Out",
+              "thresholds": [],
+              "type": "number",
+              "unit": "decbytes"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "functions": [
+                {
+                  "name": "withExporterNode",
+                  "parameters": [
+                    "$node"
+                  ]
+                },
+                {
+                  "name": "withIfIndex",
+                  "parameters": [
+                    "$interface"
+                  ]
+                },
+                {
+                  "name": "withDscp",
+                  "parameters": [
+                    "$dscp"
+                  ]
+                },
+                {
+                  "name": "asTableSummary",
+                  "parameters": []
+                }
+              ],
+              "metric": "dscps",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Usage by DSCP",
+          "transform": "table",
+          "type": "table-old"
+        }
+      ],
+      "title": "DSCPs",
       "type": "row"
     }
   ],
-  "refresh": "",
-  "schemaVersion": 27,
+  "refresh": false,
+  "schemaVersion": 16,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {},
-        "description": null,
-        "error": null,
         "hide": 0,
-        "includeAll": false,
         "label": "Flow Datasource",
-        "multi": false,
         "name": "flowds",
         "options": [],
         "query": "opennms-helm-flow-datasource",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {},
-        "description": null,
-        "error": null,
         "hide": 0,
-        "includeAll": false,
         "label": "Perf. Datasource",
-        "multi": false,
         "name": "perfds",
         "options": [],
         "query": "opennms-helm-performance-datasource",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "allValue": null,
         "current": {},
         "datasource": "$flowds",
-        "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Node",
@@ -1046,7 +1532,6 @@
         "query": "exporterNodesWithFlows()",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
         "tags": [],
@@ -1058,9 +1543,6 @@
         "allValue": null,
         "current": {},
         "datasource": "$flowds",
-        "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Interface",
@@ -1069,6 +1551,27 @@
         "options": [],
         "query": "interfacesOnExporterNodeWithFlows($node)",
         "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "all",
+        "current": {},
+        "datasource": "$flowds",
+        "definition": "dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "DSCP",
+        "multi": true,
+        "name": "dscp",
+        "options": [],
+        "query": "dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)",
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -1111,5 +1614,5 @@
   },
   "timezone": "",
   "title": "Flow Deep Dive | OpenNMS Helm",
-  "version": 2
+  "version": 1
 }
