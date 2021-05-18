@@ -2,8 +2,6 @@
 
 Helm is a [Grafana](https://grafana.com/) application that allows users to create flexible dashboards using both fault management (FM) and performance management (PM) data from [OpenNMS® Horizon™](https://www.opennms.org) and/or [OpenNMS® Meridian™](https://www.opennms.com/).
 
-It is the successor to the original [OpenNMS Datasource for Grafana](https://github.com/OpenNMS/grafana-opennms-datasource).
-
 Consult the [Helm Documentation](http://docs.opennms.org/helm/branches/master/helm/latest/welcome/index.html) for help on installing, configuring and using the application.
 
 ## Features
@@ -54,5 +52,5 @@ We use the Helm project in our [JIRA](https://issues.opennms.org/projects/HELM) 
 
 ## Changelog
 
-You can view the change log [here](./CHANGELOG.md).
+The changelog has moved to [CHANGELOG.md](https://github.com/OpenNMS/opennms-helm/blob/master/CHANGELOG.md).
 
