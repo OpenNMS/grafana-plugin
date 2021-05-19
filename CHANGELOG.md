@@ -1,3 +1,9 @@
+### v7.1.0
+
+This release adds support for handling aggregate flow DSCP ToS/QoS values, coming soon in Helm 28.
+It also bumps some dependencies, and fixes a bug in the filter panel where not all values would
+be shown in select boxes.
+
 ### v7.0.0
 
 This release contains a rework of our code to use TypeScript, and a conversion to Grafana's
