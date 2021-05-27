@@ -79,12 +79,10 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:206",
           "alias": "/In/",
           "stack": "A"
         },
         {
-          "$$hashKey": "object:211",
           "alias": "/Out/",
           "stack": "B",
           "transform": "negative-Y"
@@ -465,12 +463,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:423",
               "alias": "/In/",
               "stack": "A"
             },
             {
-              "$$hashKey": "object:428",
               "alias": "/Out/",
               "stack": "B",
               "transform": "negative-Y"
@@ -586,12 +582,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:350",
               "alias": "/In/",
               "stack": "A"
             },
             {
-              "$$hashKey": "object:355",
               "alias": "/Out/",
               "stack": "B",
               "transform": "negative-Y"
@@ -740,12 +734,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:489",
               "alias": "/In/",
               "stack": "A"
             },
             {
-              "$$hashKey": "object:494",
               "alias": "/Out/",
               "stack": "B",
               "transform": "negative-Y"
@@ -1135,12 +1127,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:687",
               "alias": "/In/",
               "stack": "A"
             },
             {
-              "$$hashKey": "object:692",
               "alias": "/Out/",
               "stack": "B",
               "transform": "negative-Y"
@@ -1517,12 +1507,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:831",
               "alias": "/In/",
               "stack": "A"
             },
             {
-              "$$hashKey": "object:836",
               "alias": "/Out/",
               "stack": "B",
               "transform": "negative-Y"
