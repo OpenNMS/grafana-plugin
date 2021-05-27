@@ -84,8 +84,7 @@
         },
         {
           "alias": "/Out/",
-          "stack": "B",
-          "transform": "negative-Y"
+          "stack": "B"
         }
       ],
       "spaceLength": 10,
@@ -125,6 +124,10 @@
             },
             {
               "name": "perSecond",
+              "parameters": []
+            },
+            {
+              "name": "negativeEgress",
               "parameters": []
             }
           ],
@@ -739,8 +742,7 @@
             },
             {
               "alias": "/Out/",
-              "stack": "B",
-              "transform": "negative-Y"
+              "stack": "B"
             }
           ],
           "spaceLength": 10,
@@ -775,6 +777,10 @@
                 },
                 {
                   "name": "perSecond",
+                  "parameters": []
+                },
+                {
+                  "name": "negativeEgress",
                   "parameters": []
                 }
               ],
@@ -1132,8 +1138,7 @@
             },
             {
               "alias": "/Out/",
-              "stack": "B",
-              "transform": "negative-Y"
+              "stack": "B"
             }
           ],
           "spaceLength": 10,
@@ -1168,6 +1173,10 @@
                 },
                 {
                   "name": "perSecond",
+                  "parameters": []
+                },
+                {
+                  "name": "negativeEgress",
                   "parameters": []
                 }
               ],
@@ -1512,8 +1521,7 @@
             },
             {
               "alias": "/Out/",
-              "stack": "B",
-              "transform": "negative-Y"
+              "stack": "B"
             }
           ],
           "spaceLength": 10,
@@ -1542,6 +1550,10 @@
                 },
                 {
                   "name": "perSecond",
+                  "parameters": []
+                },
+                {
+                  "name": "negativeEgress",
                   "parameters": []
                 }
               ],
