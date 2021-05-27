@@ -406,14 +406,7 @@
         }
       ],
       "title": "Data Usage by Application",
-      "transformations": [
-        {
-          "id": "merge",
-          "options": {
-            "reducers": []
-          }
-        }
-      ],
+      "transformations": [],
       "type": "table"
     },
     {
@@ -1068,12 +1061,6 @@
           "title": "Data Usage by Conversation (Top N)",
           "transformations": [
             {
-              "id": "merge",
-              "options": {
-                "reducers": []
-              }
-            },
-            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -1467,14 +1454,7 @@
             }
           ],
           "title": "Data Usage by Host (Top N)",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {
-                "reducers": []
-              }
-            }
-          ],
+          "transformations": [],
           "type": "table"
         }
       ],
@@ -1844,14 +1824,7 @@
             }
           ],
           "title": "Data Usage by DSCP",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {
-                "reducers": []
-              }
-            }
-          ],
+          "transformations": [],
           "type": "table"
         }
       ],
