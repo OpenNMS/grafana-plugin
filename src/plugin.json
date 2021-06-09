@@ -35,6 +35,7 @@
     {"type": "datasource", "name": "OpenNMS Entities"},
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},
+    {"type": "dashboard", "name": "About | OpenNMS Helm", "path": "dashboards/about.json"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
   ],
   "dependencies": {
