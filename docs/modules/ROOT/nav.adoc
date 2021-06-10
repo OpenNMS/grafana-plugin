@@ -8,7 +8,6 @@
 * xref:installation:debian.adoc[Installing on Debian/Ubuntu]
 * xref:installation:plugin.adoc[Installing via Plugin (for existing Grafana installations)]
 * xref:installation:source.adoc[Installing from Source]
-* xref:installation:db-reports.adoc[Configuration for PDF dashboard reports]
 * xref:installation:upgrading.adoc[Upgrading from Older Versions]
 
 .Getting Started with Helm
