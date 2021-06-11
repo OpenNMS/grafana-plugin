@@ -1,6 +1,6 @@
-= Building with Docker
+= Build with Docker
 
-== Simple Build
+== Simple build
 
 The source can be compiled from source with a Docker builder image.
 
@@ -19,7 +19,7 @@ Login on `http://your-ip:3000` with login admin:admin and go to Plugins and enab
 
 IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can't be changed.
 
-== Advanced Build
+== Advanced build
 
 If you want to build an image based on a specific GitHub fork or branch you can use `--build-arg`:
 
@@ -31,7 +31,7 @@ docker build -t mycustomforkbranch \
 
 This will create the plugin from the given GitHub URL and branch.
 
-== Using Docker Compose to Build a Service Stack
+== Use Docker Compose to build a service stack
 
 There is an example `docker-compose.yml` which builds a whole service stack with a compiled _Grafana OpenNMS Helm App_ which can be tested.
 
@@ -45,7 +45,7 @@ The URL for the data source in Grafana for the OpenNMS Horizon server is `http:/
 
 == Docker configuration for PDF dashboard reports
 
-OpenNMS Horizon/Meridian includes three templates to create a PDF report from an existing Grafana dashboard. 
+OpenNMS Horizon/Meridian includes three templates to xref:horizon:operation:database-reports:database.adoc#pdf-report[create a PDF report] from an existing Grafana dashboard. 
 If you plan to use this feature and are running Helm with Docker, you must complete additional configuration.
 
 Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information on how to set up remote rendering. 

@@ -1,0 +1,21 @@
+:imagesdir: ../assets/images
+[[deep-dive-dash]]
+= Flow deep-dive dashboard
+
+The {page-component-title} plugin includes a
+
+[[deep-dive-add]]
+== Add a flow deep-dive dashboard
+
+. Navigate to the home page of your Grafana instance.
+. In the left menu, click the Configuration icon, and click *Plugins*.
+. Click the *Dashboards* tab. 
+. In the list, click *Flow Deep-Dive|OpenNMS Helm*.
++
+The dashboard appears, ready for you to configure. 
+It also appears in the list of dashboards on the home page.
+
+[[deep-dive-configure]]
+== Configure a flow deep-dive dashboard
+
+

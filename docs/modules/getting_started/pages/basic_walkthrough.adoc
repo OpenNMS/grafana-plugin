@@ -2,78 +2,65 @@
 :!figure-caption:
 
 [[getting-started-basic-walkthrough]]
-= Basic Walk-Through
-:toc: macro
-:toc-title:
-:data-uri:
-:prewrap!:
+= Basic walk-through
 
-toc::[]
+This section demonstrates how to create a simple dashboard with {page-component-title}:
 
-== Overview
-
-This guide demonstrates how to create a simple dashboard with {page-component-title} by doing the following:
-
-* xref:bw-app-setup[setting up the application and custom actions]
-* xref:bw-ds-setup[setting up datasources]
-* xref:bw-dash-setup[creating a dashboard]
-* xref:bw-panel-create[creating a panel]
+* xref:bw-app-setup[set up the application and custom actions]
+* xref:bw-ds-setup[set up datasources]
+* xref:bw-dash-setup[create a dashboard]
+* xref:bw-panel-create[create a panel]
 
 
-The tutorial assumes that you have:
+The walk-through assumes that you have:
 
 * an instance of Grafana with the {page-component-title} application installed
 * an instance of OpenNMS that is reachable from the Grafana instance above
 * one or mode nodes being monitored by OpenNMS
 
-[NOTE]
-====
-If you are already using the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrating from the OpenNMS Data Source plugin] to migrate to using {page-component-title} to interface with OpenNMS. 
-====
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] to for information on how to switch to {page-component-title}. 
 
 [[bw-app-setup]]
-== Application Setup
+== Setup plugin
 
-In this section, you will enable the {page-component-title} application in Grafana and create <<Custom Actions>>.
+In this section, you will enable the {page-component-title} plugin in Grafana and create <<Custom actions>> to help with alarm diagnosis. 
 
 . Navigate to the home page of your Grafana instance.
-. In the left menu, click on the Configuration icon, and click *Plugins*:
+. In the left menu, click the Configuration icon, and click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
 
-. Search for the `OpenNMS Helm` application and click on it.
+. Search for the OpenNMS Helm plugin and click on it.
+
 +
-[NOTE]
-====
-If the `OpenNMS Helm` application is not listed on the `Plugins` tab, try restarting the Grafana server.
-If the issue persists, make sure the application is installed correctly.
-====
+If the OpenNMS Helm plugin is not listed, try restarting the Grafana server.
+If the issue persists, make sure the plugin is in the grafana plugins directory (default is var/lib/grafana/plugins).
 
-. Enable the application by clicking the `Enable` button.
+. In the Config tab, click *Enable*.
 +
-[NOTE]
-====
-If you see a `Disable` button, then the application is already enabled and you can skip to the next step (creating <<Custom Actions>>). You may also choose `Update` for the latest version of {page-component-title}. 
-====
 
-=== Custom Actions
+A *Disable* button indicates the plugin is already enabled. 
+Skip to the next step (creating <<Custom actions>>). 
+You may also choose *Update* for the latest version of {page-component-title}. 
 
-A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that can help users obtain a deeper diagnosis of an alarm. Once created, custom actions appear when you right-click an alarm in an alarms table:
+=== Custom actions
+
+A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that might help users better diagnosis an alarm. 
+Once created, custom actions appear when you right-click an alarm in an alarms table:
 
 image::gf-cust-action-context.png[Custom Actions, 300]
 
 Created in the Helm Config tab, a custom action includes a label and URL.  
 Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.
-See http://docs.opennms.org/opennms-js/branches/master/opennms-js/classes/onmsalarm.html[OpenNMS.js documentation] for a list of the available properties.
+See https://docs.opennms.com/opennms-js/2.1.0/index.html[OpenNMS.js documentation] for a list of available properties.
 
 [NOTE]
 ====
-Special case: event parameters on the alarm can be accessed either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
+Special case: you can access event parameters on the alarm either by index ($parameters[1]) or by name ($parameters[reason]).
 ====
 
-If a variable can't be matched against the row, the action will not appear in the context menu.
-
-Variables will be URL-encoded when they are injected into the URL.
+If a variable cannot be matched against the row, the action will not appear in the context menu.
+Variables are URL-encoded when injected into the URL.
 
 .Action URLs using parameters
 image::gf-custom-actions.png[Custom Actions, 500]
@@ -83,26 +70,23 @@ To create a custom action, follow these steps:
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click on the Configuration icon and click *Plugins*:
 . Select *OpenNMS Helm*. 
-. On the Confg tab, click *+Add Custom Action*:
-+
-image::gf-add-cust-action.png[Custom Action, 500]
-
+. On the Config tab, click *+Add Custom Action*:
 . Specify a label and enter a URL.
-.. In most cases the URL will be your OpenNMS instance, e.g., `http://localhost:8980/opennms/`, appended with the $variable that references a property of an OpenNMS alarm.
+.. In most cases the URL will be your OpenNMS instance, for example, `http://localhost:8980/opennms/`, appended with the $variable that references a property of an OpenNMS alarm.
 . Repeat for each custom action you want to create.
 . Click *Update*. 
 
 [[bw-ds-setup]]
-== Datasource Setup
+== Datasource setup
 
 The type of data you can display in your dashboard depends on the datasource you select. 
-Before creating a dashboard, you need to set up the datasource. 
+Before you create a dashboard, you need to set up the datasource. 
 OpenNMS datasources include performance, flow, and entity. 
 For more information on OpenNMS datasources, see  xref:datasources:performance_datasource.adoc[Datasources].
 
-In this section, you will configure the _Entity_ datasource.
+In this section, you will configure the Entity datasource.
 Follow the same process to configure a Flow or Performance datasource. 
-The only fields you *need* to configure are the following: `URL`, `Basic auth`, `Basic Auth Details` (user and password).
+The only fields you *need* to configure are the following: URL, Basic auth, and Basic Auth Details (user and password).
 Refer to Grafana's https://grafana.com/docs/grafana/latest/features/datasources/[documentation] for information on configuring the other fields.  
 
 . Navigate to the home page of your Grafana instance.

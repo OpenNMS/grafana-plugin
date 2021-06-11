@@ -3,36 +3,36 @@
 
 If you want to contribute documentation to this project which manages the docs with Antora, you’ve come to the right place.
 
-== Installing Antora
+== Install Antora
 
 Antora is a documenation site generator based around the AsciiDoc format. 
 To install Antora, follow the https://docs.antora.org/antora/2.2/install/install-antora/[instructions] on the Antora website.  
 
-== Making a Copy of the OpenNMS Docs Repo
+== Make a copy of the OpenNMS docs repo
 
 If you already know how to use https://git-scm.com/[git], then this is going to sound very familiar.
 If not, here’s the full walk-through:
 
 1. Install git.
-2. If the docs source is hosted on GitHub, you will probably next need to https://help.github.com/articles/fork-a-repo/[fork] the https://github.com/OpenNMS/opennms-helm[OpenNMS Helm repo].
+2. If the docs source is hosted on GitHub, you will need to https://help.github.com/articles/fork-a-repo/[fork] the https://github.com/OpenNMS/opennms-helm[OpenNMS Helm repo].
 3. Using git, clone the repo (either the original or your fork, as appropriate) to your local system: `git clone <repo URL>`
 
-If the project that you are working in already has version branches, then you will want to set up local copies of those as well.
-After you have cloned the repo to your local system, you can track those branches with the command:
+If the project that you are working in already has version branches, you should set up local copies of those as well.
+After you have cloned the repo to your local system, you can track those branches:
 
 [source, shell]
 ----
 $ git checkout -b <local_branch_name> <remote_repo>/<remote_branch_name>
 ----
 
-== Write the Docs
+== Write the docs
 
 The documentation for the project lives in the `docs` directory within the source code repository you have checked out.
-Each main section is structured in directories and contain the text `.adoc` files.
-The text files need to be written in the http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc] format.
+Each main section is structured in directories and contains the text .adoc files.
+Write the text files in the http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc] format.
 
-Every new created directory or text file needs to be included in the general structure of the documentation.
-The `nav.adoc` file in the ROOT direcory defines the content hierarchy.
+You must include every new created directory or text file in the general structure of the documentation.
+The nav.adoc file in the ROOT direcory defines the content hierarchy.
 
 .Structure of the nav.adoc file
 [source]
@@ -47,13 +47,13 @@ The `nav.adoc` file in the ROOT direcory defines the content hierarchy.
 * xref:installation:rpm.adoc[Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]  <4>
 * xref:installation:debian.adoc[Installing on Debian/Ubuntu]  <4>
 ----
-<1> Friendly directory name _About_ which appears in the left navigation.
-<2> Each topic in the _About_ section, written as a cross reference to the directory, file name, and friendly name that appears in the left navigation. 
-<3> Second section _Installation_.
-<4> Each topic in the _Installation_ section. 
+<1> Friendly directory name "About" that appears in the left navigation.
+<2> Each topic in the "About" section, written as a cross reference to the directory, file name, and friendly name that appears in the left navigation. 
+<3> Second section "Installation".
+<4> Each topic in the "Installation" section. 
 
-IF images needs to be included, use a directory `assests/images` inside each module folder.
-Within the text file images are included as the following:
+Include images in the `assests/images` directory inside each module folder.
+Include images in the text file as follows:
 
 [source]
 ----
@@ -66,9 +66,9 @@ image::helm-diagram.svg[Helm Diagram, 600]  <3>
 
 <1> Lookup directory for images for this text file.
 <2> Description of the image.
-<3> Include the image with an alternative text and a proportional width of 600 pixels.
+<3> Include the image with alternative text and a proportional width of 600 pixels.
 
-The `_distro_map.yml` controls the overall behavior of how docs are generated for different branches and distributions.
+The `_distro_map.yml` controls how docs are generated for different branches and distributions.
 It is normally not necessary to touch this file when just creating or changing existing content.
 The file is described as the following:
 
@@ -87,13 +87,15 @@ helm: <1>
       dir: latest <5>
 
 ----
-<1> System name of distro, used when conditionalizing content on a per-distro basis.
-<2> System name of site, used to pick up the correct index file and organize the included distros.
+<1> System name of distro. 
+Used when conditionalizing content on a per-distro basis.
+<2> System name of site. 
+Used to pick up the correct index file and organize the included distros.
 <3> Git branch name that represents a version of this distro.
 <4> User-readable name of this version of this distro.
 <5> Directory on the site where this version of this distro should go.
 
-== Building the Docs
+== Building the docs
 
 The documentation is located in the `docs` directory.
 Transforming an Antora repo into a documentation site is pretty easy:
@@ -103,10 +105,10 @@ Transforming an Antora repo into a documentation site is pretty easy:
 antora generate local-site.yml
 ----
 
-=== Build Output
+=== Build output
 
 Antora creates a .zip file of the documentation site in the `build` directory. 
-Unzipping the file reveals the HTML content in the `site` directory. 
+Unzip the file to reveal the HTML content in the `site` directory. 
 
 The generic path to a given version of the docs is:
 
