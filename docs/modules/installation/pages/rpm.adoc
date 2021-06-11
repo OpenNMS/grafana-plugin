@@ -1,3 +1,4 @@
+[[helm-rpm-install]]
 = Installing on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)
 
 [IMPORTANT]
