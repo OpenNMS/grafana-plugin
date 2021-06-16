@@ -2,7 +2,22 @@
 [[deep-dive-dash]]
 = Flow deep-dive dashboard
 
-The {page-component-title} plugin includes a
+The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays aggregated flow data.  
+The dashboard can help with quality of service (QoS) monitoring and includes panels that display data in the following categories:
+
+* flow interface statistics (throughput and data use by application)
+* SNMP interface statistics (interface throughput and errors/discards)
+* conversations (throughput and data use by conversation)
+* hosts (throughput and data use by host)
+* DCSPs ((throughput and data use by differentiated services code points)
+
+== Additional QoS options
+
+You can also filter flows traffic by ToS/DSCP (Differentiated Services Code Point) and ECN (explicit congestion notification) through two drop-down lists.
+
+Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding). 
+The ECN drop-down allows you to further filter on this value to see which flows use ECN-capable transports, and congestion reports for them.  
+This works for aggregated and unaggregated flow data. 
 
 [[deep-dive-add]]
 == Add a flow deep-dive dashboard
@@ -18,4 +33,5 @@ It also appears in the list of dashboards on the home page.
 [[deep-dive-configure]]
 == Configure a flow deep-dive dashboard
 
+By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. You can further configure the dashboard by creating queries
 
