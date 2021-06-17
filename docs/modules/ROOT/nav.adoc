@@ -10,12 +10,13 @@
 * xref:installation:source.adoc[Install from source]
 * xref:installation:upgrading.adoc[Upgrade from older versions]
 
-.Get started with helm
+.Get started with Helm
 * xref:getting_started:index.adoc[Overview]
 * xref:getting_started:dashboard_planning.adoc[Plan your dashboard]
 * xref:getting_started:basic_walkthrough.adoc[Basic walk-through]
 * xref:getting_started:migrating_from_opennms_datasource.adoc[Migrate from the OpenNMS datasource plugin]
 * xref:getting_started:importing.adoc[Import a dashboard]
+* xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive dashboard]
 
 .Panel configuration
 * xref:panel_configuration:index.adoc[Overview]
@@ -31,7 +32,7 @@
 .Contribute
 * xref:contributing:index.adoc[Contribute]
 * xref:contributing:developing.adoc[Develop]
-* xref:contributing:how-to-build-docs.adoc[How to build the docs]
+* xref:contributing:how-to-build-docs.adoc[Write and build the docs]
 
 .Reference
 * xref:reference:severities.adoc[Severities]

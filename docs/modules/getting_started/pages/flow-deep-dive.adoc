@@ -1,26 +1,30 @@
 :imagesdir: ../assets/images
 [[deep-dive-dash]]
-= Flow deep-dive dashboard
+= Flow Deep-Dive dashboard
 
-The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays aggregated flow data.  
+The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays flow data.  
 The dashboard can help with quality of service (QoS) monitoring and includes panels that display data in the following categories:
 
 * flow interface statistics (throughput and data use by application)
 * SNMP interface statistics (interface throughput and errors/discards)
 * conversations (throughput and data use by conversation)
 * hosts (throughput and data use by host)
-* DCSPs ((throughput and data use by differentiated services code points)
+* DCSPs (throughput and data use by Differentiated Services Code Points)
 
-== Additional QoS options
+== QoS options
 
-You can also filter flows traffic by ToS/DSCP (Differentiated Services Code Point) and ECN (explicit congestion notification) through two drop-down lists.
+The dashboard exposes nodes and interfaces with flows, that you can filter on in the *Node* and *Interface* drop-down lists.  
+
+You can also filter flows traffic by ToS/DSCP and ECN (explicit congestion notification) for nodes and interfaces with these values. 
 
 Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding). 
-The ECN drop-down allows you to further filter on this value to see which flows use ECN-capable transports, and congestion reports for them.  
+
+The ECN drop-down lets you further filter on this value to see which flows use ECN-capable transports, and congestion reports for them.  
+ECN values appear in the *Data Usage by Application/Conversation/Host/DSCP* panels.
 This works for aggregated and unaggregated flow data. 
 
 [[deep-dive-add]]
-== Add a flow deep-dive dashboard
+== Add a Flow Deep-Dive dashboard
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click the Configuration icon, and click *Plugins*.
@@ -31,7 +35,8 @@ The dashboard appears, ready for you to configure.
 It also appears in the list of dashboards on the home page.
 
 [[deep-dive-configure]]
-== Configure a flow deep-dive dashboard
+== Configure a Flow Deep-Dive dashboard
 
-By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. You can further configure the dashboard by creating queries
+By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. You can further configure the dashboard by creating queries or editing existing panels. 
+For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
 
