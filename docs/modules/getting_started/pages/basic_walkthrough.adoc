@@ -100,7 +100,9 @@ image::gf-data-sources.png[Data Sources, 100]
 
 . Beside the OpenNMS Entities datasource, click *Select*.
 +
-The settings screen appears.
+The settings screen appears:
+
+image::gf-data-config.png[settings screen, 300]
 
 . In the *URL* field, enter the URL to your OpenNMS instance, for example `http://localhost:8980/opennms`.
 

@@ -122,7 +122,7 @@ The `resourceToLabel()` function converts an OpenNMS resource identifier or node
 
 The 1-argument form of this call expects a complete resource ID. That resource ID must be the full resource identifier as queried to the measurements API.
 
-The 2-argument form of this call lets you to use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
+The 2-argument form of this call lets you use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
 
 A partial resource ID is just the portion of the resource identifier that doesn't identify the node itself, like `nodeSnmp[]` or `responseTime[127.0.0.1]`.
 

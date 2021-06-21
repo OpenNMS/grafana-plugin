@@ -3,7 +3,8 @@
 
 = What is {page-component-title}?
 
-{page-component-title} is an application that lets users create flexible dashboards to interact with data stored by OpenNMS. {page-component-title} works with https://grafana.com[Grafana], an analytics platform, to display and customize xref:fault[fault management (FM)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS(R) Horizon(TM)] and/or https://www.opennms.com[OpenNMS(R) Meridian(TM)].
+{page-component-title} is an application that lets users create flexible dashboards to interact with data stored by OpenNMS. 
+{page-component-title} works with https://grafana.com[Grafana], an analytics platform, to display and customize xref:fault[fault management (FM)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS Horizon ] and/or https://www.opennms.com[OpenNMS Meridian].
 Create and customize dashboards to display the data you want to see -- alarms, outages, key performance indicators -- in a way that best meets the needs of your workflow and staff. 
 
 .Sample {page-component-title} dashboard
@@ -12,7 +13,7 @@ image::helm-sample-dash.png[Dash, 800]
 == How does it work?
 
 {page-component-title} includes datasources for retrieving both FM and PM data from an existing OpenNMS deployment as well as specialized panels to display and interact with the faults.
-The ability to aggregate data from multiple instances of OpenNMS lets operators to build a single pane of glass from distributed deployments.
+The ability to aggregate data from multiple instances of OpenNMS lets operators build a single pane of glass from distributed deployments.
 
 All interactions with OpenNMS are done via the REST API.
 No FM or PM data is stored within {page-component-title} or Grafana.

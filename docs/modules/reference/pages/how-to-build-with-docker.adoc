@@ -45,7 +45,7 @@ The URL for the data source in Grafana for the OpenNMS Horizon server is `http:/
 
 == Docker configuration for PDF dashboard reports
 
-OpenNMS Horizon/Meridian includes three templates to https://docs.opennms.com/horizon/28.0.0/operation/database-reports/database.html#creating-a-pdf-of-a-grafana-dashboard[create a PDF report] from an existing Grafana dashboard. 
+OpenNMS Horizon/Meridian includes three templates to create a PDF report from an existing Grafana dashboard (see "Creating a PDF of a Grafana Dashboard" in the Horizon/Meridian documentation). 
 If you plan to use this feature and are running Helm with Docker, you must complete additional configuration.
 
 Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information on how to set up remote rendering. 

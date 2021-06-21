@@ -3,6 +3,7 @@
 = Migrate from the OpenNMS data source plugin
 
 This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to using {page-component-title} to interface with OpenNMS.
+This section applies only to those still using he OpenNMS Data Source plugin, which was deprecated in 2016. 
 
 The tutorial assumes that you have:
 
