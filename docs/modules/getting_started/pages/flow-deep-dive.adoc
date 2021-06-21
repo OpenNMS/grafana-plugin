@@ -29,7 +29,7 @@ This works for aggregated and unaggregated flow data.
 == Configure a Flow Deep-Dive dashboard
 
 By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. 
-If you have not already specified these data sources, follow the instructions in xref:basic_walkthrough.acod#bw-ds-setup[set up datasources] to do so. 
+If you have not already specified these data sources, follow the instructions in xref:basic_walkthrough.adoc#bw-ds-setup[set up datasources] to do so. 
 
 You can further configure the dashboard by creating queries or editing existing panels. 
 For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
