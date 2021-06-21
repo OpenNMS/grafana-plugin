@@ -15,7 +15,7 @@ The dashboard can help with quality of service (QoS) monitoring and includes pan
 
 The dashboard exposes nodes and interfaces with flows, that you can filter on in the *Node* and *Interface* drop-down lists.  
 
-You can also filter flows traffic by ToS/DSCP and ECN (explicit congestion notification) for nodes and interfaces with these values. 
+You can also filter flows traffic by ToS/DSCP for nodes and interfaces with these values. 
 
 Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding). 
 
@@ -39,4 +39,3 @@ It also appears in the list of dashboards on the home page.
 
 By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. You can further configure the dashboard by creating queries or editing existing panels. 
 For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
-
