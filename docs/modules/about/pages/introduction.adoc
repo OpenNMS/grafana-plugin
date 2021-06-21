@@ -11,7 +11,8 @@ image::helm-sample-dash.png[Dash, 800]
 
 == How does it work?
 
-{page-component-title} includes datasources for retrieving both FM and PM data from an existing OpenNMS deployment as well as specialized panels to display and interact with the faults. The ability to aggregate data from multiple instances of OpenNMS lets operators to build a single pane of glass from distributed deployments.
+{page-component-title} includes datasources for retrieving both FM and PM data from an existing OpenNMS deployment as well as specialized panels to display and interact with the faults.
+The ability to aggregate data from multiple instances of OpenNMS lets operators to build a single pane of glass from distributed deployments.
 
 All interactions with OpenNMS are done via the REST API.
 No FM or PM data is stored within {page-component-title} or Grafana.
