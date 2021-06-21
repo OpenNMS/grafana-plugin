@@ -21,7 +21,8 @@ image::helm-diagram.svg[Helm Diagram, 400]
 [[fault]]
 == Fault management
 
-Fault management (FM) is the process of identifying problems (or faults) related to network devices and systems, and managing their lifecycle. OpenNMS uses a combination of events, outages, alarms, notifications, and tickets, to do this.
+Fault management (FM) is the process of identifying problems (or faults) related to network devices and systems, and managing their lifecycle.
+OpenNMS uses a combination of events, outages, alarms, and notifications to do this.
 
 {page-component-title} supports filtering, retrieving, displaying and performing actions against *alarms in OpenNMS*.
 
