@@ -19,7 +19,9 @@ You can also filter flows traffic by ToS/DSCP for nodes and interfaces with thes
 
 Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding). 
 
-ECN values appear in the *Data Usage by Application/Conversation/Host/DSCP* panels.
+The ECN (explicit congestion notification) column of summary tables shows ECN related information separated by a slash.
+The first value shows if all summarized flows used ECN capable transports, abbreviated by `ect`, or at least one flow used a `non-ect`.
+The second value indicates if a congestion was encountered (`ce`) or not (`no ce`).
 This works for aggregated and unaggregated flow data. 
 
 [[deep-dive-add]]
