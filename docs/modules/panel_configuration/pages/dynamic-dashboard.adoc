@@ -71,7 +71,7 @@ While xref:pc-template-filters[template variables] work with the performance dat
 
 Before creating a filter panel, make sure you have a panel on the dashboard that uses an entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]).
 
-This procedure creates a panel that will let you to filter on alarm type and alarms that are acknowledged or in a situation.   
+This procedure creates a panel that will let you filter on alarm type and alarms that are acknowledged or in a situation.   
 
 To create a filter panel, follow these steps:
 
