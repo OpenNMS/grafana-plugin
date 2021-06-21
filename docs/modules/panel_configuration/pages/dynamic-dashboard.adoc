@@ -66,7 +66,7 @@ image::pc-select-nodes.png[Node Select, 500]
 [[pc-filter-panel]]
 == Creating a Filter Panel
 
-A filter panel lets you to configure a series of variables to put on a dashboard. 
+A filter panel lets you configure a series of variables to put on a dashboard. 
 While xref:pc-template-filters[template variables] work with the performance datasource, the filter panel coordinates with any panels in the dashboard that use an xref:datasources:entity_datasource.adoc[entities datasource], to automatically apply filters that match those variables.
 
 Before creating a filter panel, make sure you have a panel on the dashboard that uses an entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]).
