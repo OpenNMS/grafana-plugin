@@ -1,4 +1,4 @@
-= Entities Datasource
+= Entities datasource
 
 == General
 
@@ -7,7 +7,7 @@ It currently supports alarms and nodes.
 
 (For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).
 
-== Datasource Queries
+== Datasource queries
 
 The behavior of this datasource changes depending on which entity is chosen.
 Attributes and values will change depending on the entity type.
@@ -16,7 +16,7 @@ NOTE: Currently the entities datasource only allows a single target.
 Subsequent targets in the query editor will be ignored.
 
 [[ds-entity-template]]
-== Template Queries
+== Template queries
 
 To change the behavior of a template query (like a datasource variable), you can pass a function to the `query` field, with an optional attribute argument.
 
