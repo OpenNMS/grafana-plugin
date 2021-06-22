@@ -1,4 +1,4 @@
-# Contributing
+# Contribute
 
 * Fork me on https://github.com/OpenNMS/opennms-helm[GitHub]
 

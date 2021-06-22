@@ -1,4 +1,4 @@
-# Development and Production Versions
+# Development and production versions
 
 Development is done in the `develop` (default GitHub) branch.
 

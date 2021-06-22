@@ -1,4 +1,4 @@
-= Performance Datasource
+= Performance datasource
 
 == General
 
@@ -8,7 +8,7 @@ Use the _Performance Datasource_ to retrieve performance metrics (i.e., data col
 
 The query editor provides the ability to build queries of the following types:
 
-=== Attribute Queries
+=== Attribute queries
 
 Used to extract data points from time series data that OpenNMS collects and stores.
 The query is used to identify which attribute (or series) is being queried.
@@ -29,7 +29,7 @@ The query is used to identify which attribute (or series) is being queried.
                        Must be unique for all attributes and expression results in the query.
 |===
 
-=== Expression Queries
+=== Expression queries
 
 Used to combine or otherwise transform one or more series into a new series.
 Supports mathematical and conditional operators provided by JEXL.
@@ -42,19 +42,19 @@ Consult the _Measurements API_ documentation of your _OpenNMS_ version for more 
 | Label              | Name for the series resulting from the expression.
 |===
 
-=== Filter Queries
+=== Filter queries
 
 Used to create new and/or alter existing series.
 
 The option provided depend on the selected filter.
 
-==== Outlier Filter
+==== Outlier filter
 
 Used to remove datapoints from the series that fall outside of the configured quantile, defaults to 95%.
 The datapoints are replaced with interpolated values.
 
 [[ds-perf-template]]
-== Template Queries
+== Template queries
 
 Use template queries in metric queries and panel titles.
 The results will appear as a drop-down list at the top of the dashboard. 
@@ -92,7 +92,7 @@ To query only SNMP interface resources on the node with ID 42, and to display th
 nodeResources(42, label, interfaceSnmp)
 ```
 
-== Label Formatters
+== Label formatters
 
 Helm provides a number of formatting functions you can use to transform the labels shown in graph legends.
 
@@ -122,7 +122,7 @@ The `resourceToLabel()` function converts an OpenNMS resource identifier or node
 
 The 1-argument form of this call expects a complete resource ID. That resource ID must be the full resource identifier as queried to the measurements API.
 
-The 2-argument form of this call allows you to use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
+The 2-argument form of this call lets you use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
 
 A partial resource ID is just the portion of the resource identifier that doesn't identify the node itself, like `nodeSnmp[]` or `responseTime[127.0.0.1]`.
 

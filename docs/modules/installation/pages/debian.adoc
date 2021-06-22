@@ -1,15 +1,15 @@
 [[helm-install-debian]]
-= Installing on Debian / Ubuntu
+= Install on Debian/Ubuntu
 
 [IMPORTANT]
 ====
-These instructions assume that https://grafana.com[Grafana] is NOT already installed on the target system.
-If you have an existing instance of https://grafana.com[Grafana] you would like to use, refer to xref:plugin.adoc#[Installing via plugin].
+These instructions assume that you do not have https://grafana.com[Grafana] installed on the target system.
+If you have an existing instance of https://grafana.com[Grafana] you would like to use, refer to xref:plugin.adoc#[Install via plugin].
 ====
 
 == Install stable
 
-Create a new apt source file (eg: `/etc/apt/sources.list.d/opennms.list`), and add the following 2 lines:
+Create a new apt source file (e.g,: /etc/apt/sources.list.d/opennms.list), and add the following two lines:
 
 .Package repository configuration for Debian-based systems
 [source, shell]
@@ -36,16 +36,17 @@ sudo apt-get install opennms-helm
 
 == Start the server (init.d service)
 
-You can start Grafana by running:
+Start Grafana:
 
 [source, shell]
 ----
 sudo service grafana-server start
 ----
 
-This will start the `grafana-server` process as the `grafana` user,
-which is created during package installation. The default HTTP port is
-`3000`, and default user and group is `admin`.
+This starts the grafana-server process as the grafana user, which is created during package installation. 
+
+* Default HTTP port: 3000
+* Default user and passowrd: admin
 
 To configure the Grafana server to start at boot time:
 
@@ -63,13 +64,13 @@ sudo systemctl start grafana-server
 sudo systemctl status grafana-server
 ----
 
-=== Enable the systemd service to start at boot
+To enable the systemd service to start at boot:
 
 [source, shell]
 ----
 sudo systemctl enable grafana-server.service
 ----
 
-== Next Steps
+== Next steps
 
-See xref:getting_started:index.adoc#[Getting Started with Helm] for help in setting up your first dashboard.
+xref:getting_started:index.adoc#[Set up your first dashboard].

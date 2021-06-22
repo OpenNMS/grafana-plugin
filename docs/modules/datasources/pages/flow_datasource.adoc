@@ -1,4 +1,4 @@
-= Flow Datasource
+= Flow datasource
 
 == General
 
@@ -27,7 +27,7 @@ interval (in the format of: 10s, 5m, 1h, etc.)
 
 
 [[ds-flow-template]]
-== Template Queries
+== Template queries
 
 === exporterNodesWithFlows
 

@@ -2,7 +2,7 @@
 = Overview
 
 [.lead]
-{page-component-title} is an application that allows users to create flexible dashboards to interact with data stored by OpenNMS. 
+{page-component-title} is an application that lets users create flexible dashboards to interact with data stored by OpenNMS. 
 {page-component-title} works with https://grafana.com[Grafana], an analytics platform, to display information like alarms, outages, and key performance indicators.
 
 To leverage all of the features {page-component-title} has to offer, you'll need to be familiar with both OpenNMS and Grafana. 

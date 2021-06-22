@@ -1,0 +1,38 @@
+:imagesdir: ../assets/images
+[[deep-dive-dash]]
+= Flow Deep-Dive dashboard
+
+The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays flow data.  
+Access this dashboard from the home page or from the *Dashboards>Manage* menu. 
+The dashboard can help with quality of service (QoS) monitoring and includes panels that display data in the following categories:
+
+* flow interface statistics (throughput and data use by application)
+* SNMP interface statistics (interface throughput and errors/discards)
+* conversations (throughput and data use by conversation)
+* hosts (throughput and data use by host)
+* DCSPs (throughput and data use by Differentiated Services Code Points)
+
+== QoS options
+
+The dashboard exposes nodes and interfaces with flows, that you can filter on in the *Node* and *Interface* drop-down lists.  
+
+You can also filter flows traffic by ToS/DSCP for nodes and interfaces with these values. 
+
+Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding). 
+
+The ECN (explicit congestion notification) column of summary tables shows ECN-related information separated by a slash.
+The first value shows if all summarized flows used ECN capable transports, abbreviated by `ect`, or at least one flow used a `non-ect`.
+The second value indicates if a congestion was encountered (`ce`) or not (`no ce`).
+This works for aggregated and unaggregated flow data. 
+
+[[deep-dive-configure]]
+== Configure a Flow Deep-Dive dashboard
+
+By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources. 
+If you have not already specified these data sources, follow the instructions in xref:basic_walkthrough.adoc#bw-ds-setup[set up datasources] to do so. 
+
+You can further configure the dashboard by creating queries or editing existing panels. 
+For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
+
+IMPORTANT: Use "Save As" to create your custom version of the Flow Deep-Dive dashboard. 
+Otherwise, changes you make to the default dashboard are overwritten when you update the plugin or re-import the dashboard. 
