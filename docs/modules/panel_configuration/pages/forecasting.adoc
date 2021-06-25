@@ -38,7 +38,7 @@ To display this information in bits, create an expression:
 . In the *Type* drop-down, choose *Filter*.
 . Click the Filter type label, select `HoltWinters` from the pop-up dialog, and click *Select*.
 .. Note that the far right column displays requirements on the node being queried, e.g., R, Java. 
-. For the Input column, specify the name of the attribute or expresssion you wish to forecast, in this case, `Out`.
+. For the Input column, specify the name of the attribute or expression you wish to forecast, in this case, `Out`.
 . Specify an output, or accept the default (`HW`).
 .. The output is the prefix for the lower and upper fit (how successfully the forecast method fits to your data).
 . Specify the number of periods to forecast, the size of the period in seconds, and the desired probability in the appropriate fields. 
@@ -112,4 +112,3 @@ For example, you could specify a filter to display the SUM of certain data.
 |Displays the rate of change during the forecast period. 
 
 |===
-

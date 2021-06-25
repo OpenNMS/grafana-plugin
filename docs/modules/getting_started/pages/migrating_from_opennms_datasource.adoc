@@ -15,7 +15,7 @@ The tutorial assumes that you have:
 
 Both the OpenNMS Data Source plugin and {page-component-title} can be installed at the same time while you complete the migration.
 
-If you have not already done so, you may xref:installation:requirements.adoc[install] {page-component-title} using your prefered method.
+If you have not already done so, you may xref:installation:requirements.adoc[install] {page-component-title} using your preferred method.
 
 [[mig-app-setup]]
 == Application Setup
@@ -39,7 +39,7 @@ A *Disable* button indicates the plugin is already enabled.
 [[mig-convert-ds]]
 == Migrate Data Sources
 
-Once the {page-component-title} application is enabled, you can convert your existing OpenNMS data sources to use the OpenNMS Perfomance type.
+Once the {page-component-title} application is enabled, you can convert your existing OpenNMS data sources to use the OpenNMS Performance type.
 When switching the type, you may need to re-enter the URL and authentication details.
 
 {page-component-title} provides two data source types.
