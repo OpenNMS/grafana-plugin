@@ -29,7 +29,7 @@ interval (in the format of: 10s, 5m, 1h, etc.)
 [[ds-flow-template]]
 == Template queries
 
-=== exporterNodesWithFlows
+=== exporterNodesWithFlows()
 
 The `exporterNodesWithFlows()` query will return a list of nodes which have exported flow data to OpenNMS.
 The value of the template variable is the `Node ID` and the display text is the `Node Label`.
@@ -41,7 +41,7 @@ For example, to query the exporters that have sent flows you can use the followi
 exporterNodesWithFlows()
 ```
 
-=== interfacesOnExporterNodeWithFlows
+=== interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
 The `interfacesOnExporterNodeWithFlows()` query will return a list of interface indexes which are associated with one or more flows on the given node.
 The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
@@ -68,7 +68,7 @@ To query a specific node by foreign source and foreign id, you can use an expres
 interfacesOnExporterNodeWithFlows(FS:FID)
 ```
 
-=== dscpOnExporterNodeAndInterface
+=== dscpOnExporterNodeAndInterface(<nodeCriteria>,<interface>,<from>,<to>)
 
 The `dscpOnExporterNodeAndInterface()` query will return a list of DSCP values which are used by one or more flows on the given node and interface
 and given time range. The query returns selection options for the found DSCP values and ip precedence groups that cover these values.
