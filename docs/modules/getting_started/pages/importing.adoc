@@ -9,7 +9,7 @@ There are a number of official- and community-built https://grafana.com/grafana/
 * SNMP data collected by Linux hosts
 * Business service availability
 * Cassandra performance
-* Generic UPS statitstics
+* Generic UPS statistics
 * Network interfaces
 * And more ...
 
@@ -36,4 +36,3 @@ You must specify a flow and performance data source.
 The dashboard appears. 
 +
 . Click *Dashboards>Manage* to view a list of your dashboards. 
-

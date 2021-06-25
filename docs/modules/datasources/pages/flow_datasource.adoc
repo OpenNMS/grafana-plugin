@@ -50,7 +50,7 @@ The available arguments are as follows:
 [options="header, %autowidth"]
 |===
 | Name                 | Default     | Description
-| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node on which to enumerate the interfaces.
+| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Source and Node Foreign ID) of the node on which to enumerate the interfaces.
 |===
 
 Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query, you can use the following expression:
@@ -78,10 +78,10 @@ The available arguments are as follows:
 [options="header, autowidth"]
 |===
 | Name                 | Default     | Description
-| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Souce and Node Foreign ID) of the node on which to enumerate.
+| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Source and Node Foreign ID) of the node on which to enumerate.
 | interface            | `(none)`    | Interface Index of the SNMP interface to enumerate.
-| from                 | `(none)`    | Start time in epoche millis
-| to                   | `(none)`    | End time in epoche millis
+| from                 | `(none)`    | Start time in epoch milliseconds
+| to                   | `(none)`    | End time in epoch milliseconds
 |===
 
 Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query and that the `$interface` variable is populated with a value from the `interfacesOnExporterNodeWithFlows($node)` query, you can use the following expression:

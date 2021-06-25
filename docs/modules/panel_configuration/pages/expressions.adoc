@@ -26,7 +26,7 @@ image::pc-outpos3.png[out3,300]
 
 === Value in Bits
 
-The `ifHCOutOctets` value is in bytes, but you want to dispaly it in bits. 
+The `ifHCOutOctets` value is in bytes, but you want to display it in bits.
 Create a simple expression to multiply the data by 8: `ifHCOutOctets * 8`.
 
 Note that in this case, there is no series label, so the expression uses the `IfHCOutOctets` name:

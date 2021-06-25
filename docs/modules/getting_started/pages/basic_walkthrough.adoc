@@ -124,7 +124,7 @@ If the message indicates a failure, review the information you entered and click
 This section describes how to create a dashboard with an alarm table. 
 For information on displaying additional or different types of data, see xref:bw-panel-create[creating a panel].
 
-. Create a new dashboard by clicking the *+* sign in the left menu and chooosing *Create>Dashboard*.
+. Create a new dashboard by clicking the *+* sign in the left menu and choosing *Create>Dashboard*.
 
 . Click *Add new panel*.
 
@@ -139,7 +139,7 @@ image::gf-panel-config.png[Configure Panel, 500]
 
 . Select *Alarms* in the *SELECT* drop-down.
 +
-.. Configure addtional information and add filters as desired (click *+Query* to add queries). 
+.. Configure additional information and add filters as desired (click *+Query* to add queries).
 
 . In the *Panel* tab, under the *Settings>Panel title* add a name for the panel. 
 

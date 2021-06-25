@@ -23,7 +23,7 @@ For example, the xref:datasources:performance_datasource.adoc#ds-perf-template[p
 * specific node(s): `nodeFilter(NODEFILTERSTRING)`
 * specific resource(s) on a node: `nodeResources(NODEID[, id|label|name[, resource-type-name|*]])`
 
-See the following for xref:datasources:entity_datasource#ds-entity-template[entities datasource] andc xref:datasources:flow_datasource#ds-flow-template[flow datasource] template queries. 
+See the following for xref:datasources:entity_datasource#ds-entity-template[entities datasource] and xref:datasources:flow_datasource#ds-flow-template[flow datasource] template queries.
 
 This procedure explains how to use variables in a query for a category of nodes (switches). 
 
