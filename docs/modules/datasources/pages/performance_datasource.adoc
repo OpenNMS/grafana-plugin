@@ -106,7 +106,7 @@ The available arguments are as follows:
 |===
 | Name              | Required | Default  | Description
 | resourceId        | Required | `(none)` | The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
-| textProperty      | Optional | `id`     | One of `id`, `label`, or `name` to display alternate string values in the variable drop down.
+| textProperty      | Optional | `id`     | One of `id`, `label`, or `name` to display alternate string values in the variable drop-down menu.
 | resourceType      | Optional | `*`      | Resource type filter to limit the types of resources returned.
 |===
 
