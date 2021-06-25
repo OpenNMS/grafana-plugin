@@ -18,7 +18,7 @@ Subsequent targets in the query editor will be ignored.
 [[ds-entity-template]]
 == Template queries
 
-To change the behavior of a template query (like a datasource variable), you can pass a function to the `query` field, with an optional attribute argument.
+To change the behavior of a template query, you can pass a function to the `attribute` field, with an optional attribute to use as the display value of the variable.
 
 If no attribute argument is given, the query will return the `id` attribute of the entity.
 

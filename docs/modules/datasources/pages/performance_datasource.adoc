@@ -17,7 +17,9 @@ The query is used to identify which attribute (or series) is being queried.
 |===
 | Name               | Description
 | Node               | Node ID, or FS:FID (foreign source and foreign id) of the node to query.
+                       Can also be a variable with a `nodeFilter()` query.
 | Resource           | Resource ID containing the requested attribute.
+                       Can also be a variable with a `nodeResources()` query.
 | Attribute          | Name of the attribute to query.
 | Sub-Attribute      | Name of the sub-attribute to query.
                        This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
@@ -61,7 +63,7 @@ The results will appear as a drop-down list at the top of the dashboard.
 You can then select from the list to change the data the panel displays.
 See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
 
-=== nodeFilter
+=== nodeFilter(<filterQuery>)
 
 The `nodeFilter()` query will return a list of nodes which match the given filter expression.
 
@@ -70,7 +72,14 @@ For example, to return the set of nodes that are in the `Production` and `Linux`
 nodeFilter(catincProduction & catincLinux)
 ```
 
-=== nodeResources
+The available arguments are as follows:
+[options="header, %autowidth"]
+|===
+| Name                | Description
+| filterQuery         | Any valid node query syntax as used by core OpenNMS services.
+|===
+
+=== nodeResources(<resourceId>[,textProperty[,resourceType]])
 
 The `nodeResources()` query will return the list of resource IDs which are available on the given node.
 An optional second argument specifies whether to show the resource's ID (the default), label, or name in the template value chooser and elsewhere.
@@ -91,6 +100,15 @@ To query only SNMP interface resources on the node with ID 42, and to display th
 ```
 nodeResources(42, label, interfaceSnmp)
 ```
+
+The available arguments are as follows:
+[options="header, %autowidth"]
+|===
+| Name              | Required | Default  | Description
+| resourceId        | Required | `(none)` | The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
+| textProperty      | Optional | `id`     | One of `id`, `label`, or `name` to display alternate string values in the variable drop down.
+| resourceType      | Optional | `*`      | Resource type filter to limit the types of resources returned.
+|===
 
 == Label formatters
 
