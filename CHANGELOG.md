@@ -1,6 +1,6 @@
-### v7.1.1
+### v7.1.1/v7.1.2
 
-Re-pack with a fix for a plugin signature issue.
+Re-pack with fixes for a plugin signature issue.
 
 ### v7.1.0
 
