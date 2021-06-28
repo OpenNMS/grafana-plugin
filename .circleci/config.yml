@@ -226,6 +226,8 @@ jobs:
           root: ~/
           paths:
             - ./project/dist/packages
+            - ./project/package.json
+            - ./project/version.tag
 
   make-zip:
     executor: build-executor-centos
@@ -252,6 +254,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
+            echo "version: $(.circleci/get-version.sh)"
             docker build \
               --build-arg OPENNMS_HELM_PKG=opennms-helm_$(.circleci/get-version.sh).tar.gz \
               --build-arg GRAFANA_VERSION=$(cat grafana.version) \
