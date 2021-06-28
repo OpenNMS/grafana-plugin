@@ -11,8 +11,10 @@ VERSION="0"
 
 if [ -n "$JQ" ] && [ -x "$JQ" ]; then
   VERSION="$(jq --raw-output .info.version "${MYDIR}/../src/plugin.json")"
-elif [ -e "${MYDIR}/version.tag" ]; then
-  VERSION="$(cat version.tag)"
+elif [ -e "${MYDIR}/../version.tag" ]; then
+  VERSION="$(cat "${MYDIR}/../version.tag")"
+else
+  echo "unable to parse plugin.json or version.tag -- bailing"
 fi
 
 SNAPSHOT_RELEASE="SNAPSHOT"
