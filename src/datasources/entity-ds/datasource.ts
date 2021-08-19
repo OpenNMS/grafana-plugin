@@ -1,10 +1,16 @@
+import angular from 'angular';
+import _ from 'lodash';
+import {API, Model} from 'opennms';
+
 import {ClientDelegate} from '../../lib/client_delegate';
 import {FunctionFormatter} from '../../lib/function_formatter';
-import {API, Model} from 'opennms';
-import _ from 'lodash';
+
 import AlarmEntity from './AlarmEntity';
+import IpInterfaceEntity from './IpInterfaceEntity';
+import MonitoredServiceEntity from './MonitoredServiceEntity';
 import NodeEntity from './NodeEntity';
-import angular from 'angular';
+import OutageEntity from './OutageEntity';
+import SnmpInterfaceEntity from './SnmpInterfaceEntity';
 
 const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
@@ -21,6 +27,26 @@ export const entityTypes = [
         label: 'Nodes',
         queryFunction: 'nodes',
     },
+    {
+        id: 'ipInterface',
+        label: 'IP Interfaces',
+        queryFunction: 'ipInterfaces',
+    },
+    {
+        id: 'snmpInterface',
+        label: 'SNMP Interfaces',
+        queryFunction: 'snmpInterfaces',
+    },
+    {
+        id: 'monitoredService',
+        label: 'Monitored Services',
+        queryFunction: 'monitoredServices',
+    },
+    {
+        id: 'outage',
+        label: 'Outages',
+        queryFunction: 'outages',
+    },
 ];
 
 export const getEntity = (e, client, datasource) => {
@@ -31,7 +57,11 @@ export const getEntity = (e, client, datasource) => {
     const entityType = e.id ? e.id : e;
     switch(entityType) {
         case 'alarm': return new AlarmEntity(client, datasource);
+        case 'ipInterface': return new IpInterfaceEntity(client, datasource);
+        case 'monitoredService': return new MonitoredServiceEntity(client, datasource);
         case 'node': return new NodeEntity(client, datasource);
+        case 'outage': return new OutageEntity(client, datasource);
+        case 'snmpInterface': return new SnmpInterfaceEntity(client, datasource);
     }
 
     throw new Error('Unable to get entity for ' + JSON.stringify(e));
@@ -263,10 +293,18 @@ export class OpenNMSEntityDatasource {
     try {
         const functions = FunctionFormatter.findFunctions(q);
         for (const func of functions) {
-            if (func.name === 'nodes') {
-                return new NodeEntity(this.opennmsClient, this);
-            } else if (func.name === 'alarms') {
+            if (func.name === 'alarms') {
                 return new AlarmEntity(this.opennmsClient, this);
+            } else if (func.name === 'ipInterfaces') {
+                return new IpInterfaceEntity(this.opennmsClient, this);
+            } else if (func.name === 'monitoredServices') {
+                return new MonitoredServiceEntity(this.opennmsClient, this);
+            } else if (func.name === 'nodes') {
+                return new NodeEntity(this.opennmsClient, this);
+            } else if (func.name === 'outages') {
+                return new OutageEntity(this.opennmsClient, this);
+            } else if (func.name === 'snmpInterfaces') {
+                return new SnmpInterfaceEntity(this.opennmsClient, this);
             }
         }
     } catch (e) {
@@ -311,12 +349,19 @@ export class OpenNMSEntityDatasource {
     let e = entity;
     const functions = FunctionFormatter.findFunctions(attribute);
     for (const func of functions) {
-      if (func.name === 'nodes') {
-            e = new NodeEntity(entity.client, this);
-            attribute = func.arguments[0] || 'id';
-        } else if (func.name === 'alarms') {
+        attribute = func.arguments[0] || 'id';
+        if (func.name === 'alarms') {
             e = new AlarmEntity(entity.client, this);
-            attribute = func.arguments[0] || 'id';
+        } else if (func.name === 'ipInterfaces') {
+            e = new IpInterfaceEntity(entity.client, this);
+        } else if (func.name === 'monitoredServices') {
+            e = new MonitoredServiceEntity(entity.client, this);
+        } else if (func.name === 'nodes') {
+            e = new NodeEntity(entity.client, this);
+        } else if (func.name === 'outages') {
+            e = new OutageEntity(entity.client, this);
+        } else if (func.name === 'snmpInterfaces') {
+            e = new SnmpInterfaceEntity(entity.client, this);
         }
         // TODO: add nodeFilter() support (requires OpenNMS.js update)
     }
