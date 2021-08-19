@@ -28,18 +28,20 @@ if (version.indexOf('-SNAPSHOT')) {
   release = 0;
 }
 
- program
-   .version(pkginfo.version)
-   .option('-r --release <release>', 'Specify release number of package')
-   .parse(process.argv);
+program
+  .version(pkginfo.version)
+  .option('-r --release <release>', 'Specify release number of package')
+  .parse(process.argv);
 
- if (program.release === undefined) {
-   program.release = release;
- }
+const options = program.opts();
+if (options.release === undefined) {
+  options.release = release;
+}
 
- pkginfo.version = version;
- pkginfo.release = release;
- release = program.release;
+pkginfo.version = version;
+pkginfo.release = release;
+release = options.release;
+
 
 var date = new Date().toUTCString().replace(/ [^ ]+$/, ' +0000');
 var changelog = `${pkginfo.name} (${version}-${release}) unstable; urgency=low

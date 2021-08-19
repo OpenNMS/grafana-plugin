@@ -37,18 +37,19 @@ program
   .option('-r --release <release>', 'Specify release number of package')
   .parse(process.argv);
 
-if (program.release === undefined) {
-  program.release = release;
+const options = program.opts();
+if (options.release === undefined) {
+  options.release = release;
 }
 
 pkginfo.version = version;
 pkginfo.release = release;
-release = program.release;
+release = options.release;
 
-console.log('Generating RPM spec for ' + pkginfo.name + ' ' + pkginfo.version + '-' + program.release);
+console.log('Generating RPM spec for ' + pkginfo.name + ' ' + pkginfo.version + '-' + options.release);
 
 clean('.', pkginfo);
-generate(cwd, pkginfo, program, pkginfo.name, function (err, generated) {
+generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
   if (err) {
     console.error('Error:', err.message);
     process.exit(1);
