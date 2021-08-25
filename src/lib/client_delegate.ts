@@ -116,9 +116,56 @@ export class ClientDelegate {
             .then((client) => this.$q.when(client.nodes()));
     }
 
-    findNodes(filter): angular.IPromise<Model.OnmsNode[]> {
-        return this.getNodeDao()
-            .then((nodeDao) => this.$q.when(nodeDao.find(filter)))
+    getIpInterfaceDao(): angular.IPromise<DAO.IpInterfaceDAO> {
+        return this.getClientWithMetadata()
+            .then((client) => this.$q.when(client.ipInterfaces()))
+            .catch((err) => {
+                console.warn('This OpenNMS does not support the api/v2/ipinterfaces API');
+            });
+    }
+
+    findNodes(filter: API.Filter, fetchPrimaryInterfaces = false): angular.IPromise<Model.OnmsNode[]> {
+        return this.$q.all([this.getClientWithMetadata(), this.getNodeDao(), this.getIpInterfaceDao()])
+            .then(async ([client, nodeDao, ipInterfaceDao]) => {
+                let nodes = await nodeDao.find(filter);
+
+                if (fetchPrimaryInterfaces && client.http?.server?.metadata?.capabilities()?.ipInterfaceRest) {
+                    let clauses = nodes.map((node) => {
+                        return new API.Clause(new API.Restriction('node.id', API.Comparators.EQ, node.id), API.Operators.OR);
+                    });
+
+                    const mapped = {} as [number: Model.OnmsIpInterface];
+
+                    do {
+                        // do this 100 at a time so the query strings don't get too long
+                        const temporary = clauses.splice(0, 100);
+
+                        const filter = new API.Filter()
+                            .withAndRestriction(new API.Restriction('snmpPrimary', API.Comparators.EQ, Model.PrimaryTypes.PRIMARY))
+                            .withAndRestriction(new API.NestedRestriction(...temporary));
+
+                        try {
+                            const interfaces = await ipInterfaceDao.find(filter);
+                            interfaces.forEach((iface) => {
+                                if (iface.node && iface.node.id !== undefined) {
+                                    mapped[iface.node.id] = iface;
+                                }
+                            });
+                        } catch (err) {
+                            console.warn('An error occurred querying the IP interface')
+                        }
+                    } while (clauses.length > 0);
+
+                    nodes = nodes.map((node) => {
+                        if (mapped[node.id]) {
+                            node.ipInterfaces.push(mapped[node.id]);
+                        }
+                        return node;
+                    });
+                }
+
+                return this.$q.when(nodes);
+            })
             .catch(this.decorateError);
     }
 

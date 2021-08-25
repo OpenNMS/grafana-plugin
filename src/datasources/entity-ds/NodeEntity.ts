@@ -77,7 +77,7 @@ export default class NodeEntity extends Entity {
   async query(filter) {
     const self = this;
 
-    const nodes = await self.client.findNodes(filter);
+    const nodes = await Promise.resolve(self.client.findNodes(filter, true));
 
     let getPrimary = (node) => {
       if (node && node.ipInterfaces) {
@@ -91,7 +91,7 @@ export default class NodeEntity extends Entity {
 
     const rows = _.map(nodes, node => {
       const primaryIpInterface = getPrimary(node);
-      const primarySnmp = primaryIpInterface && primaryIpInterface.snmpInterface;
+      const ifIndex = primaryIpInterface?.snmpInterfaceId;
 
       return [
           node.id,
@@ -115,7 +115,7 @@ export default class NodeEntity extends Entity {
           node.operatingSystem,
           node.lastCapsdPoll,
           // primarySnmp && primarySnmp.physAddr ? primarySnmp.physAddr.toString() : undefined,
-          primarySnmp ? primarySnmp.ifIndex : undefined,
+          ifIndex,
           primaryIpInterface && primaryIpInterface.ipAddress ? primaryIpInterface.ipAddress.correctForm() : undefined,
           // primaryIpInterface && primaryIpInterface.ipHostname ? primaryIpInterface.ipHostname : undefined,
           node.categories ? node.categories.map(cat => cat.name) : undefined,
