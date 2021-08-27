@@ -116,14 +116,6 @@ export class ClientDelegate {
             .then((client) => this.$q.when(client.nodes()));
     }
 
-    getIpInterfaceDao(): angular.IPromise<DAO.IpInterfaceDAO> {
-        return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.ipInterfaces()))
-            .catch((err) => {
-                console.warn('This OpenNMS does not support the api/v2/ipinterfaces API');
-            });
-    }
-
     findNodes(filter: API.Filter, fetchPrimaryInterfaces = false): angular.IPromise<Model.OnmsNode[]> {
         return this.$q.all([this.getClientWithMetadata(), this.getNodeDao(), this.getIpInterfaceDao()])
             .then(async ([client, nodeDao, ipInterfaceDao]) => {
@@ -177,7 +169,8 @@ export class ClientDelegate {
 
     getNodeProperties(): angular.IPromise<any[]> {
         return this.getNodeDao()
-            .then((nodeDao) => this.$q.when(nodeDao.searchProperties())).catch(this.decorateError);
+            .then((nodeDao) => this.$q.when(nodeDao.searchProperties()))
+            .catch(this.decorateError);
     }
 
     findNodeProperty(propertyId) {
@@ -189,6 +182,198 @@ export class ClientDelegate {
 
     getNodePropertyComparators(propertyId): angular.IPromise<any[]> {
         return this.findNodeProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            }).catch(this.decorateError);
+    }
+
+    // IP interface related functions
+
+    getIpInterfaceDao(): angular.IPromise<DAO.IpInterfaceDAO> {
+        return this.getClientWithMetadata()
+            .then((client) => this.$q.when(client.ipInterfaces()));
+    }
+
+    findIpInterfaces(filter): angular.IPromise<Model.OnmsIpInterface[]> {
+        return this.getIpInterfaceDao()
+            .then((dao) => this.$q.when(dao.find(filter)))
+            .catch(this.decorateError);
+    }
+
+    getIpInterfaces(id): angular.IPromise<Model.OnmsIpInterface> {
+        return this.getIpInterfaceDao()
+            .then((dao) => this.$q.when(dao.get(id)))
+            .catch(this.decorateError);
+    }
+
+    getIpInterfaceProperties(): angular.IPromise<any[]> {
+        return this.getIpInterfaceDao()
+            .then((dao) => this.$q.when(dao.searchProperties()))
+            .catch(this.decorateError);
+    }
+
+    findIpInterfaceProperty(propertyId) {
+        return this.getIpInterfaceProperties()
+            .then((properties) => {
+                return _.find(properties, (property) => property.id === propertyId);
+            });
+    }
+
+    getIpInterfacePropertyComparators(propertyId): angular.IPromise<any[]> {
+        return this.findIpInterfaceProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            }).catch(this.decorateError);
+    }
+
+    // SNMP interface related functions
+
+    getSnmpInterfaceDao(): angular.IPromise<DAO.SnmpInterfaceDAO> {
+        return this.getClientWithMetadata()
+            .then((client) => this.$q.when(client.snmpInterfaces()));
+    }
+
+    findSnmpInterfaces(filter): angular.IPromise<Model.OnmsSnmpInterface[]> {
+        return this.getSnmpInterfaceDao()
+            .then((dao) => this.$q.when(dao.find(filter)))
+            .catch(this.decorateError);
+    }
+
+    getSnmpInterfaces(id): angular.IPromise<Model.OnmsSnmpInterface> {
+        return this.getSnmpInterfaceDao()
+            .then((dao) => this.$q.when(dao.get(id)))
+            .catch(this.decorateError);
+    }
+
+    getSnmpInterfaceProperties(): angular.IPromise<any[]> {
+        return this.getSnmpInterfaceDao()
+            .then((dao) => this.$q.when(dao.searchProperties()))
+            .catch(this.decorateError);
+    }
+
+    findSnmpInterfaceProperty(propertyId) {
+        return this.getSnmpInterfaceProperties()
+            .then((properties) => {
+                return _.find(properties, (property) => property.id === propertyId);
+            });
+    }
+
+    getSnmpInterfacePropertyComparators(propertyId): angular.IPromise<any[]> {
+        return this.findSnmpInterfaceProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            }).catch(this.decorateError);
+    }
+
+    // monitored service related functions
+
+    getMonitoredServiceDao(): angular.IPromise<DAO.MonitoredServiceDAO> {
+        return this.getClientWithMetadata()
+            .then((client) => this.$q.when(client.monitoredServices()));
+    }
+
+    findMonitoredServices(filter): angular.IPromise<Model.OnmsMonitoredService[]> {
+        return this.getMonitoredServiceDao()
+            .then((dao) => this.$q.when(dao.find(filter)))
+            .catch(this.decorateError);
+    }
+
+    getMonitoredServices(id): angular.IPromise<Model.OnmsMonitoredService> {
+        return this.getMonitoredServiceDao()
+            .then((dao) => this.$q.when(dao.get(id)))
+            .catch(this.decorateError);
+    }
+
+    getMonitoredServiceProperties(): angular.IPromise<any[]> {
+        return this.getMonitoredServiceDao()
+            .then((dao) => this.$q.when(dao.searchProperties()))
+            .catch(this.decorateError);
+    }
+
+    findMonitoredServiceProperty(propertyId) {
+        return this.getMonitoredServiceProperties()
+            .then((properties) => {
+                return _.find(properties, (property) => property.id === propertyId);
+            });
+    }
+
+    getMonitoredServicePropertyComparators(propertyId): angular.IPromise<any[]> {
+        return this.findMonitoredServiceProperty(propertyId)
+            .then(property => {
+                if (property) {
+                    const comparators = property.type.getComparators();
+                    if (comparators && comparators.length > 0) {
+                        return comparators;
+                    }
+                }
+                console.warn(`No comparators found for property with id '${propertyId}'. Falling back to EQ.`);
+                // This may be the case when the user entered a property, which does not exist
+                // therefore fallback to EQ
+                return [ API.Comparators.EQ ];
+            }).catch(this.decorateError);
+    }
+
+    // outage related functions
+
+    getOutageDao(): angular.IPromise<DAO.OutageDAO> {
+        return this.getClientWithMetadata()
+            .then((client) => this.$q.when(client.outages()));
+    }
+
+    findOutages(filter): angular.IPromise<Model.OnmsOutage[]> {
+        return this.getOutageDao()
+            .then((dao) => this.$q.when(dao.find(filter)))
+            .catch(this.decorateError);
+    }
+
+    getOutages(id): angular.IPromise<Model.OnmsOutage> {
+        return this.getOutageDao()
+            .then((dao) => this.$q.when(dao.get(id)))
+            .catch(this.decorateError);
+    }
+
+    getOutageProperties(): angular.IPromise<any[]> {
+        return this.getOutageDao()
+            .then((dao) => this.$q.when(dao.searchProperties()))
+            .catch(this.decorateError);
+    }
+
+    findOutageProperty(propertyId) {
+        return this.getOutageProperties()
+            .then((properties) => {
+                return _.find(properties, (property) => property.id === propertyId);
+            });
+    }
+
+    getOutagePropertyComparators(propertyId): angular.IPromise<any[]> {
+        return this.findOutageProperty(propertyId)
             .then(property => {
                 if (property) {
                     const comparators = property.type.getComparators();
