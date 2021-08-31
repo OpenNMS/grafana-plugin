@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1629892013245,
+  "iteration": 1630425259199,
   "links": [],
   "panels": [
     {
@@ -351,7 +351,7 @@
             "h": 8,
             "w": 16,
             "x": 0,
-            "y": 10
+            "y": 2
           },
           "hiddenSeries": false,
           "id": 18,
@@ -537,7 +537,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 10
+            "y": 2
           },
           "id": 20,
           "options": {
@@ -558,7 +558,7 @@
             },
             {
               "exemplar": true,
-              "expr": "sum by (host) (sum_over_time(BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"in\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range]))) or label_replace(sum by () (sum_over_time(EXPORTER_INTERFACE_TOS{nodeId=\"$node\", ifIndex=\"$interface\", dscp=~\"$dscp\", direction=\"in\"}[$__range])) - sum by () (sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"in\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range])))), \"host\", \"Other\", \"none\", \".*\")",
+              "expr": "sum by (host) (sum_over_time(BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"in\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range]))) or label_replace(2 * sum by () (sum_over_time(EXPORTER_INTERFACE_TOS{nodeId=\"$node\", ifIndex=\"$interface\", dscp=~\"$dscp\", direction=\"in\"}[$__range])) - sum by () (sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"in\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range])))), \"host\", \"Other\", \"none\", \".*\")",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -568,7 +568,7 @@
             },
             {
               "exemplar": true,
-              "expr": "sum by (host) (sum_over_time(BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"out\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range]))) or label_replace(sum by () (sum_over_time(EXPORTER_INTERFACE_TOS{nodeId=\"$node\", ifIndex=\"$interface\", dscp=~\"$dscp\", direction=\"out\"}[$__range])) - sum by () (sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"out\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range])))), \"host\", \"Other\", \"none\", \".*\")",
+              "expr": "sum by (host) (sum_over_time(BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"out\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range]))) or label_replace(2 * sum by () (sum_over_time(EXPORTER_INTERFACE_TOS{nodeId=\"$node\", ifIndex=\"$interface\", dscp=~\"$dscp\", direction=\"out\"}[$__range])) - sum by () (sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\", direction=\"out\"}[$__range])) and ignoring (direction) topk($topk, sum by (host) (sum_over_time (BY_TOS_AND_HOST_${node}_${interface}{dscp=~\"$dscp\"}[$__range])))), \"host\", \"Other\", \"none\", \".*\")",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -961,10 +961,9 @@
       {
         "allValue": null,
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "2",
+          "value": "2"
         },
         "datasource": "${flowds}",
         "definition": "query_result(sum by (nodeId) (min_over_time(EXPORTER_INTERFACE[$__range])))",
@@ -993,10 +992,9 @@
       {
         "allValue": null,
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "3",
+          "value": "3"
         },
         "datasource": "${flowds}",
         "definition": "query_result(sum by (ifIndex) (min_over_time(EXPORTER_INTERFACE{nodeId=\"${node}\"}[$__range])))",
@@ -1060,9 +1058,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "10",
-          "value": "10"
+          "selected": false,
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
@@ -1073,12 +1071,12 @@
         "name": "topk",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "3",
             "value": "3"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "5",
             "value": "5"
           },
@@ -1086,9 +1084,19 @@
             "selected": false,
             "text": "10",
             "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "20",
+            "value": "20"
           }
         ],
-        "query": "3,5,10",
+        "query": "3,5,10,15,20",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -1103,5 +1111,5 @@
   "timezone": "",
   "title": "Cortex Flow Deep Dive | OpenNMS Helm",
   "uid": "6PhWpcZnz",
-  "version": 36
+  "version": 38
 }
