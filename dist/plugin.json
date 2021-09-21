@@ -36,7 +36,8 @@
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},
     {"type": "dashboard", "name": "About | OpenNMS Helm", "path": "dashboards/about.json"},
-    {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"}
+    {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"},
+    {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Helm", "path": "dashboards/cortex_flow_deep_dive.json"}
   ],
   "dependencies": {
     "grafanaDependency": ">=7.5.0",
