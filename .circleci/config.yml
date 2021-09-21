@@ -513,16 +513,16 @@ workflows:
               only: master
             tags:
               ignore: /^v.*/
-      - publish-docs:
-          requires:
-            - build-docs
-          filters:
-            branches:
-              only:
-                - master
-                - develop
-            tags:
-              ignore: /^v.*/
+#      - publish-docs:
+#          requires:
+#            - build-docs
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - develop
+#            tags:
+#              ignore: /^v.*/
       - publish-deb:
           context: Service Principal
           requires:
