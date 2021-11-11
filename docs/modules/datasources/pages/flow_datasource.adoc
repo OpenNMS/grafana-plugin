@@ -13,6 +13,7 @@ The query editor supports the following functions:
 | Combine   | `includeOther`          | Combine and include other conversations/applications that fall outside of the Top N.
 | Filter    | `withExporterNode`      | Filter for flows related to the given exporter node.
 | Filter    | `withIfIndex`           | Filter for flows related to the given interface index.
+| Filter    | `withDscp`              | Filter for flows with the given DSCP value(s).
 | Transform | `toBits`                | Convert the values from bytes to bits.
 | Transform | `perSecond`             | Convert the values to a per/second rate.
 | Transform | `negativeEgress`        | Make the egress values negative.
@@ -21,8 +22,9 @@ The query editor supports the following functions:
 | Transform | `combineIngressEgress`  | Sum ingress and egress values together.
 | Transform | `onlyIngress`           | Only display ingress traffic.
 | Transform | `onlyEgress`            | Only display egress traffic.
-| Transform | `withGroupByInterval`   | Changes the resolution of the returned datapoints grouping by the given time
-interval (in the format of: 10s, 5m, 1h, etc.)
+| Transform | `withGroupByInterval`   | Changes the resolution of the returned datapoints grouping by the given time interval (in the format of: 10s, 5m, 1h, etc.).
+| Transform | `withPrefix`            | Specifies a prefix for graph and summary labels.
+| Transform | `withSuffix`            | Specifies a suffix for graph and summary labels.
 |===
 
 
