@@ -4,11 +4,11 @@ executors:
 
   build-executor-centos:
     docker:
-      - image: opennms/build-env:11.0.5.10-3.6.3-b3976
+      - image: opennms/build-env:11.0.12.0.7-3.6.3-b7295
 
   build-executor-debian:
     docker:
-      - image: opennms/build-env:debian-jdk11-b3982
+      - image: opennms/build-env:debian-jdk11-b7291
 
   node-executor:
     docker:
@@ -20,15 +20,15 @@ executors:
 
   docs-executor:
     docker:
-      - image: opennms/antora:2.3.4-b6293
+      - image: opennms/antora:2.3.4-b7274
 
   netlify-cli-executor:
     docker:
-      - image: opennms/netlify-cli:2.8.3-b1
+      - image: opennms/netlify-cli:2.54.0-b5940
 
 orbs:
-  cloudsmith: cloudsmith/cloudsmith@1.0.3
-  sign-packages: opennms/sign-packages@2.1.0
+  cloudsmith: cloudsmith/cloudsmith@1.0.4
+  sign-packages: opennms/sign-packages@2.3.0
 
 # NOTE: the "_label" versions of these are for the case when your source or target
 # branches have slashes in them, that way the merge branch gets created properly

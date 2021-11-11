@@ -1,11 +1,15 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-import { rangeUtil } from '@grafana/data';
+import {DataQuery, DataQueryRequest, rangeUtil} from '@grafana/data';
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
 import { processSelectionVariables } from 'lib/utils';
+
+interface FlowDataQuery extends DataQuery {
+  metric: string
+}
 
 export class FlowDatasource {
   type?: string;
@@ -23,20 +27,36 @@ export class FlowDatasource {
     this.client = new ClientDelegate(instanceSettings, backendSrv, $q);
   }
 
-  query(options) {
-    let start = options.range.from.valueOf();
-    let end = options.range.to.valueOf();
+  query(options: DataQueryRequest<FlowDataQuery>) {
 
     if (options.targets.length > 1) {
       throw new Error("Multiple targets are not currently supported when using the OpenNMS Flow Datasource.");
     }
 
     // Grab the first target
-    let target = options.targets[0];
+    return this.queryOneTarget(options, options.targets[0])
+  }
+
+  queryOneTarget(options: DataQueryRequest, target: FlowDataQuery) {
+
     if (target.metric === undefined || target.metric === null) {
       // Nothing to query - this can happen when we initially create the panel
       // and have not yet selected a metric
       return this.q.when({'data': []});
+    }
+
+    let start = options.range.from.valueOf();
+    let end = options.range.to.valueOf();
+
+    // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
+    // value from Grafana's automatically calculated maxDataPoints (based on pixel width)
+    let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
+    let step;
+    if (groupByInterval) {
+      step = rangeUtil.intervalToMs(groupByInterval);
+    } else {
+      // @ts-ignore
+      step = Math.floor((end - start) / options.maxDataPoints);
     }
 
     // Combine
@@ -52,29 +72,19 @@ export class FlowDatasource {
     // Transform
     let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
 
-    // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
-    // value from Grafana's automatically calculated maxDataPoints (based on pixel width)
-    let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
-    let step;
-    if (groupByInterval) {
-      step = rangeUtil.intervalToMs(groupByInterval);
-    } else {
-      step = Math.floor((end - start) / options.maxDataPoints);
-    }
-
     switch (target.metric) {
       case 'conversations':
         if (!asTableSummary) {
           if (conversations && conversations.length > 0) {
             return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           } else {
             return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           }
@@ -82,13 +92,13 @@ export class FlowDatasource {
           if (conversations && conversations.length > 0) {
             return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           }
@@ -98,13 +108,13 @@ export class FlowDatasource {
           if (applications && applications.length > 0) {
             return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           } else {
             return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           }
@@ -112,13 +122,13 @@ export class FlowDatasource {
           if (applications && applications.length > 0) {
             return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           }
@@ -128,13 +138,13 @@ export class FlowDatasource {
           if (hosts && hosts.length > 0) {
             return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           } else {
             return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
               return {
-                data: FlowDatasource.toSeries(target, series)
+                data: this.toSeries(target, series)
               };
             });
           }
@@ -142,13 +152,13 @@ export class FlowDatasource {
           if (hosts && hosts.length > 0) {
             return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           } else {
             return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
               return {
-                data: FlowDatasource.toTable(target, table)
+                data: this.toTable(target, table)
               };
             });
           }
@@ -157,13 +167,13 @@ export class FlowDatasource {
         if (!asTableSummary) {
           return this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
             return {
-              data: FlowDatasource.toSeries(target, series, dscpLabel)
+              data: this.toSeries(target, series, dscpLabel)
             };
           });
         } else {
           return this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
             return {
-              data: FlowDatasource.toTable(target, table, dscpLabel)
+              data: this.toTable(target, table, dscpLabel)
             };
           });
         }
@@ -266,10 +276,20 @@ export class FlowDatasource {
     );
   }
 
-  static toTable(
+  ensureLabelTransformer(labelTransformer?: (s: string) => string): (string) => string {
+    return labelTransformer ? labelTransformer : s => s
+  }
+
+  prefixSuffixLabelTransformer(target, labelTransformer: (s: string) => string): (string) => string {
+    let prefix = this.getFunctionParameterOrDefault(target, 'withPrefix', 0, '');
+    let suffix = this.getFunctionParameterOrDefault(target, 'withSuffix', 0, '');
+    return s => prefix + labelTransformer(s) + suffix
+  }
+
+  toTable(
       target,
       table,
-      labelTransformer?: (any) => any,
+      labelTransformer?: (string) => string,
   ) {
     let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
 
@@ -285,9 +305,8 @@ export class FlowDatasource {
       table.headers[outIndex] = 'Bits Out';
     }
 
-    if (labelTransformer) {
-      table.rows.forEach(r => r[0] = labelTransformer(r[0]));
-    }
+    let effectiveLabelTransformer = this.prefixSuffixLabelTransformer(target, this.ensureLabelTransformer(labelTransformer))
+    table.rows.forEach(r => r[0] = effectiveLabelTransformer(r[0]));
 
     let ecnIndex = table.headers.lastIndexOf('ECN');
     if (ecnIndex > 0) {
@@ -327,12 +346,12 @@ export class FlowDatasource {
     ];
   }
 
-  static toSeries(
+  toSeries(
       target,
       flowSeries,
-      labelTransformer?: (any) => any,
+      labelTransformer?: (string) => string,
   ) {
-    labelTransformer = labelTransformer ? labelTransformer : function(any) { return any; };
+    let ensuredLabelTranformer = this.ensureLabelTransformer(labelTransformer)
     let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
     let perSecond = FlowDatasource.isFunctionPresent(target, 'perSecond');
     let negativeEgress = FlowDatasource.isFunctionPresent(target, 'negativeEgress');
@@ -374,6 +393,10 @@ export class FlowDatasource {
           // Remove any suffix, so that ingress and egress both have the same label
           suffix = "";
         }
+
+        let inOutLabelTransformer: (s: string) => string = suffix ? s => ensuredLabelTranformer(s) + suffix : ensuredLabelTranformer
+        let effectiveLabelTransformer = this.prefixSuffixLabelTransformer(target, inOutLabelTransformer);
+
         if (perSecond) {
           multiplier /= step / 1000;
         }
@@ -397,7 +420,7 @@ export class FlowDatasource {
         }
 
         series.push({
-          target: labelTransformer(columns[i].label) + suffix,
+          target: effectiveLabelTransformer(columns[i].label),
           datapoints: datapoints
         });
       }
