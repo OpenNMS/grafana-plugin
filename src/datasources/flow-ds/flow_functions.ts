@@ -186,6 +186,26 @@ addFuncDef({
   }]
 });
 
+addFuncDef({
+  name: 'withPrefix',
+  category: categories.Transform,
+  cardinality: Cardinality.SINGLE,
+  params: [{
+    name: "value",
+    type: "string"
+  }]
+});
+
+addFuncDef({
+  name: 'withSuffix',
+  category: categories.Transform,
+  cardinality: Cardinality.SINGLE,
+  params: [{
+    name: "value",
+    type: "string"
+  }]
+});
+
 _.each(categories, function (funcList, catName) {
   categories[catName] = _.sortBy(funcList, 'name');
 });
