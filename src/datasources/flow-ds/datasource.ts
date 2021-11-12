@@ -1,11 +1,19 @@
 import _ from 'lodash';
-import angular from 'angular';
 
-import {DataQuery, DataQueryRequest, rangeUtil} from '@grafana/data';
+import {
+  DataQuery,
+  DataQueryRequest,
+  DataQueryResponse,
+  rangeUtil,
+  TableData
+} from '@grafana/data';
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
 import { processSelectionVariables } from 'lib/utils';
+import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
+import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
+import {TimeSeries} from "@grafana/data/types/data";
 
 interface FlowDataQuery extends DataQuery {
   metric: string
@@ -15,49 +23,80 @@ export class FlowDatasource {
   type?: string;
   url?: string;
   name?: string;
-  q: angular.IQService;
   client: ClientDelegate;
 
   /** @ngInject */
-  constructor(instanceSettings: any, $q: angular.IQService, public backendSrv: any, public templateSrv: any) {
+  constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
-    this.q = $q;
-    this.client = new ClientDelegate(instanceSettings, backendSrv, $q);
+    this.client = new ClientDelegate(instanceSettings, backendSrv);
   }
 
-  query(options: DataQueryRequest<FlowDataQuery>) {
+  query(options: DataQueryRequest<FlowDataQuery>): Promise<DataQueryResponse> {
 
-    if (options.targets.length > 1) {
-      throw new Error("Multiple targets are not currently supported when using the OpenNMS Flow Datasource.");
-    }
+    const allAreSummaries = options.targets.every(target => FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
+    const allAreSeries = options.targets.every(target => !FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
 
-    // Grab the first target
-    return this.queryOneTarget(options, options.targets[0])
-  }
-
-  queryOneTarget(options: DataQueryRequest, target: FlowDataQuery) {
-
-    if (target.metric === undefined || target.metric === null) {
-      // Nothing to query - this can happen when we initially create the panel
-      // and have not yet selected a metric
-      return this.q.when({'data': []});
+    if (!allAreSummaries && !allAreSeries) {
+      throw new Error("The 'asTableSummary' transformation must be included in all queries of a panel or in none of them.");
     }
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
 
-    // If a group by interval has been set we will use that to determine the step value, otherwise we will use the step
-    // value from Grafana's automatically calculated maxDataPoints (based on pixel width)
-    let groupByInterval = this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0, null);
-    let step;
-    if (groupByInterval) {
-      step = rangeUtil.intervalToMs(groupByInterval);
+    if (allAreSummaries) {
+
+      const tables = options.targets.map(query => this.querySummary(options, query))
+
+      return Promise.all(tables).then(tables => {
+        return {
+          // return only tables that are not `undefined`
+          data: tables.filter(t => t)
+        }
+      })
+
     } else {
-      // @ts-ignore
-      step = Math.floor((end - start) / options.maxDataPoints);
+
+      const intervals = options.targets
+          .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
+          .filter(i => i)
+
+      const differentIntervals = new Set(intervals)
+      if (differentIntervals.size > 1) {
+        throw new Error("All queries must use the same 'withGroupByInterval`.");
+      }
+      let step;
+      if (differentIntervals.size === 1) {
+        step = rangeUtil.intervalToMs(differentIntervals.values().next().value)
+      } else {
+        // @ts-ignore
+        step = Math.floor((end - start) / options.maxDataPoints);
+      }
+
+      const series = options.targets.map(target => this.querySeries(options, target, step))
+
+      return Promise.all(series).then(series => {
+        return {
+          // querySeries returns TimeSeries[]
+          // -> flatMap it
+          data: series.filter(s => s).flatMap(s => s)
+        }
+      })
     }
+
+  }
+
+  querySummary(options: DataQueryRequest, target: FlowDataQuery): Promise<TableData | undefined> {
+
+    if (target.metric === undefined || target.metric === null) {
+      // Nothing to query - this can happen when we initially create the panel
+      // and have not yet selected a metric
+      return Promise.resolve(undefined)
+    }
+
+    let start = options.range.from.valueOf();
+    let end = options.range.to.valueOf();
 
     // Combine
     let N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
@@ -69,114 +108,104 @@ export class FlowDatasource {
     let applications = this.getFunctionParametersOrDefault(target, 'withApplication', 0, null);
     let conversations = this.getFunctionParametersOrDefault(target, 'withConversation', 0, null);
     let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
-    // Transform
-    let asTableSummary = FlowDatasource.isFunctionPresent(target, 'asTableSummary');
 
     switch (target.metric) {
       case 'conversations':
-        if (!asTableSummary) {
-          if (conversations && conversations.length > 0) {
-            return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          } else {
-            return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          }
+        if (conversations && conversations.length > 0) {
+          return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         } else {
-          if (conversations && conversations.length > 0) {
-            return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          } else {
-            return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          }
+          return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         }
       case 'applications':
-        if (!asTableSummary) {
-          if (applications && applications.length > 0) {
-            return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          } else {
-            return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          }
+        if (applications && applications.length > 0) {
+          return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         } else {
-          if (applications && applications.length > 0) {
-            return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          } else {
-            return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          }
+          return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         }
       case 'hosts':
-        if (!asTableSummary) {
-          if (hosts && hosts.length > 0) {
-            return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          } else {
-            return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-              return {
-                data: this.toSeries(target, series)
-              };
-            });
-          }
+        if (hosts && hosts.length > 0) {
+          return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         } else {
-          if (hosts && hosts.length > 0) {
-            return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          } else {
-            return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-              return {
-                data: this.toTable(target, table)
-              };
-            });
-          }
+          return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+            return this.toTable(target, table)
+          });
         }
       case 'dscps':
-        if (!asTableSummary) {
-          return this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
-            return {
-              data: this.toSeries(target, series, dscpLabel)
-            };
+        return this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
+          return this.toTable(target, table, dscpLabel)
+        });
+      default:
+        throw 'Unsupported target metric: ' + target.metric;
+    }
+  }
+
+  querySeries(options: DataQueryRequest, target: FlowDataQuery, step: number): Promise<TimeSeries[] | undefined> {
+
+    if (target.metric === undefined || target.metric === null) {
+      // Nothing to query - this can happen when we initially create the panel
+      // and have not yet selected a metric
+      return Promise.resolve(undefined)
+    }
+
+    let start = options.range.from.valueOf();
+    let end = options.range.to.valueOf();
+
+    // Combine
+    let N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
+    let includeOther = FlowDatasource.isFunctionPresent(target, 'includeOther');
+    // Filter
+    let exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
+    let ifIndex = this.getFunctionParameterOrDefault(target, 'withIfIndex', 0);
+    let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(target, 'withDscp', 0, null));
+    let applications = this.getFunctionParametersOrDefault(target, 'withApplication', 0, null);
+    let conversations = this.getFunctionParametersOrDefault(target, 'withConversation', 0, null);
+    let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
+
+    switch (target.metric) {
+      case 'conversations':
+        if (conversations && conversations.length > 0) {
+          return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
           });
         } else {
-          return this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
-            return {
-              data: this.toTable(target, table, dscpLabel)
-            };
+          return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
           });
         }
+      case 'applications':
+        if (applications && applications.length > 0) {
+          return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
+          });
+        } else {
+          return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
+          });
+        }
+      case 'hosts':
+        if (hosts && hosts.length > 0) {
+          return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
+          });
+        } else {
+          return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+            return this.toSeries(target, series)
+          });
+        }
+      case 'dscps':
+        return this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
+          return this.toSeries(target, series, dscpLabel)
+        });
       default:
         throw 'Unsupported target metric: ' + target.metric;
     }
@@ -213,13 +242,13 @@ export class FlowDatasource {
   }
 
   annotationQuery(/* options */) {
-    return this.q.when([]);
+    return Promise.resolve([]);
   }
 
   // Used by template queries
   metricFindQuery(query) {
     if (query === null || query === undefined || query === "") {
-      return this.q.resolve([]);
+      return Promise.resolve([]);
     }
     query = this.templateSrv.replace(query);
 
@@ -247,7 +276,7 @@ export class FlowDatasource {
       );
     }
 
-    return this.q.resolve([]);
+    return Promise.resolve([]);
   }
 
   metricFindExporterNodes(query?: any) {
@@ -276,22 +305,31 @@ export class FlowDatasource {
     );
   }
 
-  ensureLabelTransformer(labelTransformer?: (s: string) => string): (string) => string {
+  ensureLabelTransformer(labelTransformer?: (s: string) => string): (string: string) => string {
     return labelTransformer ? labelTransformer : s => s
   }
 
-  prefixSuffixLabelTransformer(target, labelTransformer: (s: string) => string): (string) => string {
+  prefixSuffixLabelTransformer(target): (string) => string {
     let prefix = this.getFunctionParameterOrDefault(target, 'withPrefix', 0, '');
     let suffix = this.getFunctionParameterOrDefault(target, 'withSuffix', 0, '');
-    return s => prefix + labelTransformer(s) + suffix
+    return s => prefix + s + suffix
   }
 
   toTable(
-      target,
-      table,
+      query: FlowDataQuery,
+      table: OnmsFlowTable,
       labelTransformer?: (string) => string,
-  ) {
-    let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
+  ): TableData {
+
+    // get optionality out of the way -> all fields are required
+    if (!table.headers || !table.rows) {
+      throw new Error('table response did not contain all necessary information')
+    }
+
+    let ensuredLabelTranformer = this.ensureLabelTransformer(labelTransformer)
+    let prefixSuffixLabelTransformer = this.prefixSuffixLabelTransformer(query)
+
+    let toBits = FlowDatasource.isFunctionPresent(query, 'toBits');
 
     if (toBits) {
       let inIndex = table.headers.indexOf('Bytes In');
@@ -305,8 +343,7 @@ export class FlowDatasource {
       table.headers[outIndex] = 'Bits Out';
     }
 
-    let effectiveLabelTransformer = this.prefixSuffixLabelTransformer(target, this.ensureLabelTransformer(labelTransformer))
-    table.rows.forEach(r => r[0] = effectiveLabelTransformer(r[0]));
+    table.rows.forEach(r => r[0] = _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(r[0]));
 
     let ecnIndex = table.headers.lastIndexOf('ECN');
     if (ecnIndex > 0) {
@@ -333,130 +370,108 @@ export class FlowDatasource {
       return {"text": column}
     }) : [];
 
-    return [
-      {
+    return {
+        refId: query.refId,
         "columns": columns,
         "rows": table.rows,
         "type": "table",
-        "meta": {
-          metric: target.metric,
-          toBits: toBits
-        }
       }
-    ];
   }
 
   toSeries(
-      target,
-      flowSeries,
+      query: FlowDataQuery,
+      flowSeries: OnmsFlowSeries,
       labelTransformer?: (string) => string,
-  ) {
+  ): TimeSeries[] {
+
+    // get optionality out of the way -> all fields are required
+    if (!flowSeries.start || !flowSeries.end || !flowSeries.columns || !flowSeries.timestamps || !flowSeries.values) {
+      throw new Error('series response did not contain all necessary information')
+    }
+
     let ensuredLabelTranformer = this.ensureLabelTransformer(labelTransformer)
-    let toBits = FlowDatasource.isFunctionPresent(target, 'toBits');
-    let perSecond = FlowDatasource.isFunctionPresent(target, 'perSecond');
-    let negativeEgress = FlowDatasource.isFunctionPresent(target, 'negativeEgress');
-    let negativeIngress = FlowDatasource.isFunctionPresent(target, 'negativeIngress');
-    let combineIngressEgress = FlowDatasource.isFunctionPresent(target, 'combineIngressEgress');
-    let onlyIngress = FlowDatasource.isFunctionPresent(target, 'onlyIngress');
-    let onlyEgress = FlowDatasource.isFunctionPresent(target, 'onlyEgress');
+    let prefixSuffixLabelTransformer = this.prefixSuffixLabelTransformer(query)
+
+    let toBits = FlowDatasource.isFunctionPresent(query, 'toBits');
+    let perSecond = FlowDatasource.isFunctionPresent(query, 'perSecond');
+    let negativeEgress = FlowDatasource.isFunctionPresent(query, 'negativeEgress');
+    let negativeIngress = FlowDatasource.isFunctionPresent(query, 'negativeIngress');
+    let combineIngressEgress = FlowDatasource.isFunctionPresent(query, 'combineIngressEgress');
+    let onlyIngress = FlowDatasource.isFunctionPresent(query, 'onlyIngress');
+    let onlyEgress = FlowDatasource.isFunctionPresent(query, 'onlyEgress');
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
     let columns = flowSeries.columns;
     let values = flowSeries.values;
     let timestamps = flowSeries.timestamps;
-    let series = [] as any[];
-    let i, j, nRows, nCols, datapoints;
+    let timestampsInRange = timestamps
+        .map((timestamp, timestampIdx) => { return { timestamp, timestampIdx }})
+        .filter(({timestamp}) => timestamp >= start && timestamp <= end)
 
     let step = timestamps[1] - timestamps[0];
 
-    if (timestamps !== undefined) {
-      nRows = timestamps.length;
-      nCols = columns.length;
+    // const timestampAndVals = timestamps
+    //     .map((timestamp, idx) => { return { timestamp, vals: values[idx] } })
+    //     .filter(({ timestamp }) => timestamp >= start && timestamp <= end)
 
-      for (i = 0; i < nCols; i++) {
-        // Optionally skip egress or ingress columns
-        if (onlyIngress && !columns[i].ingress) {
-          continue;
-        }
-        if (onlyEgress && columns[i].ingress) {
-          continue;
-        }
-
-        let multiplier = negativeIngress ? -1 : 1;
-        let suffix = " (In)";
-        if (!columns[i].ingress) {
-          multiplier = negativeEgress ? -1 : 1;
-          suffix = " (Out)";
-        }
-        if (combineIngressEgress) {
-          // Remove any suffix, so that ingress and egress both have the same label
-          suffix = "";
-        }
-
-        let inOutLabelTransformer: (s: string) => string = suffix ? s => ensuredLabelTranformer(s) + suffix : ensuredLabelTranformer
-        let effectiveLabelTransformer = this.prefixSuffixLabelTransformer(target, inOutLabelTransformer);
-
-        if (perSecond) {
-          multiplier /= step / 1000;
-        }
-        if (toBits) {
-          // Convert from bytes to bits
-          multiplier *= 8;
-        }
-
-        datapoints = [] as any[];
-        for (j = 0; j < nRows; j++) {
-          // Skip rows that are out-of-range
-          if (timestamps[j] < start || timestamps[j] > end) {
-            continue;
-          }
-
-          if (values[i][j] === 'NaN') {
-            values[i][j] = null;
-          }
-
-          datapoints.push([values[i][j] * multiplier, timestamps[j]]);
-        }
-
-        series.push({
-          target: effectiveLabelTransformer(columns[i].label),
-          datapoints: datapoints
-        });
-      }
+    let multiplier = 1
+    if (perSecond) {
+      multiplier /= step / 1000;
+    }
+    if (toBits) {
+      // Convert from bytes to bits
+      multiplier *= 8;
     }
 
     if (combineIngressEgress) {
-      series = FlowDatasource.sumMatchingTargets(series);
+
+      return flowSeries.columns
+          // use the ingress columns to drive the calculation of combined series
+          .filter(column => column.ingress)
+          .map(column => {
+
+            const datapoints = timestampsInRange
+                .map(({timestamp, timestampIdx}) => {
+                  const sum = columns
+                      // determine the indexes of those columns that have the same label as the current column
+                      .map((c, colIdx) => { return { c, colIdx } })
+                      .filter(({c}) => c.label === column.label)
+                      // get the values in those of those columns
+                      .map(({colIdx}) => values[colIdx][timestampIdx])
+                      // and sum them up
+                      .reduce((previous, current) => previous + (current ? current : 0), 0)
+                  return [sum * multiplier, timestamp]
+                })
+
+            return {
+              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(column.label),
+              datapoints
+            }
+          })
+
+    } else {
+
+      return flowSeries.columns
+          .map((column, colIdx) => { return { column, colIdx } })
+          .filter(({column}) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+          .map(({column, colIdx}) => {
+            const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1
+            const inOutLabelTransformer: (s: string) => string = s => s + (column.ingress ? ' (In)' : ' (Out)')
+
+            const datapoints = timestampsInRange
+                .map(({timestamp, timestampIdx}) => {
+                  const v = values[colIdx][timestampIdx]
+                  return [v === undefined || Number.isNaN(v) ? null : v * multiplier * sign, timestamp]
+                })
+
+            return {
+              target: _.flow(ensuredLabelTranformer, inOutLabelTransformer, prefixSuffixLabelTransformer)(column.label),
+              datapoints
+            }
+          })
     }
 
-    return series;
-  }
-
-  static sumMatchingTargets(series) {
-    let targetsByName = _.groupBy(series, (s) => s.target);
-    let newSeries = [] as any[];
-    _.each(targetsByName, (t) => {
-      let target = t[0].target;
-      let K = t.length;
-      let N = t[0].datapoints.length;
-      let summedDatapoints = new Array(N);
-      for (let k = 0; k < K; k++) {
-        let targetDatapoints = t[k].datapoints;
-        for (let n = 0; n < N; n++) {
-          if (summedDatapoints[n] == null) {
-            summedDatapoints[n] = [0, targetDatapoints[n][1]];
-          }
-          let valueToAdd = targetDatapoints[n][0] == null ? 0 : targetDatapoints[n][0];
-          summedDatapoints[n][0] = summedDatapoints[n][0] + valueToAdd;
-        }
-      }
-      newSeries.push({
-        target: target,
-        datapoints: summedDatapoints
-      })
-    });
-    return newSeries;
   }
 
   static getFirstFunction(target, name) {

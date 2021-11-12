@@ -81,7 +81,7 @@ export class OpenNMSEntityDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
-    this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv, $q);
+    this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv);
 
     // When enabled in the datasource, the grafana user should be used instead of the datasource username on
     // supported operations

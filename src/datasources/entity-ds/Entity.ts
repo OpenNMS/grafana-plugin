@@ -3,8 +3,6 @@ import { ClientDelegate } from 'lib/client_delegate';
 import { AttributeMapping } from './mapping/AttributeMapping';
 import { Filter } from './ui/Filter';
 
-import angular from 'angular';
-
 export default class Entity {
   abstract name: string;
   abstract type: string;
