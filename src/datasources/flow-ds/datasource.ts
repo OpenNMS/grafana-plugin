@@ -35,8 +35,12 @@ export class FlowDatasource {
 
   query(options: DataQueryRequest<FlowDataQuery>): Promise<DataQueryResponse> {
 
-    const allAreSummaries = options.targets.every(target => FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
-    const allAreSeries = options.targets.every(target => !FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
+    // filter queries that have their metric set
+    // -> when we initially create a query no metric is selected
+    const queriesWithMetrics = options.targets.filter(query => query.metric)
+
+    const allAreSummaries = queriesWithMetrics.every(target => FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
+    const allAreSeries = queriesWithMetrics.every(target => !FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
 
     if (!allAreSummaries && !allAreSeries) {
       throw new Error("The 'asTableSummary' transformation must be included in all queries of a panel or in none of them.");
@@ -47,20 +51,19 @@ export class FlowDatasource {
 
     if (allAreSummaries) {
 
-      const tables = options.targets.map(query => this.querySummary(options, query))
+      const summaryPromises = queriesWithMetrics.map(query => this.querySummary(options, query))
 
-      return Promise.all(tables).then(tables => {
+      return Promise.all(summaryPromises).then(summaries => {
         return {
-          // return only tables that are not `undefined`
-          data: tables.filter(t => t)
+          data: summaries
         }
       })
 
     } else {
 
-      const intervals = options.targets
+      const intervals = queriesWithMetrics
           .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
-          .filter(i => i)
+          .filter(i => i) // exclude `undefined`
 
       const differentIntervals = new Set(intervals)
       if (differentIntervals.size > 1) {
@@ -74,26 +77,20 @@ export class FlowDatasource {
         step = Math.floor((end - start) / options.maxDataPoints);
       }
 
-      const series = options.targets.map(target => this.querySeries(options, target, step))
+      const series = queriesWithMetrics.map(target => this.querySeries(options, target, step))
 
       return Promise.all(series).then(series => {
         return {
           // querySeries returns TimeSeries[]
           // -> flatMap it
-          data: series.filter(s => s).flatMap(s => s)
+          data: series.flatMap(s => s)
         }
       })
     }
 
   }
 
-  querySummary(options: DataQueryRequest, target: FlowDataQuery): Promise<TableData | undefined> {
-
-    if (target.metric === undefined || target.metric === null) {
-      // Nothing to query - this can happen when we initially create the panel
-      // and have not yet selected a metric
-      return Promise.resolve(undefined)
-    }
+  querySummary(options: DataQueryRequest, target: FlowDataQuery): Promise<TableData> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
@@ -149,13 +146,7 @@ export class FlowDatasource {
     }
   }
 
-  querySeries(options: DataQueryRequest, target: FlowDataQuery, step: number): Promise<TimeSeries[] | undefined> {
-
-    if (target.metric === undefined || target.metric === null) {
-      // Nothing to query - this can happen when we initially create the panel
-      // and have not yet selected a metric
-      return Promise.resolve(undefined)
-    }
+  querySeries(options: DataQueryRequest, target: FlowDataQuery, step: number): Promise<TimeSeries[]> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
@@ -411,10 +402,6 @@ export class FlowDatasource {
 
     let step = timestamps[1] - timestamps[0];
 
-    // const timestampAndVals = timestamps
-    //     .map((timestamp, idx) => { return { timestamp, vals: values[idx] } })
-    //     .filter(({ timestamp }) => timestamp >= start && timestamp <= end)
-
     let multiplier = 1
     if (perSecond) {
       multiplier /= step / 1000;
@@ -462,7 +449,7 @@ export class FlowDatasource {
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
                   const v = values[colIdx][timestampIdx]
-                  return [v === undefined || Number.isNaN(v) ? null : v * multiplier * sign, timestamp]
+                  return [v === null || v === undefined || Number.isNaN(v) ? null : v * multiplier * sign, timestamp]
                 })
 
             return {
