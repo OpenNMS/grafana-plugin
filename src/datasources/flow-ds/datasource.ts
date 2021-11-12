@@ -5,7 +5,8 @@ import {
   DataQueryRequest,
   DataQueryResponse,
   rangeUtil,
-  TableData
+  TableData,
+  TimeSeries
 } from '@grafana/data';
 
 import { ClientDelegate } from 'lib/client_delegate';
@@ -13,7 +14,6 @@ import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
 import { processSelectionVariables } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
-import {TimeSeries} from "@grafana/data/types/data";
 
 interface FlowDataQuery extends DataQuery {
   metric: string
@@ -46,9 +46,6 @@ export class FlowDatasource {
       throw new Error("The 'asTableSummary' transformation must be included in all queries of a panel or in none of them.");
     }
 
-    let start = options.range.from.valueOf();
-    let end = options.range.to.valueOf();
-
     if (allAreSummaries) {
 
       const summaryPromises = queriesWithMetrics.map(query => this.querySummary(options, query))
@@ -73,13 +70,15 @@ export class FlowDatasource {
       if (differentIntervals.size === 1) {
         step = rangeUtil.intervalToMs(differentIntervals.values().next().value)
       } else {
+        const start = options.range.from.valueOf();
+        const end = options.range.to.valueOf();
         // @ts-ignore
         step = Math.floor((end - start) / options.maxDataPoints);
       }
 
-      const series = queriesWithMetrics.map(target => this.querySeries(options, target, step))
+      const seriesPromises = queriesWithMetrics.map(query => this.querySeries(options, query, step))
 
-      return Promise.all(series).then(series => {
+      return Promise.all(seriesPromises).then(series => {
         return {
           // querySeries returns TimeSeries[]
           // -> flatMap it
@@ -90,115 +89,115 @@ export class FlowDatasource {
 
   }
 
-  querySummary(options: DataQueryRequest, target: FlowDataQuery): Promise<TableData> {
+  querySummary(options: DataQueryRequest, query: FlowDataQuery): Promise<TableData> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
 
     // Combine
-    let N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
-    let includeOther = FlowDatasource.isFunctionPresent(target, 'includeOther');
+    let N = this.getFunctionParameterOrDefault(query, 'topN', 0, 10);
+    let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
-    let exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
-    let ifIndex = this.getFunctionParameterOrDefault(target, 'withIfIndex', 0);
-    let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(target, 'withDscp', 0, null));
-    let applications = this.getFunctionParametersOrDefault(target, 'withApplication', 0, null);
-    let conversations = this.getFunctionParametersOrDefault(target, 'withConversation', 0, null);
-    let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
+    let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
+    let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
+    let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
+    let applications = this.getFunctionParametersOrDefault(query, 'withApplication', 0, null);
+    let conversations = this.getFunctionParametersOrDefault(query, 'withConversation', 0, null);
+    let hosts = this.getFunctionParametersOrDefault(query, 'withHost', 0, null);
 
-    switch (target.metric) {
+    switch (query.metric) {
       case 'conversations':
         if (conversations && conversations.length > 0) {
           return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         } else {
           return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         }
       case 'applications':
         if (applications && applications.length > 0) {
           return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         } else {
           return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         }
       case 'hosts':
         if (hosts && hosts.length > 0) {
           return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         } else {
           return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
-            return this.toTable(target, table)
+            return this.toTable(query, table)
           });
         }
       case 'dscps':
         return this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
-          return this.toTable(target, table, dscpLabel)
+          return this.toTable(query, table, dscpLabel)
         });
       default:
-        throw 'Unsupported target metric: ' + target.metric;
+        throw 'Unsupported target metric: ' + query.metric;
     }
   }
 
-  querySeries(options: DataQueryRequest, target: FlowDataQuery, step: number): Promise<TimeSeries[]> {
+  querySeries(options: DataQueryRequest, query: FlowDataQuery, step: number): Promise<TimeSeries[]> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
 
     // Combine
-    let N = this.getFunctionParameterOrDefault(target, 'topN', 0, 10);
-    let includeOther = FlowDatasource.isFunctionPresent(target, 'includeOther');
+    let N = this.getFunctionParameterOrDefault(query, 'topN', 0, 10);
+    let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
-    let exporterNode = this.getFunctionParameterOrDefault(target, 'withExporterNode', 0);
-    let ifIndex = this.getFunctionParameterOrDefault(target, 'withIfIndex', 0);
-    let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(target, 'withDscp', 0, null));
-    let applications = this.getFunctionParametersOrDefault(target, 'withApplication', 0, null);
-    let conversations = this.getFunctionParametersOrDefault(target, 'withConversation', 0, null);
-    let hosts = this.getFunctionParametersOrDefault(target, 'withHost', 0, null);
+    let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
+    let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
+    let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
+    let applications = this.getFunctionParametersOrDefault(query, 'withApplication', 0, null);
+    let conversations = this.getFunctionParametersOrDefault(query, 'withConversation', 0, null);
+    let hosts = this.getFunctionParametersOrDefault(query, 'withHost', 0, null);
 
-    switch (target.metric) {
+    switch (query.metric) {
       case 'conversations':
         if (conversations && conversations.length > 0) {
           return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         } else {
           return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         }
       case 'applications':
         if (applications && applications.length > 0) {
           return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         } else {
           return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         }
       case 'hosts':
         if (hosts && hosts.length > 0) {
           return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         } else {
           return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
-            return this.toSeries(target, series)
+            return this.toSeries(query, series)
           });
         }
       case 'dscps':
         return this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
-          return this.toSeries(target, series, dscpLabel)
+          return this.toSeries(query, series, dscpLabel)
         });
       default:
-        throw 'Unsupported target metric: ' + target.metric;
+        throw 'Unsupported target metric: ' + query.metric;
     }
   }
 
@@ -393,7 +392,7 @@ export class FlowDatasource {
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
-    let columns = flowSeries.columns;
+    let columnsWithIndex = flowSeries.columns.map((column, colIdx) => { return { column, colIdx }});
     let values = flowSeries.values;
     let timestamps = flowSeries.timestamps;
     let timestampsInRange = timestamps
@@ -416,31 +415,29 @@ export class FlowDatasource {
       return flowSeries.columns
           // use the ingress columns to drive the calculation of combined series
           .filter(column => column.ingress)
-          .map(column => {
+          .map(col => {
 
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
-                  const sum = columns
+                  const sum = columnsWithIndex
                       // determine the indexes of those columns that have the same label as the current column
-                      .map((c, colIdx) => { return { c, colIdx } })
-                      .filter(({c}) => c.label === column.label)
-                      // get the values in those of those columns
+                      .filter(({column}) => column.label === col.label)
+                      // get the values of those columns ...
                       .map(({colIdx}) => values[colIdx][timestampIdx])
-                      // and sum them up
+                      // ... and sum them up
                       .reduce((previous, current) => previous + (current ? current : 0), 0)
                   return [sum * multiplier, timestamp]
                 })
 
             return {
-              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(column.label),
+              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col.label),
               datapoints
             }
           })
 
     } else {
 
-      return flowSeries.columns
-          .map((column, colIdx) => { return { column, colIdx } })
+      return columnsWithIndex
           .filter(({column}) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
           .map(({column, colIdx}) => {
             const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1

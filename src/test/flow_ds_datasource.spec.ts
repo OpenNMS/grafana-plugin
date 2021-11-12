@@ -57,7 +57,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ];
 
-      expect(actualResponse).toEqual(expectedResponse);
+      expect(expectedResponse).toEqual(actualResponse);
       done();
     });
 
