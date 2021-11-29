@@ -1,4 +1,3 @@
-import angular from 'angular';
 import _ from 'lodash';
 import {API, Model} from 'opennms';
 
@@ -11,6 +10,7 @@ import MonitoredServiceEntity from './MonitoredServiceEntity';
 import NodeEntity from './NodeEntity';
 import OutageEntity from './OutageEntity';
 import SnmpInterfaceEntity from './SnmpInterfaceEntity';
+import Entity from "./Entity";
 
 const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
@@ -71,16 +71,14 @@ export class OpenNMSEntityDatasource {
     name?: string;
     url?: string;
     type?: string;
-    q: angular.IQService;
     opennmsClient: ClientDelegate;
     user?: string;
 
     /** @ngInject */
-  constructor(instanceSettings: any, $q: angular.IQService, public backendSrv: any, public templateSrv: any, public contextSrv: any, public dashboardSrv: any) {
+  constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any, public contextSrv: any, public dashboardSrv: any) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
-    this.q = $q;
     this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv);
 
     // When enabled in the datasource, the grafana user should be used instead of the datasource username on
@@ -103,7 +101,7 @@ export class OpenNMSEntityDatasource {
       const entityType = target.entityType || 'alarm';
       filter.limit = target.limit || 0; // 0 = no limit
 
-      let entity = getEntity(entityType, this.opennmsClient, this);
+      let entity: Entity | null = getEntity(entityType, this.opennmsClient, this);
       if (!entity) {
         console.error('Unable to determine entity from entity type', entityType);
         entity = new AlarmEntity(this.opennmsClient, this);
@@ -113,7 +111,7 @@ export class OpenNMSEntityDatasource {
       options.entity = entity;
       const clonedFilter = this.buildQuery(filter, options);
 
-      return this.q.when(entity.query(clonedFilter)).then((data) => {
+      return entity.query(clonedFilter).then((data) => {
           return { data: data };
       });
   }
@@ -280,7 +278,7 @@ export class OpenNMSEntityDatasource {
   }
 
   annotationQuery(/* options */) {
-    return this.q.when([]);
+    return Promise.resolve([]);
   }
 
   _getQueryEntity(query) {
@@ -329,21 +327,21 @@ export class OpenNMSEntityDatasource {
     // special case queries to fill in metadata
     if (options.queryType === 'attributes') {
         if (options.strategy === 'featured') {
-            return this.q.when(entity.getColumns().filter(col => col.featured).map(col => {
+            return Promise.resolve(entity.getColumns().filter(col => col.featured).map(col => {
                 return { id: col.resource, value: col.text }
             }));
         }
         // assume all
-        return this.q.when(entity.getProperties());
+        return entity.getProperties();
     } else if (options.queryType === 'comparators') {
-        return this.q.when(entity.getPropertyComparators(attribute));
+        return entity.getPropertyComparators(attribute);
     } else if (options.queryType === 'operators') {
-        return this.q.when(this.opennmsClient.findOperators());
+        return this.opennmsClient.findOperators();
     }
 
     if (attribute === undefined || attribute === null || attribute === '') {
         console.warn('entity-ds: metricFindQuery: no attribute specified');
-        return this.q.when([]);
+        return Promise.resolve([]);
     }
 
     let e = entity;
@@ -374,20 +372,20 @@ export class OpenNMSEntityDatasource {
 
   searchForValues(entity, attribute) {
       if (attribute === 'isSituation' || attribute === 'isInSituation' || attribute === 'isAcknowledged') {
-        return this.q.when([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}]);
+        return Promise.resolve([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}]);
       }
 
       return entity.findProperty(attribute)
           .then(property => {
               if (!property) {
-                  return this.q.when([]);
+                  return Promise.resolve([]);
               }
               // Special handling for properties
               switch(property.id) {
                   // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
                   // used, but that may not be ideal for the user
                   case 'severity':
-                      return this.q.when(_.map(Model.Severities, severity => {
+                      return Promise.resolve(_.map(Model.Severities, severity => {
                           return {
                               id: severity.id,
                               label: severity.label

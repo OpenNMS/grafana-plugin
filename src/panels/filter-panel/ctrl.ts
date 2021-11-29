@@ -10,7 +10,6 @@ class FilterCtrl extends MetricsPanelCtrl {
   datasourceSrv: any;
   templateSrv: any;
   timeSrv: any;
-  $q: any;
   $injector: any;
   variableSrv: any;
   columnData: any;
@@ -21,13 +20,12 @@ class FilterCtrl extends MetricsPanelCtrl {
   datasource: any;
   ctrl: any;
   /** @ngInject */
-  constructor($scope, $q, $injector, datasourceSrv, templateSrv, timeSrv) {
+  constructor($scope, $injector, datasourceSrv, templateSrv, timeSrv) {
     super($scope, $injector);
 
     this.datasourceSrv = datasourceSrv;
     this.templateSrv = templateSrv;
     this.timeSrv = timeSrv;
-    this.$q = $q;
 
     if (this.$injector.has('variableSrv')) {
       this.variableSrv = this.$injector.get('variableSrv');
@@ -87,7 +85,7 @@ class FilterCtrl extends MetricsPanelCtrl {
   }
 
   updateVariables() {
-    return this.$q.all(this.$scope.columns.map((column, index) => this.getVariable(column))).then((cols) => {
+    return Promise.all(this.$scope.columns.map((column, index) => this.getVariable(column))).then((cols) => {
       this.$scope.columnVariables = cols;
       return cols;
     });
@@ -192,7 +190,7 @@ class FilterCtrl extends MetricsPanelCtrl {
 
   doPanelRefresh() {
     const self = this;
-    return this.$q
+    return Promise
       .all(
         this.dashboard.panels
           .filter((panel) => panel !== self.panel)
@@ -201,7 +199,7 @@ class FilterCtrl extends MetricsPanelCtrl {
           })
       )
       .then(() => {
-        return this.$q.all(this.render(), this.dashboard.render());
+        return Promise.all([this.render(), this.dashboard.render()]);
       });
   }
 }

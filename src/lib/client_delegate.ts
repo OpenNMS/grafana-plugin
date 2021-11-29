@@ -98,7 +98,7 @@ export class ClientDelegate {
 
           this.clientWithMetadata = Promise.resolve(client)
         }
-        return this.clientWithMetadata as Promise<Client>;
+        return this.clientWithMetadata;
     }
 
     // Inventory (node) related functions
@@ -147,7 +147,7 @@ export class ClientDelegate {
                     });
                 }
 
-                return Promise.resolve(nodes);
+                return nodes;
             })
             .catch(this.decorateError);
     }
@@ -525,7 +525,6 @@ export class ClientDelegate {
     }
 
     // Flow related functions
-    // FIXME: Promise<DAO.FlowDAO>
     getFlowDao(): Promise<DAO.FlowDAO> {
         return this.getClientWithMetadata().then(function(c) {
             return c.flows();
