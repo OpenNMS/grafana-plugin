@@ -90,6 +90,3 @@ Assuming that the `$node` variable is populated with a value from the `exporterN
 ```
 dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)
 ```
-== Limitations
-
-The flow datasource only supports a single query per panel.
