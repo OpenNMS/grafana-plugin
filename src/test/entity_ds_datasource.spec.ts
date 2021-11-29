@@ -687,7 +687,7 @@ describe("OpenNMS_Entity_Datasource", function() {
            };
 
            // Instantiate and try to do any operation on the delegate
-           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv);
            delegate.getClientWithMetadata().then(() => {
                done();
            });
@@ -707,7 +707,7 @@ describe("OpenNMS_Entity_Datasource", function() {
            };
 
            // Instantiate and try to do any operation on the delegate
-           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv, ctx.$q);
+           const delegate = new ClientDelegate(ctx.settings, ctx.backendSrv);
            delegate.getClientWithMetadata().catch(err => {
                expect(err.message).toEqual("Unsupported Version");
                done();

@@ -1,13 +1,15 @@
 import { FlowDatasource } from '../datasources/flow-ds/datasource';
 import {TemplateSrv} from "./template_srv";
+import {dateTimeAsMoment} from "@grafana/data";
+import {OnmsFlowSeries} from "opennms/src/model/OnmsFlowSeries";
 
 describe("OpenNMS_Flow_Datasource", function () {
 
-  const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null as any, null, new TemplateSrv())
+  const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null as any, new TemplateSrv())
 
   let flowSeriesExample = {
-    "start": 1516358909932,
-    "end": 1516373309932,
+    "start": dateTimeAsMoment(1516358909932),
+    "end": dateTimeAsMoment(1516373309932),
     "columns": [
       {
         "label": "domain",
@@ -29,11 +31,11 @@ describe("OpenNMS_Flow_Datasource", function () {
         2
       ]
     ]
-  };
+  } as OnmsFlowSeries
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({}, flowSeriesExample);
+      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
       let expectedResponse = [
         {
           "datapoints": [
@@ -62,6 +64,8 @@ describe("OpenNMS_Flow_Datasource", function () {
 
     it("should combine ingress and egress when set", function (done) {
       let target = {
+        metric: '',
+        refId: '',
         'functions': [
           {
             'name': 'combineIngressEgress'
@@ -87,6 +91,8 @@ describe("OpenNMS_Flow_Datasource", function () {
 
     it("should convert bytes to bits when set", function (done) {
       let target = {
+        metric: '',
+        refId: '',
         'functions': [
           {
             'name': 'toBits'
@@ -121,6 +127,8 @@ describe("OpenNMS_Flow_Datasource", function () {
 
     it("should only show ingress when set", function (done) {
       let target = {
+        metric: '',
+        refId: '',
         'functions': [
           {
             'name': 'onlyIngress'
@@ -146,6 +154,8 @@ describe("OpenNMS_Flow_Datasource", function () {
 
     it("should only show egress when set", function (done) {
       let target = {
+        metric: '',
+        refId: '',
         'functions': [
           {
             'name': 'onlyEgress'
@@ -171,6 +181,8 @@ describe("OpenNMS_Flow_Datasource", function () {
 
     it("should apply prefix and suffix to labels when set", function (done) {
       let target = {
+        metric: '',
+        refId: '',
         'functions': [
           {
             'name': 'withPrefix',

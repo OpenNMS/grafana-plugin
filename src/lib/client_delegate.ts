@@ -1,9 +1,6 @@
 import _ from 'lodash';
-import angular from 'angular';
 
 import { API, Client, DAO, Model, Rest } from 'opennms';
-
-let Q;
 
 export class ClientDelegate {
     type?: string;
@@ -12,17 +9,14 @@ export class ClientDelegate {
     searchLimit: number;
     timeout?: number;
     client: Client;
-    clientWithMetadata?: angular.IPromise<Client>;
+    clientWithMetadata?: Promise<Client>;
 
     /** @ngInject */
-    constructor(settings: any, public backendSrv: any, public $q: angular.IQService) {
+    constructor(settings: any, public backendSrv: any) {
         this.type = settings.type;
         this.url = settings.url;
         this.name = settings.name;
         this.searchLimit = 1000;
-        if (!Q) {
-            Q = $q;
-        }
 
         if (settings.jsonData && settings.jsonData.timeout) {
             this.timeout = parseInt(settings.jsonData.timeout,10) * 1000;
@@ -75,10 +69,10 @@ export class ClientDelegate {
         if (!ret.status) {
             ret.status = 'error';
         }
-        return Q.reject(ret);
+        return Promise.reject(ret);
     }
 
-    getClientWithMetadata(): angular.IPromise<Client> {
+    getClientWithMetadata(): Promise<Client> {
         if (!this.clientWithMetadata) {
               const self = this;
               const http = self.client.http;
@@ -102,22 +96,19 @@ export class ClientDelegate {
                     throw e;
                 });
 
-          // Grafana functions that invoke the datasource expect the
-          // promise to be one that is returned by $q.
-          this.clientWithMetadata = this.$q.when(client) as angular.IPromise<Client>;
+          this.clientWithMetadata = Promise.resolve(client)
         }
-        return this.clientWithMetadata as angular.IPromise<Client>;
+        return this.clientWithMetadata as Promise<Client>;
     }
 
     // Inventory (node) related functions
 
-    getNodeDao(): angular.IPromise<DAO.NodeDAO> {
-        return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.nodes()));
+    getNodeDao(): Promise<DAO.NodeDAO> {
+        return this.getClientWithMetadata().then((client) => client.nodes());
     }
 
-    findNodes(filter: API.Filter, fetchPrimaryInterfaces = false): angular.IPromise<Model.OnmsNode[]> {
-        return this.$q.all([this.getClientWithMetadata(), this.getNodeDao(), this.getIpInterfaceDao()])
+    findNodes(filter: API.Filter, fetchPrimaryInterfaces = false): Promise<Model.OnmsNode[]> {
+        return Promise.all([this.getClientWithMetadata(), this.getNodeDao(), this.getIpInterfaceDao()])
             .then(async ([client, nodeDao, ipInterfaceDao]) => {
                 let nodes = await nodeDao.find(filter);
 
@@ -156,20 +147,20 @@ export class ClientDelegate {
                     });
                 }
 
-                return this.$q.when(nodes);
+                return Promise.resolve(nodes);
             })
             .catch(this.decorateError);
     }
 
-    getNode(nodeId): angular.IPromise<Model.OnmsNode> {
+    getNode(nodeId): Promise<Model.OnmsNode> {
       return this.getNodeDao()
-        .then((nodeDao) => this.$q.when(nodeDao.get(nodeId)))
+        .then((nodeDao) => nodeDao.get(nodeId))
         .catch(this.decorateError);
     }
 
-    getNodeProperties(): angular.IPromise<any[]> {
+    getNodeProperties(): Promise<any[]> {
         return this.getNodeDao()
-            .then((nodeDao) => this.$q.when(nodeDao.searchProperties()))
+            .then((nodeDao) => nodeDao.searchProperties())
             .catch(this.decorateError);
     }
 
@@ -180,7 +171,7 @@ export class ClientDelegate {
             });
     }
 
-    getNodePropertyComparators(propertyId): angular.IPromise<any[]> {
+    getNodePropertyComparators(propertyId): Promise<any[]> {
         return this.findNodeProperty(propertyId)
             .then(property => {
                 if (property) {
@@ -198,26 +189,26 @@ export class ClientDelegate {
 
     // IP interface related functions
 
-    getIpInterfaceDao(): angular.IPromise<DAO.IpInterfaceDAO> {
+    getIpInterfaceDao(): Promise<DAO.IpInterfaceDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.ipInterfaces()));
+            .then((client) => client.ipInterfaces());
     }
 
-    findIpInterfaces(filter): angular.IPromise<Model.OnmsIpInterface[]> {
+    findIpInterfaces(filter): Promise<Model.OnmsIpInterface[]> {
         return this.getIpInterfaceDao()
-            .then((dao) => this.$q.when(dao.find(filter)))
+            .then((dao) => dao.find(filter))
             .catch(this.decorateError);
     }
 
-    getIpInterfaces(id): angular.IPromise<Model.OnmsIpInterface> {
+    getIpInterfaces(id): Promise<Model.OnmsIpInterface> {
         return this.getIpInterfaceDao()
-            .then((dao) => this.$q.when(dao.get(id)))
+            .then((dao) => dao.get(id))
             .catch(this.decorateError);
     }
 
-    getIpInterfaceProperties(): angular.IPromise<any[]> {
+    getIpInterfaceProperties(): Promise<any[]> {
         return this.getIpInterfaceDao()
-            .then((dao) => this.$q.when(dao.searchProperties()))
+            .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
@@ -228,7 +219,7 @@ export class ClientDelegate {
             });
     }
 
-    getIpInterfacePropertyComparators(propertyId): angular.IPromise<any[]> {
+    getIpInterfacePropertyComparators(propertyId): Promise<any[]> {
         return this.findIpInterfaceProperty(propertyId)
             .then(property => {
                 if (property) {
@@ -246,26 +237,26 @@ export class ClientDelegate {
 
     // SNMP interface related functions
 
-    getSnmpInterfaceDao(): angular.IPromise<DAO.SnmpInterfaceDAO> {
+    getSnmpInterfaceDao(): Promise<DAO.SnmpInterfaceDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.snmpInterfaces()));
+            .then((client) => client.snmpInterfaces());
     }
 
-    findSnmpInterfaces(filter): angular.IPromise<Model.OnmsSnmpInterface[]> {
+    findSnmpInterfaces(filter): Promise<Model.OnmsSnmpInterface[]> {
         return this.getSnmpInterfaceDao()
-            .then((dao) => this.$q.when(dao.find(filter)))
+            .then((dao) => dao.find(filter))
             .catch(this.decorateError);
     }
 
-    getSnmpInterfaces(id): angular.IPromise<Model.OnmsSnmpInterface> {
+    getSnmpInterfaces(id): Promise<Model.OnmsSnmpInterface> {
         return this.getSnmpInterfaceDao()
-            .then((dao) => this.$q.when(dao.get(id)))
+            .then((dao) => dao.get(id))
             .catch(this.decorateError);
     }
 
-    getSnmpInterfaceProperties(): angular.IPromise<any[]> {
+    getSnmpInterfaceProperties(): Promise<any[]> {
         return this.getSnmpInterfaceDao()
-            .then((dao) => this.$q.when(dao.searchProperties()))
+            .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
@@ -276,7 +267,7 @@ export class ClientDelegate {
             });
     }
 
-    getSnmpInterfacePropertyComparators(propertyId): angular.IPromise<any[]> {
+    getSnmpInterfacePropertyComparators(propertyId): Promise<any[]> {
         return this.findSnmpInterfaceProperty(propertyId)
             .then(property => {
                 if (property) {
@@ -294,26 +285,26 @@ export class ClientDelegate {
 
     // monitored service related functions
 
-    getMonitoredServiceDao(): angular.IPromise<DAO.MonitoredServiceDAO> {
+    getMonitoredServiceDao(): Promise<DAO.MonitoredServiceDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.monitoredServices()));
+            .then((client) => client.monitoredServices())
     }
 
-    findMonitoredServices(filter): angular.IPromise<Model.OnmsMonitoredService[]> {
+    findMonitoredServices(filter): Promise<Model.OnmsMonitoredService[]> {
         return this.getMonitoredServiceDao()
-            .then((dao) => this.$q.when(dao.find(filter)))
+            .then((dao) => dao.find(filter))
             .catch(this.decorateError);
     }
 
-    getMonitoredServices(id): angular.IPromise<Model.OnmsMonitoredService> {
+    getMonitoredServices(id): Promise<Model.OnmsMonitoredService> {
         return this.getMonitoredServiceDao()
-            .then((dao) => this.$q.when(dao.get(id)))
+            .then((dao) => dao.get(id))
             .catch(this.decorateError);
     }
 
-    getMonitoredServiceProperties(): angular.IPromise<any[]> {
+    getMonitoredServiceProperties(): Promise<any[]> {
         return this.getMonitoredServiceDao()
-            .then((dao) => this.$q.when(dao.searchProperties()))
+            .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
@@ -324,7 +315,7 @@ export class ClientDelegate {
             });
     }
 
-    getMonitoredServicePropertyComparators(propertyId): angular.IPromise<any[]> {
+    getMonitoredServicePropertyComparators(propertyId): Promise<any[]> {
         return this.findMonitoredServiceProperty(propertyId)
             .then(property => {
                 if (property) {
@@ -342,26 +333,26 @@ export class ClientDelegate {
 
     // outage related functions
 
-    getOutageDao(): angular.IPromise<DAO.OutageDAO> {
+    getOutageDao(): Promise<DAO.OutageDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.outages()));
+            .then((client) => client.outages())
     }
 
-    findOutages(filter): angular.IPromise<Model.OnmsOutage[]> {
+    findOutages(filter): Promise<Model.OnmsOutage[]> {
         return this.getOutageDao()
-            .then((dao) => this.$q.when(dao.find(filter)))
+            .then((dao) => dao.find(filter))
             .catch(this.decorateError);
     }
 
-    getOutages(id): angular.IPromise<Model.OnmsOutage> {
+    getOutages(id): Promise<Model.OnmsOutage> {
         return this.getOutageDao()
-            .then((dao) => this.$q.when(dao.get(id)))
+            .then((dao) => dao.get(id))
             .catch(this.decorateError);
     }
 
-    getOutageProperties(): angular.IPromise<any[]> {
+    getOutageProperties(): Promise<any[]> {
         return this.getOutageDao()
-            .then((dao) => this.$q.when(dao.searchProperties()))
+            .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
@@ -372,7 +363,7 @@ export class ClientDelegate {
             });
     }
 
-    getOutagePropertyComparators(propertyId): angular.IPromise<any[]> {
+    getOutagePropertyComparators(propertyId): Promise<any[]> {
         return this.findOutageProperty(propertyId)
             .then(property => {
                 if (property) {
@@ -390,44 +381,44 @@ export class ClientDelegate {
 
     // Fault related functions
 
-    getAlarmDao(): angular.IPromise<DAO.AlarmDAO> {
+    getAlarmDao(): Promise<DAO.AlarmDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.alarms()));
+            .then((client) => client.alarms())
     }
 
-    findAlarms(filter): angular.IPromise<Model.OnmsAlarm[]> {
+    findAlarms(filter): Promise<Model.OnmsAlarm[]> {
         return this.getAlarmDao()
-            .then((alarmDao) => this.$q.when(alarmDao.find(filter)))
+            .then((alarmDao) => alarmDao.find(filter))
             .catch(this.decorateError);
     }
 
-    getAlarm(alarmId): angular.IPromise<Model.OnmsAlarm> {
+    getAlarm(alarmId): Promise<Model.OnmsAlarm> {
       return this.getAlarmDao()
-        .then((alarmDao) => this.$q.when(alarmDao.get(alarmId)))
+        .then((alarmDao) => alarmDao.get(alarmId))
         .catch(this.decorateError);
     }
 
     doEscalate(alarmId, user) {
         return this.getAlarmDao()
-            .then((alarmDao) => this.$q.when(alarmDao.escalate(alarmId, user)))
+            .then((alarmDao) => alarmDao.escalate(alarmId, user))
             .catch(this.decorateError);
     }
 
     doClear(alarmId, user) {
         return this.getAlarmDao()
-            .then((alarmDao) => this.$q.when(alarmDao.clear(alarmId, user)))
+            .then((alarmDao) => alarmDao.clear(alarmId, user))
             .catch(this.decorateError);
     }
 
     doUnack(alarmId, user) {
         return this.getAlarmDao()
-            .then((alarmDao) => this.$q.when(alarmDao.unacknowledge(alarmId, user)))
+            .then((alarmDao) => alarmDao.unacknowledge(alarmId, user))
             .catch(this.decorateError);
     }
 
     doAck(alarmId, user) {
         return this.getAlarmDao()
-            .then((alarmDao) => this.$q.when(alarmDao.acknowledge(alarmId, user)))
+            .then((alarmDao) => alarmDao.acknowledge(alarmId, user))
             .catch(this.decorateError);
     }
 
@@ -445,7 +436,7 @@ export class ClientDelegate {
 
     saveSticky(alarmId, sticky, user) {
       return this.getAlarmDao()
-        .then((alarmDao) => this.$q.when(alarmDao.saveStickyMemo(alarmId, sticky, user)))
+        .then((alarmDao) => alarmDao.saveStickyMemo(alarmId, sticky, user))
         .catch(this.decorateError);
     }
 
@@ -470,20 +461,20 @@ export class ClientDelegate {
         }).catch(this.decorateError);
     }
 
-    findOperators(): angular.IPromise<API.Operator[]> {
+    findOperators(): Promise<API.Operator[]> {
         const operators = _.map(API.Operators, (operator) => {
             return {
                 id: operator.id,
                 label: operator.label
             }
         });
-        return this.$q.when(operators);
+        return Promise.resolve(operators);
     }
 
-    getAlarmProperties(): angular.IPromise<API.SearchProperty[]> {
+    getAlarmProperties(): Promise<API.SearchProperty[]> {
         return this.getAlarmDao()
             .then(alarmDao => {
-                return this.$q.when(alarmDao.searchProperties());
+                return alarmDao.searchProperties();
             }).catch(this.decorateError);
     }
 
@@ -515,66 +506,66 @@ export class ClientDelegate {
 
     // Situation Feedback functions
 
-    getSituationfeedbackDao(): angular.IPromise<DAO.SituationFeedbackDAO> {
+    getSituationfeedbackDao(): Promise<DAO.SituationFeedbackDAO> {
         return this.getClientWithMetadata()
-            .then((client) => this.$q.when(client.situationfeedback()))
+            .then((client) => client.situationfeedback())
             .catch(this.decorateError);
     }
 
-    getSituationfeedback(situationId): angular.IPromise<Model.OnmsSituationFeedback> {
+    getSituationfeedback(situationId): Promise<Model.OnmsSituationFeedback> {
         return this.getSituationfeedbackDao()
-        .then((dao) => this.$q.when(dao.getFeedback(situationId)))
+        .then((dao) => dao.getFeedback(situationId))
         .catch(this.decorateError);
     }
 
-    submitSituationFeedback(situationId, feedback): angular.IPromise<any> {
+    submitSituationFeedback(situationId, feedback): Promise<any> {
         return this.getSituationfeedbackDao()
-            .then((dao) => this.$q.when(dao.saveFeedback(feedback, situationId)))
+            .then((dao) => dao.saveFeedback(feedback, situationId))
             .catch(this.decorateError);
     }
 
     // Flow related functions
-    // FIXME: angular.IPromise<DAO.FlowDAO>
-    getFlowDao(): angular.IPromise<any> {
+    // FIXME: Promise<DAO.FlowDAO>
+    getFlowDao(): Promise<DAO.FlowDAO> {
         return this.getClientWithMetadata().then(function(c) {
             return c.flows();
         }).catch(this.decorateError);
     }
 
-    // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
+    // FIXME: Promise<Model.OnmsFlowTable>
+    getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp): Promise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getApplications(prefix, start, end, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSeriesForTopNApplications(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSeriesForApplications(applications, start, end, step, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSummaryForTopNApplications(N, start, end, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSummaryForApplications(applications, start, end, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForTopNConversations(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForTopNConversations({
+            .then((dao) => dao.getSeriesForTopNConversations({
                     N: N,
                     start: start,
                     end: end,
@@ -583,19 +574,19 @@ export class ClientDelegate {
                     ifIndex: interfaceId,
                     dscp: dscp,
                     includeOther: includeOther,
-                }))
+                })
             ).catch(this.decorateError);
     }
 
-    getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSeriesForConversations(conversations, start, end, step, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForTopNConversations(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForTopNConversations({
+            .then((dao) => dao.getSummaryForTopNConversations({
                     N: N,
                     start: start,
                     end: end,
@@ -603,60 +594,60 @@ export class ClientDelegate {
                     ifIndex: interfaceId,
                     dscp: dscp,
                     includeOther: includeOther
-                }))
+                })
             ).catch(this.decorateError);
     }
 
-    getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSummaryForConversations(conversations, start, end, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    // FIXME: angular.IPromise<Model.OnmsFlowTable>
-    getHosts(prefix, start, end, nodeCriteria, interfaceId, dscp): angular.IPromise<any> {
+    // FIXME: Promise<Model.OnmsFlowTable>
+    getHosts(prefix, start, end, nodeCriteria, interfaceId, dscp): Promise<any> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getHosts(prefix + '.*', start, end, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getHosts(prefix + '.*', start, end, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSeriesForHosts(hosts, start, end, step, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowSeries> {
+    getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSeriesForTopNHosts(N, start, end, step, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSummaryForTopNHosts(N, start, end, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp): angular.IPromise<Model.OnmsFlowTable> {
+    getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp)))
+            .then((dao) => dao.getSummaryForHosts(hosts, start, end, includeOther, nodeCriteria, interfaceId, dscp))
             .catch(this.decorateError);
     }
 
-    // FIXME: angular.IPromise<Model.OnmsFlowExporterSummary[]>
-    getExporters(): angular.IPromise<any[]> {
+    // FIXME: Promise<Model.OnmsFlowExporterSummary[]>
+    getExporters(): Promise<any[]> {
         const searchLimit = this.searchLimit;
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getExporters(searchLimit)))
+            .then((dao) => dao.getExporters(searchLimit))
             .catch(this.decorateError);
     }
 
-    // FIXME: angular.IPromise<Model.OnmsFlowExporter>
+    // FIXME: Promise<Model.OnmsFlowExporter>
     getExporter(nodeCriteria) {
         const searchLimit = this.searchLimit;
         return this.getFlowDao()
-            .then((dao) => this.$q.when(dao.getExporter(nodeCriteria, searchLimit)))
+            .then((dao) => dao.getExporter(nodeCriteria, searchLimit))
             .catch(this.decorateError);
     }
 
@@ -671,14 +662,14 @@ export class ClientDelegate {
         }).catch(this.decorateError);
     }
 
-    getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp) {
+    getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowTable> {
       return this.getFlowDao()
           .then(function(flowDao) {
             return flowDao.getSummaryForDscps(start, end, nodeCriteria, interfaceId, dscp);
           }).catch(this.decorateError);
     }
 
-    getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp) {
+    getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp): Promise<Model.OnmsFlowSeries> {
       return this.getFlowDao()
           .then(function(flowDao) {
             return flowDao.getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp);
