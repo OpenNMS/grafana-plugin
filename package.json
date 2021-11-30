@@ -15,10 +15,10 @@
   "devDependencies": {
     "@antora/cli": "^2.3.3",
     "@antora/site-generator-default": "^2.3.3",
-    "@grafana/data": "^7.5.10",
-    "@grafana/eslint-config": "^2.5.0",
-    "@grafana/toolkit": "^8.1.1",
-    "@grafana/ui": "^7.5.10",
+    "@grafana/data": "^7.5.11",
+    "@grafana/eslint-config": "^2.5.1",
+    "@grafana/toolkit": "^8.2.5",
+    "@grafana/ui": "^7.5.11",
     "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/grafana": "github:CorpGlory/types-grafana",
@@ -31,6 +31,7 @@
     "recursive-copy": "^2.0.13",
     "rimraf": "^3.0.0",
     "specit": "^1.4.4",
+    "tslib": "^2.3.1",
     "urijs": "^1.19.7",
     "which": "^2.0.1"
   },
@@ -45,7 +46,7 @@
     ]
   },
   "dependencies": {
-    "@grafana/runtime": "^7.5.10",
+    "@grafana/runtime": "^7.5.11",
     "async": "^3.2.1",
     "crypto-js": "^3.1.9-1",
     "flot": "^0.8.3",
