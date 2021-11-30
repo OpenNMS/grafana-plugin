@@ -44,8 +44,7 @@ AutoReqProv: no
 {{#prune}}
 rm -rf .git
 rm -rf node_modules
-rm -rf dist/packages
-rm -rf dist/spec
+rm -rf artifacts
 rm -rf dist/test
 {{/prune}}
 {{#noarch}}
@@ -57,7 +56,7 @@ npm rebuild
 
 %install
 mkdir -p %{buildroot}{{installDir}}/{{name}}-app
-cp -r ./* %{buildroot}{{installDir}}/{{name}}-app
+cp -r ./dist/* %{buildroot}{{installDir}}/{{name}}-app
 
 %post
 {{#postInstallCommands}}

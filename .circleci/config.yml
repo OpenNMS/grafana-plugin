@@ -219,13 +219,17 @@ jobs:
           at: ~/
       - run:
           name: Create plugin tarball
-          command: mkdir -p ./dist/packages && tar --exclude='package-lock.json' --exclude='.circleci' --exclude='.git' --exclude='./node_modules' --exclude='./dist/packages' -czf "./dist/packages/opennms-helm_$(.circleci/get-version.sh).tar.gz" .
+          command: |
+            mkdir -p ./artifacts
+            cd dist
+            tar --exclude='test' \
+              -czf "../artifacts/opennms-helm_$(../.circleci/get-version.sh).tar.gz" .
       - store_artifacts:
-          path: ./dist/packages
+          path: ~/project/artifacts
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/dist/packages
+            - ./project/artifacts
             - ./project/package.json
             - ./project/version.tag
 
@@ -239,11 +243,11 @@ jobs:
           command: |
             ./makezip.js
       - store_artifacts:
-          path: ./dist/packages
+          path: ./artifacts
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/dist/packages
+            - ./project/artifacts
 
   make-docker-image:
     executor: docker-executor
@@ -256,7 +260,6 @@ jobs:
           command: |
             echo "version: $(.circleci/get-version.sh)"
             docker build \
-              --build-arg OPENNMS_HELM_PKG=opennms-helm_$(.circleci/get-version.sh | cut -d- -f1)-*.tar.gz \
               --build-arg GRAFANA_VERSION=$(cat grafana.version) \
               -t helm:$(.circleci/get-version.sh) .
       - run:
@@ -276,7 +279,7 @@ jobs:
       - run:
           name: Create RPM package
           command: |
-            RELEASE="$(.circleci/get-version.sh | cut -d- -f2-)"
+            RELEASE="0.$(.circleci/get-version.sh | cut -d- -f2-)"
             if [ "$(grep -c -- -SNAPSHOT package.json)" -eq 0 ]; then
               RELEASE=1
             fi
@@ -288,13 +291,13 @@ jobs:
       - sign-packages/sign-rpms:
           skip_if_forked_pr: true
           gnupg_key: opennms@opennms.org
-          packages: dist/packages/*.rpm
+          packages: artifacts/*.rpm
       - store_artifacts:
-          path: ./dist/packages
+          path: ./artifacts
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/dist/packages
+            - ./project/artifacts
 
   make-deb:
     executor: build-executor-debian
@@ -304,7 +307,7 @@ jobs:
       - run:
           name: Create DEB package
           command: |
-            RELEASE="$(.circleci/get-version.sh | cut -d- -f2-)"
+            RELEASE="0.$(.circleci/get-version.sh | cut -d- -f2-)"
             if [ "$(grep -c -- -SNAPSHOT package.json)" -eq 0 ]; then
               RELEASE=1
             fi
@@ -316,13 +319,13 @@ jobs:
       - sign-packages/sign-debs:
           skip_if_forked_pr: true
           gnupg_key: opennms@opennms.org
-          packages: dist/packages/*.deb
+          packages: artifacts/*.deb
       - store_artifacts:
-          path: ./dist/packages
+          path: ./artifacts
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/dist/packages
+            - ./project/artifacts
 
   publish-docker-image-latest:
     executor: docker-executor
@@ -430,7 +433,7 @@ jobs:
           cloudsmith-repository: opennms/common-testing
           package-format: rpm
           package-distribution: any-distro/any-version
-          package-path: dist/packages/*.rpm
+          package-path: artifacts/*.rpm
 
   publish-deb:
     executor: cloudsmith/default
@@ -443,7 +446,7 @@ jobs:
           cloudsmith-repository: opennms/common-testing
           package-format: deb
           package-distribution: any-distro/any-version
-          package-path: dist/packages/*.deb
+          package-path: artifacts/*.deb
 
 workflows:
   version: 2
@@ -486,30 +489,40 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - make-docker-image:
           requires:
             - make-tarball
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - make-rpm:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - make-deb:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - make-zip:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /^merge\/.*/
       - publish-docker-image-latest:
           requires:
             - make-docker-image
