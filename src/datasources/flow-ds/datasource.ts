@@ -37,7 +37,7 @@ export class FlowDatasource {
 
     // filter queries that have their metric set
     // -> when we initially create a query no metric is selected
-    const queriesWithMetrics = options.targets.filter(query => query.metric)
+    const queriesWithMetrics = options.targets.filter(query => query.metric && !query.hide)
 
     const allAreSummaries = queriesWithMetrics.every(target => FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
     const allAreSeries = queriesWithMetrics.every(target => !FlowDatasource.isFunctionPresent(target, 'asTableSummary'))
