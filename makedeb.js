@@ -52,11 +52,12 @@ var changelog = `${pkginfo.name} (${version}-${release}) unstable; urgency=low
 `;
 
 var pkgname = pkginfo.name;
-var workdir = path.join(process.cwd(), 'dist', 'packages', pkgname);
+var workdir = path.join(process.cwd(), 'artifacts', pkgname);
+var distdir = path.join(process.cwd(), 'dist');
 
 rimraf.sync(workdir);
 fs.mkdirsSync(workdir);
-return copy(process.cwd(), workdir, {
+return copy(distdir, workdir, {
   dot: true,
   junk: false,
   filter: [
@@ -67,14 +68,8 @@ return copy(process.cwd(), workdir, {
     '!**/*.deb',
     '!**/*.dsc',
     '!**/*.tar.gz',
-    '!node_modules',
-    '!node_modules/**',
-    '!dist/packages',
-    '!dist/packages/**',
-    '!dist/spec',
-    '!dist/spec/**',
-    '!dist/test',
-    '!dist/test/**',
+    '!test',
+    '!test/**',
   ]
 }).then((results) => {
   console.log(results.length + ' files copied to ' + workdir);

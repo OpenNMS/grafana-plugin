@@ -4,6 +4,7 @@
   "id": "opennms-helm-alarm-histogram-panel",
 
   "info": {
+    "description": "OpenNMS Alarm Histogram Panel",
     "logos": {
       "small": "img/alarm-histogram.svg",
       "large": "img/alarm-histogram.svg"
