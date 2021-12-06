@@ -256,7 +256,7 @@ jobs:
           command: |
             echo "version: $(.circleci/get-version.sh)"
             docker build \
-              --build-arg OPENNMS_HELM_PKG=opennms-helm_$(.circleci/get-version.sh).tar.gz \
+              --build-arg OPENNMS_HELM_PKG=opennms-helm_$(.circleci/get-version.sh | cut -d- -f1)-*.tar.gz \
               --build-arg GRAFANA_VERSION=$(cat grafana.version) \
               -t helm:$(.circleci/get-version.sh) .
       - run:
