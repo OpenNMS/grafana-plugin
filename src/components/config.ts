@@ -28,4 +28,4 @@ export class OpenNMSHelmAppConfigCtrl {
   }
 }
 
-OpenNMSHelmAppConfigCtrl.templateUrl = 'components/config.html';
+OpenNMSHelmAppConfigCtrl.templateUrl = 'public/plugins/opennms-helm-app/components/config.html';

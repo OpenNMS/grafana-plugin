@@ -8,7 +8,7 @@ import { QueryType } from './constants';
 import './modal_ctrl';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
-  static templateUrl = 'datasources/perf-ds/partials/query.editor.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/query.editor.html';
   appEvents: EventBusSrv;
   nodeResources = [] as any[] | undefined;
   types: typeof QueryType;

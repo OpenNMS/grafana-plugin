@@ -98,7 +98,7 @@ const styles = {
 };
 
 class AlarmTableCtrl extends MetricsPanelCtrl {
-  static templateUrl = 'panels/alarm-table/module.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/panels/alarm-table/module.html';
 
   $rootScope: any;
   annotationsSrv: any;

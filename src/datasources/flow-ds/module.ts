@@ -3,11 +3,11 @@ import { FlowDatasourceQueryCtrl } from './query_ctrl';
 import '../../components/timeout';
 
 class GenericConfigCtrl {
-  static templateUrl = 'datasources/flow-ds/partials/config.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/flow-ds/partials/config.html';
 }
 
 class GenericQueryOptionsCtrl {
-  static templateUrl = 'datasources/flow-ds/partials/query.options.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/flow-ds/partials/query.options.html';
 }
 
 export {

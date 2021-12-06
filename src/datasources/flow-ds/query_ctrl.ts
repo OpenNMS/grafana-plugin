@@ -8,7 +8,7 @@ import { Gfuncs } from './flow_functions';
 import './css/query-editor.css';
 
 export class FlowDatasourceQueryCtrl extends QueryCtrl {
-  static templateUrl = 'datasources/flow-ds/partials/query.editor.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/flow-ds/partials/query.editor.html';
 
   error: any;
   functions = [] as any[];
