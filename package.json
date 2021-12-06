@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "7.1.2",
+  "version": "7.2.0-SNAPSHOT",
   "description": "An OpenNMS Integration for Grafana",
   "repository": {
     "type": "git",
