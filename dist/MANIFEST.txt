@@ -8,8 +8,8 @@ Hash: SHA512
   "signedByOrg": "opennms",
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-helm-app",
-  "version": "7.1.2",
-  "time": 1638639671375,
+  "version": "7.2.0-SNAPSHOT",
+  "time": 1638804970829,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "eeaea6c3aa5fec275526e0d84d9d27d8235ab546bbd2c294353544da53c668c3",
@@ -128,7 +128,7 @@ Hash: SHA512
     "panels/flow-histogram/module.js.LICENSE.txt": "114bd1d8f3d8bcc09dd334cfe755c746aa773373f7ed226ff221d5d8bea58845",
     "panels/flow-histogram/module.js.map": "ae7006dce3b94533e5d8730360da8fac41ee2a91c4fa426a53f2dee399060ab3",
     "panels/flow-histogram/plugin.json": "800b5ec4b586bb6bc89f70b6eee1073ee359141108b8b8627c28e7713a5b59a2",
-    "plugin.json": "81db64511648af5e5e9bfb8dbc80eac487767f58fd27432c3493cdc738f76d78",
+    "plugin.json": "7b07d5b250a77137f778539ed7108628bb7a001efe156b31218bcace0b54ba1d",
     "styles/dark.css": "4d7c4b846f069149c6ee3e095bc6e7747c5917e486627a104174e8aac4dd9593",
     "styles/dark.css.map": "ab72435b0e7d6dfd4765dbf41bb20646d011c74e601137fe1c53ccdce795ed87",
     "styles/light.css": "fef3bf3836533f5b77818751e19eeefd02c1150b0e0ffdbfaa7e3552854092df",
@@ -139,9 +139,9 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.1
 Comment: https://openpgpjs.org
 
-wqIEARMKAAYFAmGrqDcACgkQfk0ManCIZueimAIJAfa8QGb0oufAWO/74vBg
-mRUalutMHAEd0IK5sQYBRHaOaP3qagt7Yrjg3NP0Qd/VmB0YdB6dr+1bEH1j
-ypPx/qoTAgkBpHBcj+T5HKPfSRL0/7czDwtemVfilgs/YOFi/Th0JzXmZ/aU
-Dt35O+RCiX92OrPDLkiGZXjAgoiGyARCXVFm1Eg=
-=XzmG
+wqEEARMKAAYFAmGuLeoACgkQfk0ManCIZuep8gIJAa8mj4Q2QDKbPrKEGygB
+6TLAum4szjVAwBfD7hjaB7ZfCQtob8vUqeAwA5gLv3sUfjJSlRsW97YAQQST
+o0zQbuXCAgYnVDH7JIdt7oLZ/dr/gXrvUjkzMzRsW4gftCCwi20JLeASVKd5
+JrQI/KBylCn9/cUxbOu+MmwOZmg79igAOWXNew==
+=lSR+
 -----END PGP SIGNATURE-----
