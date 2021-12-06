@@ -16,7 +16,7 @@ executors:
 
   docker-executor:
     docker:
-      - image: docker:19.03.0-git
+      - image: docker:20-git
 
   docs-executor:
     docker:
