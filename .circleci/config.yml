@@ -37,19 +37,19 @@ defaults: &defaults
     from_branch:
       description: the auto-merge source branch
       type: string
-      default: develop
+      default: "release-7.x"
     from_branch_label:
       description: the auto-merge source branch (escaped, no slashes)
       type: string
-      default: develop
+      default: "release-7.x"
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: master
+      default: develop
     to_branch_label:
       description: the auto-merge target branch (escaped, no slashes)
       type: string
-      default: master
+      default: develop
 
 docker_container_config: &docker_container_config
   executor: docker-executor
