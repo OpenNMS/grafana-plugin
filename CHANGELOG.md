@@ -1,3 +1,17 @@
+### v7.2.0
+
+This release bumps a bunch of dependencies, improves documentation, tweaks plugin
+signing, and adds a number of new features, including:
+
+* More Helm flow dashboard updates (Issue [HELM-277](https://issues.opennms.org/browse/HELM-277))
+* A new "About Helm" dashboard (Issue [HELM-281](https://issues.opennms.org/browse/HELM-281))
+* Support for returning node primary ifIndex and IP address in the entity datasource (Issue [HELM-188](https://issues.opennms.org/browse/HELM-188))
+* New entities in the entity datasource: IP interface, SNMP interface, ifService, outagers (Issue [HELM-228](https://issues.opennms.org/browse/HELM-228))
+* Support for prefixing/suffixing label names of flow series and summaries (Issue [HELM-298](https://issues.opennms.org/browse/HELM-298))
+* Support multiple flow queries per panel (Issue [HELM-299](https://issues.opennms.org/browse/HELM-299))
+* A new dashboard for flow aggregations using data from Cortex/Prometheus (Issue [NMS-13374](https://issues.opennms.org/browse/NMS-13374))
+* Fixes for host traffic aggregations from Nephron (Issue [NMS-13534](https://issues.opennms.org/browse/NMS-13534))
+
 ### v7.1.1/v7.1.2
 
 Re-pack with fixes for a plugin signature issue.
