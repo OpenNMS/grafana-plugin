@@ -41,12 +41,19 @@ Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to
 
 [options="header, autowidth"]
 |===
-| Name               | Description
-| Node               | Node ID of the node to query.
+| Name
+| Description
+
+| Node
+| Node ID of the node to query.
 Can also be a variable with a `nodeFilter()` query.
-| Resource           | Resource ID containing the requested attribute.
+
+| Resource
+| Resource ID containing the requested attribute.
 Can also be a variable with a `nodeResources()` query.
-| String Property    | Name of the attribute to query.
+
+| String Property
+| Name of the attribute to query.
 |===
 
 === Expression queries
