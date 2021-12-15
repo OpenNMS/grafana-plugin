@@ -105,6 +105,10 @@ export class OpenNMSDatasource {
     return request.targets.every(query => query.type === STRING_PROPERTY_TYPE)
   }
 
+  someQueriesAreStringPropertyQueries(request: DataQueryRequest<PerfQuery>): boolean {
+    return request.targets.some(query => query.type === STRING_PROPERTY_TYPE)
+  }
+
   queryStringPropertiesOfNode(nodeId: string, queries: DefinedStringPropertyQuery[]): Promise<DataQueryResponseData[]> {
     return this.doOpenNMSRequest({
       url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
@@ -208,7 +212,10 @@ export class OpenNMSDatasource {
   query(options: any) {
     if (this.allQueriesAreStringPropertyQueries(options)) {
       return this.queryStringProperties(options)
+    } else if (this.someQueriesAreStringPropertyQueries(options)) {
+      throw new Error("string property queries can not be mixed with other kinds of queries")
     }
+
 
     const self = this;
 
