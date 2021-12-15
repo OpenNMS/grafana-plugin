@@ -101,10 +101,6 @@ export class OpenNMSDatasource {
     return this.$q.reject(ret);
   }
 
-  allQueriesAreStringPropertyQueries(request: DataQueryRequest<PerfQuery>): boolean {
-    return request.targets.every(query => query.type === STRING_PROPERTY_TYPE)
-  }
-
   someQueriesAreStringPropertyQueries(request: DataQueryRequest<PerfQuery>): boolean {
     return request.targets.some(query => query.type === STRING_PROPERTY_TYPE)
   }
@@ -209,13 +205,20 @@ export class OpenNMSDatasource {
     })
   }
 
-  query(options: any) {
-    if (this.allQueriesAreStringPropertyQueries(options)) {
+  query(options: DataQueryRequest<PerfQuery>) {
+    const queries = options.targets.filter(q => !q.hide && q.type)
+    if (queries.every(query => query.type === STRING_PROPERTY_TYPE)) {
       return this.queryStringProperties(options)
-    } else if (this.someQueriesAreStringPropertyQueries(options)) {
-      throw new Error("string property queries can not be mixed with other kinds of queries")
+    } else if (queries.some(query => query.type === STRING_PROPERTY_TYPE)) {
+      return Promise.resolve(
+          {
+            data: [],
+            error: {
+              message: "string property queries can not be mixed with other kinds of queries"
+            }
+          }
+      )
     }
-
 
     const self = this;
 
