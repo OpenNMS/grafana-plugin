@@ -84,7 +84,7 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
     process.exit(1);
   }
 
-  var targetdir = path.join('dist', 'packages');
+  var targetdir = path.join('artifacts');
   if (!fs.existsSync(targetdir)) {
     fs.mkdirSync(targetdir);
   }

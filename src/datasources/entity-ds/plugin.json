@@ -11,6 +11,7 @@
   "annotations": false,
 
   "info": {
+    "description": "OpenNMS Entities Datasource",
     "logos": {
       "small": "img/entity-ds.svg",
       "large": "img/entity-ds.svg"

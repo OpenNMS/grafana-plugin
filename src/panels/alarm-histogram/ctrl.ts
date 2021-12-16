@@ -7,7 +7,7 @@ import 'jquery.flot.crosshair';
 import 'flot/jquery.flot.categories';
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
-  static templateUrl = 'panels/alarm-histogram/module.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/panels/alarm-histogram/module.html';
 
   _renderRetries: number;
   retryTimes: number;

@@ -11,7 +11,7 @@ import './query-directive';
 import './css/query-editor.css';
 
 export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
-  static templateUrl = 'datasources/entity-ds/partials/query.editor.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/query.editor.html';
 
   datasource: any;
   entity: any;

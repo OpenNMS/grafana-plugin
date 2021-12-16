@@ -15,7 +15,7 @@ import './legend';
 import dataSeries = jquery.flot.dataSeries;
 
 class HelmHistogramCtrl extends MetricsPanelCtrl {
-  static templateUrl = 'panels/flow-histogram/module.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/panels/flow-histogram/module.html';
 
   $rootScope: any;
   scope: any;

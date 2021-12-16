@@ -8,7 +8,7 @@ import { QueryType } from './constants';
 import './modal_ctrl';
 
 export class OpenNMSQueryCtrl extends QueryCtrl {
-  static templateUrl = 'datasources/perf-ds/partials/query.editor.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/query.editor.html';
   appEvents: EventBusSrv;
   nodeResources = [] as any[] | undefined;
   types: typeof QueryType;
@@ -158,6 +158,36 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         self.target[prop] = attribute.name;
         self.targetBlur(prop);
       }
+    );
+  }
+
+  openStringPropertySelectionModal(prop) {
+    var self = this;
+
+    if (!prop) {
+      prop = 'attribute';
+    }
+
+    this.showSelectionModal(
+        'attributes',
+        {
+          Name: 'name',
+        },
+        function (query) {
+          return self.datasource
+              .suggestStringProperties(self.target.nodeId, self.target.resourceId, query)
+              .then((stringProperties: string[]) => {
+                const named = stringProperties.map(s => { return { name: s } })
+                return {
+                  totalCount: named.length,
+                  rows: named,
+                };
+              });
+        },
+        function (attribute) {
+          self.target[prop] = attribute.name;
+          self.targetBlur(prop);
+        }
     );
   }
 

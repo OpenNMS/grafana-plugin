@@ -6,7 +6,7 @@
   "dateFormats": ["table", "time_series"],
 
   "info": {
-    "description": "OpenNMS Alarm Table Panel for Grafana",
+    "description": "OpenNMS Alarm Table Panel",
     "logos": {
       "small": "img/alarm-table.svg",
       "large": "img/alarm-table.svg"

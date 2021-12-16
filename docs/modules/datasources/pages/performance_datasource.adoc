@@ -31,6 +31,31 @@ The query is used to identify which attribute (or series) is being queried.
                        Must be unique for all attributes and expression results in the query.
 |===
 
+=== String property queries
+
+Used to read the last value of string-valued properties that OpenNMS collects and stores.
+The query identifies which string property is queried. 
+A panel can contain multiple string property queries. 
+The result can be visualized in a table. 
+Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to adjust the visualized table as needed.
+
+[options="header, autowidth"]
+|===
+| Name
+| Description
+
+| Node
+| Node ID of the node to query.
+Can also be a variable with a `nodeFilter()` query.
+
+| Resource
+| Resource ID containing the requested attribute.
+Can also be a variable with a `nodeResources()` query.
+
+| String Property
+| Name of the attribute to query.
+|===
+
 === Expression queries
 
 Used to combine or otherwise transform one or more series into a new series.

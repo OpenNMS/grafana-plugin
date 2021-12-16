@@ -57,13 +57,9 @@ export class TableRenderer {
       for (let i = 0; i < this.panel.styles.length; i++) {
         const style = this.panel.styles[i];
 
-        let escapedPattern = style.pattern;
-        // Grafana 6.4+ uses `stringStartsAsRegEx`, fall back to `stringToJsRegex` if it's not found
-        if (stringStartsAsRegEx && escapeStringForRegex && unEscapeStringFromRegex) {
-          escapedPattern = stringStartsAsRegEx(style.pattern)
-            ? style.pattern
-            : escapeStringForRegex(unEscapeStringFromRegex(style.pattern));
-        }
+        let escapedPattern = stringStartsAsRegEx(style.pattern)
+          ? style.pattern
+          : escapeStringForRegex(unEscapeStringFromRegex(style.pattern));
         const regex = stringToJsRegex(escapedPattern);
         if (column.text.match(regex)) {
           column.style = style;

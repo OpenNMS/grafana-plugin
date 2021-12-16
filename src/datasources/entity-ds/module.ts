@@ -4,11 +4,11 @@ import { Example, Examples } from './Examples';
 import '../../components/timeout';
 
 class OpenNMSEntityDatasourceConfigCtrl {
-  static templateUrl = 'datasources/entity-ds/partials/config.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/config.html';
 }
 
 class OpenNMSEntityDatasourceQueryOptionsCtrl {
-  static templateUrl = 'datasources/entity-ds/partials/query.options.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/query.options.html';
 
   examples: Example[];
   panelCtrl: any;
