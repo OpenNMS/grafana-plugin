@@ -52,5 +52,5 @@ build/
 *.deb
 *.changes
 
-# don't ever persist the binary packages
-/dist/packages
+# final resting place of binary packages
+/artifacts

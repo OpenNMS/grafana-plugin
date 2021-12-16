@@ -34,11 +34,11 @@ Create a tarball artifact from compiled source code:
 
 [source, shell]
 ----
-mkdir -p ./dist/packages
+mkdir -p ./artifacts
 tar --exclude='.git' \
     --exclude='.circleci' \
-    --exclude='./dist/packages' \
-    -czf "./dist/packages/opennms-helm.tar.gz" .
+    --exclude='./artifacts' \
+    -czf "./artifacts/opennms-helm.tar.gz" .
 ----
 
 Build Docker image and install the plugin from the tarball artifact.
@@ -46,7 +46,6 @@ Build Docker image and install the plugin from the tarball artifact.
 [source, shell]
 ----
 docker build \
-    --build-arg OPENNMS_HELM_PKG=opennms-helm.tar.gz \
     --build-arg GRAFANA_VERSION=latest \
     --build-arg OPENNMS_HELM_VERSION=SNAPSHOT \
     -t myhelm:snapshot .
@@ -61,7 +60,6 @@ docker run -p 3000:3000 myhelm:snapshot
 
 To build the Docker image the following conventions for build arguments are set:
 
-* OPENNMS_HELM_PKG: the name of the tarball archive in dist/packages
 * GRAFANA_VERSION: The version number of Grafana, default is `latest`
 * OPENNMS_HELM_VERSION: Used as in label `org.opennms.helm.version` in the Docker image to identify the running version
 

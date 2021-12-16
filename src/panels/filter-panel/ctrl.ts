@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { FilterColumn } from '../../lib/filter_column';
 
 class FilterCtrl extends MetricsPanelCtrl {
-  static templateUrl = 'panels/filter-panel/module.html';
+  static templateUrl = 'public/plugins/opennms-helm-app/panels/filter-panel/module.html';
 
   datasourceSrv: any;
   templateSrv: any;

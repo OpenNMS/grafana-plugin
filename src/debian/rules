@@ -20,6 +20,12 @@ include /usr/share/dpkg/default.mk
 %:
 	dh $@
 
+override_dh_strip_nondeterminism:
+	dh_strip_nondeterminism -X.png
+
+override_dh_compress:
+	dh_compress -X.png
+
 override_dh_auto_install:
 	echo "installing"
 	install -d -m 755 debian/opennms-helm/var/lib/grafana/plugins/opennms-helm-app/

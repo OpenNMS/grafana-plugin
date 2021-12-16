@@ -122,6 +122,65 @@
         </div>
     </div>
 
+    <div ng-show="ctrl.target.type === 'stringProperty'">
+        <div class="gf-form-inline">
+            <div class="gf-form max-width-25">
+                <a class="gf-form-label query-keyword width-10"
+                   ng-click="ctrl.openNodeSelectionModal();"
+                   role="menuitem">
+                    Node <i class="fa fa-tree"></i>
+                </a>
+                <input type="text" ng-required="true"
+                       class="gf-form-input"
+                       ng-model="ctrl.target.nodeId"
+                       spellcheck='false'
+
+                       placeholder="node id"
+                       data-min-length=0 data-items=100
+                       ng-blur="ctrl.targetBlur('nodeId')"
+                >
+            </div>
+        </div>
+        <div class="gf-form-inline" ng-show="ctrl.target.nodeId">
+            <div class="gf-form max-width-25">
+                <a class="gf-form-label query-keyword width-10"
+                   ng-click="ctrl.openResourceSelectionModal();"
+                   role="menuitem">
+                    Resource <i class="fa fa-leaf"></i>
+                </a>
+                <input type="text" ng-required="true"
+                       class="gf-form-input"
+                       ng-model="ctrl.target.resourceId"
+                       spellcheck='false'
+
+                       placeholder="resource id"
+                       data-min-length=0 data-items=100
+                       ng-blur="ctrl.targetBlur('resourceId')"
+                >
+            </div>
+        </div>
+        <div ng-show="ctrl.target.resourceId">
+            <div class="gf-form-inline">
+                <div class="gf-form max-width-25">
+                    <a class="gf-form-label query-keyword width-10"
+                       ng-click="ctrl.openStringPropertySelectionModal('stringProperty');"
+                       role="menuitem">
+                        String Property<i class="fa fa-tag"></i>
+                    </a>
+                    <input type="text" ng-required="true"
+                           class="gf-form-input"
+                           ng-model="ctrl.target.stringProperty"
+                           spellcheck='false'
+
+                           placeholder="string"
+                           data-min-length=0 data-items=100
+                           ng-blur="ctrl.targetBlur('stringProperty')"
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="gf-form-inline" ng-show="ctrl.target.type === 'expression'">
         <div class="gf-form max-width">
             <label class="gf-form-label query-keyword width-10">
@@ -178,7 +237,7 @@
         </div>
     </div>
 
-    <div class="gf-form-inline" ng-show="ctrl.target.type && ctrl.target.type !== 'filter'">
+    <div class="gf-form-inline" ng-show="ctrl.target.type && ctrl.target.type !== 'filter' && ctrl.target.type !== 'stringProperty'">
         <div class="gf-form max-width-25">
             <label class="gf-form-label query-keyword width-10">
                 Label <i class="fa fa-font"></i>

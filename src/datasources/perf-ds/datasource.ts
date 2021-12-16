@@ -1,8 +1,10 @@
-import {QueryType} from './constants';
+import {QueryType, STRING_PROPERTY_TYPE} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
 import {FunctionFormatter} from '../../lib/function_formatter';
 import angular from 'angular';
+import {DataQuery, DataQueryRequest, DataQueryResponse, FieldType} from "@grafana/data";
+import {DataQueryResponseData} from "@grafana/data/types/datasource";
 
 interface Query {
   start: number;
@@ -13,6 +15,22 @@ interface Query {
   source: any[];
   expression: any[];
   filter: any;
+}
+
+interface PerfQuery extends DataQuery {
+  type?: string
+}
+
+interface StringPropertyQuery extends PerfQuery {
+  nodeId?: string
+  resourceId?: string
+  stringProperty?: string
+}
+
+type DefinedStringPropertyQuery = Required<StringPropertyQuery>
+
+function isDefinedStringPropertyQuery(q: StringPropertyQuery | undefined): q is DefinedStringPropertyQuery {
+  return q !== undefined && !!q.nodeId && !!q.resourceId && !!q.stringProperty
 }
 
 export class OpenNMSDatasource {
@@ -40,7 +58,7 @@ export class OpenNMSDatasource {
     }
   }
 
-  doOpenNMSRequest(options: any) {
+  doOpenNMSRequest(options: any): Promise<any> {
     if (this.basicAuth || this.withCredentials) {
       options.withCredentials = true;
     }
@@ -83,7 +101,125 @@ export class OpenNMSDatasource {
     return this.$q.reject(ret);
   }
 
-  query(options: any) {
+  someQueriesAreStringPropertyQueries(request: DataQueryRequest<PerfQuery>): boolean {
+    return request.targets.some(query => query.type === STRING_PROPERTY_TYPE)
+  }
+
+  queryStringPropertiesOfNode(nodeId: string, queries: DefinedStringPropertyQuery[]): Promise<DataQueryResponseData[]> {
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
+      method: 'GET',
+      headers: {'Content-Type': 'application/json'}
+    }).then(response => {
+      return queries.flatMap(query => {
+        return response.data.children.resource
+            .filter(resource => (resource.id as string).endsWith(`.${query.resourceId}`))
+            .flatMap(resource => this.extractStringProperty(query, resource, response.data))
+      })
+    })
+  }
+
+  /*
+  // not used for now because the node label is not available when subresources are queried directly
+  queryStringPropertiesOfResource(query: DefinedStringPropertyQuery): Promise<DataQueryResponseData[]> {
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/node[' + query.nodeId + '].' + query.resourceId,
+      method: 'GET',
+      headers: {'Content-Type': 'application/json'}
+    }).then(response => {
+      // no node data is available when a resource is directly addressed
+      // -> no node label is available
+      return this.extractStringProperty(query, response.data, undefined)
+    })
+  }
+  */
+
+  extractStringProperty(query: DefinedStringPropertyQuery, resource: any, node?: any): DataQueryResponseData[] {
+    return Object.keys(resource.stringPropertyAttributes)
+        .filter(key => key === query.stringProperty)
+        .flatMap(key => {
+          return {
+            refId: query.refId,
+            fields: [
+              {
+                name: 'nodeId',
+                type: FieldType.string,
+                config: {},
+                values: [query.nodeId]
+              },
+              {
+                name: 'nodeLabel',
+                type: FieldType.string,
+                values: [node ? node.label : query.nodeId]
+              },
+              {
+                name: 'resourceId',
+                type: FieldType.string,
+                config: {},
+                values: [query.resourceId]
+              },
+              {
+                name: 'resourceLabel',
+                type: FieldType.string,
+                config: {},
+                values: [resource.label]
+              },
+              {
+                name: key,
+                type: FieldType.string,
+                config: {},
+                values: [resource.stringPropertyAttributes[key]]
+              }
+            ]
+          }
+        })
+  }
+
+  queryStringProperties(request: DataQueryRequest<StringPropertyQuery>): Promise<DataQueryResponse> {
+    const definedQueries = request.targets
+        .filter(q => !q.hide)
+        .filter(isDefinedStringPropertyQuery)
+        .map(q => {
+          return {
+            ...q,
+            nodeId: this.templateSrv.replace(q.nodeId),
+            resourceId: this.templateSrv.replace(q.resourceId)
+          }
+        })
+    const groupedByNodeId = definedQueries.reduce<{ [key: string]: DefinedStringPropertyQuery[] }>((accu, query) => {
+      (accu[query.nodeId] = accu[query.nodeId] || []).push(query)
+      return accu
+    }, {})
+    const datas: Array<Promise<DataQueryResponseData[]>> =
+        // send a request for each node separately and query the complete node resource
+        // -> may be optimized in future, by batch querying for multiple nodes in one go and returning only relevant parts
+        //    (could be activated by a feature toggle in opennms-js/ServerMetadata)
+        Object.keys(groupedByNodeId).map((nodeId) => {
+          const queries = groupedByNodeId[nodeId]
+          return this.queryStringPropertiesOfNode(nodeId, queries)
+        })
+    return Promise.all(datas).then(datas => {
+      return {
+        data: datas.flatMap(x => x)
+      }
+    })
+  }
+
+  query(options: DataQueryRequest<PerfQuery>) {
+    const queries = options.targets.filter(q => !q.hide && q.type)
+    if (queries.every(query => query.type === STRING_PROPERTY_TYPE)) {
+      return this.queryStringProperties(options)
+    } else if (queries.some(query => query.type === STRING_PROPERTY_TYPE)) {
+      return Promise.resolve(
+          {
+            data: [],
+            error: {
+              message: "string property queries can not be mixed with other kinds of queries"
+            }
+          }
+      )
+    }
+
     const self = this;
 
     // Generate the query
@@ -556,4 +692,30 @@ export class OpenNMSDatasource {
       return attributes;
     });
   }
+
+  suggestStringProperties(nodeId: string, resourceId: string, query: string) {
+    var interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
+        interpolatedResourceId = _.first(this.interpolateValue(resourceId));
+    var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
+
+    return this.doOpenNMSRequest({
+      url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
+      method: 'GET',
+      params: {
+        depth: -1
+      }
+    }).then(function (results) {
+      query = query.toLowerCase();
+      var stringProperties = [] as any[];
+      _.each(results.data.stringPropertyAttributes, function (value, key) {
+        if (key.toLowerCase().indexOf(query) >= 0) {
+          stringProperties.push(key);
+        }
+      });
+      stringProperties.sort();
+
+      return stringProperties;
+    });
+  }
+
 }

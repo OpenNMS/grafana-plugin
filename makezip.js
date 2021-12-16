@@ -23,11 +23,13 @@ const version = pkginfo.version;
 
 const pkgname = 'opennms-helm-app';
 const srcdir = path.join(topdir, 'dist');
-const workdir = path.join(topdir, 'tmp', pkgname);
-const packagedir = path.join(srcdir, 'packages');
+const tmpdir = path.join(topdir, 'tmp');
+const workdir = path.join(tmpdir, pkgname);
+const packagedir = path.join(topdir, 'artifacts');
 const zipfile = path.join(packagedir, `${pkgname}-${version}.zip`);
 
 rimraf.sync(workdir);
+rimraf.sync(zipfile);
 fs.mkdirsSync(workdir);
 fs.mkdirsSync(packagedir);
 return copy(path.join(srcdir), workdir, {
@@ -43,7 +45,7 @@ return copy(path.join(srcdir), workdir, {
 
   console.info('* running zip');
   var ret = spawn('zip', ['-r', zipfile, pkgname], {
-    cwd: path.join(topdir, 'tmp'),
+    cwd: path.join(tmpdir),
     stdio: ['inherit', 'inherit', 'inherit'],
   });
   if (ret.error) {

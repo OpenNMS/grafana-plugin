@@ -3,7 +3,6 @@ ARG GRAFANA_VERSION="latest"
 FROM grafana/grafana:${GRAFANA_VERSION}
 
 ARG OPENNMS_HELM_VERSION="bleeding"
-ARG OPENNMS_HELM_PKG="opennms-helm_3.0.1-SNAPSHOT.tar.gz"
 
 LABEL maintainer "Ronny Trommer <ronny@opennms.org>"
 
@@ -20,7 +19,7 @@ RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
     done; \
 fi
 
-ADD dist/packages/${OPENNMS_HELM_PKG} ${GF_PATHS_PLUGINS}/opennms-helm
+ADD artifacts/opennms-helm*.tar.gz ${GF_PATHS_PLUGINS}/opennms-helm
 
 LABEL license="AGPLv3" \
       org.opennms.helm.version="${OPENNMS_HELM_VERSION}" \
