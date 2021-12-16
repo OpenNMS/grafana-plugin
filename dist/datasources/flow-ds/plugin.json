@@ -11,6 +11,7 @@
   "annotations": false,
 
   "info": {
+    "description": "OpenNMS Flow Datasource",
     "logos": {
       "small": "img/flow-ds.svg",
       "large": "img/flow-ds.svg"

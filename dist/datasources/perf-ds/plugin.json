@@ -17,6 +17,7 @@
   },
 
   "info": {
+    "description": "OpenNMS Performance Datasource",
     "logos": {
       "small": "img/pm-ds.svg",
       "large": "img/pm-ds.svg"
