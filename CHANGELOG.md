@@ -1,3 +1,9 @@
+### v7.3.0
+
+This release adds a new feature to allow querying string properties in the perf datasource.
+
+* support string properties in performance datasource (Issue [HELM-293](https://issues.opennms.org/browse/HELM-293))
+
 ### v7.2.0
 
 This release bumps a bunch of dependencies, improves documentation, tweaks plugin
