@@ -482,7 +482,7 @@ workflows:
             - pre-build
           filters:
             branches:
-              only: /^merge\/.*/
+              only: merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
       - make-tarball:
           requires:
             - build
