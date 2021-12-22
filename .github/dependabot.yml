@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "release-7.x"
+    versioning-strategy: "increase-if-necessary"
+    reviewers:
+      - "rangerrick"
+      - "j-white"
+    labels:
+      - "dependabot"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    schedule:
+      interval: "daily"
+
