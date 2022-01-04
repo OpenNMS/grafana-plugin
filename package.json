@@ -15,15 +15,15 @@
   "devDependencies": {
     "@antora/cli": "^2.3.3",
     "@antora/site-generator-default": "^2.3.3",
-    "@grafana/data": "^7.5.11",
+    "@grafana/data": "^7.5.12",
     "@grafana/eslint-config": "^2.5.1",
     "@grafana/toolkit": "^8.2.5",
-    "@grafana/ui": "^7.5.11",
+    "@grafana/ui": "^7.5.12",
     "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^27.0.0",
-    "@types/jquery": "^3.5.6",
+    "@types/jquery": "^3.5.11",
     "commander": "^8.0.0",
     "fs-extra": "^10.0.0",
     "opennms-style": "https://github.com/OpenNMS/opennms-style.git#v0.3.3",
@@ -45,17 +45,17 @@
     ]
   },
   "dependencies": {
-    "@grafana/runtime": "^7.5.11",
-    "async": "^3.2.1",
+    "@grafana/runtime": "^7.5.12",
+    "async": "^3.2.2",
     "crypto-js": "^4.1.1",
     "flot": "^0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.21",
     "opennms": "^2.3.0",
     "parenthesis": "^3.1.7",
-    "perfect-scrollbar": "^1.5.2",
+    "perfect-scrollbar": "^1.5.3",
     "q": "^1.5.1",
-    "xlsx": "^0.17.1"
+    "xlsx": "^0.17.4"
   },
   "scripts": {
     "build": "grafana-toolkit plugin:build",
