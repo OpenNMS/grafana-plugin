@@ -200,7 +200,7 @@ export class OpenNMSDatasource {
         })
     return this.clientDelegate.getClientWithMetadata().then((client: Client) => {
       const metadata: ServerMetadata = client.http.server.metadata;
-      if (false && metadata.selectPartialResources()) {
+      if (metadata.selectPartialResources()) {
         return this.queryStringPropertiesForAllNodesInBulk(definedQueries)
       } else {
         return this.queryStringPropertiesForEachNodeSeparately(definedQueries)
