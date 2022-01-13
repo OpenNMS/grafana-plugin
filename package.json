@@ -13,8 +13,8 @@
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
   "devDependencies": {
-    "@antora/cli": "^2.3.3",
-    "@antora/site-generator-default": "^2.3.3",
+    "@antora/cli": "^3.0.1",
+    "@antora/site-generator-default": "^3.0.1",
     "@grafana/data": "^7.5.12",
     "@grafana/eslint-config": "^2.5.1",
     "@grafana/toolkit": "^8.2.5",
