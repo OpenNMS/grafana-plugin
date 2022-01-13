@@ -15,6 +15,7 @@
   "devDependencies": {
     "@antora/cli": "^3.0.1",
     "@antora/site-generator-default": "^3.0.1",
+    "@antora/xref-validator": "gitlab:antora/xref-validator",
     "@grafana/data": "^7.5.12",
     "@grafana/eslint-config": "^2.5.1",
     "@grafana/toolkit": "^8.2.5",
@@ -63,6 +64,8 @@
     "dev": "grafana-toolkit plugin:dev",
     "watch": "grafana-toolkit plugin:dev --watch",
     "sign": "grafana-toolkit plugin:sign",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
+    "docs": "antora --stacktrace generate local-site.yml"
   }
 }
