@@ -11,7 +11,7 @@ import { Column, TableData, QueryResultMeta } from '@grafana/data';
   desc?: boolean;
   type?: string;
   style?: any;
-  hidden?: boolean = false;
+  hidden?: boolean;
 }
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {

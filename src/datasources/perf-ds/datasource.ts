@@ -3,8 +3,10 @@ import {interpolate} from "./interpolate";
 import _ from 'lodash';
 import {FunctionFormatter} from '../../lib/function_formatter';
 import angular from 'angular';
-import {DataQuery, DataQueryRequest, DataQueryResponse, FieldType} from "@grafana/data";
+import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
+import {ClientDelegate} from '../../lib/client_delegate'
+import {Client, ServerMetadata} from 'opennms'
 
 interface Query {
   start: number;
@@ -43,12 +45,14 @@ export class OpenNMSDatasource {
   timeout = 10000;
   searchLimit = 25;
   target?: any;
+  clientDelegate: ClientDelegate;
 
   /** @ngInject */
   constructor(instanceSettings: any, public $q: angular.IQService, public backendSrv: any, public templateSrv: any) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
+    this.clientDelegate = new ClientDelegate(instanceSettings, backendSrv);
 
     // This variable is referenced by the calculateInterval() method in metrics_panel_ctrl.ts
     this.interval = (instanceSettings.jsonData || {}).timeInterval;
@@ -101,15 +105,31 @@ export class OpenNMSDatasource {
     return this.$q.reject(ret);
   }
 
-  someQueriesAreStringPropertyQueries(request: DataQueryRequest<PerfQuery>): boolean {
-    return request.targets.some(query => query.type === STRING_PROPERTY_TYPE)
+  // constructs a single string valued data frame field
+  private static field(name: string, value: string): Field<string, string[]> {
+    return {
+      name,
+      type: FieldType.string,
+      config: {},
+      values: [value]
+    }
+  }
+
+  // constructs all data frame fields for a string property
+  private static fields(o: { nodeId: string, nodeLabel: string, resourceId: string, resourceLabel: string, stringPropertyKey: string, stringPropertyValue: string }): Array<Field<string, string[]>> {
+    return [
+      OpenNMSDatasource.field('nodeId', o.nodeId),
+      OpenNMSDatasource.field('nodeLabel', o.nodeLabel),
+      OpenNMSDatasource.field('resourceId', o.resourceId),
+      OpenNMSDatasource.field('resourceLabel', o.resourceLabel),
+      OpenNMSDatasource.field(o.stringPropertyKey, o.stringPropertyValue)
+    ]
   }
 
   queryStringPropertiesOfNode(nodeId: string, queries: DefinedStringPropertyQuery[]): Promise<DataQueryResponseData[]> {
     return this.doOpenNMSRequest({
       url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'}
+      method: 'GET'
     }).then(response => {
       return queries.flatMap(query => {
         return response.data.children.resource
@@ -119,64 +139,56 @@ export class OpenNMSDatasource {
     })
   }
 
-  /*
-  // not used for now because the node label is not available when subresources are queried directly
-  queryStringPropertiesOfResource(query: DefinedStringPropertyQuery): Promise<DataQueryResponseData[]> {
+  queryAllStringProperties(selection: { nodes: Set<string>, nodeSubresources: Set<string>, stringProperties: Set<string> }): Promise<DataQueryResponseData[]> {
     return this.doOpenNMSRequest({
-      url: '/rest/resources/node[' + query.nodeId + '].' + query.resourceId,
+      url: '/rest/resources/select',
       method: 'GET',
-      headers: {'Content-Type': 'application/json'}
-    }).then(response => {
-      // no node data is available when a resource is directly addressed
-      // -> no node label is available
-      return this.extractStringProperty(query, response.data, undefined)
-    })
+      params: {
+        nodes: Array.from(selection.nodes).join(','),
+        nodeSubresources: Array.from(selection.nodeSubresources).join(','),
+        stringProperties: Array.from(selection.stringProperties).join(',')
+      }
+    }).then(response =>
+        response.data.flatMap(node =>
+            node.children.resource.flatMap(resource =>
+                Object.entries<string>(resource.stringPropertyAttributes).flatMap(([key, value]) => {
+                      return {
+                        fields: OpenNMSDatasource.fields({
+                          nodeId: node.name,
+                          nodeLabel: node.label,
+                          resourceId: resource.name,
+                          resourceLabel: resource.label,
+                          stringPropertyKey: key,
+                          stringPropertyValue: value
+                        })
+                      }
+                    }
+                )
+            )
+        )
+    )
   }
-  */
 
-  extractStringProperty(query: DefinedStringPropertyQuery, resource: any, node?: any): DataQueryResponseData[] {
+  private extractStringProperty(query: DefinedStringPropertyQuery, resource: any, node?: any): DataQueryResponseData[] {
     return Object.keys(resource.stringPropertyAttributes)
         .filter(key => key === query.stringProperty)
         .flatMap(key => {
           return {
             refId: query.refId,
-            fields: [
-              {
-                name: 'nodeId',
-                type: FieldType.string,
-                config: {},
-                values: [query.nodeId]
-              },
-              {
-                name: 'nodeLabel',
-                type: FieldType.string,
-                values: [node ? node.label : query.nodeId]
-              },
-              {
-                name: 'resourceId',
-                type: FieldType.string,
-                config: {},
-                values: [query.resourceId]
-              },
-              {
-                name: 'resourceLabel',
-                type: FieldType.string,
-                config: {},
-                values: [resource.label]
-              },
-              {
-                name: key,
-                type: FieldType.string,
-                config: {},
-                values: [resource.stringPropertyAttributes[key]]
-              }
-            ]
+            fields: OpenNMSDatasource.fields({
+              nodeId: query.nodeId,
+              nodeLabel: node ? node.label : query.nodeId,
+              resourceId: query.resourceId,
+              resourceLabel: resource.label,
+              stringPropertyKey: key,
+              stringPropertyValue: resource.stringPropertyAttributes[key]
+            })
           }
         })
   }
 
   queryStringProperties(request: DataQueryRequest<StringPropertyQuery>): Promise<DataQueryResponse> {
-    const definedQueries = request.targets
+    const definedQueries: DefinedStringPropertyQuery[] = request.targets
         .filter(q => !q.hide)
         .filter(isDefinedStringPropertyQuery)
         .map(q => {
@@ -186,18 +198,44 @@ export class OpenNMSDatasource {
             resourceId: this.templateSrv.replace(q.resourceId)
           }
         })
+    return this.clientDelegate.getClientWithMetadata().then((client: Client) => {
+      const metadata: ServerMetadata = client.http.server.metadata;
+      if (false && metadata.selectPartialResources()) {
+        return this.queryStringPropertiesForAllNodesInBulk(definedQueries)
+      } else {
+        return this.queryStringPropertiesForEachNodeSeparately(definedQueries)
+      }
+    })
+  }
+
+  queryStringPropertiesForAllNodesInBulk(definedQueries: DefinedStringPropertyQuery[]): Promise<DataQueryResponse> {
+    // send a single request that selects all nodes, subresources, and string properties
+    const selection =
+        definedQueries.reduce<{ nodes: Set<string>, nodeSubresources: Set<string>, stringProperties: Set<string> }>((accu, query) => {
+          accu.nodes.add(query.nodeId)
+          accu.nodeSubresources.add(query.resourceId)
+          accu.stringProperties.add(query.stringProperty)
+          return accu
+        }, {nodes: new Set(), nodeSubresources: new Set(), stringProperties: new Set()})
+    return this.queryAllStringProperties(selection).then(datas => {
+      return {
+        data: datas
+      }
+    })
+  }
+
+  queryStringPropertiesForEachNodeSeparately(definedQueries: DefinedStringPropertyQuery[]): Promise<DataQueryResponse> {
     const groupedByNodeId = definedQueries.reduce<{ [key: string]: DefinedStringPropertyQuery[] }>((accu, query) => {
       (accu[query.nodeId] = accu[query.nodeId] || []).push(query)
       return accu
     }, {})
+    // send a request for each node separately...
     const datas: Array<Promise<DataQueryResponseData[]>> =
-        // send a request for each node separately and query the complete node resource
-        // -> may be optimized in future, by batch querying for multiple nodes in one go and returning only relevant parts
-        //    (could be activated by a feature toggle in opennms-js/ServerMetadata)
         Object.keys(groupedByNodeId).map((nodeId) => {
           const queries = groupedByNodeId[nodeId]
           return this.queryStringPropertiesOfNode(nodeId, queries)
         })
+    // ... and then combine all results into a single DataQueryResponse
     return Promise.all(datas).then(datas => {
       return {
         data: datas.flatMap(x => x)
