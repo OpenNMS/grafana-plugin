@@ -1,6 +1,6 @@
 {
   "name": "opennms-helm",
-  "version": "7.3.1-SNAPSHOT",
+  "version": "8.0.0-SNAPSHOT",
   "description": "An OpenNMS Integration for Grafana",
   "repository": {
     "type": "git",
@@ -13,21 +13,21 @@
   },
   "homepage": "https://github.com/OpenNMS/opennms-helm",
   "devDependencies": {
-    "@antora/cli": "^2.3.3",
-    "@antora/site-generator-default": "^2.3.3",
-    "@grafana/data": "^7.5.11",
+    "@antora/cli": "^3.0.1",
+    "@antora/site-generator-default": "^3.0.1",
+    "@antora/xref-validator": "gitlab:antora/xref-validator",
+    "@grafana/data": "^7.5.12",
     "@grafana/eslint-config": "^2.5.1",
     "@grafana/toolkit": "^8.2.5",
-    "@grafana/ui": "^7.5.11",
+    "@grafana/ui": "^7.5.12",
+    "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
     "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^27.0.0",
-    "@types/jquery": "^3.5.6",
+    "@types/jquery": "^3.5.13",
     "commander": "^8.0.0",
-    "emotion": "~10.0.27",
     "fs-extra": "^10.0.0",
-    "opennms-style": "https://github.com/OpenNMS/opennms-style.git#v0.3.3",
     "recursive-copy": "^2.0.13",
     "rimraf": "^3.0.0",
     "specit": "^1.4.4",
@@ -46,17 +46,17 @@
     ]
   },
   "dependencies": {
-    "@grafana/runtime": "^7.5.11",
-    "async": "^3.2.1",
-    "crypto-js": "^3.1.9-1",
+    "@grafana/runtime": "^7.5.12",
+    "async": "^3.2.3",
+    "crypto-js": "^4.1.1",
     "flot": "^0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.21",
-    "opennms": "^2.3.0",
+    "opennms": "^2.4.1",
     "parenthesis": "^3.1.7",
-    "perfect-scrollbar": "^1.5.2",
+    "perfect-scrollbar": "^1.5.5",
     "q": "^1.5.1",
-    "xlsx": "^0.17.1"
+    "xlsx": "^0.17.5"
   },
   "scripts": {
     "build": "grafana-toolkit plugin:build",
@@ -64,6 +64,8 @@
     "dev": "grafana-toolkit plugin:dev",
     "watch": "grafana-toolkit plugin:dev --watch",
     "sign": "grafana-toolkit plugin:sign",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
+    "docs": "antora --stacktrace generate local-site.yml"
   }
 }

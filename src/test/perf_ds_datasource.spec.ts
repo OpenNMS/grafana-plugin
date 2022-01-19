@@ -14,7 +14,7 @@ describe('OpenNMSPMDatasource', function () {
     ctx.$q = Q;
     ctx.backendSrv = {};
     ctx.templateSrv = {replace: val => val, containsVariable: () => true};
-    ctx.ds = new Datasource({url: ''}, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+    ctx.ds = new Datasource({url: 'http://opennms'}, ctx.$q, ctx.backendSrv, ctx.templateSrv);
   });
 
   describe('querying with one target', function () {
@@ -106,7 +106,7 @@ describe('OpenNMSPMDatasource', function () {
   describe('testing for connectivity', function () {
     it('should make a request to /rest/info', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {
-        expect(request.url).toEqual('/rest/info');
+        expect(request.url).toEqual('http://opennms/rest/info');
         return ctx.$q.when({
           status: 200
         });
