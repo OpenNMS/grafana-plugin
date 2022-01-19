@@ -24,7 +24,7 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "7.3.1-SNAPSHOT",
+    "version": "8.0.0-SNAPSHOT",
     "updated": "2021-12-16"
   },
   "includes": [
@@ -40,8 +40,8 @@
     {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Helm", "path": "dashboards/cortex_flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=7.5.0",
-    "grafanaVersion": "7.5.0",
+    "grafanaDependency": ">=8.0.0",
+    "grafanaVersion": "8.0.0",
     "plugins": []
   }
 }

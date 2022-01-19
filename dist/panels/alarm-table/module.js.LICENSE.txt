@@ -27,3 +27,5 @@ PERFORMANCE OF THIS SOFTWARE.
 /*! cputils.js (C) 2013-present SheetJS -- http://sheetjs.com */
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
+/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
