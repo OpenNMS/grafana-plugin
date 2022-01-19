@@ -22,7 +22,7 @@ export class TextBoxVariable {
   };
 
   /** @ngInject **/
-  constructor(public model, public filterColumn, public filterState, public $q, public dashboardSrv, public datasourceSrv, public templateSrv) {
+  constructor(public model, public filterColumn, public filterState, public dashboardSrv, public datasourceSrv, public templateSrv) {
     assignModelProperties(this, model, this.defaults);
   }
 
@@ -47,7 +47,7 @@ export class TextBoxVariable {
 
   setValueFromUrl(urlValue) {
     this.query = urlValue;
-    return setOptionFromUrl(this, urlValue, this.$q);
+    return setOptionFromUrl(this, urlValue);
   }
 
   getValueForUrl() {

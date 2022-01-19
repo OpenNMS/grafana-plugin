@@ -18,11 +18,9 @@ export class OnmsValueSelectDropdownCtrl {
 
   hide: any;
   onUpdated: any;
-  private $q: any;
 
   /** @ngInject */
-  constructor($q) {
-    this.$q = $q;
+  constructor() {
   }
 
   show() {
@@ -102,7 +100,7 @@ export class OnmsValueSelectDropdownCtrl {
     if (!tag.values) {
       tagValuesPromise = this.variable.getValuesForTag(tag.text);
     } else {
-      tagValuesPromise = this.$q.when(tag.values);
+      tagValuesPromise = Promise.resolve(tag.values);
     }
 
     return tagValuesPromise.then((values) => {

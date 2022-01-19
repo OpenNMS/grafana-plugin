@@ -1,4 +1,3 @@
-import Q from "q";
 import _ from 'lodash';
 // eslint-disable-next-line no-restricted-imports
 import moment from 'moment';
@@ -665,7 +664,6 @@ describe("OpenNMS_Entity_Datasource", function() {
 
        beforeEach(() => {
             ctx.backendSrv = {};
-            ctx.$q = Q;
             ctx.settings = {
                 type: "opennms-entity",
                 name: "dummy-name",
@@ -676,7 +674,7 @@ describe("OpenNMS_Entity_Datasource", function() {
        it('should not throw an exception when supported version is used', (done) => {
            // All requests assume the /rest/info call
            ctx.backendSrv.datasourceRequest = function(request) {
-               return ctx.$q.when({
+               return Promise.resolve({
                    _request: request,
                    status: 200,
                    headers: {
@@ -696,7 +694,7 @@ describe("OpenNMS_Entity_Datasource", function() {
        it('should throw exception when unsupported version is used', (done) => {
            // All requests assume the /rest/info call
            ctx.backendSrv.datasourceRequest = function(request) {
-               return ctx.$q.when({
+               return Promise.resolve({
                     _request: request,
                    status: 200,
                    headers: {
@@ -725,13 +723,12 @@ describe("OpenNMS_Entity_Datasource", function() {
         };
 
         const createDatasource = function(settings, ctx) {
-            ctx.datasource = new OpenNMSEntityDatasource(settings, ctx.$q, ctx.backendSrv, ctx.templateSrv, ctx.contextSrv, ctx.dashboardSrv);
+            ctx.datasource = new OpenNMSEntityDatasource(settings, ctx.backendSrv, ctx.templateSrv, ctx.contextSrv, ctx.dashboardSrv);
             return ctx.datasource;
         };
 
         beforeEach(() => {
             // Context initialization
-            ctx.$q = Q;
             ctx.backendSrv = {};
             ctx.templateSrv = new TemplateSrv();
             ctx.uiSegmentSrv = uiSegmentSrv;

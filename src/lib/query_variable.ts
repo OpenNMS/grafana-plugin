@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { IPromise, IQService } from 'angular';
 import { stringToJsRegex } from '@grafana/data';
 
 import { assignModelProperties, containsVariable, setOptionAsCurrent, setOptionFromUrl, validateVariableSelectionState } from './utils';
@@ -56,12 +55,12 @@ export class QueryVariable {
   };
 
   initialized: boolean;
-  inFlight: IPromise<any>;
+  inFlight: Promise<any>;
 
   /** @ngInject */
-  constructor(public model, public filterColumn, public filterState, public $q: IQService, public dashboardSrv, public datasourceSrv, public templateSrv, public timeSrv) {
+  constructor(public model, public filterColumn, public filterState, public dashboardSrv, public datasourceSrv, public templateSrv, public timeSrv) {
     this.initialized = false;
-    this.inFlight = this.$q.when();
+    this.inFlight = Promise.resolve();
 
     assignModelProperties(this, model, this.defaults);
     this.updateOptionsFromMetricFindQuery.bind(this);
@@ -89,7 +88,7 @@ export class QueryVariable {
   }
 
   setValueFromUrl(urlValue) {
-    return setOptionFromUrl(this, urlValue, this.$q);
+    return setOptionFromUrl(this, urlValue);
   }
 
   getValueForUrl() {
@@ -108,7 +107,7 @@ export class QueryVariable {
         .then(this.updateTags.bind(this))
         .then(validateVariableSelectionState(this)).catch((err) => {
           console.debug('QueryVariable.updateOptions(): err=', err);
-          return this.$q.reject(err);
+          return Promise.reject(err);
         });
     });
     this.inFlight.finally(() => {
@@ -161,7 +160,7 @@ export class QueryVariable {
       return datasource;
     }).catch((err) => {
       console.debug('QueryVariable.updateOptionsFromMetricFindQuery(): err=', err);
-      return this.$q.reject(err);
+      return Promise.reject(err);
     });
   }
 
@@ -175,7 +174,7 @@ export class QueryVariable {
 
     return datasource.metricFindQuery(query, options).catch((err) => {
       console.debug('QueryVariable.metricFindQuery(): err=', err);
-      return this.$q.reject(err);
+      return Promise.reject(err);
     });
   }
 

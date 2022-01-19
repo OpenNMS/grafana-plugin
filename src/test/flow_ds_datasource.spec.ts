@@ -5,7 +5,7 @@ import {OnmsFlowSeries} from "opennms/src/model/OnmsFlowSeries";
 
 describe("OpenNMS_Flow_Datasource", function () {
 
-  const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null as any, new TemplateSrv())
+  const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null, new TemplateSrv())
 
   let flowSeriesExample = {
     "start": dateTimeAsMoment(1516358909932),

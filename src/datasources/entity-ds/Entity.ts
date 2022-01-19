@@ -3,7 +3,7 @@ import { ClientDelegate } from 'lib/client_delegate';
 import { AttributeMapping } from './mapping/AttributeMapping';
 import { Filter } from './ui/Filter';
 
-export default class Entity {
+export default abstract class Entity {
   abstract name: string;
   abstract type: string;
 
@@ -15,8 +15,8 @@ export default class Entity {
 
   abstract getAttributeMapping(): AttributeMapping;
   abstract getColumns(): Column[];
-  abstract getProperties(): angular.IPromise<any[]>;
-  abstract getPropertyComparators(attribute: any): angular.IPromise<any[]>;
-  abstract findProperty(attribute: any): angular.IPromise<any>;
-  abstract query(filter: Filter): angular.IPromise<any>;
+  abstract getProperties(): Promise<any[]>;
+  abstract getPropertyComparators(attribute: any): Promise<any[]>;
+  abstract findProperty(attribute: any): Promise<any>;
+  abstract query(filter: Filter): Promise<any>;
 }

@@ -24,7 +24,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   uiFilter: any;
 
   /** @ngInject */
-  constructor($scope: any, $injector: any, public $q: any, public uiSegmentSrv) {
+  constructor($scope: any, $injector: any, public uiSegmentSrv) {
     super($scope, $injector);
 
     this.featuredAttributes = true; // limits the selection to the featured attributes

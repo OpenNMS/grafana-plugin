@@ -2,7 +2,6 @@ import {QueryType, STRING_PROPERTY_TYPE} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
 import {FunctionFormatter} from '../../lib/function_formatter';
-import angular from 'angular';
 import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
 import {ClientDelegate} from '../../lib/client_delegate'
@@ -48,7 +47,7 @@ export class OpenNMSDatasource {
   clientDelegate: ClientDelegate;
 
   /** @ngInject */
-  constructor(instanceSettings: any, public $q: angular.IQService, public backendSrv: any, public templateSrv: any) {
+  constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -102,7 +101,7 @@ export class OpenNMSDatasource {
     if (!ret.status) {
       ret.status = 'error';
     }
-    return this.$q.reject(ret);
+    return Promise.reject(ret);
   }
 
   // constructs a single string valued data frame field
@@ -274,7 +273,7 @@ export class OpenNMSDatasource {
       });
     } else {
       // There are no sources listed, let Grafana display "No data points" to the user
-      return this.$q.when({ data: [] });
+      return Promise.resolve({ data: [] });
     }
 
     return request
@@ -282,7 +281,7 @@ export class OpenNMSDatasource {
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
           console.warn('Response code:',response);
-          return self.$q.reject(response);
+          return Promise.reject(response);
         }
 
         return OpenNMSDatasource.processMeasurementsResponse(response);
@@ -293,7 +292,7 @@ export class OpenNMSDatasource {
           return result;
       })
       .catch(err => {
-        return self.$q.reject(self.decorateError(err));
+        return Promise.reject(self.decorateError(err));
       });
   }
 
@@ -320,7 +319,7 @@ export class OpenNMSDatasource {
   // Used by template queries
   metricFindQuery(query) {
     if (query === null || query === undefined || query === "") {
-      return this.$q.resolve([]);
+      return Promise.resolve([]);
     }
 
     var interpolatedQuery = _.first(this.interpolateValue(query));
@@ -339,7 +338,7 @@ export class OpenNMSDatasource {
       }
     }
 
-    return this.$q.resolve([]);
+    return Promise.resolve([]);
   }
 
   metricFindNodeFilterQuery(query) {
