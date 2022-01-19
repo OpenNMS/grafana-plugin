@@ -3,7 +3,6 @@ const warn = console.warn;
 console.warn = () => {};
 
 import { Datasource } from '../datasources/perf-ds/module';
-import Q from 'q';
 
 console.warn = warn;
 
@@ -11,10 +10,9 @@ describe('OpenNMSPMDatasource', function () {
   let ctx = {} as any;
 
   beforeEach(function () {
-    ctx.$q = Q;
     ctx.backendSrv = {};
     ctx.templateSrv = {replace: val => val, containsVariable: () => true};
-    ctx.ds = new Datasource({url: 'http://opennms'}, ctx.$q, ctx.backendSrv, ctx.templateSrv);
+    ctx.ds = new Datasource({url: 'http://opennms'}, ctx.backendSrv, ctx.templateSrv);
   });
 
   describe('querying with one target', function () {
@@ -45,7 +43,7 @@ describe('OpenNMSPMDatasource', function () {
 
     it('should return a list of series', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {
-        return ctx.$q.when({
+        return Promise.resolve({
           _request: request,
           status: 200,
           data: response
@@ -89,7 +87,7 @@ describe('OpenNMSPMDatasource', function () {
 
     it('should filter series that contain only NaNs', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {
-        return ctx.$q.when({
+        return Promise.resolve({
           _request: request,
           status: 200,
           data: response
@@ -107,7 +105,7 @@ describe('OpenNMSPMDatasource', function () {
     it('should make a request to /rest/info', function (done) {
       ctx.backendSrv.datasourceRequest = function (request) {
         expect(request.url).toEqual('http://opennms/rest/info');
-        return ctx.$q.when({
+        return Promise.resolve({
           status: 200
         });
       };
@@ -436,7 +434,7 @@ describe('OpenNMSPMDatasource', function () {
               {name: 'nodeId', current: {value: '1'}},
           ];
           ctx.backendSrv.datasourceRequest = function (request) {
-              return ctx.$q.when({
+              return Promise.resolve({
                   _request: request,
                   status: 200,
                   data: response

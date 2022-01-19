@@ -1,4 +1,3 @@
-import { IQService } from 'angular';
 import _ from 'lodash';
 
 import { transformers, TableTransform } from './transformers';
@@ -19,7 +18,7 @@ export class TablePanelEditorCtrl {
   destIndex?: number;
 
   /** @ngInject */
-  constructor(public $scope: any, public $q: IQService, public uiSegmentSrv: any) {
+  constructor(public $scope: any, public uiSegmentSrv: any) {
     $scope.editor = this;
     this.panelCtrl = $scope.ctrl;
     this.panel = this.panelCtrl.panel;
@@ -160,14 +159,14 @@ export class TablePanelEditorCtrl {
 
   getColumnOptions() {
     if (!this.panelCtrl.dataRaw) {
-      return this.$q.when([]);
+      return Promise.resolve([]);
     }
     let columns = this.transformers[this.panel.transform].getColumns(this.panelCtrl.dataRaw);
     // Filter out columns that have already been selected
     columns = columns.filter(a => this.panel.columns.indexOf(a) < 0);
 
     const segments = _.map(columns, (c) => this.uiSegmentSrv.newSegment({value: c.text}));
-    return this.$q.when(segments);
+    return Promise.resolve(segments);
   }
 
   addColumn() {

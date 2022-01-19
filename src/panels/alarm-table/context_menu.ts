@@ -30,7 +30,7 @@ This is based on the context menu code available here:
 /** @ngInject */
 export function contextMenuAsDirective() {
   'use strict';
-  return ["$parse", "$q", function ($parse, $q) {
+  return ["$parse", function ($parse) {
 
     var _contextMenus = [] as Array<JQuery<HTMLElement>>;
     // Contains the element that was clicked to show the context menu
@@ -85,7 +85,7 @@ export function contextMenuAsDirective() {
           text = item.text;
         }
 
-        var $promise = $q.when(text);
+        var $promise = Promise.resolve(text);
         $promises.push($promise);
         $promise.then(function (pText) {
           if (nestedMenu) {
@@ -185,7 +185,7 @@ export function contextMenuAsDirective() {
            * At this point, nestedMenu can only either be an Array or a promise.
            * Regardless, passing them to `when` makes the implementation singular.
            */
-          $q.when(nestedMenu).then(function(promisedNestedMenu) {
+          Promise.resolve(nestedMenu).then(function(promisedNestedMenu) {
             var nestedParam = {
               "$scope" : $scope,
               "event" : ev,
@@ -333,7 +333,7 @@ export function contextMenuAsDirective() {
       var event = params.event;
       var leftOriented = String(params.orientation).toLowerCase() === 'left';
 
-      $q.all($promises).then(function () {
+      Promise.all($promises).then(function () {
         var topCoordinate  = event.pageY;
         var menuHeight = angular.element($ul[0]).prop('offsetHeight');
         var winHeight = window.scrollY + event.view.innerHeight;

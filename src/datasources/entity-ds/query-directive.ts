@@ -16,7 +16,7 @@ angular.module('grafana.directives')
             }
         };
     })
-    .controller('QueryController', function ($scope, uiSegmentSrv, $q) {
+    .controller('QueryController', function ($scope, uiSegmentSrv) {
         const datasource = $scope.datasource;
         const QueryCtrl = $scope.queryCtrl;
         $scope.query.updateControls();
@@ -90,7 +90,7 @@ angular.module('grafana.directives')
                     });
                 }).catch(QueryCtrl.handleQueryError.bind(QueryCtrl));
             }
-            return $q.when([]);
+            return Promise.resolve([]);
         };
 
         $scope.segmentUpdated = function(clause, segment, segmentIndex) {
@@ -144,13 +144,13 @@ angular.module('grafana.directives')
             }
 
             if (segment.type === 'value') {
-                return $q.when(['DESC', 'ASC'].map((order) => {
+                return Promise.resolve(['DESC', 'ASC'].map((order) => {
                     return uiSegmentSrv.newKeyValue(order);
                 }));
             }
 
             console.debug('getOrderSuggestions: unknown segment type :(');
-            return $q.when([]);
+            return Promise.resolve([]);
         };
 
         $scope.addOrderBy = (order, index) => {

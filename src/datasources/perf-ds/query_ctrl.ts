@@ -16,7 +16,6 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   /** @ngInject */
   constructor(
     public $rootScope: any,
-    public $q: any,
     public $modal: any,
     public $scope: any,
     $injector: auto.IInjectorService,
@@ -99,9 +98,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       },
       function (query) {
         if (self.nodeResources !== undefined) {
-          var deferred = self.$q.defer();
-          deferred.resolve(filterResources(self.nodeResources, query));
-          return deferred.promise;
+          return Promise.resolve(filterResources(self.nodeResources, query));
         }
 
         return self.datasource.getResourcesWithAttributesForNode(self.target.nodeId).then(function (resources) {
@@ -222,19 +219,17 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     scope.columns = columns;
     scope.search = search;
 
-    scope.result = this.$q.defer();
-    scope.result.promise.then(callback);
+    new Promise((resolve, reject) => {
+      scope.result = { resolve, reject }
+    }).then(v => callback.apply(v))
 
-    var modal = this.$modal({
+    this.$modal({
       template: 'public/plugins/opennms-helm-app/datasources/perf-ds/partials/modal.selection.html',
       persist: false,
       show: false,
       scope: scope,
       keyboard: false,
-    });
-    return this.$q.when(modal).then((modalEl) => {
-      return modalEl.modal('show');
-    });
+    }).modal('show');
   }
 
   targetBlur(targetId: string, required?: boolean) {

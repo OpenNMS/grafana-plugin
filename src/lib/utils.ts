@@ -1,4 +1,3 @@
-import { IQService } from 'angular';
 import _ from 'lodash';
 
 import { loadPluginCss } from '@grafana/runtime';
@@ -62,13 +61,12 @@ export function setOptionAsCurrent(variable, option) {
 }
 
 export function variableUpdated(variable, emitChangeEvents = false) {
-  const $q = variable.$q;
   const dashboardSrv = variable.dashboardSrv;
   const templateSrv = variable.templateSrv;
 
   // if there is a variable lock ignore cascading update because we are in a boot up scenario
   if (variable.initLock) {
-    return $q.when();
+    return Promise.resolve();
   }
 
   const getVariables = templateSrv.getVariables.bind(templateSrv) || dashboardSrv.dashboard.getVariables.bind(dashboardSrv.dashboard);
@@ -80,7 +78,7 @@ export function variableUpdated(variable, emitChangeEvents = false) {
 
   templateSrv.setGlobalVariable(variable.id, variable.current);
 
-  return $q.all(promises).then(() => {
+  return Promise.all(promises).then(() => {
     if (emitChangeEvents) {
       dashboardSrv.dashboard.templateVariableValueUpdated();
       dashboardSrv.dashboard.startRefresh();
@@ -89,8 +87,8 @@ export function variableUpdated(variable, emitChangeEvents = false) {
 }
 
 
-export function setOptionFromUrl(variable: any, urlValue: any, $q: IQService) {
-  let promise = $q.when();
+export function setOptionFromUrl(variable: any, urlValue: any) {
+  let promise = Promise.resolve();
 
   if (variable.refresh) {
     promise = variable.updateOptions();
