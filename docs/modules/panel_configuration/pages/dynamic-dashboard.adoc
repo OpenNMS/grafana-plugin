@@ -39,7 +39,7 @@ image::pc-TCP-panel.png[TCP, 300]
 A preview of the values returned appears at the bottom of the screen:
 
 +
-image::pc-variables.png[Variable, 400]
+image::pc-Variables.png[Variable, 400]
 
 .. Supported queries are in the form `nodeFilter($filter)` or `nodeResource(FS:FID)` where `$filter` is any filter expression.
 In this case, we used the `nodeFilter` variable to specify the nodes in the category "switches". 
@@ -56,7 +56,7 @@ After creating the template variable, you need to update the panel to make sure 
 . Update the label to make it unique by typing the following: `nodeToLabel($node)`.
 .. A label must be unique to display data in the panel.
 +
-image::pc-node-final.png[Node final, 300]
+image::pc-node-Final.png[Node final, 300]
 
 . Save your dashboard. 
 . Click the *Node* drop-down you created to select the nodes whose data you want to display:
