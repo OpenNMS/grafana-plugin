@@ -435,7 +435,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
   }
 
   setLegendWidthForLegacyBrowser() {
-    const isIE11 = !!window.MSInputMethodContext && !!(document as any).documentMode;
+    const isIE11 = !!(window as any).MSInputMethodContext && !!(document as any).documentMode;
     if (isIE11 && this.panel.legendType === 'Right side' && !this.panel.legend.sideWidth) {
       this.panel.legend.sideWidth = 150;
     }
