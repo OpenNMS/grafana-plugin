@@ -115,9 +115,8 @@ jobs:
       - run:
           name: Run Build, Tests, and Sign
           command: |
-            export NODE_OPTIONS="--lite-mode --optimize-for-size --memory-reducer"
-            npm run build
-            npm run sign
+            node --optimize-for-size --memory-reducer node_modules/.bin/grafana-toolkit plugin:build
+            node --optimize-for-size --memory-reducer node_modules/.bin/grafana-toolkit plugin:sign
       - store_test_results:
           path: coverage
       - store_artifacts:
@@ -203,7 +202,9 @@ jobs:
           command: npm --no-progress ci
       - run:
           name: Run Build, Tests, and Sign
-          command: npm run build && npm run sign
+          command: |
+            node --optimize-for-size --memory-reducer node_modules/.bin/grafana-toolkit plugin:build
+            node --optimize-for-size --memory-reducer node_modules/.bin/grafana-toolkit plugin:sign
       - run:
           name: Commit Build Output
           command: |

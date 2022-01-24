@@ -41,7 +41,7 @@
     "specTemplate": "src/rpm/spec.mustache",
     "installDir": "/var/lib/grafana/plugins",
     "requires": [
-      "grafana >= 7.5.0"
+      "grafana >= 8.0.0"
     ]
   },
   "dependencies": {
