@@ -114,7 +114,10 @@ jobs:
             - ~/.npm
       - run:
           name: Run Build, Tests, and Sign
-          command: npm run build && npm run sign
+          command: |
+            export NODE_OPTIONS="--lite-mode --optimize-for-size --memory-reducer"
+            npm run build
+            npm run sign
       - store_test_results:
           path: coverage
       - store_artifacts:
