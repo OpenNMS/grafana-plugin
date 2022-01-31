@@ -26,7 +26,7 @@
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^27.0.0",
     "@types/jquery": "^3.5.13",
-    "commander": "^8.0.0",
+    "commander": "^9.0.0",
     "fs-extra": "^10.0.0",
     "recursive-copy": "^2.0.13",
     "rimraf": "^3.0.0",
