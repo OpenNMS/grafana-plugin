@@ -30,7 +30,7 @@ git clone https://github.com/OpenNMS/opennms-helm.git
 cd opennms-helm
 ----
 
-4. Build Helm and symlink the `dist` directory in your Helm source tree into the Grafana plugin path (you will need to change these paths to match your system)
+4. Build Helm and symlink the `dist` directory in your Helm source tree into the Grafana plugin path (you will need to change these paths to match your system).
 +
 [source]
 ----
