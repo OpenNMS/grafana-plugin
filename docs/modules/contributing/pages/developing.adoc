@@ -10,7 +10,7 @@ Releases will be tagged from the `master` branch and submitted to the https://gi
 
 ## Setting Up Helm and Grafana for Development
 
-1. Install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana] for your platform
+1. Install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana] for your platform.
 
 2. Configure Grafana to allow unsigned plugin development by editing `grafana.ini`:
 +
