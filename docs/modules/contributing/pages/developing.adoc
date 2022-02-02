@@ -22,7 +22,7 @@ app_mode = development
 allow_loading_unsigned_plugins = opennms-helm-app
 ----
 
-3. Check out https://github.com/OpenNMS/opennms-helm[the Helm git repository]:
+3. Check out the https://github.com/OpenNMS/opennms-helm[Helm git repository]:
 +
 [source]
 ----
