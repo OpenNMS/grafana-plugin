@@ -41,6 +41,6 @@ npm run dev
 # symlink the dist/ directory into Grafana's plugin dir
 ln -s /path/to/opennms-helm/dist /var/lib/grafana/plugins/opennms-helm-app
 # run a continuous build that watches for changes
-# after you save a change to helm, just refresh Grafana to get the updates
+# after you save a change to Helm, just refresh Grafana to get the updates
 npm run watch
 ----
