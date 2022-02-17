@@ -46,7 +46,7 @@
     ]
   },
   "dependencies": {
-    "@grafana/runtime": "^7.5.12",
+    "@grafana/runtime": "^8.4.0",
     "async": "^3.2.3",
     "crypto-js": "^4.1.1",
     "flot": "^0.8.3",
