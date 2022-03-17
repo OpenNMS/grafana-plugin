@@ -10,7 +10,7 @@ Hash: SHA512
   "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "8.0.0-SNAPSHOT",
-  "time": 1647543837850,
+  "time": 1647547843555,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96be1edcd4712b8d8240c7c84a0cf350f82b98f1fb6248d9e38c6624a87b8668",
@@ -26,7 +26,7 @@ Hash: SHA512
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
     "datasources/entity-ds/module.js": "9a79cf7f05dee747bbaee7fc5e8734074b2afb628e65bb288abcb616e4e115a8",
     "datasources/entity-ds/module.js.LICENSE.txt": "d8469dc55c08516606faac81bdd7143e776f9f0581af3463460c51cc9cb4565e",
-    "datasources/entity-ds/module.js.map": "b1bc52649520fa7e30a32c1e5dd9761a49f9f059c65e58d5898bea4eb0f82f39",
+    "datasources/entity-ds/module.js.map": "01eea5a18b1da7b2c6ba1626ffea6a501c161296e2e9c593d02690c40f528b80",
     "datasources/entity-ds/partials/config.html": "2ff87ed27af4b24c552b808b3cb4ea940824047b704b9ea20f73d91f457c8362",
     "datasources/entity-ds/partials/query.editor.html": "7129d9a5d370cd133ced79e53dcb0181353ec9fcb2e47c7376cbb6d684d59a93",
     "datasources/entity-ds/partials/query.html": "191db0afb4f2ac041a9bf5644706e6344eb79ec4fc96f72e6f0403c80329cb4d",
@@ -35,7 +35,7 @@ Hash: SHA512
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
     "datasources/flow-ds/module.js": "c02ece8562fd714118452960c665049840689e4a16daa227f1557c2509e92a37",
     "datasources/flow-ds/module.js.LICENSE.txt": "d8469dc55c08516606faac81bdd7143e776f9f0581af3463460c51cc9cb4565e",
-    "datasources/flow-ds/module.js.map": "2f6a1c392255b05342b830af241632be2e0301e37f1f7ae7f4ca7bf59abbce34",
+    "datasources/flow-ds/module.js.map": "9a696abac4c0461eee2ccdab09b73aa41eb90be80cb0f838901ee7cf7f1849eb",
     "datasources/flow-ds/partials/config.html": "f99ef59ab65fb2dd92290f5d79d74abb6e0d03b2a68425348b14e0fbea1b4742",
     "datasources/flow-ds/partials/query.editor.html": "d0551bb55ff0800345c2c37252daea55cc9ab6b94b2724837e8bc04e4eaede9d",
     "datasources/flow-ds/partials/query.options.html": "01570a3c97a66d192bf4986355a52b92b3ff5b45fe528d9e5849464e8b4e213d",
@@ -51,7 +51,7 @@ Hash: SHA512
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
     "datasources/perf-ds/module.js": "c6578619313100ead9c3d6680e138043550aa9e8d5875d03570ab380ebb3d733",
     "datasources/perf-ds/module.js.LICENSE.txt": "d8469dc55c08516606faac81bdd7143e776f9f0581af3463460c51cc9cb4565e",
-    "datasources/perf-ds/module.js.map": "dc198ed20eb5bbb9116fc894c3d451c223e97368b609f641bfb8de9ffb4595d9",
+    "datasources/perf-ds/module.js.map": "921bcbc860f1377a31006a96965ac0864e9f8d9a9818980613671a883d97a576",
     "datasources/perf-ds/partials/config.html": "3131aa3bc6d399fac83e5019df43a60fb7b95a534e44c9beb2681db31061ae56",
     "datasources/perf-ds/partials/modal.selection.html": "afc44f6f509c370b601759fb52c57a64c82ae1c6f58ce1f1a27ae22e75e7908e",
     "datasources/perf-ds/partials/query.editor.html": "2d0a139be461c5bd09637b9db5c3c7cfbdf1bce3bfcc03e53fdd23c69e908ecd",
@@ -96,7 +96,7 @@ Hash: SHA512
     "panels/alarm-table/module.html": "83762cf9386b16a95e78dd8e7d15f1cfd50e00d94ae8923f3187ba61289ef903",
     "panels/alarm-table/module.js": "3bd033b97534a1cc4a674318994be4b7d2b5bf8fa473d0f6706b82404f90e097",
     "panels/alarm-table/module.js.LICENSE.txt": "83c39a6bb1387473a8a37200428e19fe898b1b59f702f4b7eafbdc56366b16e7",
-    "panels/alarm-table/module.js.map": "8cd2d690ba3cf67bce698bf3f2082e9aa95f6257b8d6bda17f8be3f52f22ff65",
+    "panels/alarm-table/module.js.map": "1890688e45baaf17d3c25ff35082b36dc3ca484a6984d53737ca46028e4783db",
     "panels/alarm-table/plugin.json": "a0df731760544b8b4e8b17e9859c001e8db2c8cf53b4df384c5e944d24cb5c0b",
     "panels/filter-panel/css/filter.dark.css": "4c867644b00e59f802bfa87947eada18686bbba248a676c09cb6a49e101dddc5",
     "panels/filter-panel/css/filter.dark.css.map": "9e0781bcafb3b980515b67ef4d5708872b1561e000031a8cd206bbf882fd6ce7",
@@ -111,7 +111,7 @@ Hash: SHA512
     "panels/filter-panel/module.html": "f12971b4fdbdbaa8e3a2430810212451314228c625dd20b30f0528dffb2880ee",
     "panels/filter-panel/module.js": "52dd759e667e055573e35472f41bdb228673fb8e30cbc85a00c041ba772a7e68",
     "panels/filter-panel/module.js.LICENSE.txt": "d8469dc55c08516606faac81bdd7143e776f9f0581af3463460c51cc9cb4565e",
-    "panels/filter-panel/module.js.map": "b9c1bd4ebf8d886babe3b9ecd4aa42487e2bcfb1b90ea9d854cce2d642056f1c",
+    "panels/filter-panel/module.js.map": "b21ae570addd955e755d8dd2209edd3f1c0a4bcd107cf960fabe05dda738024b",
     "panels/filter-panel/plugin.json": "c0cccd066dab6bf7cea0e3212b90e74847d988300b8ef2092abf23ce5dc01c0e",
     "panels/filter-panel/valueSelectDropdown.html": "fd02c84665341da2059d7085cb19be6b99558d62f1d2aa8c93a9e0a8ca3ecb10",
     "panels/flow-histogram/css/legend.dark.css": "0ba179c497602a2442189864ef01f780fa1ca7c9dfadfb4e2e8b98247a97d864",
@@ -140,10 +140,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrkEARMKAAYFAmIzhh4AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5+qFAgkBC4be9QW2gXyUvA3myEJ8Qf6M2FUvATekoNevOTiJBQV92XwK
-8ze7c8g4h3/KORdxSCTeiccaAmFSbz/i1fwV3GACCQHTc2QP2hzCri2vsf8Y
-ds7u2EzeHYmN6cIj0He61sSurwQCg6MTk58ri1pY7EE7MXLWa1PrM1gLZFVa
-WaV0L437yw==
-=jGQo
+wrgEARMKAAYFAmIzlcMAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm50D5AgkBaf1Li51sk80xDbH/sxl6xcLsHAJ6Lkp6AVXllzDSkAeAMbZj
+h2Ej7k5Fr+qKDSSkJACyaZeHelMrR6Xi2upl2MUCB1At+FnVsRLfqsYBtsyU
+GjoXdg3/JBzVV9OnnSojeYgCGTVGhwKPQfBgK0QO1v1GTDala9TnZ55dGP+3
+27ewnK23
+=0APr
 -----END PGP SIGNATURE-----
