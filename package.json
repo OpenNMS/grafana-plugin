@@ -16,7 +16,7 @@
     "@antora/cli": "^3.0.1",
     "@antora/site-generator-default": "^3.0.1",
     "@antora/xref-validator": "gitlab:antora/xref-validator",
-    "@grafana/data": "^7.5.12",
+    "@grafana/data": "^8.4.4",
     "@grafana/eslint-config": "^3.0.0",
     "@grafana/toolkit": "^8.2.5",
     "@grafana/ui": "^7.5.12",
