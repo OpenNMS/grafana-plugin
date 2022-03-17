@@ -423,7 +423,10 @@ export class FlowDatasource {
                       // determine the indexes of those columns that have the same label as the current column
                       .filter(({column}) => column.label === col.label)
                       // get the values of those columns ...
-                      .map(({colIdx}) => values[colIdx][timestampIdx])
+                      .map(({colIdx}) => {
+                        const v = Number(values[colIdx][timestampIdx])
+                        return isNaN(v) ? 0 : v
+                      })
                       // ... and sum them up
                       .reduce((previous, current) => previous + (current ? current : 0), 0)
                   return [sum * multiplier, timestamp]
@@ -445,8 +448,8 @@ export class FlowDatasource {
 
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
-                  const v = values[colIdx][timestampIdx]
-                  return [v === null || v === undefined || Number.isNaN(v) ? null : v * multiplier * sign, timestamp]
+                  const v = Number(values[colIdx][timestampIdx])
+                  return [isNaN(v) ? 0 : v * multiplier * sign, timestamp]
                 })
 
             return {
