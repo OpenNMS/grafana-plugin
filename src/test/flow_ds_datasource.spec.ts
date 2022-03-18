@@ -246,13 +246,53 @@ describe("OpenNMS_Flow_Datasource", function () {
       done();
     })
 
-    it("should convert 'NaN' values in response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExampleNaN);
+    it("should convert 'NaN' to 0 values in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'nanToZero'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExampleNaN);
       let expectedResponse = [
         {
           "datapoints": [
             [
               0,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("should convert 'NaN' to null values in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: ''
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExampleNaN);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              null,
               1516358909932
             ]
           ],

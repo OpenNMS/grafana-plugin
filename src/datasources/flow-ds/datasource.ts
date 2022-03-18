@@ -389,6 +389,7 @@ export class FlowDatasource {
     let combineIngressEgress = FlowDatasource.isFunctionPresent(query, 'combineIngressEgress');
     let onlyIngress = FlowDatasource.isFunctionPresent(query, 'onlyIngress');
     let onlyEgress = FlowDatasource.isFunctionPresent(query, 'onlyEgress');
+    let nanToZero = FlowDatasource.isFunctionPresent(query, 'nanToZero');
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
@@ -424,8 +425,8 @@ export class FlowDatasource {
                       .filter(({column}) => column.label === col.label)
                       // get the values of those columns ...
                       .map(({colIdx}) => {
-                        const v = Number(values[colIdx][timestampIdx])
-                        return isNaN(v) ? 0 : v
+                        const v = values[colIdx][timestampIdx]
+                       return isNaN(Number(v)) && nanToZero ? 0 : v 
                       })
                       // ... and sum them up
                       .reduce((previous, current) => previous + (current ? current : 0), 0)
@@ -449,7 +450,7 @@ export class FlowDatasource {
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
                   const v = Number(values[colIdx][timestampIdx])
-                  return [isNaN(v) ? 0 : v * multiplier * sign, timestamp]
+                  return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
                 })
 
             return {
