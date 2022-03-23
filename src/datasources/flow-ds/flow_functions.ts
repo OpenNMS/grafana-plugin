@@ -135,6 +135,7 @@ addFuncDef({
 addFuncDef({
   name: 'nanToZero',
   cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
   category: categories.Transform
 });
 
