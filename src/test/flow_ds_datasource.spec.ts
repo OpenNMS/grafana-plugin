@@ -33,6 +33,32 @@ describe("OpenNMS_Flow_Datasource", function () {
     ]
   } as OnmsFlowSeries
 
+  let flowSeriesExampleNaN = {
+    "start": dateTimeAsMoment(1516358909932),
+    "end": dateTimeAsMoment(1516373309932),
+    "columns": [
+      {
+        "label": "domain",
+        "ingress": true
+      },
+      {
+        "label": "domain",
+        "ingress": false
+      }
+    ],
+    "timestamps": [
+      1516358909932
+    ],
+    "values": [
+      [
+        "NaN"
+      ],
+      [
+        2
+      ]
+    ]
+  } as OnmsFlowSeries
+
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
       let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
@@ -219,6 +245,73 @@ describe("OpenNMS_Flow_Datasource", function () {
       expect(expectedResponse).toEqual(actualResponse);
       done();
     })
+
+    it("should convert 'NaN' to 0 values in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'nanToZero'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExampleNaN);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              0,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("should convert 'NaN' to null values in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: ''
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExampleNaN);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              null,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
 
   });
 
