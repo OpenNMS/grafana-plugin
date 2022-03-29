@@ -25,6 +25,7 @@ The query editor supports the following functions:
 | Transform | `withGroupByInterval`   | Changes the resolution of the returned datapoints grouping by the given time interval (in the format of: 10s, 5m, 1h, etc.).
 | Transform | `withPrefix`            | Specifies a prefix for graph and summary labels.
 | Transform | `withSuffix`            | Specifies a suffix for graph and summary labels.
+| Transform | `nanToZero`             | Convert all NaN values to zero (0) so they can be taken in consideration by reduce expressions.
 |===
 
 

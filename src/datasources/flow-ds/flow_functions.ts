@@ -133,6 +133,13 @@ addFuncDef({
 });
 
 addFuncDef({
+  name: 'nanToZero',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
+  category: categories.Transform
+});
+
+addFuncDef({
   name: 'negativeEgress',
   cardinality: Cardinality.SINGLE,
   mutuallyExcludes: ['asTableSummary'],
