@@ -59,8 +59,8 @@ export class FlowDatasource {
     } else {
 
       const intervals = queriesWithMetrics
-          .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
-          .filter(i => i) // exclude `undefined`
+        .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
+        .filter(i => i) // exclude `undefined`
 
       const differentIntervals = new Set(intervals)
       if (differentIntervals.size > 1) {
@@ -222,7 +222,7 @@ export class FlowDatasource {
           return {
             status: "danger",
             message: "The OpenNMS version you are trying to connect to is not supported. " +
-            "OpenNMS Horizon version >= 22.0.0 or OpenNMS Meridian version >= 2018.1.0 is required.",
+              "OpenNMS Horizon version >= 22.0.0 or OpenNMS Meridian version >= 2018.1.0 is required.",
             title: e.message
           }
         } else {
@@ -259,10 +259,10 @@ export class FlowDatasource {
     let dscpOnExporterNodeAndInterfaceQuery = query.match(dscpOnExporterNodeAndInterfaceRegex);
     if (dscpOnExporterNodeAndInterfaceQuery) {
       return this.metricFindDscpOnExporterNodeAndInterface(
-          dscpOnExporterNodeAndInterfaceQuery[1], // node
-          dscpOnExporterNodeAndInterfaceQuery[2], // interface
-          dscpOnExporterNodeAndInterfaceQuery[3], // start millis
-          dscpOnExporterNodeAndInterfaceQuery[4], // end millis
+        dscpOnExporterNodeAndInterfaceQuery[1], // node
+        dscpOnExporterNodeAndInterfaceQuery[2], // interface
+        dscpOnExporterNodeAndInterfaceQuery[3], // start millis
+        dscpOnExporterNodeAndInterfaceQuery[4], // end millis
       );
     }
 
@@ -291,7 +291,7 @@ export class FlowDatasource {
 
   metricFindDscpOnExporterNodeAndInterface(node, iface, start, end) {
     return this.client.getDscpValues(node,  iface, start, end).then(
-        values => dscpSelectOptions(values)
+      values => dscpSelectOptions(values)
     );
   }
 
@@ -306,9 +306,9 @@ export class FlowDatasource {
   }
 
   toTable(
-      query: FlowDataQuery,
-      table: OnmsFlowTable,
-      labelTransformer?: (string) => string,
+    query: FlowDataQuery,
+    table: OnmsFlowTable,
+    labelTransformer?: (string) => string,
   ): TableData {
 
     // get optionality out of the way -> all fields are required
@@ -361,17 +361,17 @@ export class FlowDatasource {
     }) : [];
 
     return {
-        refId: query.refId,
-        "columns": columns,
-        "rows": table.rows,
-        "type": "table",
-      }
+      refId: query.refId,
+      "columns": columns,
+      "rows": table.rows,
+      "type": "table",
+    }
   }
 
   toSeries(
-      query: FlowDataQuery,
-      flowSeries: OnmsFlowSeries,
-      labelTransformer?: (string) => string,
+    query: FlowDataQuery,
+    flowSeries: OnmsFlowSeries,
+    labelTransformer?: (string) => string,
   ): TimeSeries[] {
 
     // get optionality out of the way -> all fields are required
@@ -390,6 +390,7 @@ export class FlowDatasource {
     let onlyIngress = FlowDatasource.isFunctionPresent(query, 'onlyIngress');
     let onlyEgress = FlowDatasource.isFunctionPresent(query, 'onlyEgress');
     let nanToZero = FlowDatasource.isFunctionPresent(query, 'nanToZero');
+    let swapIngressEgress = FlowDatasource.isFunctionPresent(query, 'swapIngressEgress');
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
@@ -397,8 +398,8 @@ export class FlowDatasource {
     let values = flowSeries.values;
     let timestamps = flowSeries.timestamps;
     let timestampsInRange = timestamps
-        .map((timestamp, timestampIdx) => { return { timestamp, timestampIdx }})
-        .filter(({timestamp}) => timestamp >= start && timestamp <= end)
+      .map((timestamp, timestampIdx) => { return { timestamp, timestampIdx }})
+      .filter(({timestamp}) => timestamp >= start && timestamp <= end)
 
     let step = timestamps[1] - timestamps[0];
 
@@ -414,50 +415,54 @@ export class FlowDatasource {
     if (combineIngressEgress) {
 
       return flowSeries.columns
-          // use the ingress columns to drive the calculation of combined series
-          .filter(column => column.ingress)
-          .map(col => {
+        // use the ingress columns to drive the calculation of combined series
+        .filter(column => column.ingress)
+        .map(col => {
 
-            const datapoints = timestampsInRange
-                .map(({timestamp, timestampIdx}) => {
-                  const sum = columnsWithIndex
-                      // determine the indexes of those columns that have the same label as the current column
-                      .filter(({column}) => column.label === col.label)
-                      // get the values of those columns ...
-                      .map(({colIdx}) => {
-                        const v = values[colIdx][timestampIdx]
-                       return isNaN(Number(v)) && nanToZero ? 0 : v 
-                      })
-                      // ... and sum them up
-                      .reduce((previous, current) => previous + (current ? current : 0), 0)
-                  return [sum * multiplier, timestamp]
+          const datapoints = timestampsInRange
+            .map(({timestamp, timestampIdx}) => {
+              const sum = columnsWithIndex
+                // determine the indexes of those columns that have the same label as the current column
+                .filter(({column}) => column.label === col.label)
+                // get the values of those columns ...
+                .map(({colIdx}) => {
+                  const v = values[colIdx][timestampIdx]
+                  return isNaN(Number(v)) && nanToZero ? 0 : v
                 })
+                // ... and sum them up
+                .reduce((previous, current) => previous + (current ? current : 0), 0)
+              return [sum * multiplier, timestamp]
+            })
 
-            return {
-              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col.label),
-              datapoints
-            }
-          })
+          return {
+            target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col.label),
+            datapoints
+          }
+        })
 
     } else {
 
       return columnsWithIndex
-          .filter(({column}) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
-          .map(({column, colIdx}) => {
-            const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1
-            const inOutLabelTransformer: (s: string) => string = s => s + (column.ingress ? ' (In)' : ' (Out)')
+        .filter(({ column }) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+        .map(({ column, colIdx }) => {
+          const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
+          const inOutLabelTransformer: (s: string) => string = s => {
+            if (swapIngressEgress)
+              return s + (column.ingress ? ' (Out)' : ' (In)');
+            else return s + (column.ingress ? ' (In)' : ' (Out)');
+          };
 
-            const datapoints = timestampsInRange
-                .map(({timestamp, timestampIdx}) => {
-                  const v = Number(values[colIdx][timestampIdx])
-                  return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
-                })
+          const datapoints = timestampsInRange
+            .map(({timestamp, timestampIdx}) => {
+              const v = Number(values[colIdx][timestampIdx])
+              return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
+            })
 
-            return {
-              target: _.flow(ensuredLabelTranformer, inOutLabelTransformer, prefixSuffixLabelTransformer)(column.label),
-              datapoints
-            }
-          })
+          return {
+            target: _.flow(ensuredLabelTranformer, inOutLabelTransformer, prefixSuffixLabelTransformer)(column.label),
+            datapoints
+          }
+        })
     }
 
   }

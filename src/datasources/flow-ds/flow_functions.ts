@@ -140,6 +140,13 @@ addFuncDef({
 });
 
 addFuncDef({
+  name: 'swapIngressEgress',
+  cardinality: Cardinality.SINGLE,
+  mutuallyExcludes: ['asTableSummary'],
+  category: categories.Transform
+});
+
+addFuncDef({
   name: 'negativeEgress',
   cardinality: Cardinality.SINGLE,
   mutuallyExcludes: ['asTableSummary'],
