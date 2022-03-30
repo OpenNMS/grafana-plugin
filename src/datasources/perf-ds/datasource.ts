@@ -1,11 +1,13 @@
-import {QueryType, STRING_PROPERTY_TYPE} from './constants';
-import {interpolate} from "./interpolate";
+import { QueryType, STRING_PROPERTY_TYPE } from './constants';
+import { interpolate } from "./interpolate";
 import _ from 'lodash';
-import {FunctionFormatter} from '../../lib/function_formatter';
-import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
-import {DataQueryResponseData} from "@grafana/data/types/datasource";
-import {ClientDelegate} from '../../lib/client_delegate'
-import {Client, ServerMetadata} from 'opennms'
+import { FunctionFormatter } from '../../lib/function_formatter';
+import { DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType } from "@grafana/data";
+import { DataQueryResponseData } from "@grafana/data/types/datasource";
+import { ClientDelegate } from '../../lib/client_delegate'
+import { Client, ServerMetadata } from 'opennms'
+
+const lodashClonedeep = require('lodash.clonedeep');
 
 interface Query {
   start: number;
@@ -57,7 +59,7 @@ export class OpenNMSDatasource {
     this.interval = (instanceSettings.jsonData || {}).timeInterval;
 
     if (instanceSettings.jsonData && instanceSettings.jsonData.timeout) {
-        this.timeout = parseInt(instanceSettings.jsonData.timeout,10) * 1000;
+      this.timeout = parseInt(instanceSettings.jsonData.timeout, 10) * 1000;
     }
   }
 
@@ -132,8 +134,8 @@ export class OpenNMSDatasource {
     }).then(response => {
       return queries.flatMap(query => {
         return response.data.children.resource
-            .filter(resource => (resource.id as string).endsWith(`.${query.resourceId}`))
-            .flatMap(resource => this.extractStringProperty(query, resource, response.data))
+          .filter(resource => (resource.id as string).endsWith(`.${query.resourceId}`))
+          .flatMap(resource => this.extractStringProperty(query, resource, response.data))
       })
     })
   }
@@ -148,55 +150,55 @@ export class OpenNMSDatasource {
         stringProperties: Array.from(selection.stringProperties).join(',')
       }
     }).then(response =>
-        response.data.flatMap(node =>
-            node.children.resource.flatMap(resource =>
-                Object.entries<string>(resource.stringPropertyAttributes).flatMap(([key, value]) => {
-                      return {
-                        fields: OpenNMSDatasource.fields({
-                          nodeId: node.name,
-                          nodeLabel: node.label,
-                          resourceId: resource.name,
-                          resourceLabel: resource.label,
-                          stringPropertyKey: key,
-                          stringPropertyValue: value
-                        })
-                      }
-                    }
-                )
-            )
+      response.data.flatMap(node =>
+        node.children.resource.flatMap(resource =>
+          Object.entries<string>(resource.stringPropertyAttributes).flatMap(([key, value]) => {
+            return {
+              fields: OpenNMSDatasource.fields({
+                nodeId: node.name,
+                nodeLabel: node.label,
+                resourceId: resource.name,
+                resourceLabel: resource.label,
+                stringPropertyKey: key,
+                stringPropertyValue: value
+              })
+            }
+          }
+          )
         )
+      )
     )
   }
 
   private extractStringProperty(query: DefinedStringPropertyQuery, resource: any, node?: any): DataQueryResponseData[] {
     return Object.keys(resource.stringPropertyAttributes)
-        .filter(key => key === query.stringProperty)
-        .flatMap(key => {
-          return {
-            refId: query.refId,
-            fields: OpenNMSDatasource.fields({
-              nodeId: query.nodeId,
-              nodeLabel: node ? node.label : query.nodeId,
-              resourceId: query.resourceId,
-              resourceLabel: resource.label,
-              stringPropertyKey: key,
-              stringPropertyValue: resource.stringPropertyAttributes[key]
-            })
-          }
-        })
+      .filter(key => key === query.stringProperty)
+      .flatMap(key => {
+        return {
+          refId: query.refId,
+          fields: OpenNMSDatasource.fields({
+            nodeId: query.nodeId,
+            nodeLabel: node ? node.label : query.nodeId,
+            resourceId: query.resourceId,
+            resourceLabel: resource.label,
+            stringPropertyKey: key,
+            stringPropertyValue: resource.stringPropertyAttributes[key]
+          })
+        }
+      })
   }
 
   queryStringProperties(request: DataQueryRequest<StringPropertyQuery>): Promise<DataQueryResponse> {
     const definedQueries: DefinedStringPropertyQuery[] = request.targets
-        .filter(q => !q.hide)
-        .filter(isDefinedStringPropertyQuery)
-        .map(q => {
-          return {
-            ...q,
-            nodeId: this.templateSrv.replace(q.nodeId),
-            resourceId: this.templateSrv.replace(q.resourceId)
-          }
-        })
+      .filter(q => !q.hide)
+      .filter(isDefinedStringPropertyQuery)
+      .map(q => {
+        return {
+          ...q,
+          nodeId: this.templateSrv.replace(q.nodeId),
+          resourceId: this.templateSrv.replace(q.resourceId)
+        }
+      })
     return this.clientDelegate.getClientWithMetadata().then((client: Client) => {
       const metadata: ServerMetadata = client.http.server.metadata;
       if (metadata.selectPartialResources()) {
@@ -210,12 +212,12 @@ export class OpenNMSDatasource {
   queryStringPropertiesForAllNodesInBulk(definedQueries: DefinedStringPropertyQuery[]): Promise<DataQueryResponse> {
     // send a single request that selects all nodes, subresources, and string properties
     const selection =
-        definedQueries.reduce<{ nodes: Set<string>, nodeSubresources: Set<string>, stringProperties: Set<string> }>((accu, query) => {
-          accu.nodes.add(query.nodeId)
-          accu.nodeSubresources.add(query.resourceId)
-          accu.stringProperties.add(query.stringProperty)
-          return accu
-        }, {nodes: new Set(), nodeSubresources: new Set(), stringProperties: new Set()})
+      definedQueries.reduce<{ nodes: Set<string>, nodeSubresources: Set<string>, stringProperties: Set<string> }>((accu, query) => {
+        accu.nodes.add(query.nodeId)
+        accu.nodeSubresources.add(query.resourceId)
+        accu.stringProperties.add(query.stringProperty)
+        return accu
+      }, { nodes: new Set(), nodeSubresources: new Set(), stringProperties: new Set() })
     return this.queryAllStringProperties(selection).then(datas => {
       return {
         data: datas
@@ -230,10 +232,10 @@ export class OpenNMSDatasource {
     }, {})
     // send a request for each node separately...
     const datas: Array<Promise<DataQueryResponseData[]>> =
-        Object.keys(groupedByNodeId).map((nodeId) => {
-          const queries = groupedByNodeId[nodeId]
-          return this.queryStringPropertiesOfNode(nodeId, queries)
-        })
+      Object.keys(groupedByNodeId).map((nodeId) => {
+        const queries = groupedByNodeId[nodeId]
+        return this.queryStringPropertiesOfNode(nodeId, queries)
+      })
     // ... and then combine all results into a single DataQueryResponse
     return Promise.all(datas).then(datas => {
       return {
@@ -248,29 +250,33 @@ export class OpenNMSDatasource {
       return this.queryStringProperties(options)
     } else if (queries.some(query => query.type === STRING_PROPERTY_TYPE)) {
       return Promise.resolve(
-          {
-            data: [],
-            error: {
-              message: "string property queries can not be mixed with other kinds of queries"
-            }
+        {
+          data: [],
+          error: {
+            message: "string property queries can not be mixed with other kinds of queries"
           }
+        }
       )
     }
 
     const self = this;
 
     // Generate the query
+    // labels are query display labels
     var [query, labels] = this.buildQuery(options);
 
     // Issue the request
     var request;
     if (!Array.isArray(query) && query.source.length > 0) {
-      request = this.doOpenNMSRequest({
-        url: '/rest/measurements',
-        data: query,
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-      });
+      request = self.extendedQuery(query)
+        .then((query) => {
+          return this.doOpenNMSRequest({
+            url: '/rest/measurements',
+            data: query,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+        });
     } else {
       // There are no sources listed, let Grafana display "No data points" to the user
       return Promise.resolve({ data: [] });
@@ -280,7 +286,7 @@ export class OpenNMSDatasource {
       // Convert the results to the expected format
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
-          console.warn('Response code:',response);
+          console.warn('Response code:', response);
           return Promise.reject(response);
         }
 
@@ -288,8 +294,8 @@ export class OpenNMSDatasource {
       })
       // Sort resulting series by labels
       .then((result) => {
-          result.data = _.sortBy(result.data, (s) => _.indexOf(labels, s.label));
-          return result;
+        result.data = _.sortBy(result.data, (s) => _.indexOf(labels, s.label));
+        return result;
       })
       .catch(err => {
         return Promise.reject(self.decorateError(err));
@@ -303,7 +309,7 @@ export class OpenNMSDatasource {
       method: 'GET'
     }).then(response => {
       if (response.status === 200) {
-        return {status: "success", message: "Data source is working", title: "Success"};
+        return { status: "success", message: "Data source is working", title: "Success" };
       } else {
         return {
           status: "danger",
@@ -314,6 +320,52 @@ export class OpenNMSDatasource {
     }).catch(err => {
       return this.decorateError(err);
     });
+  }
+
+  extendedQuery(query: Query): Promise<Query> {
+    let self = this;
+    let sourceClone = lodashClonedeep(query.source);
+    if (sourceClone && sourceClone.length > 0) {
+      const globSources = self.getGlobExpressionsOnly(sourceClone, 'resourceId');
+      _.each(globSources, function (source) {
+        // Get all of resources for node in expression
+        return self.getResourcesWithAttributesForNode(self.getNodeId(source.resourceId))
+          .then((responses) => {
+            console.log(responses);
+          });
+      });
+      return Promise.resolve(query);
+    } else { return Promise.resolve(query); }
+  }
+
+  getGlobExpressionsOnly(sourceArray: any, type: string): any[] {
+    let globSources: any[] = [];
+    let self = this;
+    _.each(sourceArray, function (source) {
+      let sourceType = self.getIdFromType(source, type);
+      if (_.isRegExp(sourceType))
+        globSources.push(source);
+    });
+    return globSources;
+  }
+
+  getIdFromType(source: any, type: string): string {
+    switch (type) {
+      case 'resourceId':
+        return this.getResourceId(source[type]);
+        break;
+      case 'attribute':
+      default:
+        return source[type];
+        break;
+    }
+  }
+  getNodeId(resource) {
+    return resource.match(/node(Source)?\[(.*)?\]\..*/)[2];
+  }
+
+  getResourceId(resource) {
+    return resource.match(/node(Source)?\[.*?\]\.(.*)/)[2];
   }
 
   // Used by template queries
@@ -359,7 +411,7 @@ export class OpenNMSDatasource {
         if (node.foreignId !== null && node.foreignSource !== null) {
           nodeCriteria = node.foreignSource + ":" + node.foreignId;
         }
-        results.push({text: node.label, value: nodeCriteria, expandable: true});
+        results.push({ text: node.label, value: nodeCriteria, expandable: true });
       });
       return results;
     });
@@ -399,7 +451,7 @@ export class OpenNMSDatasource {
             console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
         }
         if ((resourceType === '*' && resourceWithoutNodePrefix) || (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) {
-          results.push({text: textValue, value: resourceWithoutNodePrefix[2], expandable: true});
+          results.push({ text: textValue, value: resourceWithoutNodePrefix[2], expandable: true });
         }
       });
       return results;
@@ -414,7 +466,7 @@ export class OpenNMSDatasource {
       start = options.range.from.valueOf(),
       end = options.range.to.valueOf(),
       step = Math.floor((end - start) / maxDataPoints);
-      step = (step < intervalMs) ? intervalMs : step;
+    step = (step < intervalMs) ? intervalMs : step;
 
     var query = {
       start: start,
@@ -435,7 +487,7 @@ export class OpenNMSDatasource {
       }
 
       if (target.type === QueryType.Attribute) {
-        if (!((target.nodeId && target.resourceId && target.attribute))) {
+        if (!(target.nodeId && target.resourceId && target.attribute)) {
           return;
         }
 
@@ -464,9 +516,9 @@ export class OpenNMSDatasource {
 
         // Perform variable substitution - may generate additional queries
         source = self.interpolateSourceVariables(source, options.scopedVars, (interpolatedSource: any) => {
-            // Calculate the effective resource id after the interpolation
-            interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
-            delete interpolatedSource.nodeId;
+          // Calculate the effective resource id after the interpolation
+          interpolatedSource.resourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
+          delete interpolatedSource.nodeId;
         });
         query.source = query.source.concat(source);
 
@@ -541,7 +593,7 @@ export class OpenNMSDatasource {
   }
 
   interpolateValue(value: any, scopedVars?: any) {
-    return _.map(this.interpolateVariables({'value': value}, ['value'], scopedVars), function(entry) {
+    return _.map(this.interpolateVariables({ 'value': value }, ['value'], scopedVars), function (entry) {
       return entry.value;
     });
   }
@@ -549,7 +601,7 @@ export class OpenNMSDatasource {
   interpolateVariables(object: any, attributes: any, scopedVars: any, callback?: (value: any) => void) {
     // Reformat the variables to work with our interpolate function
     var variables = [] as any[];
-    _.each(this.templateSrv.variables, function(templateVariable) {
+    _.each(this.templateSrv.variables, function (templateVariable) {
       var variable = {
         name: templateVariable.name,
         value: [] as any[]
@@ -563,9 +615,9 @@ export class OpenNMSDatasource {
         if (_.isString(templateVariable.current.value)) {
           variable.value.push(templateVariable.current.value);
         } else {
-          _.each(templateVariable.current.value, function(value) {
+          _.each(templateVariable.current.value, function (value) {
             if (value === "$__all") {
-              _.each(templateVariable.options, function(option) {
+              _.each(templateVariable.options, function (option) {
                 // "All" is part of the options, so make sure to skip that one
                 if (option.value !== "$__all") {
                   variable.value.push(option.value);
@@ -635,7 +687,7 @@ export class OpenNMSDatasource {
       }
     }
 
-    return {data: series};
+    return { data: series };
   }
 
   static flattenResourcesWithAttributes(resources, resourcesWithAttributes) {
@@ -707,7 +759,7 @@ export class OpenNMSDatasource {
 
   suggestAttributes(nodeId: string, resourceId: string, query: string) {
     var interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
-        interpolatedResourceId = _.first(this.interpolateValue(resourceId));
+      interpolatedResourceId = _.first(this.interpolateValue(resourceId));
     var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
     return this.doOpenNMSRequest({
@@ -732,7 +784,7 @@ export class OpenNMSDatasource {
 
   suggestStringProperties(nodeId: string, resourceId: string, query: string) {
     var interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
-        interpolatedResourceId = _.first(this.interpolateValue(resourceId));
+      interpolatedResourceId = _.first(this.interpolateValue(resourceId));
     var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
     return this.doOpenNMSRequest({
