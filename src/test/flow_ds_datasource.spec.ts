@@ -313,6 +313,73 @@ describe("OpenNMS_Flow_Datasource", function () {
       done();
     });
 
+    it("Swap Ingress/Egress labels in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'swapIngressEgress'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              1,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("No Swap Ingress/Egress labels in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: ''       
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              1,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
   });
 
 });
