@@ -269,3 +269,22 @@ export function processSelectionVariables(input?: string[]): string[] {
       return []
   }
 }
+
+export class OpenNMSGlob {
+  private static globExpressions: string[] = ['*', '|'];
+
+  static getGlobAsRegexPattern(expr: string) {
+    return _.escapeRegExp(expr).replace('\\*', '.*').replace('\\|', '|');
+  }
+
+  /**
+   * Check if expression contains allowed glob characters
+   * @param expr expression
+   * @returns true if expression contains allowed glob characters ('*', '|')
+   */
+  static hasGlob(expr: string): boolean {
+    return _.some([...expr], (char) => {
+      return _.includes(OpenNMSGlob.globExpressions, char);
+    });
+  }
+}
