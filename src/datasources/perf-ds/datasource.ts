@@ -279,9 +279,9 @@ export class OpenNMSDatasource {
       request = Promise.all(self.extendedQuery(query))
         .then((sources) => {
           _.each(sources, (source) => {
-            if (source.length > 0)
+            if (source.length > 0){
               query.source = query.source.concat(source);
-
+            }
           })
           return query;
         })
@@ -344,11 +344,11 @@ export class OpenNMSDatasource {
    * @param query query created from buildQuery 
    * @returns 
    */
-  extendedQuery(query: Query): Promise<any>[] {
+  extendedQuery(query: Query): Array<Promise<any>> {
     let self = this;
     let sourceClone = lodashClonedeep(query.source);
 
-    const promises: Promise<any>[] = [];
+    const promises: Array<Promise<any>> = [];
     const globSources = self.getGlobExpressionsOnly(sourceClone);
 
 
@@ -386,7 +386,7 @@ export class OpenNMSDatasource {
       });
   }
 
-  generateMatchingSourcesForMatchingProperties(matchingProps: Map<string, string>[], source: any, propsToMatch: Map<AllowedProperties, string>): any[] {
+  generateMatchingSourcesForMatchingProperties(matchingProps: Array<Map<string, string>>, source: any, propsToMatch: Map<AllowedProperties, string>): any[] {
     const result: any[] = [];
     //iterate attributes matches
     _.each(matchingProps, (pairs) => {
@@ -417,21 +417,21 @@ export class OpenNMSDatasource {
    * @param nodeId 
    * @returns 
    */
-  getMatchingProperties(response: any, properties: Map<AllowedProperties, string>, nodeId: string): Map<string, string>[] {
+  getMatchingProperties(response: any, properties: Map<AllowedProperties, string>, nodeId: string): Array<Map<string, string>> {
 
     //check if resource id matches
-    const result: Map<string, string>[] = [];
+    const result: Array<Map<string, string>> = [];
     if (response.id && response.hasOwnProperty('rrdGraphAttributes')) {
       const resourceId = OpenNMSDatasource.getResourceId(response.id);
 
       const resourceIdPattern = OpenNMSDatasource.getResourceId(properties.get(AllowedProperties.ResourceId));
-      if (!resourceIdPattern) return result;
+      if (!resourceIdPattern) { return result; }
       const regexResourceId = new RegExp(resourceIdPattern);
-      if (!regexResourceId.test(resourceId)) return result;
+      if (!regexResourceId.test(resourceId)) { return result; }
 
       _.forOwn(response.rrdGraphAttributes, (obj, id) => {
         const attributePattern = properties.get(AllowedProperties.Attribute);
-        if (!attributePattern) return;
+        if (!attributePattern)  { return; }
         const regex = new RegExp(attributePattern);
         if (regex.test(id)) {
           const match: Map<string, string> = new Map<string, string>();
@@ -492,10 +492,12 @@ export class OpenNMSDatasource {
   getGlobQueries(source: any): Map<AllowedProperties, string> {
     const props: Map<AllowedProperties, string> = new Map<AllowedProperties, string>();
     _.forIn(AllowedProperties, (value, key) => {
-      if (value === AllowedProperties.ResourceId)
+      if (value === AllowedProperties.ResourceId){
         props.set(value, OpenNMSGlob.getGlobAsRegexPattern(OpenNMSDatasource.getResourceId(source[value])));
-      else
-        props.set(value, OpenNMSGlob.getGlobAsRegexPattern(source[value]))
+      }
+      else {
+        props.set(value, OpenNMSGlob.getGlobAsRegexPattern(source[value]));
+      }
     });
     return props;
   }
@@ -507,9 +509,10 @@ export class OpenNMSDatasource {
    */
   static getNodeId(resource): string {
     const matches = resource.match(/node(Source)?\[(.*)?\]\..*/);
-    if (matches && matches.length == 3)
+    if (matches && matches.length === 3){
       return matches[2];
-    else return resource;
+    }
+    else { return resource; }
   }
 
   /**
@@ -519,9 +522,10 @@ export class OpenNMSDatasource {
    */
   static getResourceId(resource): string {
     const matches = resource.match(/node(Source)?\[.*?\]\.(.*)/);
-    if (matches && matches.length == 3)
+    if (matches && matches.length === 3){
       return matches[2];
-    else return resource;
+    }
+    else { return resource; }
   }
 
   // Used by template queries
