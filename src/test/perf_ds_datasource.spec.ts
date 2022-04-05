@@ -3,6 +3,7 @@ const warn = console.warn;
 console.warn = () => {};
 
 import { Datasource } from '../datasources/perf-ds/module';
+import { AllowedProperties } from '../datasources/perf-ds/datasource';
 
 console.warn = warn;
 
