@@ -206,9 +206,9 @@ export function containsVariable(...args) {
   const isMatchingVariable =
     matches !== null
       ? matches.find(match => {
-        const varMatch = variableRegexExec(match);
-        return varMatch !== null && varMatch.indexOf(variableName) > -1;
-      })
+          const varMatch = variableRegexExec(match);
+          return varMatch !== null && varMatch.indexOf(variableName) > -1;
+        })
       : false;
 
   return !!isMatchingVariable;
@@ -223,24 +223,24 @@ export function containsVariable(...args) {
  * The dropUnresolved parameter determines if an empty array is returned if the input starts with '$'.
  * The dropAll parameter determines if an empty array is returned if the input is "all".
  */
-export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
+ export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
   if (input) {
-    if (input.startsWith('{') && input.endsWith('}')) {
-      const args = input.substring(1, input.length - 1).split(',').map(s => s.trim())
-      if (dropAll && args.some(s => s === 'all')) {
-        return []
+      if (input.startsWith('{') && input.endsWith('}')) {
+          const args = input.substring(1, input.length - 1).split(',').map(s => s.trim())
+          if (dropAll && args.some(s => s === 'all')) {
+              return []
+          } else {
+              return args
+          }
+      } else if (dropUnresolved && input.startsWith('$')) {
+          return [];
+      } else if (dropAll && input === 'all') {
+          return []
       } else {
-        return args
+          return [input]
       }
-    } else if (dropUnresolved && input.startsWith('$')) {
-      return [];
-    } else if (dropAll && input === 'all') {
-      return []
-    } else {
-      return [input]
-    }
   } else {
-    return []
+      return []
   }
 }
 
@@ -259,14 +259,14 @@ export function isFirst<T>(t: T, index: number, array: T[]) {
  */
 export function processSelectionVariables(input?: string[]): string[] {
   if (input) {
-    const mapped = input.map(i => processSelectionVariable(i, true, false))
-    if (mapped.some(m => m.some(s => s === 'all'))) {
-      return []
-    } else {
-      return ([] as string[]).concat(...mapped).filter(isFirst)
-    }
+      const mapped = input.map(i => processSelectionVariable(i, true, false))
+      if (mapped.some(m => m.some(s => s === 'all'))) {
+          return []
+      } else {
+          return ([] as string[]).concat(...mapped).filter(isFirst)
+      }
   } else {
-    return []
+      return []
   }
 }
 
