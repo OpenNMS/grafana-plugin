@@ -2,6 +2,7 @@ import { FlowDatasource } from '../datasources/flow-ds/datasource';
 import {TemplateSrv} from "./template_srv";
 import {dateTimeAsMoment} from "@grafana/data";
 import {OnmsFlowSeries} from "opennms/src/model/OnmsFlowSeries";
+import {OnmsFlowTable} from "opennms/src/model/OnmsFlowTable";
 
 describe("OpenNMS_Flow_Datasource", function () {
 
