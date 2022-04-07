@@ -59,6 +59,32 @@ describe("OpenNMS_Flow_Datasource", function () {
     ]
   } as OnmsFlowSeries
 
+  let flowSummaryExample = {
+    "start": dateTimeAsMoment(1516358909932),
+    "end": dateTimeAsMoment(1516373309932),
+    "rows":
+      [
+        [
+          "app0",
+          5352721,
+          5301360,
+          3
+        ],
+        [
+          "app1",
+          3398268,
+          2939031,
+          3
+        ]    
+      ],
+    "headers": [
+      "Application",
+      "Bytes In",
+      "Bytes Out",
+      "ECN"
+    ]
+  } as OnmsFlowTable
+
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
       let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
@@ -375,6 +401,54 @@ describe("OpenNMS_Flow_Datasource", function () {
           "target": "domain (Out)"
         }
       ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("Swap Ingress/Egress response to Grafana summary", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'swapIngressEgress'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toTable(target, flowSummaryExample);
+      let expectedResponse = {
+        refId: '',
+        "columns": [
+          {
+              "text": "Application"
+          },
+          {
+              "text": "Bytes In"
+          },
+          {
+              "text": "Bytes Out"
+          },
+          {
+              "text": "ECN"
+          }
+      ],
+        "rows": [
+          [
+              "app0",              
+              5301360,
+              5352721,
+              "non-ect / ce"
+          ],
+          [
+              "app1",             
+              2939031,
+              3398268,
+              "non-ect / ce"
+          ]          
+      ],
+        "type": "table",
+      };
 
       expect(expectedResponse).toEqual(actualResponse);
       done();

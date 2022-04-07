@@ -12,6 +12,7 @@ import {
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
 import { processSelectionVariables } from 'lib/utils';
+import { swapColumns } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
 
@@ -320,6 +321,7 @@ export class FlowDatasource {
     let prefixSuffixLabelTransformer = this.prefixSuffixLabelTransformer(query)
 
     let toBits = FlowDatasource.isFunctionPresent(query, 'toBits');
+    let swapIngressEgress = FlowDatasource.isFunctionPresent(query, 'swapIngressEgress');
 
     if (toBits) {
       let inIndex = table.headers.indexOf('Bytes In');
@@ -354,6 +356,12 @@ export class FlowDatasource {
         }
         return row;
       });
+    }
+
+    if(Array.isArray(table.rows) && table.rows.length > 0 && swapIngressEgress){
+      let inIndex = table.headers.indexOf('Bytes In');
+      let outIndex = table.headers.indexOf('Bytes Out');
+      table.rows = swapColumns(table.rows, inIndex, outIndex);
     }
 
     let columns = table && table.headers ? _.map(table.headers, column => {
