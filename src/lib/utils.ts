@@ -286,7 +286,7 @@ export function swap(thisArray: any[], colIndex1: number, colIndex2: number): an
  * @param colIndex1 
  * @param colIndex2 
  */
-export function swapColumns(rows: Array<any>[], colIndex1: number, colIndex2: number): Array<any>[] {
+export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number): any[][] {
   if (rows && rows.length > 0 && colIndex1 >= 0 && colIndex2 >= 0) {
     for (var i = 0; i < rows.length; i++) {
       if (colIndex1 >= rows[i].length || colIndex2 >= rows[i].length) {
