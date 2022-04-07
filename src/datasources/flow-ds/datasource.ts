@@ -408,7 +408,7 @@ export class FlowDatasource {
 
     let start = flowSeries.start.valueOf();
     let end = flowSeries.end.valueOf();
-    let columnsWithIndex = flowSeries.columns.map((column, colIdx) => { return { column, colIdx } });
+    let columnsWithIndex = flowSeries.columns.map((column, colIdx) => { return { column, colIdx }});
     let values = flowSeries.values;
     let timestamps = flowSeries.timestamps;
     let timestampsInRange = timestamps
@@ -457,10 +457,10 @@ export class FlowDatasource {
     } else {
 
       return columnsWithIndex
-        .filter(({ column }) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
-        .map(({ column, colIdx }) => {
-          const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
-          const inOutLabelTransformer: (s: string) => string = s => s + (column.ingress ? ' (In)' : ' (Out)')
+          .filter(({column}) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+          .map(({column, colIdx}) => {
+            const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1
+            const inOutLabelTransformer: (s: string) => string = s => s + (column.ingress ? ' (In)' : ' (Out)')
 
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
