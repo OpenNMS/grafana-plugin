@@ -11,8 +11,7 @@ import {
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
-import { processSelectionVariables } from 'lib/utils';
-import { swapColumns } from 'lib/utils';
+import { processSelectionVariables, swapColumns } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
 
@@ -456,8 +455,8 @@ export class FlowDatasource {
           const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
           const inOutLabelTransformer: (s: string) => string = s => {
             if (swapIngressEgress)
-              return s + (column.ingress ? ' (Out)' : ' (In)');
-            else return s + (column.ingress ? ' (In)' : ' (Out)');
+              { return s + (column.ingress ? ' (Out)' : ' (In)'); }
+            else { return s + (column.ingress ? ' (In)' : ' (Out)'); }
           };
 
             const datapoints = timestampsInRange

@@ -270,8 +270,11 @@ export function processSelectionVariables(input?: string[]): string[] {
   }
 }
 
-
-export function swap(thisArray: Array<any>, colIndex1: any, colIndex2: any): Array<any> {
+/**
+ * Swap items in an array
+ * @param thisArray 
+ */
+export function swap(thisArray: any[], colIndex1: number, colIndex2: number): any[] {
   const tmp = thisArray[colIndex1];
   thisArray[colIndex1] = thisArray[colIndex2];
   thisArray[colIndex2] = tmp;
@@ -283,7 +286,7 @@ export function swap(thisArray: Array<any>, colIndex1: any, colIndex2: any): Arr
  * @param colIndex1 
  * @param colIndex2 
  */
-export function swapColumns(rows: Array<Array<any>>, colIndex1: Number, colIndex2: Number): Array<any> {
+export function swapColumns(rows: Array<any>[], colIndex1: number, colIndex2: number): Array<any>[] {
   if (rows && rows.length > 0 && colIndex1 >= 0 && colIndex2 >= 0) {
     for (var i = 0; i < rows.length; i++) {
       if (colIndex1 >= rows[i].length || colIndex2 >= rows[i].length) {
