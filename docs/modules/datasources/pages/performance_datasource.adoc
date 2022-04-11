@@ -88,6 +88,11 @@ The results will appear as a drop-down list at the top of the dashboard.
 You can then select from the list to change the data the panel displays.
 See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
 
+=== nodeLocation()
+
+The `nodeLocation()` query will return a list of all available nodes locations. 
+This variable is meant to be used together with nodeFilter, in order to reduce the number of nodes displayed by location.
+
 === nodeFilter(<filterQuery>)
 
 The `nodeFilter()` query will return a list of nodes which match the given filter expression.
