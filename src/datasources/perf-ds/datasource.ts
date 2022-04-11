@@ -328,7 +328,9 @@ export class OpenNMSDatasource {
       const functions = FunctionFormatter.findFunctions(interpolatedQuery);
 
       for (const func of functions) {
-        if (func.name === 'nodeFilter') {
+        if(func.name === 'nodeLocation'){
+          return this.metricFindNodesLocation.apply(this, func.arguments);
+        } else if (func.name === 'nodeFilter') {
           return this.metricFindNodeFilterQuery.apply(this, func.arguments);
         } else if (func.name === 'nodeResources') {
           return this.metricFindNodeResourceQuery.apply(this, func.arguments);
@@ -339,6 +341,29 @@ export class OpenNMSDatasource {
     }
 
     return Promise.resolve([]);
+  }
+
+  metricFindNodesLocation(searchLimit) {
+    return this.doOpenNMSRequest({
+      url: '/rest/nodes',
+      method: 'GET',
+      params: {
+        limit: searchLimit ? searchLimit : 0        
+      }
+    })
+    .then(function(response){
+      if (response.data.count > response.data.totalCount) {
+        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
+      }
+      var results = [] as any[];
+      _.each(response.data.node, function (node) {
+        var nodeLocation = node.location.toString();
+        if(nodeLocation){
+        results.push({text: nodeLocation, value: nodeLocation, expandable: true});
+        }
+      });
+      return results;
+    });
   }
 
   metricFindNodeFilterQuery(query) {
