@@ -441,7 +441,7 @@ export class FlowDatasource {
                       // get the values of those columns ...
                       .map(({colIdx}) => {
                         const v = values[colIdx][timestampIdx]
-                       return isNaN(Number(v)) && nanToZero ? 0 : v
+                       return isNaN(Number(v)) && nanToZero ? 0 : v 
                       })
                       // ... and sum them up
                       .reduce((previous, current) => previous + (current ? current : 0), 0)
