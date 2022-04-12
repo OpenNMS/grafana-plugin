@@ -328,8 +328,8 @@ export class OpenNMSDatasource {
       const functions = FunctionFormatter.findFunctions(interpolatedQuery);
 
       for (const func of functions) {
-        if(func.name === 'nodeLocation'){
-          return this.metricFindNodesLocation.apply(this, func.arguments);
+        if(func.name === 'locations'){
+          return this.metricFindLocations.apply(this, func.arguments);
         } else if (func.name === 'nodeFilter') {
           return this.metricFindNodeFilterQuery.apply(this, func.arguments);
         } else if (func.name === 'nodeResources') {
@@ -343,9 +343,9 @@ export class OpenNMSDatasource {
     return Promise.resolve([]);
   }
 
-  metricFindNodesLocation(searchLimit) {
+  metricFindLocations(searchLimit) {
     return this.doOpenNMSRequest({
-      url: '/rest/nodes',
+      url: '/rest/monitoringLocations',
       method: 'GET',
       params: {
         limit: searchLimit ? searchLimit : 0        
@@ -356,10 +356,11 @@ export class OpenNMSDatasource {
         console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
       }
       var results = [] as any[];
-      _.each(response.data.node, function (node) {
-        var nodeLocation = node.location.toString();
-        if(nodeLocation){
-        results.push({text: nodeLocation, value: nodeLocation, expandable: true});
+      _.each(response.data.location, function (location) {
+        let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
+        let exist = _.find(results, (o)=> o.text === nodeLocation);
+        if(nodeLocation && !exist){
+          results.push({text: nodeLocation, value: nodeLocation, expandable: true});
         }
       });
       return results;
