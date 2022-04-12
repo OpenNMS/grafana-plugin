@@ -91,7 +91,7 @@ See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Te
 === nodeLocation()
 
 The `nodeLocation()` query returns a list of all available node locations. 
-This variable is meant to be used together with nodeFilter, in order to reduce the number of nodes displayed by location.
+Use this variable with nodeFilter to reduce the number of nodes displayed by location.
 
 === nodeFilter(<filterQuery>)
 
