@@ -40,6 +40,7 @@ The result can be visualized in a table.
 Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to adjust the visualized table as needed.
 
 [options="header, autowidth"]
+[cols="1,2"]
 |===
 | Name
 | Description
