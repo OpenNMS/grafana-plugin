@@ -269,6 +269,7 @@ export function processSelectionVariables(input?: string[]): string[] {
       return []
   }
 }
+
 export class SimpleOpenNMSRequest {
   backendSrv: any;
   timeout: number = 10000;
@@ -324,3 +325,32 @@ export class SimpleOpenNMSRequest {
     });
   }
 }
+
+/**
+ * Swap items in an array
+ * @param thisArray 
+ */
+export function swap(thisArray: any[], colIndex1: number, colIndex2: number): any[] {
+  const tmp = thisArray[colIndex1];
+  thisArray[colIndex1] = thisArray[colIndex2];
+  thisArray[colIndex2] = tmp;
+  return thisArray;
+}
+
+/**
+ * Swap table rows column values
+ * @param colIndex1 
+ * @param colIndex2 
+ */
+export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number): any[][] {
+  if (rows && rows.length > 0 && colIndex1 >= 0 && colIndex2 >= 0) {
+    for (var i = 0; i < rows.length; i++) {
+      if (colIndex1 >= rows[i].length || colIndex2 >= rows[i].length) {
+        throw new Error('Index out of bounds');
+      }
+      rows[i] = swap(rows[i], colIndex1, colIndex2);
+    }
+  }
+  return rows;
+}
+

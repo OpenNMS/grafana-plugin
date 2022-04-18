@@ -2,62 +2,94 @@ import { FlowDatasource } from '../datasources/flow-ds/datasource';
 import {TemplateSrv} from "./template_srv";
 import {dateTimeAsMoment} from "@grafana/data";
 import {OnmsFlowSeries} from "opennms/src/model/OnmsFlowSeries";
+import { OnmsFlowTable } from "opennms/src/model/OnmsFlowTable";
 
 describe("OpenNMS_Flow_Datasource", function () {
 
   const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null, new TemplateSrv())
 
-  let flowSeriesExample = {
-    "start": dateTimeAsMoment(1516358909932),
-    "end": dateTimeAsMoment(1516373309932),
-    "columns": [
-      {
-        "label": "domain",
-        "ingress": true
-      },
-      {
-        "label": "domain",
-        "ingress": false
-      }
-    ],
-    "timestamps": [
-      1516358909932
-    ],
-    "values": [
-      [
-        1
-      ],
-      [
-        2
-      ]
-    ]
-  } as OnmsFlowSeries
+  let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample;
 
-  let flowSeriesExampleNaN = {
-    "start": dateTimeAsMoment(1516358909932),
-    "end": dateTimeAsMoment(1516373309932),
-    "columns": [
-      {
-        "label": "domain",
-        "ingress": true
-      },
-      {
-        "label": "domain",
-        "ingress": false
-      }
-    ],
-    "timestamps": [
-      1516358909932
-    ],
-    "values": [
-      [
-        "NaN"
+  beforeEach(() => {
+    
+    flowSeriesExample = {
+      "start": dateTimeAsMoment(1516358909932),
+      "end": dateTimeAsMoment(1516373309932),
+      "columns": [
+        {
+          "label": "domain",
+          "ingress": true
+        },
+        {
+          "label": "domain",
+          "ingress": false
+        }
       ],
-      [
-        2
+      "timestamps": [
+        1516358909932
+      ],
+      "values": [
+        [
+          1
+        ],
+        [
+          2
+        ]
       ]
-    ]
-  } as OnmsFlowSeries
+    } as OnmsFlowSeries
+
+    flowSeriesExampleNaN = {
+      "start": dateTimeAsMoment(1516358909932),
+      "end": dateTimeAsMoment(1516373309932),
+      "columns": [
+        {
+          "label": "domain",
+          "ingress": true
+        },
+        {
+          "label": "domain",
+          "ingress": false
+        }
+      ],
+      "timestamps": [
+        1516358909932
+      ],
+      "values": [
+        [
+          "NaN"
+        ],
+        [
+          2
+        ]
+      ]
+    } as OnmsFlowSeries
+
+    flowSummaryExample = {
+      "start": dateTimeAsMoment(1516358909932),
+      "end": dateTimeAsMoment(1516373309932),
+      "rows":
+        [
+          [
+            "app0",
+            5352721,
+            5301360,
+            3
+          ],
+          [
+            "app1",
+            3398268,
+            2939031,
+            3
+          ]
+        ],
+      "headers": [
+        "Application",
+        "Bytes In",
+        "Bytes Out",
+        "ECN"
+      ]
+    } as OnmsFlowTable
+  });
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
@@ -308,6 +340,121 @@ describe("OpenNMS_Flow_Datasource", function () {
           "target": "domain (Out)"
         }
       ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("Swap Ingress/Egress labels in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'swapIngressEgress'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              1,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("No Swap Ingress/Egress labels in response to Grafana series", function (done) {
+      let target = {
+        metric: '',
+        refId: ''
+      };
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExample);
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              1,
+              1516358909932
+            ]
+          ],
+          "target": "domain (In)"
+        },
+        {
+          "datapoints": [
+            [
+              2,
+              1516358909932
+            ]
+          ],
+          "target": "domain (Out)"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("Swap Ingress/Egress response to Grafana summary", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'swapIngressEgress'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toTable(target, flowSummaryExample);
+      let expectedResponse = {
+        refId: '',
+        "columns": [
+          {
+            "text": "Application"
+          },
+          {
+            "text": "Bytes In"
+          },
+          {
+            "text": "Bytes Out"
+          },
+          {
+            "text": "ECN"
+          }
+        ],
+        "rows": [
+          [
+            "app0",
+            5301360,
+            5352721,
+            "non-ect / ce"
+          ],
+          [
+            "app1",
+            2939031,
+            3398268,
+            "non-ect / ce"
+          ]
+        ],
+        "type": "table",
+      };
 
       expect(expectedResponse).toEqual(actualResponse);
       done();
