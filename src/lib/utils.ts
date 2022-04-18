@@ -269,3 +269,58 @@ export function processSelectionVariables(input?: string[]): string[] {
       return []
   }
 }
+export class SimpleOpenNMSRequest {
+  backendSrv: any;
+  timeout: number = 10000;
+  url?: string;
+  withCredentials: boolean = false;
+  basicAuth?: string;
+  searchLimit = 25;
+
+  constructor(backendSrv, url) {
+    this.backendSrv = backendSrv;
+    this.url = url;
+  }
+
+  doOpenNMSRequest(options: any): Promise<any> {
+
+    if (this.basicAuth || this.withCredentials) {
+      options.withCredentials = true;
+    }
+    if (this.basicAuth) {
+      options.headers = options.headers || {};
+      options.headers.Authorization = this.basicAuth;
+    }
+
+    options.url = this.url + options.url;
+    if (this.timeout) {
+      options.timeout = this.timeout;
+    }
+
+    return this.backendSrv.datasourceRequest(options);
+  }
+
+  getLocations(searchLimit: number = 0){
+    return this.doOpenNMSRequest({
+      url: '/rest/monitoringLocations',
+      method: 'GET',
+      params: {
+        limit: searchLimit       
+      }
+    })
+    .then(function(response){
+      if (response.data.count > response.data.totalCount) {
+        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
+      }
+      var results = [] as any[];
+      _.each(response.data.location, function (location) {
+        let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
+        let exist = _.find(results, (o)=> o.text === nodeLocation);
+        if(nodeLocation && !exist){
+          results.push({text: nodeLocation, value: nodeLocation, expandable: true});
+        }
+      });
+      return results;
+    });
+  }
+}

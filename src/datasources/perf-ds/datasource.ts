@@ -6,6 +6,7 @@ import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
 import {ClientDelegate} from '../../lib/client_delegate'
 import {Client, ServerMetadata} from 'opennms'
+import {SimpleOpenNMSRequest} from '../../lib/utils'
 
 interface Query {
   start: number;
@@ -45,6 +46,7 @@ export class OpenNMSDatasource {
   searchLimit = 25;
   target?: any;
   clientDelegate: ClientDelegate;
+  simpleRequest: SimpleOpenNMSRequest;
 
   /** @ngInject */
   constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any) {
@@ -52,6 +54,7 @@ export class OpenNMSDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.clientDelegate = new ClientDelegate(instanceSettings, backendSrv);
+    this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
 
     // This variable is referenced by the calculateInterval() method in metrics_panel_ctrl.ts
     this.interval = (instanceSettings.jsonData || {}).timeInterval;
@@ -61,22 +64,7 @@ export class OpenNMSDatasource {
     }
   }
 
-  doOpenNMSRequest(options: any): Promise<any> {
-    if (this.basicAuth || this.withCredentials) {
-      options.withCredentials = true;
-    }
-    if (this.basicAuth) {
-      options.headers = options.headers || {};
-      options.headers.Authorization = this.basicAuth;
-    }
 
-    options.url = this.url + options.url;
-    if (this.timeout) {
-      options.timeout = this.timeout;
-    }
-
-    return this.backendSrv.datasourceRequest(options);
-  }
 
   decorateError(err: any) {
     let ret = err;
@@ -126,7 +114,7 @@ export class OpenNMSDatasource {
   }
 
   queryStringPropertiesOfNode(nodeId: string, queries: DefinedStringPropertyQuery[]): Promise<DataQueryResponseData[]> {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest( {
       url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
       method: 'GET'
     }).then(response => {
@@ -139,7 +127,7 @@ export class OpenNMSDatasource {
   }
 
   queryAllStringProperties(selection: { nodes: Set<string>, nodeSubresources: Set<string>, stringProperties: Set<string> }): Promise<DataQueryResponseData[]> {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/select',
       method: 'GET',
       params: {
@@ -265,7 +253,7 @@ export class OpenNMSDatasource {
     // Issue the request
     var request;
     if (!Array.isArray(query) && query.source.length > 0) {
-      request = this.doOpenNMSRequest({
+      request = this.simpleRequest.doOpenNMSRequest({
         url: '/rest/measurements',
         data: query,
         method: 'POST',
@@ -298,7 +286,7 @@ export class OpenNMSDatasource {
 
   // Used for testing the connection from the datasource configuration page
   testDatasource() {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/info',
       method: 'GET'
     }).then(response => {
@@ -343,32 +331,12 @@ export class OpenNMSDatasource {
     return Promise.resolve([]);
   }
 
-  metricFindLocations(searchLimit) {
-    return this.doOpenNMSRequest({
-      url: '/rest/monitoringLocations',
-      method: 'GET',
-      params: {
-        limit: searchLimit ? searchLimit : 0        
-      }
-    })
-    .then(function(response){
-      if (response.data.count > response.data.totalCount) {
-        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-      }
-      var results = [] as any[];
-      _.each(response.data.location, function (location) {
-        let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
-        let exist = _.find(results, (o)=> o.text === nodeLocation);
-        if(nodeLocation && !exist){
-          results.push({text: nodeLocation, value: nodeLocation, expandable: true});
-        }
-      });
-      return results;
-    });
+  metricFindLocations() {
+    return this.simpleRequest.getLocations();
   }
 
   metricFindNodeFilterQuery(query) {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/nodes',
       method: 'GET',
       params: {
@@ -399,7 +367,7 @@ export class OpenNMSDatasource {
     if (options.length > 1) {
       resourceType = options[1];
     }
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
       method: 'GET',
       params: {
@@ -691,7 +659,7 @@ export class OpenNMSDatasource {
   }
 
   searchForNodes(query, offset) {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/nodes',
       method: 'GET',
       params: {
@@ -713,7 +681,7 @@ export class OpenNMSDatasource {
   getResourcesWithAttributesForNode(nodeId) {
     var interpolatedNodeId = _.first(this.interpolateValue(nodeId));
 
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
       method: 'GET',
       params: {
@@ -725,7 +693,7 @@ export class OpenNMSDatasource {
   }
 
   getAvailableFilters() {
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/measurements/filters',
       method: 'GET'
     });
@@ -736,7 +704,7 @@ export class OpenNMSDatasource {
         interpolatedResourceId = _.first(this.interpolateValue(resourceId));
     var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
       method: 'GET',
       params: {
@@ -761,7 +729,7 @@ export class OpenNMSDatasource {
         interpolatedResourceId = _.first(this.interpolateValue(resourceId));
     var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
-    return this.doOpenNMSRequest({
+    return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
       method: 'GET',
       params: {
@@ -770,7 +738,7 @@ export class OpenNMSDatasource {
     }).then(function (results) {
       query = query.toLowerCase();
       var stringProperties = [] as any[];
-      _.each(results.data.stringPropertyAttributes, function (value, key) {
+      _.each(results.data.stringPßropertyAttributes, function (value, key) {
         if (key.toLowerCase().indexOf(query) >= 0) {
           stringProperties.push(key);
         }
