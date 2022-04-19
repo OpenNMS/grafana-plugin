@@ -274,7 +274,7 @@ export class OpenNMSGlob {
   private static globExpressions: string[] = ['*', '|'];
 
   static getGlobAsRegexPattern(expr: string) {
-    return _.escapeRegExp(expr).replace('\\*', '.*').replace('\\|', '|');
+    return _.escapeRegExp(expr).replace(/\\\*/ig, '.*').replace(/\\\|/ig, '|');
   }
 
   /**
