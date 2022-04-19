@@ -288,6 +288,7 @@ export class OpenNMSGlob {
       return _.includes(OpenNMSGlob.globExpressions, char);
     });
   }
+}
 
 /**
  * Swap items in an array
