@@ -8,7 +8,7 @@ describe("OpenNMS_Flow_Datasource", function () {
 
   const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null, new TemplateSrv())
 
-  let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample;
+  let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample, exporterNodes;
 
   beforeEach(() => {
     
@@ -89,11 +89,29 @@ describe("OpenNMS_Flow_Datasource", function () {
         "ECN"
       ]
     } as OnmsFlowTable
+
+    exporterNodes = [
+      {
+        "text": "NYC-Cisco-ASR100-Core-Router",
+        "value": 1,
+        "expandable": true
+      },
+      {
+        "text": "NYC-Cisco-ASR100-Core-Router-MIMIC27-172.16.33.101",
+        "value": 23,
+        "expandable": true
+      },
+      {
+        "text": "LON-Juniper-T4000-Core-Router",
+        "value": 2,
+        "expandable": true
+      }
+    ]
   });
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
+      let actualResponse = flowDatasource.toSeries({ metric: '', refId: '' }, flowSeriesExample);
       let expectedResponse = [
         {
           "datapoints": [
@@ -457,6 +475,50 @@ describe("OpenNMS_Flow_Datasource", function () {
       };
 
       expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("Filter exporter nodes by location", function (done) {
+      flowDatasource.client.getNode = (nodeId: any) => { 
+        let location = "Default"
+        if(nodeId > 2 ){
+          location = "Unknown";
+        }
+        return Promise.resolve(
+        {
+          "id": 1,
+          "label": "localhost",
+          "labelSource": {},
+          "foreignSource": "selfmonitor",
+          "foreignId": "1",
+          "location": location,
+          "createTime": "",
+          "type": {},
+          "lastCapsdPoll": "",
+          "snmpInterfaces": [],
+          "ipInterfaces": [],
+          "categories": [],
+          "assets": {}
+      }); };
+
+      let actualResponse = flowDatasource.getFilteredNodes(exporterNodes, "location='Default'");
+      let expectedResponse = [
+        {
+          "text": "NYC-Cisco-ASR100-Core-Router",
+          "value": 1,
+          "expandable": true
+        },
+        {
+          "text": "LON-Juniper-T4000-Core-Router",
+          "value": 2,
+          "expandable": true
+        }       
+      ];
+      actualResponse.then(response => { 
+          expect(response.length).toEqual(2);
+          expect(response).toEqual(expectedResponse); 
+        });
+      
       done();
     });
 

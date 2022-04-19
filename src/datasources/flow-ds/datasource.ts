@@ -11,7 +11,7 @@ import {
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
-import { processSelectionVariables, swapColumns } from 'lib/utils';
+import { processSelectionVariables, swapColumns, SimpleOpenNMSRequest } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
 
@@ -24,6 +24,7 @@ export class FlowDatasource {
   url?: string;
   name?: string;
   client: ClientDelegate;
+  simpleRequest: SimpleOpenNMSRequest;
 
   /** @ngInject */
   constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any) {
@@ -31,6 +32,7 @@ export class FlowDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.client = new ClientDelegate(instanceSettings, backendSrv);
+    this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
   }
 
   query(options: DataQueryRequest<FlowDataQuery>): Promise<DataQueryResponse> {
@@ -242,13 +244,20 @@ export class FlowDatasource {
     }
     query = this.templateSrv.replace(query);
 
+    let locations = /locations\((.*)\)/;
     let exporterNodesRegex = /exporterNodesWithFlows\((.*)\)/;
     let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/; // just pick the first arg and ignore anything else
     let dscpOnExporterNodeAndInterfaceRegex = /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/;
 
+    let locationsQuery = query.match(locations);
+    if (locationsQuery) {
+      return this.metricFindLocations();
+    }
+
     let exporterNodesQuery = query.match(exporterNodesRegex);
     if (exporterNodesQuery) {
-      return this.metricFindExporterNodes();
+      let exporterNodesQueryFilter = exporterNodesQuery.length > 1 ? exporterNodesQuery[1] : null;
+      return this.metricFindExporterNodes(query, exporterNodesQueryFilter);
     }
 
     let interfacesOnExporterNodeQuery = query.match(interfacesOnExporterNodeRegex);
@@ -269,13 +278,18 @@ export class FlowDatasource {
     return Promise.resolve([]);
   }
 
-  metricFindExporterNodes(query?: any) {
+  metricFindLocations() {
+    return this.simpleRequest.getLocations();
+  }
+
+  metricFindExporterNodes(query?: any, filter?: string) {
+    let self = this;
     return this.client.getExporters().then((exporters) => {
       let results = [] as any[];
       _.each(exporters, function (exporter) {
-        results.push({text: exporter.label, value: exporter.id, expandable: true});
+        results.push({ text: exporter.label, value: exporter.id, expandable: true });
       });
-      return results;
+      return self.getFilteredNodes(results, filter);
     });
   }
 
@@ -527,4 +541,28 @@ export class FlowDatasource {
     // Return the parameter value, and perform any required template variable substitutions
     return returnFuncs;
   }
+
+  getFilteredNodes(exporterNodes?: any[], filter?: string): Promise<any> {
+    let promises: Promise<any>[] = [];
+    let propValue = filter ? filter.split('=') : null;
+    if (propValue && propValue.length === 2) {
+      let propertyKey = propValue[0].trim();
+      let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+
+      _.each(exporterNodes, (exportedNode) => {
+        let promise = this.client.getNode(exportedNode.value)
+          .then(n => {
+            let p = n[propertyKey];
+            if (p === propertyValue) {
+              return exportedNode;
+            }
+          });
+        promises.push(promise);
+      });
+      return Promise.all(promises).then(results => {
+        return results.filter(result => result)
+      });
+    } else return Promise.resolve(exporterNodes);
+  }
+
 }
