@@ -543,7 +543,7 @@ export class FlowDatasource {
   }
 
   getFilteredNodes(exporterNodes?: any[], filter?: string): Promise<any> {
-    let promises: Promise<any>[] = [];
+    let promises: Array<Promise<any>> = [];
     let propValue = filter ? filter.split('=') : null;
     if (propValue && propValue.length === 2) {
       let propertyKey = propValue[0].trim();
@@ -562,7 +562,7 @@ export class FlowDatasource {
       return Promise.all(promises).then(results => {
         return results.filter(result => result)
       });
-    } else return Promise.resolve(exporterNodes);
+    } else { return Promise.resolve(exporterNodes); }
   }
 
 }

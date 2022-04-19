@@ -329,7 +329,7 @@ export class SimpleOpenNMSRequest {
     return this.backendSrv.datasourceRequest(options);
   }
 
-  getLocations(searchLimit: number = 0){
+  getLocations(searchLimit = 0){
     return this.doOpenNMSRequest({
       url: '/rest/monitoringLocations',
       method: 'GET',
