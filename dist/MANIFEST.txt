@@ -10,7 +10,7 @@ Hash: SHA512
   "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "8.0.0-SNAPSHOT",
-  "time": 1649790172312,
+  "time": 1650469162934,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96be1edcd4712b8d8240c7c84a0cf350f82b98f1fb6248d9e38c6624a87b8668",
@@ -140,10 +140,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmJVzNwAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5x1EAgkBfVTdCKypdVFGhscw+QmATr9/F4MxCkp5kN+b+NJ8hMuyeJam
-CtS/JH1SUaVulu43TR8Qnhzxef2ZTNk5gH9CtsECCMkcigFWvd58Pol2/TLJ
-eSLIiNCee8HjUdbgXF/STRVRqoPaPqyIGqce7YcOy/c5RS0KIWTOotCINJQc
-SnNqRlRV
-=tzE6
+wrcEARMKAAYFAmJgKSsAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm50TwAgjca50vVUEFvfomEez+1rBXNlAoKRQ7SO0lZ5+5FyZI34wcHZY0
+hTlnRs2i2l4bqCVptYONFLSwHwf1Dxg9fpLwWQIIubOOJu82o96MmljTrmwa
+PAfItiEMLb4Cl40qgP/x/1roEGD+ymkyHcbn4tELoOWCTQlPhPiaTR69LNS0
+zl5CB+o=
+=+sis
 -----END PGP SIGNATURE-----
