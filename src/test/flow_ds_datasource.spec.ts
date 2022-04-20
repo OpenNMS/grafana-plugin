@@ -111,7 +111,7 @@ describe("OpenNMS_Flow_Datasource", function () {
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({ metric: '', refId: '' }, flowSeriesExample);
+      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
       let expectedResponse = [
         {
           "datapoints": [
