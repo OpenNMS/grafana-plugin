@@ -287,7 +287,7 @@ export class FlowDatasource {
     return this.client.getExporters().then((exporters) => {
       let results = [] as any[];
       _.each(exporters, function (exporter) {
-        results.push({ text: exporter.label, value: exporter.id, expandable: true });
+        results.push({text: exporter.label, value: exporter.id, expandable: true});
       });
       return self.getFilteredNodes(results, filter);
     });
