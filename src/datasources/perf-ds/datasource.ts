@@ -336,27 +336,7 @@ export class OpenNMSDatasource {
   }
 
   metricFindNodeFilterQuery(query) {
-    return this.simpleRequest.doOpenNMSRequest({
-      url: '/rest/nodes',
-      method: 'GET',
-      params: {
-        filterRule: query,
-        limit: 0
-      }
-    }).then(function (response) {
-      if (response.data.count > response.data.totalCount) {
-        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-      }
-      var results = [] as any[];
-      _.each(response.data.node, function (node) {
-        var nodeCriteria = node.id.toString();
-        if (node.foreignId !== null && node.foreignSource !== null) {
-          nodeCriteria = node.foreignSource + ":" + node.foreignId;
-        }
-        results.push({text: node.label, value: nodeCriteria, expandable: true});
-      });
-      return results;
-    });
+    return this.simpleRequest.getNodesByFilter(query);
   }
 
   metricFindNodeResourceQuery(query, ...options) {
