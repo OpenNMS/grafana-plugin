@@ -11,6 +11,7 @@ import NodeEntity from './NodeEntity';
 import OutageEntity from './OutageEntity';
 import SnmpInterfaceEntity from './SnmpInterfaceEntity';
 import Entity from "./Entity";
+import { SimpleOpenNMSRequest } from "lib/utils";
 
 const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
@@ -73,6 +74,7 @@ export class OpenNMSEntityDatasource {
     type?: string;
     opennmsClient: ClientDelegate;
     user?: string;
+    simpleRequest: SimpleOpenNMSRequest;
 
     /** @ngInject */
   constructor(instanceSettings: any, public backendSrv: any, public templateSrv: any, public contextSrv: any, public dashboardSrv: any) {
@@ -80,6 +82,7 @@ export class OpenNMSEntityDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.opennmsClient = new ClientDelegate(instanceSettings, backendSrv);
+    this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
 
     // When enabled in the datasource, the grafana user should be used instead of the datasource username on
     // supported operations
@@ -316,6 +319,11 @@ export class OpenNMSEntityDatasource {
   metricFindQuery(query, optionalOptions) {
     const options = optionalOptions || {};
 
+    const locations = query ? query.match(/locations\(.*\)/i) : null;
+    if(locations){
+        return this.metricFindLocations();
+    }
+
     const entity = options.entityType ? getEntity(options.entityType, this.opennmsClient, this) : this._getQueryEntity({ query: query });
 
     if (!entity) {
@@ -360,8 +368,9 @@ export class OpenNMSEntityDatasource {
             e = new OutageEntity(entity.client, this);
         } else if (func.name === 'snmpInterfaces') {
             e = new SnmpInterfaceEntity(entity.client, this);
-        }
-        // TODO: add nodeFilter() support (requires OpenNMS.js update)
+        } else if (func.name === 'nodeFilter') {
+            return this.metricFindNodeFilterQuery(attribute);
+        }        
     }
 
     return this.searchForValues(e, attribute).then(values => {
@@ -398,6 +407,14 @@ export class OpenNMSEntityDatasource {
                   });
               });
           });
+    }
+
+    metricFindLocations() {
+        return this.simpleRequest.getLocations();
+    }
+
+    metricFindNodeFilterQuery(query) {
+        return this.simpleRequest.getNodesByFilter(query);
     }
 
     getAlarm(alarmId) {
