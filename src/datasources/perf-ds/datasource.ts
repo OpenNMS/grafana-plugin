@@ -718,7 +718,7 @@ export class OpenNMSDatasource {
     }).then(function (results) {
       query = query.toLowerCase();
       var stringProperties = [] as any[];
-      _.each(results.data.stringPßropertyAttributes, function (value, key) {
+      _.each(results.data.stringPropertyAttributes, function (value, key) {
         if (key.toLowerCase().indexOf(query) >= 0) {
           stringProperties.push(key);
         }
