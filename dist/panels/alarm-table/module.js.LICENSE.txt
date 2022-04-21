@@ -22,10 +22,6 @@ PERFORMANCE OF THIS SOFTWARE.
 
 /*! For license information please see opennms.js.LICENSE.txt */
 
-/*! cpexcel.js (C) 2013-present SheetJS -- http://sheetjs.com */
-
-/*! cputils.js (C) 2013-present SheetJS -- http://sheetjs.com */
-
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
-/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
+/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
