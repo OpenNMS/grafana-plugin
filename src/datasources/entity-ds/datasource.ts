@@ -324,6 +324,12 @@ export class OpenNMSEntityDatasource {
         return this.metricFindLocations();
     }
 
+    const nodeFilter = query ? query.match(/nodeFilter\(([^\)]*)\)/i) : null;
+    if(nodeFilter){
+        let filterQuery = nodeFilter.length > 1 ? nodeFilter[1] : null;
+        return this.metricFindNodeFilterQuery(filterQuery);
+    }
+
     const entity = options.entityType ? getEntity(options.entityType, this.opennmsClient, this) : this._getQueryEntity({ query: query });
 
     if (!entity) {
@@ -368,8 +374,6 @@ export class OpenNMSEntityDatasource {
             e = new OutageEntity(entity.client, this);
         } else if (func.name === 'snmpInterfaces') {
             e = new SnmpInterfaceEntity(entity.client, this);
-        } else if (func.name === 'nodeFilter') {
-            return this.metricFindNodeFilterQuery(attribute);
         }        
     }
 
