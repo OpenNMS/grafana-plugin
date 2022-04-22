@@ -319,7 +319,7 @@ export class OpenNMSEntityDatasource {
   metricFindQuery(query, optionalOptions) {
     const options = optionalOptions || {};
 
-    const locations = query ? query.match(/locations\(.*\)/i) : null;
+    const locations = query ? query.match(/locations\([^\)]*\)/i) : null;
     if(locations){
         return this.metricFindLocations();
     }
