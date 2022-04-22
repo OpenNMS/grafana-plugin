@@ -48,7 +48,7 @@
     "@grafana/runtime": "^8.3.4",
     "async": "^3.2.3",
     "crypto-js": "^4.1.1",
-    "flot": "^0.8.3",
+    "flot": "^2.3.2",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.21",
     "opennms": "^2.4.1",
