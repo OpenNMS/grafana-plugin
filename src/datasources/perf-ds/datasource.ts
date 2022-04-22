@@ -5,9 +5,8 @@ import {FunctionFormatter} from '../../lib/function_formatter';
 import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
 import {ClientDelegate} from '../../lib/client_delegate'
-import {OpenNMSGlob} from '../../lib/utils'
 import {Client, ServerMetadata} from 'opennms'
-import {SimpleOpenNMSRequest} from '../../lib/utils'
+import {SimpleOpenNMSRequest,OpenNMSGlob} from '../../lib/utils'
 
 const lodashClonedeep = require('lodash.clonedeep');
 
