@@ -398,3 +398,4 @@ export class SimpleOpenNMSRequest {
     });
   }
 }
+
