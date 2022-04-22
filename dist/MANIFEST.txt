@@ -10,7 +10,7 @@ Hash: SHA512
   "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "8.0.0-SNAPSHOT",
-  "time": 1650645733037,
+  "time": 1650647552175,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96be1edcd4712b8d8240c7c84a0cf350f82b98f1fb6248d9e38c6624a87b8668",
@@ -33,9 +33,9 @@ Hash: SHA512
     "datasources/entity-ds/partials/query.options.html": "63beadc7210dc238a634e1734c55ced378c18ffd97883fa2b684b6fd90a387c1",
     "datasources/entity-ds/plugin.json": "bf4332a8eb3ca454887d0b6003968d194242207f0145b46bd01300d8d550f5b8",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
-    "datasources/flow-ds/module.js": "3d4b1e22bffa36d699cd2785d437f8da678f0248c4426271165330bdc0b791be",
+    "datasources/flow-ds/module.js": "08220288fd7e9fe51d65d72ea0cc308e331e27d0401f7439669fcfccaaebea32",
     "datasources/flow-ds/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
-    "datasources/flow-ds/module.js.map": "5838eb2e1abdfe19b6abbf635fc9e377e878398d8a3122f9a5939ad855e80f5b",
+    "datasources/flow-ds/module.js.map": "6bab47f2b9bcd4094513ea52d93357830c988c6b5b9ff63b02b28b831c1b6669",
     "datasources/flow-ds/partials/config.html": "f99ef59ab65fb2dd92290f5d79d74abb6e0d03b2a68425348b14e0fbea1b4742",
     "datasources/flow-ds/partials/query.editor.html": "d0551bb55ff0800345c2c37252daea55cc9ab6b94b2724837e8bc04e4eaede9d",
     "datasources/flow-ds/partials/query.options.html": "01570a3c97a66d192bf4986355a52b92b3ff5b45fe528d9e5849464e8b4e213d",
@@ -49,9 +49,9 @@ Hash: SHA512
     "datasources/perf-ds/css/opennms.light.js": "f557a26e30a53d7474caed56818732d3fe6f3b80b69764485b60cd8550365361",
     "datasources/perf-ds/css/opennms.light.js.map": "3cd1f4a66d037a243465788ac14dd5fb7bb73b30103b9379710e5282f019f128",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
-    "datasources/perf-ds/module.js": "56b5a275f547dfcd466ecc82a89eed7ca40d89b24cf8f5372914f599952036b0",
+    "datasources/perf-ds/module.js": "c734b59e8f02e1f8dbcc7721c28c3aca688f27f8fea7ca70b8c411d77446c32f",
     "datasources/perf-ds/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
-    "datasources/perf-ds/module.js.map": "45bbdf2611b9e4cc24165f844eed99d8a58f36e627ff07483a87de2571cf3a5d",
+    "datasources/perf-ds/module.js.map": "0737de84df9dd625dc88048f488e8c8c22636d231036d9633ac268a7d3b6ff12",
     "datasources/perf-ds/partials/config.html": "3131aa3bc6d399fac83e5019df43a60fb7b95a534e44c9beb2681db31061ae56",
     "datasources/perf-ds/partials/modal.selection.html": "afc44f6f509c370b601759fb52c57a64c82ae1c6f58ce1f1a27ae22e75e7908e",
     "datasources/perf-ds/partials/query.editor.html": "2d0a139be461c5bd09637b9db5c3c7cfbdf1bce3bfcc03e53fdd23c69e908ecd",
@@ -70,15 +70,15 @@ Hash: SHA512
     "index.html": "8bb9639467a2a64a54fb947e9606aa4f2dd8554e30f62f192236bcc7e483975b",
     "light.js": "f10a15d43091161088cd0c075e33ae89380ba2a4ebed6ffdf42f233a51f91985",
     "light.js.map": "bbd522cb2e2c05eaa7a53f5b9d4d2f27bb125dbe2c250cbb32fc9968344b621c",
-    "module.js": "02c393f75e048f1d57375ee06de6bbb1af7ccd026057f31e787b506cb5f56930",
+    "module.js": "c1a620d502289860ca19b7bc298928904d6975554a169de4eba608ddad92ad18",
     "module.js.LICENSE.txt": "0d8f66cd4afb566cb5b7e1540c68f43b939d3eba12ace290f18abc4f4cb53ed0",
-    "module.js.map": "6301a29b165fcc4056b57e3892c1266fa5a7875e9fcfc3384d2388b901edb645",
+    "module.js.map": "e3926094428ab7af946c16235c8cdac0e0dca4dc43adc00163b4e44d792622d5",
     "panels/alarm-histogram/editor.html": "d8b4b8140c5e7c7b47f179e131d359dbaf0cf2750265c78512b8a0e498acc62a",
     "panels/alarm-histogram/img/alarm-histogram.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/alarm-histogram/module.html": "1a9ab6e0edc6d187ac96436f5f04eacbf11468f9fa57ae88559b7cae65cd6665",
-    "panels/alarm-histogram/module.js": "69fce5ef2c65663ac7db967c829ad35b8b77b301fcde17d96b96d61bbdeebde1",
+    "panels/alarm-histogram/module.js": "cfcd3199b40c178a0dedac7b8c4293eeadbdf1ca6cf984ca1fc4b3b04c806db1",
     "panels/alarm-histogram/module.js.LICENSE.txt": "0d8f66cd4afb566cb5b7e1540c68f43b939d3eba12ace290f18abc4f4cb53ed0",
-    "panels/alarm-histogram/module.js.map": "ad87b0e5799eee8c60ba1b50632bea55e94dceb98865c4871859aaebbf75fb56",
+    "panels/alarm-histogram/module.js.map": "1be7c581e974fafa6b3a1ea47e005e8173db486dbd403a01458191d8a087b46f",
     "panels/alarm-histogram/plugin.json": "9147b8d6b8cfbe08a31f2936a7bdcf8b883327f4bf0452708385f829ef19efdc",
     "panels/alarm-table/alarm_details.html": "631e3d62e75ad03f4e913dbb811f25c28489926e1f29480bebb4725295e6bf60",
     "panels/alarm-table/column_options.html": "35bc4e84b197458d0bc64cbbf479fd22bd9bbaf636828929583782dc9b8b3a17",
@@ -94,9 +94,9 @@ Hash: SHA512
     "panels/alarm-table/img/alarm-table.svg": "ab33624041ca4cec42e4e3a216234c98a13a7a15d2aea4b8cc1753eea67f0576",
     "panels/alarm-table/memo_editor.html": "c92c44714927d4e727b77d5be05da91b8bc3952980e0988815a8229410767dff",
     "panels/alarm-table/module.html": "83762cf9386b16a95e78dd8e7d15f1cfd50e00d94ae8923f3187ba61289ef903",
-    "panels/alarm-table/module.js": "600824c7ee96eb1431ef165e57ab90d4d4a610ba927c779cc5861ea9cb231236",
+    "panels/alarm-table/module.js": "cb5c8b0dc4877f3a94666a4742b8e7406c981d857c9c48cffa24dcd294b80f76",
     "panels/alarm-table/module.js.LICENSE.txt": "3db70beb129b87b1fb239ad19a10e64c37be79d98dbc9f946a9f7b152b7b3aaf",
-    "panels/alarm-table/module.js.map": "6e1cc97e2628eda8eb63b463062cdc058736adb499e456151af4982a07331d4a",
+    "panels/alarm-table/module.js.map": "0d67d77936b3632c5cafa0fe8e1b34c0a1996ecf18e235fac6e55fc76ce5a03d",
     "panels/alarm-table/plugin.json": "a0df731760544b8b4e8b17e9859c001e8db2c8cf53b4df384c5e944d24cb5c0b",
     "panels/filter-panel/css/filter.dark.css": "4c867644b00e59f802bfa87947eada18686bbba248a676c09cb6a49e101dddc5",
     "panels/filter-panel/css/filter.dark.css.map": "9e0781bcafb3b980515b67ef4d5708872b1561e000031a8cd206bbf882fd6ce7",
@@ -109,9 +109,9 @@ Hash: SHA512
     "panels/filter-panel/editor.html": "03088cd6eecbf32fa6800040e46aa57bb6b784b91d1af8d12df73c5919bcdcaf",
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/filter-panel/module.html": "f12971b4fdbdbaa8e3a2430810212451314228c625dd20b30f0528dffb2880ee",
-    "panels/filter-panel/module.js": "7e22e60b52b544fb83395ac8ffeac62b149b73e6ad3b909a82ce98ca423d602c",
+    "panels/filter-panel/module.js": "52b4aa62c523f6386cffdd315c687ba54f330e53c3fe485aef9f3e7ecf1022bf",
     "panels/filter-panel/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
-    "panels/filter-panel/module.js.map": "00317aa270b84c1b346d19f500ff3d32888d93d8f5ed1b3a1cba5bce0b533981",
+    "panels/filter-panel/module.js.map": "2d1e699b7b3a27bd89e3a0c168f2a4d2d4ac5aa14fd6fad5c91cf5503426324d",
     "panels/filter-panel/plugin.json": "c0cccd066dab6bf7cea0e3212b90e74847d988300b8ef2092abf23ce5dc01c0e",
     "panels/filter-panel/valueSelectDropdown.html": "fd02c84665341da2059d7085cb19be6b99558d62f1d2aa8c93a9e0a8ca3ecb10",
     "panels/flow-histogram/css/legend.dark.css": "0ba179c497602a2442189864ef01f780fa1ca7c9dfadfb4e2e8b98247a97d864",
@@ -140,10 +140,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmJi2uUAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm59bLAgkBezE2HvM0gOeLJyFFAAU4TPrCchufTPGsR2SXmNOh2yNmOia7
-tMMNV4ghkh82pt+a/NQzyKBKuiEv5x0uCKcsIKACBjKZePI64UDaARIqs9R4
-ncbfZGQpRsN44FOiws5hq/AvBdExUs2JzRbzsaPd8MywtJ65MfRrsFcqa/YR
-8J6RWwBA
-=u24W
+wrgEARMKAAYFAmJi4gAAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm58hKAgYhjQcG2apiZtcdhUl2u9hFw/AmH0MeN7ZtKYMv5+5Ue8tDFsAh
+bFYqJg7v+rXI0O1cl7cPf9fF2jzKYM7AfjGlswIJAdGOaS7RtX/FfZk5ls81
+Y0wtHAk/hacG+ZK66+4aFZb4vbTx+kBioLhD8HWzMmjklwPBStJ7MoOj9Nlg
+t0BoN0lj
+=tNXC
 -----END PGP SIGNATURE-----
