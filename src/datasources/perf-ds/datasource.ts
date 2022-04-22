@@ -521,7 +521,7 @@ export class OpenNMSDatasource {
    * @returns Resource Id
    */
   static getResourceId(resource): string {
-    const matches = resource.match(/node(Source)?\[.*?\]\.(.*)/);
+    const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
     if (matches && matches.length === 3){
       return matches[2];
     }
