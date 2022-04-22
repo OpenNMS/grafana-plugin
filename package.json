@@ -25,13 +25,13 @@
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^27.0.0",
     "@types/jquery": "^3.5.13",
-    "commander": "^8.0.0",
+    "commander": "^9.2.0",
     "fs-extra": "^10.0.0",
     "recursive-copy": "^2.0.13",
     "rimraf": "^3.0.0",
     "specit": "^1.4.4",
     "tslib": "^2.3.1",
-    "urijs": "^1.19.7",
+    "urijs": "^1.19.11",
     "which": "^2.0.1"
   },
   "engines": {
@@ -55,7 +55,7 @@
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.5.5",
     "q": "^1.5.1",
-    "xlsx": "^0.17.5"
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "build": "grafana-toolkit plugin:build",

@@ -270,6 +270,26 @@ export function processSelectionVariables(input?: string[]): string[] {
   }
 }
 
+
+export class OpenNMSGlob {
+  private static globExpressions: string[] = ['*', '|'];
+
+  static getGlobAsRegexPattern(expr: string) {
+    return _.escapeRegExp(expr).replace(/\\\*/ig, '.*').replace(/\\\|/ig, '|');
+  }
+
+  /**
+   * Check if expression contains allowed glob characters
+   * @param expr expression
+   * @returns true if expression contains allowed glob characters ('*', '|')
+   */
+  static hasGlob(expr: string): boolean {
+    return _.some([...expr], (char) => {
+      return _.includes(OpenNMSGlob.globExpressions, char);
+    });
+  }
+}
+
 /**
  * Swap items in an array
  * @param thisArray 
@@ -296,6 +316,7 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
     }
   }
   return rows;
+
 }
 
 export class SimpleOpenNMSRequest {

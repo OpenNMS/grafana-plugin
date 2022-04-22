@@ -3,6 +3,7 @@ const warn = console.warn;
 console.warn = () => {};
 
 import { Datasource } from '../datasources/perf-ds/module';
+import { AllowedProperties } from '../datasources/perf-ds/datasource';
 
 console.warn = warn;
 
@@ -451,5 +452,178 @@ describe('OpenNMSPMDatasource', function () {
           expect(result.data[2].datapoints).toStrictEqual([[9, 0], [9, 5], [9, 10]]);
       });
 
+    it('should identify source with glob expressions only', function () {
+      let options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [
+          {
+            type: "attribute",
+            nodeId: '1',
+            resourceId: 'nodeSnmp[*]',
+            attribute: 'loadavg5|loadavg5',
+            aggregation: 'AVERAGE'
+          },
+          {
+            type: "attribute",
+            nodeId: '1',
+            resourceId: 'nodeSnmp[]',
+            attribute: 'loadavg1',
+            aggregation: 'AVERAGE'
+          }
+        ],
+        interval: '1s'
+      };
+
+      let [query,] = ctx.ds.buildQuery(options);
+      let globSources = ctx.ds.getGlobExpressionsOnly(query.source);
+      expect(query.source.length).toEqual(2);
+      expect(globSources.size).toEqual(1);
+    });
+
+    it('Get matches from response with | glob expression', function () {
+
+      let response = {
+        "id": "node[selfmonitor:1].nodeSnmp[]",
+        "label": "",
+        "name": "",
+        "link": null,
+        "typeLabel": "",
+        "parentId": "node[selfmonitor:1]",
+        "children": {
+          "totalCount": null,
+          "count": null,
+          "offset": 0,
+          "resource": []
+        },
+        "stringPropertyAttributes": {},
+        "externalValueAttributes": {},
+        "rrdGraphAttributes": {
+          "loadavg11": {
+            "name": "loadavg11",
+            "relativePath": "/path/to/loadavg11",
+            "rrdFile": "loadavg11.jrb"
+          },
+          "loadavg12": {
+            "name": "loadavg12",
+            "relativePath": "/path/to/loadavg12",
+            "rrdFile": "loadavg12.jrb"
+          },
+          "loadavg23": {
+            "name": "loadavg23",
+            "relativePath": "/path/to/loadavg23",
+            "rrdFile": "loadavg23.jrb"
+          },
+          "loadavg21": {
+            "name": "loadavg21",
+            "relativePath": "/path/to/loadavg21",
+            "rrdFile": "loadavg21.jrb"
+          }
+
+        }
+      };
+
+      let options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [
+          {
+            type: "attribute",
+            nodeId: '1',
+            resourceId: 'nodeSnmp[]',
+            attribute: 'loadavg11|loadavg12',
+            aggregation: 'AVERAGE'
+          }
+        ],
+        interval: '1s'
+      };
+
+
+      let [query,] = ctx.ds.buildQuery(options);
+
+      const propsToMatch: Map<AllowedProperties, string> = ctx.ds.getGlobQueries(query.source[0]);
+
+      const matchingProps = ctx.ds.getMatchingProperties(response, propsToMatch, '1');
+
+      const sources = ctx.ds.generateMatchingSourcesForMatchingProperties(matchingProps, query.source[0], propsToMatch);
+
+      expect(propsToMatch.size).toEqual(2);
+      expect(matchingProps.length).toEqual(2);
+      expect(sources.length).toEqual(2);
+      expect(sources[0].attribute).toEqual('loadavg11');
+      expect(sources[1].attribute).toEqual('loadavg12');
+    });
+
+    it('Get matches from response with * glob expression', function () {
+
+      let response = {
+        "id": "node[selfmonitor:1].nodeSnmp[]",
+        "label": "",
+        "name": "",
+        "link": null,
+        "typeLabel": "",
+        "parentId": "node[selfmonitor:1]",
+        "children": {
+          "totalCount": null,
+          "count": null,
+          "offset": 0,
+          "resource": []
+        },
+        "stringPropertyAttributes": {},
+        "externalValueAttributes": {},
+        "rrdGraphAttributes": {
+          "loadavg11": {
+            "name": "loadavg11",
+            "relativePath": "/path/to/loadavg11",
+            "rrdFile": "loadavg11.jrb"
+          },
+          "loadavg12": {
+            "name": "loadavg12",
+            "relativePath": "/path/to/loadavg12",
+            "rrdFile": "loadavg12.jrb"
+          },
+          "loadavg23": {
+            "name": "loadavg23",
+            "relativePath": "/path/to/loadavg23",
+            "rrdFile": "loadavg23.jrb"
+          },
+          "loadavg21": {
+            "name": "loadavg21",
+            "relativePath": "/path/to/loadavg21",
+            "rrdFile": "loadavg21.jrb"
+          }
+
+        }
+      };
+
+      let options = {
+        range: { from: 'now-1h', to: 'now' },
+        targets: [
+          {
+            type: "attribute",
+            nodeId: '1',
+            resourceId: 'nodeSnmp[]',
+            attribute: 'loadavg2*',
+            aggregation: 'AVERAGE'
+          }
+        ],
+        interval: '1s'
+      };
+
+
+      let [query,] = ctx.ds.buildQuery(options);
+
+      const propsToMatch: Map<AllowedProperties, string> = ctx.ds.getGlobQueries(query.source[0]);
+
+      const matchingProps = ctx.ds.getMatchingProperties(response, propsToMatch, '1');
+
+      const sources = ctx.ds.generateMatchingSourcesForMatchingProperties(matchingProps, query.source[0], propsToMatch);
+
+      expect(propsToMatch.size).toEqual(2);
+      expect(matchingProps.length).toEqual(2);
+      expect(sources.length).toEqual(2);
+      expect(sources[0].attribute).toEqual('loadavg23');
+      expect(sources[1].attribute).toEqual('loadavg21');
+    });
+
+   
   });
 });
