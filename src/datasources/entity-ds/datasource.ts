@@ -60,6 +60,7 @@ export const getEntity = (e, client, datasource) => {
         case 'alarm': return new AlarmEntity(client, datasource);
         case 'ipInterface': return new IpInterfaceEntity(client, datasource);
         case 'monitoredService': return new MonitoredServiceEntity(client, datasource);
+        case 'nodeFilter':
         case 'node': return new NodeEntity(client, datasource);
         case 'outage': return new OutageEntity(client, datasource);
         case 'snmpInterface': return new SnmpInterfaceEntity(client, datasource);
@@ -300,7 +301,7 @@ export class OpenNMSEntityDatasource {
                 return new IpInterfaceEntity(this.opennmsClient, this);
             } else if (func.name === 'monitoredServices') {
                 return new MonitoredServiceEntity(this.opennmsClient, this);
-            } else if (func.name === 'nodes') {
+            } else if (func.name === 'nodes' || func.name === 'nodeFilter') {
                 return new NodeEntity(this.opennmsClient, this);
             } else if (func.name === 'outages') {
                 return new OutageEntity(this.opennmsClient, this);
@@ -322,12 +323,6 @@ export class OpenNMSEntityDatasource {
     const locations = query ? query.match(/locations\([^\)]*\)/i) : null;
     if(locations){
         return this.metricFindLocations();
-    }
-
-    const nodeFilter = query ? query.match(/nodeFilter\(([^\)]*)\)/i) : null;
-    if(nodeFilter){
-        let filterQuery = nodeFilter.length > 1 ? nodeFilter[1] : null;
-        return this.metricFindNodeFilterQuery(filterQuery);
     }
 
     const entity = options.entityType ? getEntity(options.entityType, this.opennmsClient, this) : this._getQueryEntity({ query: query });
@@ -368,8 +363,11 @@ export class OpenNMSEntityDatasource {
             e = new IpInterfaceEntity(entity.client, this);
         } else if (func.name === 'monitoredServices') {
             e = new MonitoredServiceEntity(entity.client, this);
-        } else if (func.name === 'nodes') {
-            e = new NodeEntity(entity.client, this);
+        } else if (func.name === 'nodes' || func.name === 'nodeFilter') {
+            e = new NodeEntity(entity.client, this);            
+            if(func.name === 'nodeFilter'){
+                return this.metricFindNodeFilterQuery(e, attribute);
+            }         
         } else if (func.name === 'outages') {
             e = new OutageEntity(entity.client, this);
         } else if (func.name === 'snmpInterfaces') {
@@ -417,8 +415,27 @@ export class OpenNMSEntityDatasource {
         return this.simpleRequest.getLocations();
     }
 
-    metricFindNodeFilterQuery(query) {
-        return this.simpleRequest.getNodesByFilter(query);
+    metricFindNodeFilterQuery(entity, attribute) {
+        let propValuePair = attribute ? attribute.split('=') : null;
+        let filter = new API.Filter();        
+
+        if (propValuePair && propValuePair.length === 2) {
+            const propertyKey =  entity.getAttributeMapping().getApiAttribute( propValuePair[0].trim());
+            const propertyValue = propValuePair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+            const variableName = this.templateSrv.getVariableName(propertyValue);
+            const templateVariable = this._getTemplateVariable(variableName);
+            if(templateVariable && templateVariable.current.value){
+                filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value));
+                filter.limit = 0;
+            }
+        }
+       
+        return this.opennmsClient.getNodeByFilter(filter)
+        .then(nodes => {
+            return nodes.map(node =>  { 
+                return {id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id } 
+            });
+        });
     }
 
     getAlarm(alarmId) {
