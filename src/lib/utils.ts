@@ -390,3 +390,4 @@ export class SimpleOpenNMSRequest {
     return response.data.node;
   }
 }
+
