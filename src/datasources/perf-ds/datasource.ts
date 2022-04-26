@@ -546,8 +546,17 @@ export class OpenNMSDatasource {
     return this.simpleRequest.getLocations();
   }
 
-  metricFindNodeFilterQuery(query) {
-    return this.simpleRequest.getNodesByFilter(query);
+  async metricFindNodeFilterQuery(query) {
+    let nodes = await this.simpleRequest.getNodesByFilter(query);
+    var results = [] as any[];
+    nodes.forEach( node => {
+        var nodeCriteria = node.id.toString();
+        if (node.foreignId !== null && node.foreignSource !== null) {
+          nodeCriteria = node.foreignSource + ":" + node.foreignId;
+        }
+        results.push({text: node.label, value: nodeCriteria, expandable: true});
+      });
+    return results;
   }
 
   metricFindNodeResourceQuery(query, ...options) {
