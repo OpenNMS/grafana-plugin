@@ -11,24 +11,49 @@ The query editor provides the ability to build queries of the following types:
 === Attribute queries
 
 Used to extract data points from time series data that OpenNMS collects and stores.
-The query is used to identify which attribute (or series) is being queried.
+The query is used to identify which attribute(s) (or series) is being queried.
+
+Resources and Attribute fields allow `*` and `|` glob characters to create search patterns that allow to retrieve multiple resources and attributes in a single query.
 
 [options="header, autowidth"]
+[cols="1,2,1"]
 |===
-| Name               | Description
-| Node               | Node ID, or FS:FID (foreign source and foreign id) of the node to query.
-                       Can also be a variable with a `nodeFilter()` query.
-| Resource           | Resource ID containing the requested attribute.
-                       Can also be a variable with a `nodeResources()` query.
-| Attribute          | Name of the attribute to query.
-| Sub-Attribute      | Name of the sub-attribute to query.
-                       This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
-| Fallback Attribute | Name of the attribute to query if the requested attribute was not available.
-| Aggregation        | RRD aggregation to use when exporting the metrics.
-                       Possible values are `Average`, `Min`, `Max` or `Last`.
+| Name               
+| Description
+| Allowed Glob Expressions
 
-| Label              | Name for the series.
-                       Must be unique for all attributes and expression results in the query.
+| Node               
+| Node ID, or FS:FID (foreign source and foreign id) of the node to query.
+  Can also be a variable with a `nodeFilter()` query.
+| 
+
+| Resource           
+| Resource ID containing the requested attribute.
+  Can also be a variable with a `nodeResources()` query.
+| `*` , `\|`
+
+| Attribute          
+| Name of the attribute to query.
+| `*` , `\|`
+
+| Sub-Attribute      
+| Name of the sub-attribute to query.
+  This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
+| 
+
+| Fallback Attribute 
+| Name of the attribute to query if the requested attribute was not available.
+|
+
+| Aggregation        
+| RRD aggregation to use when exporting the metrics.
+  Possible values are `Average`, `Min`, `Max` or `Last`.
+|
+
+| Label              
+| Name for the series.
+  Must be unique for all attributes and expression results in the query.
+|
 |===
 
 === String property queries
