@@ -13,8 +13,6 @@ The query editor provides the ability to build queries of the following types:
 Used to extract data points from time series data that OpenNMS collects and stores.
 The query is used to identify which attribute(s) (or series) is being queried.
 
-Resources and Attribute fields allow `*` and `|` glob characters to create search patterns that allow to retrieve multiple resources and attributes in a single query.
-
 [options="header, autowidth"]
 [cols="1,2,1"]
 |===
@@ -54,6 +52,32 @@ Resources and Attribute fields allow `*` and `|` glob characters to create searc
 | Name for the series.
   Must be unique for all attributes and expression results in the query.
 |
+|===
+
+Resources and Attribute fields allow `*` and `|` glob characters to create search patterns that allow to retrieve multiple resources and attributes in a single query.
+
+* *** : match any text
+* *|* : match the expression on the left OR right side of the pipe (`|`)
+
+Examples:
+[options="header, autowidth"]
+[cols="2,1,2"]
+|===
+| Sample
+| Expression
+| Result
+
+| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+| interfaceSnmp[*]
+| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
+| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+| interfaceSnmp[\*VLAN*]
+| interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
+| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+| interfaceSnmp[Facilities*\|Default*]
+| interfaceSnmp[Facilities_VLAN-0001d7709c85], interfaceSnmp[Default-0001d7709c83]
 |===
 
 === String property queries
