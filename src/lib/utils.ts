@@ -270,6 +270,26 @@ export function processSelectionVariables(input?: string[]): string[] {
   }
 }
 
+
+export class OpenNMSGlob {
+  private static globExpressions: string[] = ['*', '|'];
+
+  static getGlobAsRegexPattern(expr: string) {
+    return _.escapeRegExp(expr).replace(/\\\*/ig, '.*').replace(/\\\|/ig, '|');
+  }
+
+  /**
+   * Check if expression contains allowed glob characters
+   * @param expr expression
+   * @returns true if expression contains allowed glob characters ('*', '|')
+   */
+  static hasGlob(expr: string): boolean {
+    return _.some([...expr], (char) => {
+      return _.includes(OpenNMSGlob.globExpressions, char);
+    });
+  }
+}
+
 /**
  * Swap items in an array
  * @param thisArray 
@@ -296,8 +316,8 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
     }
   }
   return rows;
-}
 
+}
 
 export class SimpleOpenNMSRequest {
   backendSrv: any;
@@ -354,27 +374,20 @@ export class SimpleOpenNMSRequest {
     });
   }
 
-  getNodesByFilter(filter: string){
-    return this.doOpenNMSRequest({
+  async getNodesByFilter(filter: string){
+    const response = await this.doOpenNMSRequest({
       url: '/rest/nodes',
       method: 'GET',
       params: {
         filterRule: filter,
         limit: 0
       }
-    }).then(function (response) {
-      if (response.data.count > response.data.totalCount) {
-        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-      }
-      var results = [] as any[];
-      _.each(response.data.node, function (node) {
-        var nodeCriteria = node.id.toString();
-        if (node.foreignId !== null && node.foreignSource !== null) {
-          nodeCriteria = node.foreignSource + ":" + node.foreignId;
-        }
-        results.push({text: node.label, value: nodeCriteria, expandable: true});
-      });
-      return results;
-    });
+    })
+
+    if (response.data.count > response.data.totalCount) {
+      console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
+    }    
+    return response.data.node;
   }
 }
+
