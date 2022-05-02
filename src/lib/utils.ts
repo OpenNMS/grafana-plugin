@@ -317,6 +317,7 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
   }
   return rows;
 
+
 }
 
 export class SimpleOpenNMSRequest {
@@ -390,4 +391,6 @@ export class SimpleOpenNMSRequest {
     return response.data.node;
   }
 }
+
+
 

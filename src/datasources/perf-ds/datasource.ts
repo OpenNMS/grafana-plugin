@@ -5,7 +5,10 @@ import {FunctionFormatter} from '../../lib/function_formatter';
 import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
 import {ClientDelegate} from '../../lib/client_delegate'
+import {OpenNMSGlob} from '../../lib/utils'
 import {Client, ServerMetadata} from 'opennms'
+
+const lodashClonedeep = require('lodash.clonedeep');
 
 interface Query {
   start: number;
@@ -33,6 +36,13 @@ type DefinedStringPropertyQuery = Required<StringPropertyQuery>
 function isDefinedStringPropertyQuery(q: StringPropertyQuery | undefined): q is DefinedStringPropertyQuery {
   return q !== undefined && !!q.nodeId && !!q.resourceId && !!q.stringProperty
 }
+
+
+
+export enum AllowedProperties {
+  ResourceId = "resourceId",
+  Attribute = "attribute"
+};
 
 export class OpenNMSDatasource {
   type?: string;
@@ -260,17 +270,29 @@ export class OpenNMSDatasource {
     const self = this;
 
     // Generate the query
+    // labels are query display labels
     var [query, labels] = this.buildQuery(options);
 
     // Issue the request
     var request;
     if (!Array.isArray(query) && query.source.length > 0) {
-      request = this.doOpenNMSRequest({
-        url: '/rest/measurements',
-        data: query,
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-      });
+      request = Promise.all(self.extendedQuery(query))
+        .then((sources) => {
+          _.each(sources, (source) => {
+            if (source.length > 0){
+              query.source = query.source.concat(source);
+            }
+          })
+          return query;
+        })
+        .then((query) => {
+          return this.doOpenNMSRequest({
+            url: '/rest/measurements',
+            data: query,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+        });
     } else {
       // There are no sources listed, let Grafana display "No data points" to the user
       return Promise.resolve({ data: [] });
@@ -314,6 +336,196 @@ export class OpenNMSDatasource {
     }).catch(err => {
       return this.decorateError(err);
     });
+  }
+
+  /**
+   * Identify queries that may contain glob expressions
+   * Currently only resource id and attributes are allowed.
+   * @param query query created from buildQuery 
+   * @returns 
+   */
+  extendedQuery(query: Query): Array<Promise<any>> {
+    let self = this;
+    let sourceClone = lodashClonedeep(query.source);
+
+    const promises: Array<Promise<any>> = [];
+    const globSources = self.getGlobExpressionsOnly(sourceClone);
+
+
+    if (globSources && globSources.size > 0) {
+      globSources.forEach((source) => { promises.push(self.getExtraMatches(source)); }
+      );
+    }
+    return promises;
+  }
+
+  /**
+   * Return a promise[] with matched source[] from glob expressions  to append to a query 
+   * @param source 
+   * @returns 
+   */
+  getExtraMatches(source: any): Promise<any> {
+
+    let self = this;
+    // Get all of resources for node in expression
+    return self.getResourcesWithAttributesForNode(OpenNMSDatasource.getNodeId(source.resourceId))
+      .then((responses) => {
+
+        // get only queries with glob expressions
+        const propsToMatch: Map<AllowedProperties, string> = self.getGlobQueries(source);
+        let result: any[] = [];
+        //find all matching resourceId and attribues
+        _.each(responses, (response) => {
+
+          const matchingProps = self.getMatchingProperties(response, propsToMatch, OpenNMSDatasource.getNodeId(source[AllowedProperties.ResourceId]));
+
+          result = result.concat(self.generateMatchingSourcesForMatchingProperties(matchingProps, source, propsToMatch));
+
+        });
+        return result;
+      });
+  }
+
+  generateMatchingSourcesForMatchingProperties(matchingProps: Array<Map<string, string>>, source: any, propsToMatch: Map<AllowedProperties, string>): any[] {
+    const result: any[] = [];
+    //iterate attributes matches
+    _.each(matchingProps, (pairs) => {
+      //create a new source array copy to query the matched properties
+      const sourceClone = lodashClonedeep(source);
+      //iterate mapped fileds (resourceId, attributes so far)
+      pairs.forEach((value, key) => {
+        //iterate allowed properties             
+        propsToMatch.forEach((p, s) => {
+          if (key === s) {
+            sourceClone[s] = value;            
+            sourceClone.label += '-' + value;
+          }
+        })
+      });
+      result.push(sourceClone);
+    });
+    return result;
+  }
+
+
+
+  /**
+   * Find from any glob expressions used in a query field (allowed) 
+   * and map any matches of property name, property value    
+   * @param response 
+   * @param properties 
+   * @param nodeId 
+   * @returns 
+   */
+  getMatchingProperties(response: any, properties: Map<AllowedProperties, string>, nodeId: string): Array<Map<string, string>> {
+
+    //check if resource id matches
+    const result: Array<Map<string, string>> = [];
+    if (response.id && response.hasOwnProperty('rrdGraphAttributes')) {
+      const resourceId = OpenNMSDatasource.getResourceId(response.id);
+
+      const resourceIdPattern = OpenNMSDatasource.getResourceId(properties.get(AllowedProperties.ResourceId));
+      if (!resourceIdPattern) { return result; }
+      const regexResourceId = new RegExp(resourceIdPattern);
+      if (!regexResourceId.test(resourceId)) { return result; }
+
+      _.forOwn(response.rrdGraphAttributes, (obj, id) => {
+        const attributePattern = properties.get(AllowedProperties.Attribute);
+        if (!attributePattern)  { return; }
+        const regex = new RegExp(attributePattern);
+        if (regex.test(id)) {
+          const match: Map<string, string> = new Map<string, string>();
+
+          match.set(AllowedProperties.ResourceId, OpenNMSDatasource.getRemoteResourceId(nodeId, resourceId));
+          match.set(AllowedProperties.Attribute, id);
+          result.push(match);
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
+   * Depending if resource id or attribute is being checked
+   * @param sourceArray : source array from query
+   * @param types : allowed properties (resource id, attribute)
+   * @returns array of sources that containg glob expressions (* or |)
+   */
+  getGlobExpressionsOnly(sourceArray: any[]): Set<any> {
+    let globSources: Set<any> = new Set<any>();
+    let self = this;
+    _.each(sourceArray, (source) => {
+      _.forIn(AllowedProperties, (value, key) => {
+        let sourceType = self.getIdFromType(source, value);
+        if (OpenNMSGlob.hasGlob(sourceType) && !globSources.has(source)) {
+          globSources.add(source);
+          return;
+        }
+      });
+    });
+    return globSources;
+  }
+
+  /**
+   * Gets the Id value for the provided type
+   * @param source source object
+   * @param type property type (resourceId, attribute)
+   * @returns Id value
+   */
+  getIdFromType(source: any, type: string): string {
+    switch (type) {
+      case 'resourceId':
+        return OpenNMSDatasource.getResourceId(source[type]);
+        break;
+      case 'attribute':
+      default:
+        return source[type];
+        break;
+    }
+  }
+
+  /**
+   * Get a map with allowed properties to query and their corresponding regular expressions for search.
+   * @param source a single source object with search parameters
+   * @returns 
+   */
+  getGlobQueries(source: any): Map<AllowedProperties, string> {
+    const props: Map<AllowedProperties, string> = new Map<AllowedProperties, string>();
+    _.forIn(AllowedProperties, (value, key) => {
+      if (value === AllowedProperties.ResourceId){
+        props.set(value, OpenNMSGlob.getGlobAsRegexPattern(OpenNMSDatasource.getResourceId(source[value])));
+      }
+      else {
+        props.set(value, OpenNMSGlob.getGlobAsRegexPattern(source[value]));
+      }
+    });
+    return props;
+  }
+
+  /**
+   * Retrievd the node database id value from the resource id
+   * @param resource : resource id as <nodeId>.<resourceId>
+   * @returns Node Id 
+   */
+  static getNodeId(resource): string {
+    const matches = resource.match(/node(Source)?\[([^\]]*)?\]\..*/);
+    if (matches && matches.length === 3){
+      return matches[2];
+    }
+    else { return resource; }
+  }
+
+  /**
+   * Gets the resource Id part from the resourceId property in a source object.
+   * @param resource : resource id as node[Source]<id>.<resourceId>
+   * @returns Resource Id
+   */
+  static getResourceId(resource): string {
+    const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
+    if (matches && matches.length === 3){
+      return matches[2];
+    }
+    else { return resource; }
   }
 
   // Used by template queries
