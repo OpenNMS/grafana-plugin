@@ -566,6 +566,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         ]
       };
       let actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
+      
       let expectedResponse = [
         {
           "datapoints": [
@@ -589,6 +590,38 @@ describe("OpenNMS_Flow_Datasource", function () {
       ];
 
       expect(expectedResponse).toEqual(actualResponse);
+
+      flowSeriesExampleCalc.columns.push(
+        {
+        "label": "domain1",
+        "ingress": false
+      });
+      flowSeriesExampleCalc.values.push([10]);
+      actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
+
+      expectedResponse = [
+        {
+          "datapoints": [
+            [
+              3,
+              1516358909932
+            ]
+          ],
+          "target": "domain"
+        }
+        ,
+        {
+          "datapoints": [
+            [
+              15,
+              1516358909932
+            ]
+          ],
+          "target": "domain1"
+        }
+      ];
+      expect(expectedResponse).toEqual(actualResponse);
+
       done();
     });
 

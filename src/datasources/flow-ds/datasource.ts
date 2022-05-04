@@ -441,18 +441,16 @@ export class FlowDatasource {
     }
 
     if (combineIngressEgress) {
-      const ingressColumns =  flowSeries.columns.filter(column => column.ingress);
-      const egressColumns =  flowSeries.columns.filter(column => !column.ingress);
-      const columns = ingressColumns.length >= egressColumns.length ? ingressColumns : egressColumns;
-
-      return columns          
+      const uniqueColumns =  [...new Set(flowSeries.columns.map(col => col.label))];
+      
+      return uniqueColumns          
           .map(col => {
 
             const datapoints = timestampsInRange
                 .map(({timestamp, timestampIdx}) => {
                   const sum = columnsWithIndex
                       // determine the indexes of those columns that have the same label as the current column
-                      .filter(({column}) => column.label === col.label)
+                      .filter(({column}) => column.label === col)
                       // get the values of those columns ...
                       .map(({colIdx}) => {
                         const v = values[colIdx][timestampIdx]
@@ -464,7 +462,7 @@ export class FlowDatasource {
                 })
 
             return {
-              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col.label),
+              target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col),
               datapoints
             }
           })
