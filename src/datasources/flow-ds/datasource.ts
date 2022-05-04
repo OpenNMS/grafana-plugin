@@ -441,10 +441,11 @@ export class FlowDatasource {
     }
 
     if (combineIngressEgress) {
+      const ingressColumns =  flowSeries.columns.filter(column => column.ingress);
+      const egressColumns =  flowSeries.columns.filter(column => !column.ingress);
+      const columns = ingressColumns.length >= egressColumns.length ? ingressColumns : egressColumns;
 
-      return flowSeries.columns
-          // use the ingress columns to drive the calculation of combined series
-          .filter(column => column.ingress)
+      return columns          
           .map(col => {
 
             const datapoints = timestampsInRange
