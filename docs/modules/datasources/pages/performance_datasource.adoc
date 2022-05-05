@@ -40,6 +40,7 @@ The result can be visualized in a table.
 Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to adjust the visualized table as needed.
 
 [options="header, autowidth"]
+[cols="1,2"]
 |===
 | Name
 | Description
@@ -87,6 +88,11 @@ Use template queries in metric queries and panel titles.
 The results will appear as a drop-down list at the top of the dashboard. 
 You can then select from the list to change the data the panel displays.
 See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
+
+=== locations()
+
+The `locations()` query returns a list of all available node locations. 
+Use this variable with nodeFilter to reduce the number of nodes displayed by location.
 
 === nodeFilter(<filterQuery>)
 
