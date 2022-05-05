@@ -8,7 +8,7 @@ describe("OpenNMS_Flow_Datasource", function () {
 
   const flowDatasource = new FlowDatasource({ url: "http://localhost" }, null, new TemplateSrv())
 
-  let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample, exporterNodes;
+  let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample, exporterNodes, flowSeriesExampleCalc;
 
   beforeEach(() => {
     
@@ -107,6 +107,39 @@ describe("OpenNMS_Flow_Datasource", function () {
         "expandable": true
       }
     ]
+
+    flowSeriesExampleCalc = {
+      "start": dateTimeAsMoment(1516358909932),
+      "end": dateTimeAsMoment(1516373309932),
+      "columns": [
+        {
+          "label": "domain",
+          "ingress": true
+        },
+        {
+          "label": "domain",
+          "ingress": false
+        },
+        {
+          "label": "domain1",
+          "ingress": false
+        }
+      ],
+      "timestamps": [
+        1516358909932
+      ],
+      "values": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          5
+        ]
+      ]
+    } as OnmsFlowSeries
   });
 
   describe('Mapping', function () {
@@ -519,6 +552,76 @@ describe("OpenNMS_Flow_Datasource", function () {
           expect(response).toEqual(expectedResponse); 
         });
       
+      done();
+    });
+
+    it("should combine multiple with uneven qty of ingress and egress when set", function (done) {
+      let target = {
+        metric: '',
+        refId: '',
+        'functions': [
+          {
+            'name': 'combineIngressEgress'
+          }
+        ]
+      };
+      let actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
+      
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              3,
+              1516358909932
+            ]
+          ],
+          "target": "domain"
+        }
+        ,
+        {
+          "datapoints": [
+            [
+              5,
+              1516358909932
+            ]
+          ],
+          "target": "domain1"
+        }
+      ];
+
+      expect(expectedResponse).toEqual(actualResponse);
+
+      flowSeriesExampleCalc.columns.push(
+        {
+        "label": "domain1",
+        "ingress": false
+      });
+      flowSeriesExampleCalc.values.push([10]);
+      actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
+
+      expectedResponse = [
+        {
+          "datapoints": [
+            [
+              3,
+              1516358909932
+            ]
+          ],
+          "target": "domain"
+        }
+        ,
+        {
+          "datapoints": [
+            [
+              15,
+              1516358909932
+            ]
+          ],
+          "target": "domain1"
+        }
+      ];
+      expect(expectedResponse).toEqual(actualResponse);
+
       done();
     });
 
