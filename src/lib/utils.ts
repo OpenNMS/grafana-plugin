@@ -317,6 +317,7 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
   }
   return rows;
 
+
 }
 
 export class SimpleOpenNMSRequest {
@@ -374,28 +375,22 @@ export class SimpleOpenNMSRequest {
     });
   }
 
-  getNodesByFilter(filter: string){
-    return this.doOpenNMSRequest({
+  async getNodesByFilter(filter: string){
+    const response = await this.doOpenNMSRequest({
       url: '/rest/nodes',
       method: 'GET',
       params: {
         filterRule: filter,
         limit: 0
       }
-    }).then(function (response) {
-      if (response.data.count > response.data.totalCount) {
-        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-      }
-      var results = [] as any[];
-      _.each(response.data.node, function (node) {
-        var nodeCriteria = node.id.toString();
-        if (node.foreignId !== null && node.foreignSource !== null) {
-          nodeCriteria = node.foreignSource + ":" + node.foreignId;
-        }
-        results.push({text: node.label, value: nodeCriteria, expandable: true});
-      });
-      return results;
-    });
+    })
+
+    if (response.data.count > response.data.totalCount) {
+      console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
+    }    
+    return response.data.node;
   }
 }
+
+
 
