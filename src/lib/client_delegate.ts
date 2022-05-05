@@ -152,6 +152,11 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
+    async getNodeByFilter(filter: any): Promise<Model.OnmsNode[]> {
+        const nodeDao = await this.getNodeDao();
+        return await nodeDao.find(filter);
+    }
+
     getNode(nodeId): Promise<Model.OnmsNode> {
       return this.getNodeDao()
         .then((nodeDao) => nodeDao.get(nodeId))
