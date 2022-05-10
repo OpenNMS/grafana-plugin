@@ -11,7 +11,7 @@ The query editor provides the ability to build queries of the following types:
 === Attribute queries
 
 Used to extract data points from time series data that OpenNMS collects and stores.
-The query is used to identify which attribute(s) (or series) is being queried.
+The query is used to identify which attribute(s) (or series) are being queried.
 
 [options="header, autowidth"]
 [cols="1,2,1"]
