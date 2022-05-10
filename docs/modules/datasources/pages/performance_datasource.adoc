@@ -46,6 +46,7 @@ The query is used to identify which attribute(s) (or series) are being queried.
 | Aggregation        
 | RRD aggregation to use when exporting the metrics.
   Possible values are `Average`, `Min`, `Max`, or `Last`.
+  Defaults to `Average`.
 |
 
 | Label              
