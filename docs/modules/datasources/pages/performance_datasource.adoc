@@ -61,23 +61,27 @@ Resources and Attribute fields allow `*` and `|` glob characters to create searc
 * *|* : match the expression on the left OR right side of the pipe (`|`)
 
 Examples:
+
+Given the following list of resources, the table below shows an example of filter expressions.
+
+* interfaceSnmp[eth0-00e08177b841]
+* interfaceSnmp[Default-0001d7709c83]
+* interfaceSnmp[HR_VLAN-0001d7709c87]
+* interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
 [options="header, autowidth"]
-[cols="2,1,2"]
+[cols="1,2"]
 |===
-| Sample
 | Expression
 | Result
 
-| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
 | interfaceSnmp[*]
 | interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
 
-| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
 | interfaceSnmp[\*VLAN*]
 | interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
 
-| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
-| interfaceSnmp[Facilities*\|Default*]
+| interfaceSnmp[Facilities\*\|Default*]
 | interfaceSnmp[Facilities_VLAN-0001d7709c85], interfaceSnmp[Default-0001d7709c83]
 |===
 
