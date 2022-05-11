@@ -11,24 +11,78 @@ The query editor provides the ability to build queries of the following types:
 === Attribute queries
 
 Used to extract data points from time series data that OpenNMS collects and stores.
-The query is used to identify which attribute (or series) is being queried.
+The query is used to identify which attribute(s) (or series) are being queried.
 
 [options="header, autowidth"]
+[cols="1,2,1"]
 |===
-| Name               | Description
-| Node               | Node ID, or FS:FID (foreign source and foreign id) of the node to query.
-                       Can also be a variable with a `nodeFilter()` query.
-| Resource           | Resource ID containing the requested attribute.
-                       Can also be a variable with a `nodeResources()` query.
-| Attribute          | Name of the attribute to query.
-| Sub-Attribute      | Name of the sub-attribute to query.
-                       This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
-| Fallback Attribute | Name of the attribute to query if the requested attribute was not available.
-| Aggregation        | RRD aggregation to use when exporting the metrics.
-                       Possible values are `Average`, `Min`, `Max` or `Last`.
+| Name               
+| Description
+| Allowed Filter Expressions
 
-| Label              | Name for the series.
-                       Must be unique for all attributes and expression results in the query.
+| Node               
+| Node ID, or FS:FID (foreign source and foreign id) of the node to query.
+  Can also be a variable with a `nodeFilter()` query.
+| 
+
+| Resource           
+| Resource ID containing the requested attribute.
+  Can also be a variable with a `nodeResources()` query.
+| `*` , `\|`
+
+| Attribute          
+| Name of the attribute to query.
+| `*` , `\|`
+
+| Sub-Attribute      
+| Name of the sub-attribute to query.
+  This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
+| 
+
+| Fallback Attribute 
+| Name of the attribute to query if the requested attribute was not available.
+|
+
+| Aggregation        
+| RRD aggregation to use when exporting the metrics.
+  Possible values are `Average`, `Min`, `Max`, or `Last`.
+  Defaults to `Average`.
+|
+
+| Label              
+| Name for the series.
+  Must be unique for all attributes and expression results in the query.
+|
+|===
+
+Resource and Attribute fields allow `*` and `|` filter characters to create search patterns that allow you to retrieve multiple resources and attributes in a single query.
+
+* *** : match any text
+* *|* : match the expression on the left OR right side of the pipe (`|`)
+
+Examples:
+
+Given the following list of resources, the table below shows an example of filter expressions.
+
+* interfaceSnmp[eth0-00e08177b841]
+* interfaceSnmp[Default-0001d7709c83]
+* interfaceSnmp[HR_VLAN-0001d7709c87]
+* interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
+[options="header, autowidth"]
+[cols="1,2"]
+|===
+| Expression
+| Result
+
+| interfaceSnmp[*]
+| interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
+| interfaceSnmp[\*VLAN*]
+| interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
+
+| interfaceSnmp[Facilities\*\|Default*]
+| interfaceSnmp[Facilities_VLAN-0001d7709c85], interfaceSnmp[Default-0001d7709c83]
 |===
 
 === String property queries
