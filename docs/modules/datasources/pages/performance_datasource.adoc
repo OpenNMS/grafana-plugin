@@ -55,7 +55,7 @@ The query is used to identify which attribute(s) (or series) are being queried.
 |
 |===
 
-Resources and Attribute fields allow `*` and `|` glob characters to create search patterns that allow you to retrieve multiple resources and attributes in a single query.
+Resource and Attribute fields allow `*` and `|` filter characters to create search patterns that allow you to retrieve multiple resources and attributes in a single query.
 
 * *** : match any text
 * *|* : match the expression on the left OR right side of the pipe (`|`)
