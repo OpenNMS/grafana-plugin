@@ -28,6 +28,28 @@ The default if the `query` field is empty is `alarms()` (return a list of alarm 
 
 The `alarms()` function will query the OpenNMS alarms ReST API.
 
+=== locations()
+
+The `locations()` query returns a list of all available node locations. 
+Use this variable with nodeFilter to reduce the number of nodes displayed by location.
+
+Examples: +
+```
+nodeFilter(location='Default')
+nodeFilter(location='$location')
+```
+
+=== nodeFilter(<filterQuery>)
+
+The `nodeFilter()` query will return a list of nodes which match the given filter expression.
+
+The filter expression must be an existing node attribute and their corresponding value and the value can be constant or a template_variable.
+
+Example: +
+```
+nodeFilter(location='Default')
+```
+
 === nodes([attribute])
 
 The `nodes()` function will query the OpenNMS node ReST API.
