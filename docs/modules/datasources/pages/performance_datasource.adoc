@@ -18,7 +18,7 @@ The query is used to identify which attribute(s) (or series) are being queried.
 |===
 | Name               
 | Description
-| Allowed Glob Expressions
+| Allowed Filter Expressions
 
 | Node               
 | Node ID, or FS:FID (foreign source and foreign id) of the node to query.
