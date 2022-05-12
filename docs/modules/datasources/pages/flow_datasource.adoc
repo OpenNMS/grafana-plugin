@@ -65,7 +65,7 @@ exporterNodesWithFlows(location='Default')
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
-The `interfacesOnExporterNodeWithFlows()` query will return a list of interface indexes which are associated with one or more flows on the given node.
+The `interfacesOnExporterNodeWithFlows()` query returns a list of interface indexes which are associated with one or more flows on the given node.
 The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
 
 The available arguments are as follows:
