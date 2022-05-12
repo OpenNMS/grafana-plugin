@@ -41,7 +41,7 @@ nodeFilter(location='$location')
 
 === nodeFilter(<filterQuery>)
 
-The `nodeFilter()` query will return a list of nodes which match the given filter expression.
+The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
 The filter expression must be an existing node attribute and their corresponding value and the value can be constant or a template_variable.
 
