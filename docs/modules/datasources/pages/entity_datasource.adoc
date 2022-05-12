@@ -26,7 +26,7 @@ The default if the `query` field is empty is `alarms()` (return a list of alarm 
 
 === alarms([attribute])
 
-The `alarms()` function will query the OpenNMS alarms ReST API.
+The `alarms()` function queries the OpenNMS alarms REST API.
 
 === locations()
 
