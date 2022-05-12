@@ -45,7 +45,7 @@ exporterNodesWithFlows(location='$location')
 
 === exporterNodesWithFlows(<filterQuery>)
 
-The `exporterNodesWithFlows()` query will return a list of nodes which have exported flow data to OpenNMS.
+The `exporterNodesWithFlows()` query returns a list of nodes which have exported flow data to OpenNMS.
 The value of the template variable is the `Node ID` and the display text is the `Node Label`.
 
 NOTE: The exporters must be part of the node inventory in OpenNMS in order to be returned by this query.
