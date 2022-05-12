@@ -55,7 +55,8 @@ For example, to query the exporters that have sent flows you can use the followi
 exporterNodesWithFlows()
 ```
 
-The filter expression must be an existing node attribute and their corresponding value and the value can be constant or a template_variable.
+The filter expression must be an existing node attribute and its corresponding value.
+The value can be a constant or a template_variable.
 
 Example: +
 ```
