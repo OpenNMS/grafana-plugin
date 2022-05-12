@@ -37,7 +37,7 @@ The query editor supports the following functions:
 The `locations()` query returns a list of all available node locations. 
 Use this variable with `exporterNodesWithFlows()` to reduce the number of nodes displayed by location.
 
-Examples: +
+Examples:
 ```
 exporterNodesWithFlows(location='Default')
 exporterNodesWithFlows(location='$location')
