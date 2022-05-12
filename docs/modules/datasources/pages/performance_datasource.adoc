@@ -156,7 +156,7 @@ nodeFilter(location='$location')
 
 === nodeFilter(<filterQuery>)
 
-The `nodeFilter()` query will return a list of nodes which match the given filter expression.
+The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
 For example, to return the set of nodes that are in the `Production` and `Linux` categories, you can use:
 ```
