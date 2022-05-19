@@ -35,7 +35,7 @@ The query editor supports the following functions:
 === locations()
 
 The `locations()` query returns a list of all available node locations. 
-Use this variable with `exporterNodesWithFlows()` to reduce the number of nodes displayed by location.
+Use this inside `exporterNodesWithFlows()` to filter the number of nodes displayed by location.
 
 Examples:
 ```
