@@ -56,10 +56,8 @@ exporterNodesWithFlows()
 The filter expression must be an existing node attribute and its corresponding value.
 The value can be a constant or a variable.
 
-Example:
-```
+.Example variable expression
 exporterNodesWithFlows(location='Default')
-```
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
