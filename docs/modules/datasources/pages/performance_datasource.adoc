@@ -148,11 +148,9 @@ See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Te
 The `locations()` query returns a list of all available node locations. 
 Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
 
-Examples:
-```
-nodeFilter(location='Default')
-nodeFilter(location='$location')
-```
+.Example variable expression
+* nodeFilter(location='Default')
+* nodeFilter(location='$location')
 
 === nodeFilter(<filterQuery>)
 
