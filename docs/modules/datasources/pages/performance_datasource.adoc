@@ -146,7 +146,7 @@ See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Te
 === locations()
 
 The `locations()` query returns a list of all available node locations. 
-Use this variable with nodeFilter to reduce the number of nodes displayed by location.
+Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
 
 Examples:
 ```
