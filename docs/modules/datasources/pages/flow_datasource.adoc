@@ -37,11 +37,9 @@ The query editor supports the following functions:
 The `locations()` query returns a list of all available node locations. 
 Use this inside `exporterNodesWithFlows()` to filter the number of nodes displayed by location.
 
-Examples:
-```
-exporterNodesWithFlows(location='Default')
-exporterNodesWithFlows(location='$location')
-```
+.Example variable expression
+* exporterNodesWithFlows(location='Default')
+* exporterNodesWithFlows(location='$location')
 
 === exporterNodesWithFlows(<filterQuery>)
 
