@@ -1,4 +1,3 @@
-
 import { processSelectionVariables } from '../lib/utils';
 
 describe('Utils :: processSelectionVariables', () => {
@@ -21,4 +20,4 @@ describe('Utils :: processSelectionVariables', () => {
     expect(array.length).toEqual(4);
 
   });
-})
+});
