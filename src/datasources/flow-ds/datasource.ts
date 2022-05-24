@@ -103,9 +103,9 @@ export class FlowDatasource {
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
     let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
-    let applications = this.getFunctionParametersOrDefault(query, 'withApplication', 0, null);
-    let conversations = this.getFunctionParametersOrDefault(query, 'withConversation', 0, null);
-    let hosts = this.getFunctionParametersOrDefault(query, 'withHost', 0, null);
+    let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
+    let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
+    let hosts = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withHost', 0, null));
 
     switch (query.metric) {
       case 'conversations':
@@ -159,9 +159,9 @@ export class FlowDatasource {
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
     let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
-    let applications = this.getFunctionParametersOrDefault(query, 'withApplication', 0, null);
-    let conversations = this.getFunctionParametersOrDefault(query, 'withConversation', 0, null);
-    let hosts = this.getFunctionParametersOrDefault(query, 'withHost', 0, null);
+    let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
+    let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
+    let hosts = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withHost', 0, null));
 
     switch (query.metric) {
       case 'conversations':
@@ -244,14 +244,38 @@ export class FlowDatasource {
     }
     query = this.templateSrv.replace(query);
 
+    let applications = /applications\((\d*)\)/;
+    let conversations = /conversations\((\d*)\)/;
+    let hosts = /hosts\((\d*)\)/;
     let locations = /locations\((.*)\)/;
     let exporterNodesRegex = /exporterNodesWithFlows\((.*)\)/;
     let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/; // just pick the first arg and ignore anything else
     let dscpOnExporterNodeAndInterfaceRegex = /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/;
 
+    const start = this.templateSrv.timeRange.from.valueOf();
+    const end = this.templateSrv.timeRange.to.valueOf();
+
     let locationsQuery = query.match(locations);
     if (locationsQuery) {
       return this.metricFindLocations();
+    }
+
+    let applicationsQuery = query.match(applications);
+    if (applicationsQuery) {
+      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1])) ? parseInt(applicationsQuery[1]) : 0;
+      return this.metricFindApplications(start, end, limit);
+    }
+
+    let conversationsQuery = query.match(conversations);
+    if (conversationsQuery) {
+      let limit = conversationsQuery.length > 1 && !isNaN(parseInt(conversationsQuery[1])) ? parseInt(conversationsQuery[1]) : 0;
+      return this.metricFindConversations(start, end, limit);
+    }
+
+    let hostsQuery = query.match(hosts);
+    if (hostsQuery) {
+      let limit = hostsQuery.length > 1 && !isNaN(parseInt(hostsQuery[1])) ? parseInt(hostsQuery[1]) : 0;
+      return this.metricFindHosts(start, end, limit);
     }
 
     let exporterNodesQuery = query.match(exporterNodesRegex);
@@ -281,6 +305,19 @@ export class FlowDatasource {
   metricFindLocations() {
     return this.simpleRequest.getLocations();
   }
+
+  metricFindApplications(start: number, end: number, limit: number = 0){    
+    return this.simpleRequest.getApplications(start, end, limit);    
+  }
+  
+  metricFindHosts(start: number, end: number, limit: number = 0){
+    return this.simpleRequest.getHosts(start, end, limit);
+  }
+
+  metricFindConversations(start: number, end: number, limit: number = 0){
+    return this.simpleRequest.getConversations(start, end, limit);
+  }
+  
 
   metricFindExporterNodes(query?: any, filter?: string) {
     let self = this;
