@@ -225,32 +225,39 @@ export function containsVariable(...args) {
  */
 export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
   if (input) {
-
     if (input.startsWith('{') && input.endsWith('}')) {
-      const pattern = /(\[[^\]]*\])/g;
-      let inputArrays = input.match(pattern);
-      if (inputArrays && inputArrays.length > 1) {
-        const args: string[] = [];
-        inputArrays.forEach(array => {
-          args.push(array);
-        });
-        return args;
-      }
-      const args = input.substring(1, input.length - 1).split(',').map(s => s.trim())
-      if (dropAll && args.some(s => s === 'all')) {
-        return []
-      } else {
-        return args
-      }
+      input = input.substring(1, input.length - 1);
+    }
+    const args = getInputsAsArray(input);
+
+    if (dropAll && args.some(s => s === 'all')) {
+      return []
     } else if (dropUnresolved && input.startsWith('$')) {
       return [];
     } else if (dropAll && input === 'all') {
       return []
     } else {
-      return [input]
+      return args;
     }
   } else {
     return []
+  }
+}
+
+export function getInputsAsArray(input: string) {
+  const pattern = /(\[[^\]]*\])/g;
+  //handle conversation type 
+  let inputArrays = input.match(pattern);
+  if (inputArrays && inputArrays.length > 0) {
+    const args: string[] = [];
+    inputArrays.forEach(array => {
+      args.push(array);
+    });
+    return args;
+  } else if (input.indexOf(',') >= 0) {
+    return input.split(',').map(s => s.trim());
+  } else {
+    return [input];
   }
 }
 
