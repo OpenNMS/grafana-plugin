@@ -262,19 +262,19 @@ export class FlowDatasource {
 
     let applicationsQuery = query.match(applications);
     if (applicationsQuery) {
-      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1])) ? parseInt(applicationsQuery[1]) : 0;
+      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1], 10)) ? parseInt(applicationsQuery[1], 10) : 0;
       return this.metricFindApplications(start, end, limit);
     }
 
     let conversationsQuery = query.match(conversations);
     if (conversationsQuery) {
-      let limit = conversationsQuery.length > 1 && !isNaN(parseInt(conversationsQuery[1])) ? parseInt(conversationsQuery[1]) : 0;
+      let limit = conversationsQuery.length > 1 && !isNaN(parseInt(conversationsQuery[1], 10)) ? parseInt(conversationsQuery[1], 10) : 0;
       return this.metricFindConversations(start, end, limit);
     }
 
     let hostsQuery = query.match(hosts);
     if (hostsQuery) {
-      let limit = hostsQuery.length > 1 && !isNaN(parseInt(hostsQuery[1])) ? parseInt(hostsQuery[1]) : 0;
+      let limit = hostsQuery.length > 1 && !isNaN(parseInt(hostsQuery[1], 10)) ? parseInt(hostsQuery[1], 10) : 0;
       return this.metricFindHosts(start, end, limit);
     }
 
@@ -306,15 +306,15 @@ export class FlowDatasource {
     return this.simpleRequest.getLocations();
   }
 
-  metricFindApplications(start: number, end: number, limit: number = 0){    
+  metricFindApplications(start: number, end: number, limit = 0){    
     return this.simpleRequest.getApplications(start, end, limit);    
   }
   
-  metricFindHosts(start: number, end: number, limit: number = 0){
+  metricFindHosts(start: number, end: number, limit = 0){
     return this.simpleRequest.getHosts(start, end, limit);
   }
 
-  metricFindConversations(start: number, end: number, limit: number = 0){
+  metricFindConversations(start: number, end: number, limit = 0){
     return this.simpleRequest.getConversations(start, end, limit);
   }
   

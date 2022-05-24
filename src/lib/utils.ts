@@ -412,7 +412,7 @@ export class SimpleOpenNMSRequest {
     return response.data.node;
   }
 
-  async getApplications(start: number, end: number, limit: number = 0) {
+  async getApplications(start: number, end: number, limit = 0) {
     const response = await this.doOpenNMSRequest({
       url: this.flows + '/applications/enumerate',
       method: 'GET',
@@ -423,7 +423,7 @@ export class SimpleOpenNMSRequest {
       }
     })
 
-    if (response.data.length == 0) {
+    if (response.data.length === 0) {
       console.warn("No matches found");
       return response.data;
     } else {
@@ -436,7 +436,7 @@ export class SimpleOpenNMSRequest {
 
   }
 
-  async getHosts(start: number, end: number, limit: number = 0) {
+  async getHosts(start: number, end: number, limit = 0) {
     
     const response = await this.doOpenNMSRequest({
       url: this.flows + '/hosts/enumerate',
@@ -448,7 +448,7 @@ export class SimpleOpenNMSRequest {
       }
     })
 
-    if (response.data.length == 0) {
+    if (response.data.length === 0) {
       console.warn("No matches found");
       return response.data;
     } else {
@@ -460,7 +460,7 @@ export class SimpleOpenNMSRequest {
     }
   }
 
-  async getConversations(start: number, end: number, limit:number = 0) {
+  async getConversations(start: number, end: number, limit = 0) {
     const response = await this.doOpenNMSRequest({
       url: this.flows + '/conversations/enumerate',
       method: 'GET',
@@ -471,7 +471,7 @@ export class SimpleOpenNMSRequest {
       }
     })
 
-    if (response.data.length == 0) {
+    if (response.data.length === 0) {
       console.warn("No matches found");
       return response.data;
     } else {
