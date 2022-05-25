@@ -45,7 +45,9 @@ The filter expression must be an existing node attribute and its corresponding v
 The value can be a constant or a variable.
 
 Example:
-
+* nodeFilter(<node_attribute>='<value>')
+* nodeFilter(location='Default')
+* nodeFilter(location='$location')
 
 === nodes([attribute])
 

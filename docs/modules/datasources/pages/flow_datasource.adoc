@@ -57,7 +57,9 @@ The filter expression must be an existing node attribute and its corresponding v
 The value can be a constant or a variable.
 
 .Example variable expression
-exporterNodesWithFlows(location='Default')
+* exporterNodesWithFlows(<node_attribute>='<value>')
+* exporterNodesWithFlows(location='Default')
+* exporterNodesWithFlows(location='$location')
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
