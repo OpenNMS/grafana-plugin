@@ -14,6 +14,9 @@ The query editor supports the following functions:
 | Filter    | `withExporterNode`      | Filter for flows related to the given exporter node.
 | Filter    | `withIfIndex`           | Filter for flows related to the given interface index.
 | Filter    | `withDscp`              | Filter for flows with the given DSCP value(s).
+| Filter    | `withApplication`       | Filter for flows with the given application value(s). Use without `topN`.
+| Filter    | `withConversation`      | Filter for flows with the given conversation value(s). Use without `topN`.
+| Filter    | `withHost`              | Filter for flows with the given host value(s). Use without `topN`.
 | Transform | `toBits`                | Convert the values from bytes to bits.
 | Transform | `perSecond`             | Convert the values to a per/second rate.
 | Transform | `negativeEgress`        | Make the egress values negative.
@@ -108,3 +111,47 @@ Assuming that the `$node` variable is populated with a value from the `exporterN
 ```
 dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)
 ```
+
+=== applications(<limit>)
+
+The `aplications()` query returns a list of all available applications. This function is intended to be used inside the Filter function `withApplications()` as a template variable if needed.
+
+Currently this function accepts only a limit of records to be retrieved as argument if necessary.
+
+NOTE: The application values retrieved come `as is` from `flows/applications/enumerate` API.
+
+.Examples variable expression
+* applications()  
+* applications(1000)  
+
+.Usage with filter function withApplications()
+* withApplications($applications)
+
+=== conversations(<limit>)
+
+The `conversations()` query returns a list of all available conversations. This function is intended to be used inside the Filter function `withConversation()` as a template variable if needed. 
+Currently this function accepts only a limit of records to be retrieved as argument if necessary.
+
+.Examples variable expression
+* conversations()  
+* conversations(1000)  
+
+.Usage with filter function withConversation()
+* withConversation($conversations)
+
+NOTE: The conversations values retrieved come `as is` from `flows/conversations/enumerate` API.
+
+=== hosts(<limit>)
+
+The `hosts()` query returns a list of all available hosts. This function is intended to be used inside the Filter function `withHost()` as a template variable if needed. 
+Currently this function accepts only a limit of records to be retrieved as argument if necessary.
+
+.Examples variable expression
+* hosts()  
+* hosts(1000)  
+
+.Usage with filter function withHost()
+* withHost($hosts)
+
+NOTE: The hosts values retrieved come `as is` from `flows/hosts/enumerate` API.
+
