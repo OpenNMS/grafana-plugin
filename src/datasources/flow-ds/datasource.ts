@@ -61,8 +61,8 @@ export class FlowDatasource {
     } else {
 
       const intervals = queriesWithMetrics
-        .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
-        .filter(i => i) // exclude `undefined`
+          .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
+          .filter(i => i) // exclude `undefined`
 
       const differentIntervals = new Set(intervals)
       if (differentIntervals.size > 1) {
@@ -262,7 +262,7 @@ export class FlowDatasource {
 
     let applicationsQuery = query.match(applications);
     if (applicationsQuery) {
-      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1].trim())) ? parseInt(applicationsQuery[1].trim(), 10) : 0;
+      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1].trim(), 10)) ? parseInt(applicationsQuery[1].trim(), 10) : 0;
       return this.metricFindApplications(start, end, limit);
     }
 
@@ -272,7 +272,7 @@ export class FlowDatasource {
       if (args) {
         //first argument should be application, then location, then protocol, and last limit which should be a number
         //when multiple args are passed assume last is limit
-        if (args.length === 1 && !isNaN(parseInt(args[0]))) {
+        if (args.length === 1 && !isNaN(parseInt(args[0], 10))) {
           return this.metricFindConversations(start, end, null, null, null, parseInt(args[0], 10));
         } else if (args.length === 1) {          
           return this.metricFindConversations(start, end, args[0]);
