@@ -32,9 +32,18 @@ The query editor supports the following functions:
 [[ds-flow-template]]
 == Template queries
 
-=== exporterNodesWithFlows()
+=== locations()
 
-The `exporterNodesWithFlows()` query will return a list of nodes which have exported flow data to OpenNMS.
+The `locations()` query returns a list of all available node locations. 
+Use this inside `exporterNodesWithFlows()` to filter the number of nodes displayed by location.
+
+.Example variable expression
+* exporterNodesWithFlows(location='Default')
+* exporterNodesWithFlows(location='$location')
+
+=== exporterNodesWithFlows(<filterQuery>)
+
+The `exporterNodesWithFlows()` query returns a list of nodes which have exported flow data to OpenNMS.
 The value of the template variable is the `Node ID` and the display text is the `Node Label`.
 
 NOTE: The exporters must be part of the node inventory in OpenNMS in order to be returned by this query.
@@ -44,9 +53,17 @@ For example, to query the exporters that have sent flows you can use the followi
 exporterNodesWithFlows()
 ```
 
+The filter expression must be an existing node attribute and its corresponding value.
+The value can be a constant or a variable.
+
+.Example variable expression
+* exporterNodesWithFlows(<node_attribute>='<value>')
+* exporterNodesWithFlows(location='Default')
+* exporterNodesWithFlows(location='$location')
+
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
-The `interfacesOnExporterNodeWithFlows()` query will return a list of interface indexes which are associated with one or more flows on the given node.
+The `interfacesOnExporterNodeWithFlows()` query returns a list of interface indexes which are associated with one or more flows on the given node.
 The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
 
 The available arguments are as follows:

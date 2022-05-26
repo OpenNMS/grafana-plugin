@@ -146,16 +146,20 @@ See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Te
 === locations()
 
 The `locations()` query returns a list of all available node locations. 
-Use this variable with nodeFilter to reduce the number of nodes displayed by location.
+Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
+
+.Example variable expression
+* nodeFilter(location='Default')
+* nodeFilter(location='$location')
 
 === nodeFilter(<filterQuery>)
 
-The `nodeFilter()` query will return a list of nodes which match the given filter expression.
+The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
-For example, to return the set of nodes that are in the `Production` and `Linux` categories, you can use:
-```
-nodeFilter(catincProduction & catincLinux)
-```
+.For example, to return the set of nodes that are in the `Production` and `Linux` categories, or to return the set of nodes that are in the `SNMP` and `Production` categories and `Default` location you can use:
+
+* nodeFilter(catincProduction & catincLinux)
+* nodeFilter(location='Default' & catincProduction & catincSNMP)
 
 The available arguments are as follows:
 [options="header, %autowidth"]
