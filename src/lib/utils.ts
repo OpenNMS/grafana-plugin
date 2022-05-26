@@ -436,15 +436,19 @@ export class SimpleOpenNMSRequest {
 
   }
 
-  async getHosts(start: number, end: number, limit = 0) {
-    
+  async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
+    if(!pattern){
+      pattern = ".*"
+    }
+
     const response = await this.doOpenNMSRequest({
       url: this.flows + '/hosts/enumerate',
       method: 'GET',
       params: {
         'start': start,
         'end': end,
-        'limit': limit <= 0 ? this.searchLimit : limit
+        'limit': limit <= 0 ? this.searchLimit : limit,
+        'pattern': pattern
       }
     })
 
@@ -460,13 +464,26 @@ export class SimpleOpenNMSRequest {
     }
   }
 
-  async getConversations(start: number, end: number, limit = 0) {
+  async getConversations(start: number, end: number, application: string | null = null, 
+    location: string | null = null, protocol: string | null = null, limit = 0) {
+    if(!application){
+      application = ".*";
+    }
+    if(!location){
+      location = ".*";
+    }
+    if(!protocol){
+      protocol = ".*";
+    }
     const response = await this.doOpenNMSRequest({
       url: this.flows + '/conversations/enumerate',
       method: 'GET',
       params: {
         'start': start,
         'end': end,
+        'application': application,
+        'location': location,
+        'protocol': protocol,
         'limit': limit <= 0 ? this.searchLimit : limit
       }
     })

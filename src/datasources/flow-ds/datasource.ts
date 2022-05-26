@@ -61,8 +61,8 @@ export class FlowDatasource {
     } else {
 
       const intervals = queriesWithMetrics
-          .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
-          .filter(i => i) // exclude `undefined`
+        .map(target => this.getFunctionParameterOrDefault(target, 'withGroupByInterval', 0))
+        .filter(i => i) // exclude `undefined`
 
       const differentIntervals = new Set(intervals)
       if (differentIntervals.size > 1) {
@@ -244,9 +244,9 @@ export class FlowDatasource {
     }
     query = this.templateSrv.replace(query);
 
-    let applications = /applications\((\d*)\)/;
-    let conversations = /conversations\((\d*)\)/;
-    let hosts = /hosts\((\d*)\)/;
+    let applications = /applications\((.*)\)/;
+    let conversations = /conversations\((.*)\)/;
+    let hosts = /hosts\((.*)\)/;
     let locations = /locations\((.*)\)/;
     let exporterNodesRegex = /exporterNodesWithFlows\((.*)\)/;
     let interfacesOnExporterNodeRegex = /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/; // just pick the first arg and ignore anything else
@@ -262,20 +262,50 @@ export class FlowDatasource {
 
     let applicationsQuery = query.match(applications);
     if (applicationsQuery) {
-      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1], 10)) ? parseInt(applicationsQuery[1], 10) : 0;
+      let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1].trim())) ? parseInt(applicationsQuery[1].trim(), 10) : 0;
       return this.metricFindApplications(start, end, limit);
     }
 
     let conversationsQuery = query.match(conversations);
     if (conversationsQuery) {
-      let limit = conversationsQuery.length > 1 && !isNaN(parseInt(conversationsQuery[1], 10)) ? parseInt(conversationsQuery[1], 10) : 0;
-      return this.metricFindConversations(start, end, limit);
+      let args = conversationsQuery.length > 1 ? conversationsQuery[1].split(',').map(v => v.trim()) : null;
+      if (args) {
+        //first argument should be application, then location, then protocol, and last limit which should be a number
+        //when multiple args are passed assume last is limit
+        if (args.length === 1 && !isNaN(parseInt(args[0]))) {
+          return this.metricFindConversations(start, end, null, null, null, parseInt(args[0], 10));
+        } else if (args.length === 1) {          
+          return this.metricFindConversations(start, end, args[0]);
+        } else if (args.length === 2 && _.every(args, s => isNaN(parseInt(s, 10)))) {
+          return this.metricFindConversations(start, end, args[0], args[1] );
+        } else if (args.length === 2 && !_.every(args, s => isNaN(parseInt(s, 10)))) {
+          return this.metricFindConversations(start, end, args[0], null, null, parseInt(args[1], 10) );
+        } else if (args.length === 3 && _.every(args, s =>  isNaN(parseInt(s, 10)))) {
+          return this.metricFindConversations(start, end, args[0], args[1], args[2] );
+        } else if (args.length === 3 && !_.every(args, s =>  isNaN(parseInt(s, 10)))) {
+          return this.metricFindConversations(start, end, args[0], args[1], null, parseInt(args[2], 10) );
+        } else if (args.length === 4 && !_.every(args, s =>  isNaN(parseInt(s, 10)))) {
+          return this.metricFindConversations(start, end, args[0], args[1], args[2], parseInt(args[3], 10) );
+        }
+      }
+      return this.metricFindConversations(start, end);
     }
 
     let hostsQuery = query.match(hosts);
     if (hostsQuery) {
-      let limit = hostsQuery.length > 1 && !isNaN(parseInt(hostsQuery[1], 10)) ? parseInt(hostsQuery[1], 10) : 0;
-      return this.metricFindHosts(start, end, limit);
+      let args = hostsQuery.length > 1 ? hostsQuery[1].split(',').map(v => v.trim()) : null;
+      if (args) {
+        if (args.length === 1 &&  !isNaN(parseInt(args[0], 10))) {
+          return this.metricFindHosts(start, end, null, parseInt(args[0], 10));
+        } else if (args.length === 1) {
+          return this.metricFindHosts(start, end, args[0]);
+        } else if (args.length === 2 && !isNaN(parseInt(args[1], 10))) {
+          return this.metricFindHosts(start, end, args[0], parseInt(args[1], 10));
+        }
+      }
+      return this.metricFindHosts(start, end);
+
+
     }
 
     let exporterNodesQuery = query.match(exporterNodesRegex);
@@ -306,16 +336,17 @@ export class FlowDatasource {
     return this.simpleRequest.getLocations();
   }
 
-  metricFindApplications(start: number, end: number, limit = 0){    
-    return this.simpleRequest.getApplications(start, end, limit);    
-  }
-  
-  metricFindHosts(start: number, end: number, limit = 0){
-    return this.simpleRequest.getHosts(start, end, limit);
+  metricFindApplications(start: number, end: number, limit = 0) {
+    return this.simpleRequest.getApplications(start, end, limit);
   }
 
-  metricFindConversations(start: number, end: number, limit = 0){
-    return this.simpleRequest.getConversations(start, end, limit);
+  metricFindHosts(start: number, end: number, pattern: string | null = null, limit = 0) {
+    return this.simpleRequest.getHosts(start, end, pattern, limit);
+  }
+
+  metricFindConversations(start: number, end: number, application: string | null = null, 
+    location: string | null = null, protocol: string | null = null, limit = 0) {
+    return this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
   }
   
 
