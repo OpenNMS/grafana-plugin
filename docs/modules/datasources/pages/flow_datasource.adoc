@@ -184,7 +184,7 @@ Currently this function accepts the following arguments:
 | last      | limit (optional)              | limit number of records retrieved        | 25
 |===
 
-.Examples variable expression
+.Examples: variable expression
 
 Get all hosts ( will return a maximum of 25 records).
 
