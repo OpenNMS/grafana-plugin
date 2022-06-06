@@ -119,7 +119,7 @@ This function is intended for use inside the Filter function `withApplications()
 
 Currently this function accepts only a limit of records to be retrieved as argument if necessary.
 
-NOTE: The application values retrieved come `as is` from `flows/applications/enumerate` API.
+NOTE: The application values retrieved come "as is" from the `flows/applications/enumerate` API.
 
 .Examples variable expression
 * applications()  
