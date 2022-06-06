@@ -223,24 +223,41 @@ export function containsVariable(...args) {
  * The dropUnresolved parameter determines if an empty array is returned if the input starts with '$'.
  * The dropAll parameter determines if an empty array is returned if the input is "all".
  */
- export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
+export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
   if (input) {
-      if (input.startsWith('{') && input.endsWith('}')) {
-          const args = input.substring(1, input.length - 1).split(',').map(s => s.trim())
-          if (dropAll && args.some(s => s === 'all')) {
-              return []
-          } else {
-              return args
-          }
-      } else if (dropUnresolved && input.startsWith('$')) {
-          return [];
-      } else if (dropAll && input === 'all') {
-          return []
-      } else {
-          return [input]
-      }
-  } else {
+    if (input.startsWith('{') && input.endsWith('}')) {
+      input = input.substring(1, input.length - 1);
+    }
+    const args = getInputsAsArray(input);
+
+    if (dropAll && args.some(s => s === 'all')) {
       return []
+    } else if (dropUnresolved && input.startsWith('$')) {
+      return [];
+    } else if (dropAll && input === 'all') {
+      return []
+    } else {
+      return args;
+    }
+  } else {
+    return []
+  }
+}
+
+export function getInputsAsArray(input: string) {
+  const pattern = /(\[[^\]]*\])/g;
+  //handle conversation type 
+  let inputArrays = input.match(pattern);
+  if (inputArrays && inputArrays.length > 0) {
+    const args: string[] = [];
+    inputArrays.forEach(array => {
+      args.push(array);
+    });
+    return args;
+  } else if (input.indexOf(',') >= 0) {
+    return input.split(',').map(s => s.trim());
+  } else {
+    return [input];
   }
 }
 
@@ -328,6 +345,10 @@ export class SimpleOpenNMSRequest {
   basicAuth?: string;
   searchLimit = 25;
 
+  readonly flows = "/rest/flows";
+  readonly locations = "/rest/monitoringLocations";
+  readonly nodes = "/rest/nodes"
+
   constructor(backendSrv, url) {
     this.backendSrv = backendSrv;
     this.url = url;
@@ -351,33 +372,33 @@ export class SimpleOpenNMSRequest {
     return this.backendSrv.datasourceRequest(options);
   }
 
-  getLocations(searchLimit = 0){
+  getLocations(searchLimit = 0) {
     return this.doOpenNMSRequest({
-      url: '/rest/monitoringLocations',
+      url: this.locations,
       method: 'GET',
       params: {
-        limit: searchLimit       
+        limit: searchLimit
       }
     })
-    .then(function(response){
-      if (response.data.count > response.data.totalCount) {
-        console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-      }
-      var results = [] as any[];
-      _.each(response.data.location, function (location) {
-        let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
-        let exist = _.find(results, (o)=> o.text === nodeLocation);
-        if(nodeLocation && !exist){
-          results.push({text: nodeLocation, value: nodeLocation, expandable: true});
+      .then(function (response) {
+        if (response.data.count > response.data.totalCount) {
+          console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
         }
+        var results = [] as any[];
+        _.each(response.data.location, function (location) {
+          let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
+          let exist = _.find(results, (o) => o.text === nodeLocation);
+          if (nodeLocation && !exist) {
+            results.push({ text: nodeLocation, value: nodeLocation, expandable: true });
+          }
+        });
+        return results;
       });
-      return results;
-    });
   }
 
-  async getNodesByFilter(filter: string){
+  async getNodesByFilter(filter: string) {
     const response = await this.doOpenNMSRequest({
-      url: '/rest/nodes',
+      url: this.nodes,
       method: 'GET',
       params: {
         filterRule: filter,
@@ -387,8 +408,96 @@ export class SimpleOpenNMSRequest {
 
     if (response.data.count > response.data.totalCount) {
       console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-    }    
+    }
     return response.data.node;
+  }
+
+  async getApplications(start: number, end: number, limit = 0) {
+    const response = await this.doOpenNMSRequest({
+      url: this.flows + '/applications/enumerate',
+      method: 'GET',
+      params: {
+        'start': start,
+        'end': end,
+        'limit': limit <= 0 ? this.searchLimit : limit
+      }
+    })
+
+    if (response.data.length === 0) {
+      console.warn("No matches found");
+      return response.data;
+    } else {
+      let results: any[] = [];
+      response.data.forEach(val => {
+        results.push({ text: val, value: val, expandable: true });
+      });
+      return results;
+    }
+
+  }
+
+  async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
+    if(!pattern){
+      pattern = ".*"
+    }
+
+    const response = await this.doOpenNMSRequest({
+      url: this.flows + '/hosts/enumerate',
+      method: 'GET',
+      params: {
+        'start': start,
+        'end': end,
+        'limit': limit <= 0 ? this.searchLimit : limit,
+        'pattern': pattern
+      }
+    })
+
+    if (response.data.length === 0) {
+      console.warn("No matches found");
+      return response.data;
+    } else {
+      let results: any[] = [];
+      response.data.forEach(val => {
+        results.push({ text: val, value: val, expandable: true });
+      });
+      return results;
+    }
+  }
+
+  async getConversations(start: number, end: number, application: string | null = null, 
+    location: string | null = null, protocol: string | null = null, limit = 0) {
+    if(!application){
+      application = ".*";
+    }
+    if(!location){
+      location = ".*";
+    }
+    if(!protocol){
+      protocol = ".*";
+    }
+    const response = await this.doOpenNMSRequest({
+      url: this.flows + '/conversations/enumerate',
+      method: 'GET',
+      params: {
+        'start': start,
+        'end': end,
+        'application': application,
+        'location': location,
+        'protocol': protocol,
+        'limit': limit <= 0 ? this.searchLimit : limit
+      }
+    })
+
+    if (response.data.length === 0) {
+      console.warn("No matches found");
+      return response.data;
+    } else {
+      let results: any[] = [];
+      response.data.forEach(val => {
+        results.push({ text: val, value: val, expandable: true });
+      });
+      return results;
+    }
   }
 }
 
