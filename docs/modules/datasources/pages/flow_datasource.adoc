@@ -186,7 +186,7 @@ Currently this function accepts the following arguments:
 
 .Examples: variable expression
 
-Get all hosts ( will return a maximum of 25 records).
+Get all hosts (will return a maximum of 25 records).
 
 * hosts()  
 
