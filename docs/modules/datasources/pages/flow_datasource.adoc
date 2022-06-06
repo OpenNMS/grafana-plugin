@@ -114,7 +114,8 @@ dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)
 
 === applications(<limit>)
 
-The `aplications()` query returns a list of all available applications. This function is intended to be used inside the Filter function `withApplications()` as a template variable if needed.
+The `aplications()` query returns a list of all available applications.
+This function is intended for use inside the Filter function `withApplications()` as a template variable if needed.
 
 Currently this function accepts only a limit of records to be retrieved as argument if necessary.
 
