@@ -201,5 +201,5 @@ Get all hosts that match the pattern 192.168.0.* and return a maximum of 10 reco
 .Use with filter function withHost()
 * withHost($hosts)
 
-NOTE: The hosts values retrieved come `as is` from `flows/hosts/enumerate` API.
+NOTE: The host values retrieved come "as is" from the `flows/hosts/enumerate` API.
 
