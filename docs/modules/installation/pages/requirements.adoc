@@ -6,6 +6,9 @@
 {page-component-title} works with Grafana Server version *7.0* and up.
 It has been tested with Grafana versions up to 7.2 at the time of release.
 
+The Grafana Dashboard Report feature in Meridian/Horizon requires the
+https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
+
 == Build Requirements
 
 * https://nodejs.org/en/download[Node.js >= 10.x]
