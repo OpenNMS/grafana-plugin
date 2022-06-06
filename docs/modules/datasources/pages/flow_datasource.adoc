@@ -125,7 +125,7 @@ NOTE: The application values retrieved come "as is" from the `flows/applications
 * applications()  
 * applications(1000)  
 
-.Usage with filter function withApplications()
+.Use with filter function withApplications()
 * withApplications($applications)
 
 === conversations(<application>,<location>,<protocol>,<limit>)
