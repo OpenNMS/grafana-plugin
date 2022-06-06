@@ -181,7 +181,7 @@ Currently this function accepts the following arguments:
 |===
 | Position  | Argument                      | Description                               | Default
 | 1         | pattern (optional)            | host expression                           | ".*"
-| last      | limit (optional)              | limit number of records retrieved.        | 25
+| last      | limit (optional)              | limit number of records retrieved        | 25
 |===
 
 .Examples variable expression
