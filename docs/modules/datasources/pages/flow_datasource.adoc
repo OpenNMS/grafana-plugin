@@ -121,7 +121,7 @@ Currently this function accepts only a limit of records to be retrieved as argum
 
 NOTE: The application values retrieved come "as is" from the `flows/applications/enumerate` API.
 
-.Examples variable expression
+.Examples: variable expression
 * applications()  
 * applications(1000)  
 
