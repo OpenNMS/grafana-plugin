@@ -462,12 +462,13 @@ workflows:
           requires:
             - build
             - make-deb
+            - make-docker-image
             - make-rpm
             - make-tarball
             - make-zip
+            - publish-deb
             - publish-docker-image-bleeding
             - publish-docker-image-latest
-            - publish-deb
             - publish-rpm
           filters:
             branches:
