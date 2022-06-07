@@ -1,3 +1,20 @@
+### v8.0.0
+
+Helm 8 contains updates to the core to use Grafana 8, the start of a move to
+TypeScript, many optimizations, and a number of new features.
+
+* use an optimized bulk query when fetching string properties from OpenNMS
+  versions that support it
+* convert much of the codebase to use native promises rather than angularJS
+  wrappers
+* support converting NaN values to 0 when querying flow data
+* support swapping ingress and egress on flow data at query time
+* support for new filters for node, location, applications, hosts, and
+  conversations
+* fixed an issue with missing flow data when ingress and egress are
+  inconsistently available
+* many documentation improvements and additions
+
 ### v7.3.0
 
 This release adds a new feature to allow querying string properties in the perf datasource.
