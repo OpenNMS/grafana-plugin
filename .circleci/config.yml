@@ -463,8 +463,16 @@ workflows:
             tags:
               only: /^v.*/
       - create-merge-branch:
+          # these all imply "build", plus "make-docker-image" implies "make-tarball"
           requires:
-            - build
+            - make-deb
+            - make-docker-image
+            - make-rpm
+            - make-zip
+            - publish-deb
+            - publish-docker-image-bleeding
+            - publish-docker-image-latest
+            - publish-rpm
           filters:
             branches:
               only: << parameters.from_branch >>
