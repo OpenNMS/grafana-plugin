@@ -41,11 +41,11 @@ defaults: &defaults
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: develop
+      default: release-8.x
     to_branch_label:
       description: the auto-merge target branch (escaped, no slashes)
       type: string
-      default: develop
+      default: release-8.x
 
 docker_container_config: &docker_container_config
   executor: docker-executor
