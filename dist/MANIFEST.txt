@@ -10,7 +10,7 @@ Hash: SHA512
   "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "8.0.0-SNAPSHOT",
-  "time": 1654629598604,
+  "time": 1654633567595,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96be1edcd4712b8d8240c7c84a0cf350f82b98f1fb6248d9e38c6624a87b8668",
@@ -94,9 +94,9 @@ Hash: SHA512
     "panels/alarm-table/img/alarm-table.svg": "ab33624041ca4cec42e4e3a216234c98a13a7a15d2aea4b8cc1753eea67f0576",
     "panels/alarm-table/memo_editor.html": "c92c44714927d4e727b77d5be05da91b8bc3952980e0988815a8229410767dff",
     "panels/alarm-table/module.html": "83762cf9386b16a95e78dd8e7d15f1cfd50e00d94ae8923f3187ba61289ef903",
-    "panels/alarm-table/module.js": "84827ead5e3523e694399747269aa5818e8bb708d9f9417e28f6792ccb5485cd",
+    "panels/alarm-table/module.js": "c4bb29d0be4df05ce978cf928b1028629dd371d4d63195d26730d3fa9478ba86",
     "panels/alarm-table/module.js.LICENSE.txt": "3db70beb129b87b1fb239ad19a10e64c37be79d98dbc9f946a9f7b152b7b3aaf",
-    "panels/alarm-table/module.js.map": "ef59766dbf7d7141d06646563e4d7387a25dd9cb63bf630fa7c3058063ee7010",
+    "panels/alarm-table/module.js.map": "588fa86b4f50f245b12d8d80c29d3bba6bd304880e5f0ae2a7406dbae6d0b436",
     "panels/alarm-table/plugin.json": "a0df731760544b8b4e8b17e9859c001e8db2c8cf53b4df384c5e944d24cb5c0b",
     "panels/filter-panel/css/filter.dark.css": "4c867644b00e59f802bfa87947eada18686bbba248a676c09cb6a49e101dddc5",
     "panels/filter-panel/css/filter.dark.css.map": "9e0781bcafb3b980515b67ef4d5708872b1561e000031a8cd206bbf882fd6ce7",
@@ -140,10 +140,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrcEARMKAAYFAmKfpN4AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5wZ4AgYm3cWjEP457Iqa4RfQGcIO6xWWXB1XCea75gK8zKL59niBH+9k
-hbGVACq5lXPUGj9Xn/V1esFv7yoJ0ky5AXObtwII3ukto6tVT5ETZRyDUeB4
-eXR3KD8nYoZ6J2kXHFnMY3dfR3VghpFeG219CijZKvGOgX1UAp56XUXrCggw
-4mNtt3M=
-=+nq+
+wrgEARMKAAYFAmKftF8AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm508zAgjCNDRtxRQtEGTu3BvcaRLfCmQEcfVCDuw7KV8io3VC5Q6C8s1L
+3eo7MAQLKrYbewriVp83jGegm2+axbSyiJnhgAIJATjBVgIoDlF879+43/R1
+/07xiQck/xETF9H/JTYQSHZz9MgsELqrcgWI9IoFN+TpE2boeICVwWu8Lbr5
+N+exq4zq
+=XTcS
 -----END PGP SIGNATURE-----
