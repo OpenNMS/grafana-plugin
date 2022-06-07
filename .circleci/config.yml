@@ -33,19 +33,19 @@ defaults: &defaults
     from_branch:
       description: the auto-merge source branch
       type: string
-      default: develop
+      default: release-8.x
     from_branch_label:
       description: the auto-merge source branch (escaped, no slashes)
       type: string
-      default: develop
+      default: release-8.x
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: master
+      default: develop
     to_branch_label:
       description: the auto-merge target branch (escaped, no slashes)
       type: string
-      default: master
+      default: develop
 
 docker_container_config: &docker_container_config
   executor: docker-executor
@@ -463,8 +463,16 @@ workflows:
             tags:
               only: /^v.*/
       - create-merge-branch:
+          # these all imply "build", plus "make-docker-image" implies "make-tarball"
           requires:
-            - build
+            - make-deb
+            - make-docker-image
+            - make-rpm
+            - make-zip
+            - publish-deb
+            - publish-docker-image-bleeding
+            - publish-docker-image-latest
+            - publish-rpm
           filters:
             branches:
               only: << parameters.from_branch >>
