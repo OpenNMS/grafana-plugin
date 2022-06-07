@@ -461,6 +461,14 @@ workflows:
       - create-merge-branch:
           requires:
             - build
+            - make-deb
+            - make-rpm
+            - make-tarball
+            - make-zip
+            - publish-docker-image-bleeding
+            - publish-docker-image-latest
+            - publish-deb
+            - publish-rpm
           filters:
             branches:
               only: << parameters.from_branch >>
