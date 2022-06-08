@@ -82,7 +82,7 @@
         },
         "id": 4,
         "options": {
-          "content": "## Documentation and Support\n\n * Official documentation can be found at https://docs.opennms.com/helm/8.0.0-SNAPSHOT\n * [OpenNMS Mattermost Chat](https://chat.opennms.com)\n * [OpenNMS Discourse Forums](https://opennms.discourse.group)",
+          "content": "## Documentation and Support\n\n * Official documentation can be found at https://docs.opennms.com/helm/9.0.0-SNAPSHOT\n * [OpenNMS Mattermost Chat](https://chat.opennms.com)\n * [OpenNMS Discourse Forums](https://opennms.discourse.group)",
           "mode": "markdown"
         },
         "targets": [
