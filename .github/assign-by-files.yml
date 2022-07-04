@@ -1,0 +1,6 @@
+---
+"**/*.adoc":
+  - Bonrob2
+
+"docs/**/*":
+  - Bonrob2
