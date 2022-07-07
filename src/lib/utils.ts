@@ -74,7 +74,12 @@ export function variableUpdated(variable, emitChangeEvents = false) {
   let promises = [] as Array<Promise<any>>;
 
   // in theory we should create an efficient sub-list of variables to update, but for now just do them all YOLO
-  variables.forEach(v => promises.push(v.updateOptions()));
+  variables.forEach(v => {
+    // variables don't always seem to have updateOptions method, so check here
+    if (v.updateOptions) {
+      promises.push(v.updateOptions());
+    }
+  });
 
   templateSrv.setGlobalVariable(variable.id, variable.current);
 
@@ -259,6 +264,14 @@ export function getInputsAsArray(input: string) {
   } else {
     return [input];
   }
+}
+
+/**
+ * Grafana oftens returns values that are either the raw value or else a one-element array with the value.
+ * Utility function to get either.
+ */
+export function getValueOrFirstElement<T>(input: T | T[]): T {
+  return _.isArray(input) && input.length > 0 ? input[0] : (input as T);
 }
 
 /** Checks if the given index is the first index of the given t. */
