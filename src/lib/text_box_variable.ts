@@ -1,4 +1,4 @@
-import { assignModelProperties, setOptionAsCurrent, setOptionFromUrl } from './utils';
+import { assignModelProperties, getValueOrFirstElement, setOptionAsCurrent, setOptionFromUrl } from './utils';
 
 export class TextBoxVariable {
   type = 'textbox';
@@ -36,7 +36,9 @@ export class TextBoxVariable {
   }
 
   updateOptions() {
-    this.options = [{ text: this.query.trim(), value: this.query.trim(), selected: false }];
+    const query = (getValueOrFirstElement<string>(this.query) || '').trim();
+
+    this.options = [{ text: query, value: query, selected: false }];
     this.current = this.options[0];
     return Promise.resolve();
   }
