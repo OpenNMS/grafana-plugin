@@ -44,7 +44,7 @@ The `nodeFilter()` query returns a list of nodes which match the given filter ex
 The filter expression must be an existing node attribute and its corresponding value. 
 The value can be a constant or a variable.
 
-Example:
+.Example
 * nodeFilter(<node_attribute>='<value>')
 * nodeFilter(location='Default')
 * nodeFilter(location='$location')
