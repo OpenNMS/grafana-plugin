@@ -63,7 +63,7 @@ _:-ms-fullscreen, :root .flow-panel--legend-right .flow-legend {
 }
 
 .datapoints-warning {
-  pointer: none;
+  pointer-events: none;
   position: absolute;
   top: 50%;
   left: 50%;
