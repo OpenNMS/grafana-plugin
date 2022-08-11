@@ -123,19 +123,19 @@
                         </td>
                         <td severity><div class=alarm-detail-logmessage>{{summary.label}}</div></td>
                         <td severity title="{{summary.logMessage}}"><div class=alarm-detail-logmessage>{{summary.logMessage}}</div></td>
-                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                        <td ng-if="editFeedback" class="feedback-button-td" style="width:60px">
                             <div class="feedback-button-div">
                                 <button type="button" class="{{ctrl.detailFeedbackOkayButton(summary.reductionKey)}}"
                                 ng-click="ctrl.markCorrect(summary.reductionKey)">Is Related</button>
                             </div>
                         </td>
-                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                        <td ng-if="editFeedback" class="feedback-button-td" style="width:60px">
                             <div class="feedback-button-div">
                                 <button type="button" class="{{ctrl.detailFeedbackIncorrectButton(summary.reductionKey)}}"
                                 ng-click="ctrl.markIncorrect(summary.reductionKey)">Not Related</button>
                             </div>
                         </td>
-                        <td ng-if="editFeedback" class="feedback-button-td" width="60px">
+                        <td ng-if="editFeedback" class="feedback-button-td" style="width:60px">
                             <div class="feedback-button-div">
                                 <button type="button" class="{{ctrl.detailFeedbackRootCauseButton(summary.reductionKey)}}"
                                 ng-click="ctrl.markRootCause(summary.reductionKey, ctrl.isRootCause(summary.reductionKey))">Root Cause</button>
