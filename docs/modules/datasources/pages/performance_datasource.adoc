@@ -185,7 +185,7 @@ To query a specific node by foreign source and foreign id, you can use an expres
 nodeResources(FS:FID)
 ```
 
-To query only SNMP interface resources on the node with ID 42, and to display the interfaces resources labels rather than their often-cryptic IDs, you might use:
+To query only SNMP interface resources on the node with ID 42, and to display the interface's resource labels rather than their often-cryptic IDs, you might use:
 ```
 nodeResources(42, label, interfaceSnmp)
 ```
