@@ -377,11 +377,12 @@ export class TableRenderer {
 
       const cellLinkTooltip = this.templateSrv.replace(column.style.linkTooltip, scopedVars);
       const cellTarget = column.style.linkTargetBlank ? '_blank' : '';
+      const rel = column.style.linkTargetBlank ? 'rel="noopener"' : '';
 
       cellClasses.push('table-panel-cell-link');
 
       columnHtml += `
-        <a href="${sanitizedCellLink}" target="${cellTarget}" data-link-tooltip data-original-title="${cellLinkTooltip}" data-placement="right"${textStyle}>
+        <a href="${sanitizedCellLink}" ${rel} target="${cellTarget}" data-link-tooltip data-original-title="${cellLinkTooltip}" data-placement="right"${textStyle}>
           ${value}
         </a>
       `;

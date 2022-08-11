@@ -1,7 +1,7 @@
 <div class="modal-body alarm-details" ng-class="'opennms-theme-' + (theme ? theme : 'helm')">
     <div class="modal-header">
         <h2 class="modal-header-title">
-            <a href="{{ alarm.detailsPage }}" target="_blank"><i class="fa fa-external-link"></i></a>
+            <a href="{{ alarm.detailsPage }}" rel="noopener" target="_blank"><i class="fa fa-external-link"></i></a>
             <span class="p-l-1">Alarm Details</span>
         </h2>
 
@@ -92,7 +92,7 @@
                 <tr>
                     <td>Ticket ID</td>
                     <td ng-if="!alarm.troubleTicketLink">{{(alarm.troubleTicket || 'N/A')}}</td>
-                    <td ng-if="alarm.troubleTicketLink"><a href="{{alarm.troubleTicketLink}}" target="_blank">{{alarm.troubleTicket || 'N/A'}}</a></td>
+                    <td ng-if="alarm.troubleTicketLink"><a href="{{alarm.troubleTicketLink}}" rel="noopener" target="_blank">{{alarm.troubleTicket || 'N/A'}}</a></td>
                 </tr>
                 <tr>
                     <td>Ticket State</td>
@@ -117,7 +117,7 @@
                     </tr>
                     <tr ng-repeat="summary in node.alarms" ng-class="(severity === true || severity === 'row') ? summary.severity.toLowerCase() : ''">
                         <td ng-class="(severity === 'column')? summary.severity.toLowerCase() : ''">
-                            <a href="{{detailsLink}}={{summary.id}}" target="_blank">
+                            <a href="{{detailsLink}}={{summary.id}}" rel="noopener" target="_blank">
                                 <i class="fa fa-external-link"></i>
                             </a>
                         </td>
