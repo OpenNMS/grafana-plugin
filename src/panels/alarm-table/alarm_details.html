@@ -20,7 +20,7 @@
 
     <div class="modal-content" dynamic-height>
         <div ng-if="editor.index == 0">
-            <table class="filter-table gf-form-group alarm-details-table severity" summary="Alarm Details">
+            <table class="filter-table gf-form-group alarm-details-table severity">
                 <tr>
                     <th>UEI</th>
                     <td class="wrap">{{alarm.uei}}</td>
@@ -50,7 +50,7 @@
                     <td class="wrap operator-instructions" ng-bind-html="alarm.operatorInstructions"></td>
                 </tr>
             </table>
-            <table class="filter-table gf-form-group alarm-details-table" summary="">
+            <table class="filter-table gf-form-group alarm-details-table">
                 <tr>
                     <th>Count</th>
                     <td>{{alarm.count}}</td>
@@ -88,7 +88,7 @@
         <span ng-if="editor.index > 1 && tabs[editor.index] == 'JSON'" style="overflow-wrap: normal; white-space: pre">{{ getAlarmString() }}</span>
 
         <div ng-if="editor.index > 1 && tabs[editor.index] == 'Ticketing'">
-            <table class="filter-table gf-form-group" summary="Alarm Ticketing Info">
+            <table class="filter-table gf-form-group">
                 <tr>
                     <td>Ticket ID</td>
                     <td ng-if="!alarm.troubleTicketLink">{{(alarm.troubleTicket || 'N/A')}}</td>
@@ -102,7 +102,7 @@
         </div>
 
         <div ng-if="editor.index > 1  && tabs[editor.index] == 'Related Alarms' && alarm.relatedAlarms && alarm.relatedAlarms.length > 0">
-            <table class="table-panel-table dense-table-panel-table alarm-table alarm-details-table" summary="Related Alarms">
+            <table class="table-panel-table dense-table-panel-table alarm-table alarm-details-table">
                 <thead class="alarm-details-header">
                     <th colspan="2">Label</th>
                     <th>Log Message</th>
