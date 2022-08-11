@@ -38,7 +38,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   height: 100%;
 }
 
-_:-ms-fullscreen, :root .flow-panel--legend-right .flow-legend {
+:-ms-fullscreen, :fullscreen, :root .flow-panel--legend-right .flow-legend {
   flex: 0 1 200px;
 }
 
