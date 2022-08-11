@@ -185,9 +185,14 @@ To query a specific node by foreign source and foreign id, you can use an expres
 nodeResources(FS:FID)
 ```
 
-To query only SNMP interface resources on the node with ID 42, and to display the interfaces resources' labels rather than their often-cryptic IDs, you might use:
+To query only SNMP interface resources on the node with ID 42, and to display the interface's resource labels rather than their often-cryptic IDs, you might use:
 ```
 nodeResources(42, label, interfaceSnmp)
+```
+
+To query all resources on the node with ID 42, and labels that match the regular expression \*.DPN.*, you might use:
+```
+nodeResources(42, label, *, .*DPN.*)
 ```
 
 The available arguments are as follows:
@@ -197,6 +202,7 @@ The available arguments are as follows:
 | resourceId        | Required | `(none)` | The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
 | textProperty      | Optional | `id`     | One of `id`, `label`, or `name` to display alternate string values in the variable drop-down menu.
 | resourceType      | Optional | `*`      | Resource type filter to limit the types of resources returned.
+| Regular expression| Optional | RegExp   | Regular expression filter applied to the resource field specified by the `textProperty` argument.
 |===
 
 == Label formatters
