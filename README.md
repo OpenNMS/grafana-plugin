@@ -28,7 +28,7 @@ Retrieve metrics stored in any of the available persistence engines i.e. rrdtool
 
 ### Template support
 
-Populate template variables with all of the nodes belonging to a set of categories, or leverage the complete [filter grammar](https://www.opennms.org/wiki/Filters).
+Populate template variables with all of the nodes belonging to a set of categories, or leverage the complete [filter grammar](https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html).
 
 ### Trending and Forecasting
 

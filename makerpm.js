@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-var os = require('os');
-var fs = require('fs-extra');
-var path = require('path');
-var rimraf = require('rimraf');
-var which = require('which');
+const os = require('os');
+const fs = require('fs-extra');
+const path = require('path');
+const rimraf = require('rimraf');
+const which = require('which');
 
-var validator = require('specit/lib/validator');
-var generate = require('specit/lib/generate');
-var clean = require('specit/lib/clean');
+const validator = require('specit/lib/validator');
+const generate = require('specit/lib/generate');
+const clean = require('specit/lib/clean');
 
-var program = require('commander');
+const program = require('commander');
 
-var spawn = require('child_process').spawnSync;
-var cwd = process.cwd();
+const spawn = require('child_process').spawnSync;
+const cwd = process.cwd();
 
-var pkginfo = require('./package.json');
+const pkginfo = require('./package.json');
 
-var version = pkginfo.version;
-var release = 1;
+let version = pkginfo.version;
+let release = 1;
 
 if (version.indexOf('-SNAPSHOT') > 0) {
   version = version.replace('-SNAPSHOT', '');
@@ -59,7 +59,7 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
     console.log('Created ./%s', file);
   });
 
-  var rpmbuilddir = path.join(os.tmpdir(), 'rpmbuild');
+  const rpmbuilddir = path.join(os.tmpdir(), 'rpmbuild');
   rimraf.sync(rpmbuilddir);
   fs.mkdirSync(rpmbuilddir);
   fs.mkdirSync(path.join(rpmbuilddir, 'SOURCES'));
@@ -68,7 +68,7 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
   fs.copySync(path.join('SOURCES', pkginfo.name + '.tar.gz'), path.join(rpmbuilddir, 'SOURCES', pkginfo.name + '.tar.gz'));
 
   console.log('Running rpmbuild');
-  var ret = spawn(
+  const ret = spawn(
     'rpmbuild',
     [
       '--define', '_topdir ' + path.join(os.tmpdir(), 'rpmbuild'),
@@ -84,12 +84,12 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
     process.exit(1);
   }
 
-  var targetdir = path.join('artifacts');
+  const targetdir = path.join('artifacts');
   if (!fs.existsSync(targetdir)) {
     fs.mkdirSync(targetdir);
   }
 
-  var rpm = pkginfo.name + '-' + version + '-' + release + '.noarch.rpm';
+  const rpm = pkginfo.name + '-' + version + '-' + release + '.noarch.rpm';
   if (fs.existsSync(path.join(targetdir, rpm))) {
     fs.unlinkSync(path.join(targetdir, rpm));
   }
