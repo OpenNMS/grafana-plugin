@@ -10,7 +10,7 @@ Hash: SHA512
   "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "9.0.0-SNAPSHOT",
-  "time": 1660228053834,
+  "time": 1660228900195,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96b5c72df82990dcdab8b190be4dbba4ea0d7eeb2a947773e77903cafa5587d4",
@@ -53,7 +53,7 @@ Hash: SHA512
     "datasources/perf-ds/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
     "datasources/perf-ds/module.js.map": "e3a1e0ba98952715d8f88901ee26378b880b777df20c727887a7028d03a5748a",
     "datasources/perf-ds/partials/config.html": "3131aa3bc6d399fac83e5019df43a60fb7b95a534e44c9beb2681db31061ae56",
-    "datasources/perf-ds/partials/modal.selection.html": "315d34d9d6a12e702d13dbb1af1d0a0038788891a7f51d0559c710d5cc8e7233",
+    "datasources/perf-ds/partials/modal.selection.html": "70fbce50967e06632bcee917836b763a2497774bd902080993c5da0201b2c43e",
     "datasources/perf-ds/partials/query.editor.html": "2d0a139be461c5bd09637b9db5c3c7cfbdf1bce3bfcc03e53fdd23c69e908ecd",
     "datasources/perf-ds/partials/query.options.html": "f8551de0789e917f31a876298a83163717a8bb9dddd7c1284c0a39ae9f2b6761",
     "datasources/perf-ds/plugin.json": "04736a51a9941dfa200d201a7efdb1654b11c573e5953d3f574d88a95663b5e4",
@@ -80,7 +80,7 @@ Hash: SHA512
     "panels/alarm-histogram/module.js.LICENSE.txt": "0d8f66cd4afb566cb5b7e1540c68f43b939d3eba12ace290f18abc4f4cb53ed0",
     "panels/alarm-histogram/module.js.map": "be26959f3b94b03e9c88d44fbfe74c41632d55d04683b6c571e35f1e63fbc71c",
     "panels/alarm-histogram/plugin.json": "9147b8d6b8cfbe08a31f2936a7bdcf8b883327f4bf0452708385f829ef19efdc",
-    "panels/alarm-table/alarm_details.html": "631e3d62e75ad03f4e913dbb811f25c28489926e1f29480bebb4725295e6bf60",
+    "panels/alarm-table/alarm_details.html": "6f14d0f022737f00c566885fd8f7a5e0de9bd5c6d7a2414a920c369644147c8a",
     "panels/alarm-table/column_options.html": "35bc4e84b197458d0bc64cbbf479fd22bd9bbaf636828929583782dc9b8b3a17",
     "panels/alarm-table/css/table.dark.css": "66e6681f7dc165c79ecce9c99d1ca8cfa4ad8df9293f30f00a0a6b0a8e7b1a91",
     "panels/alarm-table/css/table.dark.css.map": "ad9b5e47a92a7525de58b1e3054b40f3344d6ba86ba7fbf322e50e6754cb8a16",
@@ -90,10 +90,10 @@ Hash: SHA512
     "panels/alarm-table/css/table.light.css.map": "a6822993e4c35d7e58d126a3862930a6c3cfe0b4f26476ed629b6a46e30c2d83",
     "panels/alarm-table/css/table.light.js": "728e1c9361161b59e94a782964896e9346d615318c4242fe901362fa42a3a506",
     "panels/alarm-table/css/table.light.js.map": "513654a2caf765f242957b190038366bf2b7598affe1003a49b9b40c71247b46",
-    "panels/alarm-table/editor.html": "c3aa59821b925543f05cf5ce53052f4eef4ffff41b1ccba2b12b234ade27b011",
+    "panels/alarm-table/editor.html": "db6b631d27a7b14e4c9939dc888737f843d393194ee84ff6c37f5718e93722e5",
     "panels/alarm-table/img/alarm-table.svg": "ab33624041ca4cec42e4e3a216234c98a13a7a15d2aea4b8cc1753eea67f0576",
     "panels/alarm-table/memo_editor.html": "c92c44714927d4e727b77d5be05da91b8bc3952980e0988815a8229410767dff",
-    "panels/alarm-table/module.html": "83762cf9386b16a95e78dd8e7d15f1cfd50e00d94ae8923f3187ba61289ef903",
+    "panels/alarm-table/module.html": "3326bfc9cd8fdcb47d4ccd6d962f9f3c037470067a496e8a51b890bf1ac12990",
     "panels/alarm-table/module.js": "83f4172d0c7cbff4c56d9d3d93fc4dfbc8640f06ef71d9eaa9ddb420c469ef12",
     "panels/alarm-table/module.js.LICENSE.txt": "3db70beb129b87b1fb239ad19a10e64c37be79d98dbc9f946a9f7b152b7b3aaf",
     "panels/alarm-table/module.js.map": "99a5b584f286b3e4da6d73e1ee7b630decf4f230139e03ad094ff7fc82f1b71f",
@@ -140,10 +140,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmL1EdUAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5+JbAgiEAX3qShnfJbuRokkvDBj68bxIpHLD2hAqZ4dRmeX6Bi8PLVzL
-Y9fjhKFsCpZicmA/EdNr+jGyBqWkkReYjZkvZgIJATibNUSi3SpKaR/NlIUN
-lsYD0OcR7rMnmXHKGpkb5GQGCTsb2mkugaUeYw4ukQFFbCq16Jy2cZcSmOrF
-3h5H8tlq
-=lsay
+wrgEARMKAAYFAmL1FSQAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm58usAgd1rAgjZveeMJP5kd879BeeOiUAApAulwEdLdCSGMtaKWL02HjG
+DEgp6zBdd2w3P2MPKw/FWLiEhs8pWb0WcUc6WgIJAY5cnKx23ffh6xQiJlEQ
+wXop6he3gUs+MZdLpZlxwKG9+x+T81KrtHFKVBkrfMlqKbFM7Tw8aiji2T8b
+cD57FDX5
+=kSX1
 -----END PGP SIGNATURE-----

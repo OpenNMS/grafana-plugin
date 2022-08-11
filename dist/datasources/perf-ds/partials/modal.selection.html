@@ -26,7 +26,7 @@
                 <div ng-show="!ctrl.rows.length">
                     <h5 class="text-center">No results.</h5>
                 </div>
-                <table class="table table-condensed" ng-show="ctrl.rows.length">
+                <table class="table table-condensed" ng-show="ctrl.rows.length" summary="Select Nodes">
                     <thead>
                     <tr>
                         <th data-ng-repeat="(key,value) in ctrl.$scope.columns">{{ key }}</th>
