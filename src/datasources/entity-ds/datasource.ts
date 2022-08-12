@@ -422,10 +422,8 @@ export class OpenNMSEntityDatasource {
         if (propValuePair && propValuePair.length === 2) {
             const propertyKey =  entity.getAttributeMapping().getApiAttribute( propValuePair[0].trim());
             const propertyValue = propValuePair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
-            const variableName = this.templateSrv.getVariableName(propertyValue);
-            const templateVariable = this._getTemplateVariable(variableName);
-            if(templateVariable && templateVariable.current.value){
-                filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value));
+             if(propertyKey && propertyValue){
+                filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, propertyValue));
                 filter.limit = 0;
             }
         }
