@@ -420,20 +420,28 @@ export class OpenNMSEntityDatasource {
         let filter = new API.Filter();        
 
         if (propValuePair && propValuePair.length === 2) {
-            const propertyKey =  entity.getAttributeMapping().getApiAttribute( propValuePair[0].trim());
+            const propertyKey = entity.getAttributeMapping().getApiAttribute(propValuePair[0].trim());
             const propertyValue = propValuePair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
-             if(propertyKey && propertyValue){
+            if (propertyValue.trim().startsWith('$')) {
+
+                const variableName = this.templateSrv.getVariableName(propertyValue);
+                const templateVariable = this._getTemplateVariable(variableName);
+                if (templateVariable && templateVariable.current.value) {
+                    filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value));
+                    filter.limit = 0;
+                }
+            } else if (propertyKey && propertyValue) {
                 filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, propertyValue));
                 filter.limit = 0;
             }
         }
-       
+
         return this.opennmsClient.getNodeByFilter(filter)
-        .then(nodes => {
-            return nodes.map(node =>  { 
-                return {id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id } 
+            .then(nodes => {
+                return nodes.map(node => {
+                    return { id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
+                });
             });
-        });
     }
 
     getAlarm(alarmId) {
