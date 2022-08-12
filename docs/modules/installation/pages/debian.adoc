@@ -1,5 +1,5 @@
 [[helm-install-debian]]
-= Install on Debian/Ubuntu
+= Install On Debian/Ubuntu
 
 [IMPORTANT]
 ====
@@ -12,7 +12,7 @@ If you have an existing instance of https://grafana.com[Grafana] you would like 
 Create a new apt source file (e.g,: /etc/apt/sources.list.d/opennms.list), and add the following two lines:
 
 .Package repository configuration for Debian-based systems
-[source, shell]
+[source, console]
 ----
 deb https://debian.opennms.org stable main
 deb-src https://debian.opennms.org stable main
@@ -21,14 +21,14 @@ deb-src https://debian.opennms.org stable main
 Import the packages' authentication key with the following command:
 
 .GPG key import for Debian-based systems
-[source, shell]
+[source, console]
 ----
 wget -O - https://debian.opennms.org/OPENNMS-GPG-KEY | sudo apt-key add -
 ----
 
 Install the packages:
 
-[source, shell]
+[source, console]
 ----
 sudo apt-get update
 sudo apt-get install opennms-helm
@@ -38,7 +38,7 @@ sudo apt-get install opennms-helm
 
 Start Grafana:
 
-[source, shell]
+[source, console]
 ----
 sudo service grafana-server start
 ----
@@ -50,14 +50,14 @@ This starts the grafana-server process as the grafana user, which is created dur
 
 To configure the Grafana server to start at boot time:
 
-[source, shell]
+[source, console]
 ----
 sudo /sbin/chkconfig --add grafana-server
 ----
 
 == Start the server (via systemd)
 
-[source, shell]
+[source, console]
 ----
 sudo systemctl daemon-reload
 sudo systemctl start grafana-server
@@ -66,7 +66,7 @@ sudo systemctl status grafana-server
 
 To enable the systemd service to start at boot:
 
-[source, shell]
+[source, console]
 ----
 sudo systemctl enable grafana-server.service
 ----

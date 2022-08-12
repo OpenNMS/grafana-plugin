@@ -1,14 +1,14 @@
 :imagesdir: ../assets/images
-= Planning your dashboard
+= Planning Your Dashboard
 
 [.lead]
-Every network is unique, with different monitoring requirements. 
-{page-component-title} has the flexibility to enable users to customize dashboards to display data in a way that best meets their needs and workflow. 
+Every network is unique, with different monitoring requirements.
+{page-component-title} has the flexibility to enable users to customize dashboards to display data in a way that best meets their needs and workflow.
 
-A dashboard you create in {page-component-title} will contain multiple panels, each of which displays specific data. 
-For example, the following sample dashboard displays performance metrics collected via SNMP. 
+A dashboard you create in {page-component-title} will contain multiple panels, each of which displays specific data.
+For example, the following sample dashboard displays performance metrics collected via SNMP.
 
-image::gf-helm-sample-dash.png[Dash, 800] 
+image::gf-helm-sample-dash.png[Dash, 800]
 
 Another dashboard might display traffic flows:
 

@@ -3,12 +3,12 @@
 
 = What is {page-component-title}?
 
-{page-component-title} is an application that lets users create flexible dashboards to interact with data stored by OpenNMS. 
+{page-component-title} is an application that lets users create flexible dashboards to interact with data stored by OpenNMS.
 {page-component-title} works with https://grafana.com[Grafana], an analytics platform, to display and customize xref:fault[fault management (FM)] and xref:performance[performance management (PM)] data from https://www.opennms.org[OpenNMS Horizon ] and/or https://www.opennms.com[OpenNMS Meridian].
-Create and customize dashboards to display the data you want to see -- alarms, outages, key performance indicators -- in a way that best meets the needs of your workflow and staff. 
+Create and customize dashboards to display the data you want to see -- alarms, outages, key performance indicators -- in a way that best meets the needs of your workflow and staff.
 
 .Sample {page-component-title} dashboard
-image::helm-sample-dash.png[Dash, 800] 
+image::helm-sample-dash.png[Dash, 800]
 
 == How does it work?
 

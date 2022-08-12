@@ -1,9 +1,9 @@
-= Upgrading from Older Versions
+= Upgrade From Older Versions
 
 Usually upgrading simply involves installing the new package.
 However, major version releases can sometimes introduce breaking changes, in which case you may need additional steps to upgrade.
 
-== Helm 3 to 4+
+== Helm 3 to 4+ migration
 
 [IMPORTANT]
 ====
@@ -14,11 +14,11 @@ You will need to follow a few steps to upgrade your dashboards.
 Before you do anything else, make sure you have installed the latest Helm plugin.
 Also, make sure you have https://nodejs.org/[Node.js] installed if it is not already.
 
-=== Export Datasources with Wizzy
+=== Export datasources with Wizzy
 
 First, install Wizzy with npm, and create a place to dump your datasources:
 
-[source, shell]
+[source, console]
 ----
 npm i -g wizzy
 mkdir /tmp/wizzy
@@ -27,7 +27,7 @@ cd /tmp/wizzy
 
 Next, configure wizzy to speak to your Grafana instance and dump your datasources:
 
-[source, shell]
+[source, console]
 ----
 # create a local wizzy project directory
 wizzy init
@@ -41,14 +41,14 @@ wizzy import datasources
 
 Then, convert any `fault` datasources to be `entity` datasources:
 
-[source, shell]
+[source, console]
 ----
 perl -pi -e 's/opennms-helm-fault-datasource/opennms-helm-entity-datasource/g' datasources/*.json
 ----
 
 Finally, publish your changes back to Grafana:
 
-[source, shell]
+[source, console]
 ----
 wizzy export datasources
 ----

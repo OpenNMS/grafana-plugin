@@ -2,7 +2,7 @@
 [.lead]
 
 [[gs-dashboard-import]]
-= Import a Dashboard
+= Import A Dashboard
 
 There are a number of official- and community-built https://grafana.com/grafana/dashboards?search=opennms&orderBy=name&direction=asc[OpenNMS dashboards] available for import, that display the following:
 
@@ -13,26 +13,26 @@ There are a number of official- and community-built https://grafana.com/grafana/
 * Network interfaces
 * And more ...
 
-You can edit these pre-designed dashboards to meet your needs or to learn more about how to build your own dashboards. 
+You can edit these pre-designed dashboards to meet your needs or to learn more about how to build your own dashboards.
 
 To import an existing dashboard, follow these steps:
 
-. Go to the https://grafana.com/grafana/dashboards[Grafana dashboards page] and search for OpenNMS. 
-. Click on the dashboard you want to import. 
+. Go to the https://grafana.com/grafana/dashboards[Grafana dashboards page] and search for OpenNMS.
+. Click on the dashboard you want to import.
 . Copy the dashboard ID:
 
 +
 image:gf-community-dash.png[]
 
 . In {page-component-title}, click the plus sign in the left menu and choose *Import*.
-. In the *Import via grafana.com* field, enter the dashboard ID and click *Load*. 
+. In the *Import via grafana.com* field, enter the dashboard ID and click *Load*.
 +
 The Import screen appears.
 
-. Change information as desired and click *Import*. 
+. Change information as desired and click *Import*.
 +
-You must specify a flow and performance data source. 
+You must specify a flow and performance data source.
 +
-The dashboard appears. 
+The dashboard appears.
 +
-. Click *Dashboards>Manage* to view a list of your dashboards. 
+. Click *Dashboards>Manage* to view a list of your dashboards.

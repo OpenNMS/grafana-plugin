@@ -1,5 +1,5 @@
 [[welcome-legal-notice]]
-= Legal notice
+= Legal Notice
 {}
 {page-version}
 :data-uri:

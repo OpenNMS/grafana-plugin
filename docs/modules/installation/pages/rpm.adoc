@@ -1,5 +1,5 @@
 [[helm-rpm-install]]
-= Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)
+= Install On RPM-based Linux
 
 [IMPORTANT]
 ====
@@ -11,7 +11,7 @@ If you have an existing instance of https://grafana.com[Grafana] you would like 
 
 Install the package repository:
 
-[source, shell]
+[source, console]
 ----
 sudo yum install https://yum.opennms.org/repofiles/opennms-repo-stable-rhel7.noarch.rpm
 sudo rpm --import https://yum.opennms.org/OPENNMS-GPG-KEY
@@ -19,7 +19,7 @@ sudo rpm --import https://yum.opennms.org/OPENNMS-GPG-KEY
 
 Install the packages:
 
-[source, shell]
+[source, console]
 ----
 sudo yum install opennms-helm
 ----
@@ -28,7 +28,7 @@ sudo yum install opennms-helm
 
 Start Grafana:
 
-[source, shell]
+[source, console]
 ----
 sudo service grafana-server start
 ----
@@ -40,14 +40,14 @@ This starts the grafana-server process as the grafana user, which is created dur
 
 To configure the Grafana server to start at boot time:
 
-[source, shell]
+[source, console]
 ----
 sudo /sbin/chkconfig --add grafana-server
 ----
 
 == Start the server (via systemd)
 
-[source, shell]
+[source, console]
 ----
 sudo systemctl daemon-reload
 sudo systemctl start grafana-server
@@ -56,7 +56,7 @@ sudo systemctl status grafana-server
 
 To enable the systemd service to start at boot:
 
-[source, shell]
+[source, console]
 ----
 sudo systemctl enable grafana-server.service
 ----
@@ -64,4 +64,3 @@ sudo systemctl enable grafana-server.service
 == Next steps
 
 xref:getting_started:index.adoc#[Set up your first dashboard].
-
