@@ -1,8 +1,8 @@
-= Entities datasource
+= Entities Datasource
 
 == General
 
-Use the _Entities Datasource_ to retrieve entity model objects from OpenNMS.
+Use the Entities Datasource to retrieve entity model objects from OpenNMS.
 It currently supports alarms and nodes.
 
 (For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).
@@ -30,7 +30,7 @@ The `alarms()` function queries the OpenNMS alarms REST API.
 
 === locations()
 
-The `locations()` query returns a list of all available node locations. 
+The `locations()` query returns a list of all available node locations.
 Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
 
 .Example variable expression
@@ -41,7 +41,7 @@ Use this inside `nodeFilter()` to filter the number of nodes displayed by locati
 
 The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
-The filter expression must be an existing node attribute and its corresponding value. 
+The filter expression must be an existing node attribute and its corresponding value.
 The value can be a constant or a variable.
 
 .Example
@@ -51,4 +51,15 @@ The value can be a constant or a variable.
 
 === nodes([attribute])
 
-The `nodes()` function will query the OpenNMS node ReST API.
+The `nodes()` function will query the OpenNMS node REST API to retrieve a list of unique values for a given attribute.
+The result from this query can be used in a `nodeFilter()` query to filter nodes in either a Entity or Performance Datasource variable.
+You can find a list of valid attributes from the `\http://HOSTNAME:8980/opennms/api/v2/nodes/properties` endpoint of your OpenNMS server.
+
+.Example filtering nodes by the "region" asset record
+. On your dashboard, create a variable called `region` and set the datasource to an Entity Datasource pointing to your server.
+. Set the query to be `nodes(assetRecord.region)`.
+. Save the variable and return to list of variables.
+. Create a second variable called `node` and set the datasource to a Performance Datasource.
+. Set the query to be `nodeFilter(region='$region')`.
+. Save the variable and return to your dashboard.
+. As you change the "region" variable, the options in the "node" variable should update to show only the matching nodes.
