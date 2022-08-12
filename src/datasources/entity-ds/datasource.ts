@@ -420,7 +420,7 @@ export class OpenNMSEntityDatasource {
         let filter = new API.Filter();        
 
         if (propValuePair && propValuePair.length === 2) {
-            const propertyKey = entity.getAttributeMapping().getApiAttribute(propValuePair[0].trim());
+            const propertyKey =  entity.getAttributeMapping().getApiAttribute( propValuePair[0].trim());
             const propertyValue = propValuePair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
             if (propertyValue.trim().startsWith('$')) {
 
@@ -437,11 +437,11 @@ export class OpenNMSEntityDatasource {
         }
 
         return this.opennmsClient.getNodeByFilter(filter)
-            .then(nodes => {
-                return nodes.map(node => {
-                    return { id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
-                });
+        .then(nodes => {
+            return nodes.map(node =>  {
+                return {id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
             });
+        });
     }
 
     getAlarm(alarmId) {
