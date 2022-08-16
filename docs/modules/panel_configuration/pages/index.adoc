@@ -8,7 +8,7 @@ Panel configuration is available in the bottom half of a panel in editing mode:
 
 image::gf-panel-config.png[Panel config, 500]
 
-The types of configuration options available depend on the type of datasource associated with the panel.
+The available configuration options depend on the type of datasource associated with the panel.
 
 This section describes the following types of panel configuration:
 
