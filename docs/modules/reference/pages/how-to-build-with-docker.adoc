@@ -17,7 +17,7 @@ The result is a runnable image which can be executed with
 docker run -p 3000:3000 -t myopennmshelmimage
 ----
 
-Login on `\http://your-ip:3000` with login admin:admin and go to Plugins and enable the Helm app.
+Log in on `\http://your-ip:3000` with login admin:admin and go to Plugins and enable the Helm app.
 
 IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can't be changed.
 
