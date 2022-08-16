@@ -6,7 +6,7 @@
 * xref:installation:rpm.adoc[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
 * xref:installation:debian.adoc[Install on Debian/Ubuntu]
 * xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
-* xref:installation:source.adoc[Install From Source]
+* xref:installation:source.adoc[Install from Source]
 * xref:installation:upgrading.adoc[Upgrade from Older Versions]
 
 .Get started with Helm
@@ -25,7 +25,7 @@
 .Datasources
 * xref:datasources:performance_datasource.adoc[Performance Datasource]
 * xref:datasources:entity_datasource.adoc[Entities Datasource]
-* xref:datasources:flow_datasource.adoc[Flow D]
+* xref:datasources:flow_datasource.adoc[Flow Datasource]
 
 .Contribute
 * xref:contributing:index.adoc[Contribute]

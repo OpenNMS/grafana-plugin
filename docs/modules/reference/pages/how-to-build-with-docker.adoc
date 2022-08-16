@@ -44,7 +44,7 @@ When you first run `docker-compose up -d`, the Grafana OpenNMS Helm plugin will 
 Any run will use the compiled image from on the local system.
 If you want to rebuild the image run `docker-compose build --no-cache` to rebuild the image with the build configuration in the given `docker-compose.yml`.
 
-The URL for the data source in Grafana for the OpenNMS Horizon server is `\http://opennms:8980/opennms`.
+The URL for the data source in Grafana for the OpenNMS Horizon or Meridian server is `\http://opennms:8980/opennms`.
 
 == Docker configuration for PDF dashboard reports
 
