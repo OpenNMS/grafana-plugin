@@ -12,11 +12,6 @@ Welcome to the {page-component-title} {page-version} documentation.
 Here, you will find information and guides to help you learn about {page-component-title} and start exploring its features.
 Learn how to set up and manage your {page-component-title} environment, from installation to creating your first dashboard and using advanced filtering.
 
-[TIP]
-====
-Use the left navigation bar to browse the documentation or the links below to access some highlights.
-====
-
 [big]*Need help?*
 
 * Talk to us on https://chat.opennms.com/opennms[Mattermost].
