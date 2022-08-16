@@ -29,7 +29,7 @@ systemctl restart grafana-server
 
 == Build Docker Image from source
 
-The source code needs to be compiled as described in the "Building" section.
+You need to compile the source code as described in the "Build" section.
 Create a tarball artifact from compiled source code:
 
 [source, console]

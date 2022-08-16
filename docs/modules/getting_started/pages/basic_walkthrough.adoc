@@ -18,12 +18,12 @@ The walk-through assumes that you have:
 * an instance of OpenNMS that is reachable from the Grafana instance above
 * one or more nodes being monitored by OpenNMS
 
-If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] to for information on how to switch to {page-component-title}.
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] for information on how to switch to {page-component-title}.
 
 [[bw-app-setup]]
 == Set up plugin
 
-In this section, you will enable the {page-component-title} plugin in Grafana and create <<Custom actions>> to help with alarm diagnosis.
+In this section, you will enable the {page-component-title} plugin in Grafana and create <<custom actions>> to help with alarm diagnosis.
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click the Configuration icon, and click *Plugins*:
@@ -53,7 +53,7 @@ A custom action is created in the Helm Config tab, and includes a label and a UR
 Custom action URLs may contain `$variables` that reference OpenNMS alarm properties.
 See the https://docs.opennms.com/opennms-js/2.1.0/index.html[OpenNMS.js docs] for a list of available properties.
 
-NOTE: Special case: you can access event parameters on the alarm either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
+NOTE: As a special case you can access event parameters on the alarm either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
 
 If a variable cannot be matched against the row, the action will not appear in the context menu.
 Variables are URL-encoded when injected into the URL.
@@ -81,7 +81,7 @@ For more information on OpenNMS datasources, see  xref:datasources:performance_d
 
 In this section, you will configure the entity datasource.
 Follow the same process to configure a flow or performance datasource.
-The only fields you _need_ to configure are the URL, Basic Auth, and Basic Auth Details (user and password) fields.
+The only fields you need to configure are the URL, Basic Auth, and Basic Auth Details (user and password) fields.
 Refer to https://grafana.com/docs/grafana/latest/datasources/[Grafana's documentation] for information on configuring other fields.
 
 . Navigate to the home page of your Grafana instance.
@@ -148,7 +148,7 @@ Create more panels to display other data, or xref:importing.adoc#gs-dashboard-im
 
 A panel is the part of your dashboard that displays the fault and performance management data you specify.
 Before you add a panel, determine the type of data you want to display (performance, metrics, alarms/nodes), and make sure that you have xref:bw-ds-setup[set up the associated datasource].
-Default graph types in Grafana work only with the appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified.)
+Default graph types in Grafana work only with the appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified).
 
 . In your dashboard, click the *Add Panel* icon and *Add New Panel*.
 
@@ -193,8 +193,8 @@ image::gf-alarm-table.png[Alarm table, 500]
 . In the *Visualization* area of the *Panel* tab, click the *Visualization* icon.
 . Select an *Alarm Table* graph.
 The graph appears in the top of the panel.
-.. You can choose Table or Histogram graphs for alarms.
-For nodes, you can configure only a Table graph.
+.. You can choose table or histogram graphs for alarms.
+For nodes, you can configure only a table graph.
 .. You can further customize the graph (including alarm severity theme colors) in the bottom half of the screen and in other sections of the *Panel* tab.
 . Change the name of the panel.
 . In the top-right menu, click *Save*.
