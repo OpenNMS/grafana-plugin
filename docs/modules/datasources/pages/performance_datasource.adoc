@@ -2,7 +2,7 @@
 
 == General
 
-Use the Performance Datasource to retrieve performance metrics (i.e., data collection and/or response time metrics) from the Measurements API in  OpenNMS.
+Use the performance datasource to retrieve performance metrics (for example, data collection and/or response time metrics) from the Measurements API in OpenNMS.
 
 (For an example of the performance datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards]).
 
@@ -88,7 +88,7 @@ Given the following list of resources, the table below shows an example of filte
 === String property queries
 
 Used to read the last value of string-valued properties that OpenNMS collects and stores.
-The query identifies which string property is queried.
+The query identifies which string property to query.
 A panel can contain multiple string property queries.
 The result can be visualized in a table.
 Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to adjust the visualized table as needed.

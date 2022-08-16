@@ -2,7 +2,7 @@
 
 == General
 
-Use the Flow Datasource to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
+Use the flow datasource to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
 
 The query editor supports the following functions:
 
@@ -130,7 +130,8 @@ NOTE: The application values retrieved come "as is" from the `flows/applications
 
 === conversations(<application>,<location>,<protocol>,<limit>)
 
-The `conversations()` query returns a list of all available conversations. This function is intended to be used inside the Filter function `withConversation()` as a template variable if needed.
+The `conversations()` query returns a list of all available conversations.
+This function is intended for use inside the filter function `withConversation()` as a template variable if needed.
 Currently this function accepts the following arguments:
 
 [options="header, %autowidth"]
@@ -174,7 +175,8 @@ NOTE: The conversations values retrieved come `as is` from `flows/conversations/
 
 === hosts(<pattern>,<limit>)
 
-The `hosts()` query returns a list of all available hosts. This function is intended to be used inside the Filter function `withHost()` as a template variable if needed.
+The `hosts()` query returns a list of all available hosts.
+This function is intended for use inside the filter function `withHost()` as a template variable if needed.
 Currently this function accepts the following arguments:
 
 [options="header, %autowidth"]

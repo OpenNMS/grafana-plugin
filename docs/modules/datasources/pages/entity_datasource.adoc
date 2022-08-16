@@ -2,7 +2,7 @@
 
 == General
 
-Use the Entities Datasource to retrieve entity model objects from OpenNMS.
+Use the entities datasource to retrieve entity model objects from OpenNMS.
 It currently supports alarms and nodes.
 
 (For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).
@@ -52,14 +52,14 @@ The value can be a constant or a variable.
 === nodes([attribute])
 
 The `nodes()` function will query the OpenNMS node REST API to retrieve a list of unique values for a given attribute.
-The result from this query can be used in a `nodeFilter()` query to filter nodes in either a Entity or Performance Datasource variable.
-You can find a list of valid attributes from the `\http://HOSTNAME:8980/opennms/api/v2/nodes/properties` endpoint of your OpenNMS server.
+You can use the result from this query in a `nodeFilter()` query to filter nodes in either an entity or performance datasource variable.
+To find a list of valid attributes, look at the `\http://HOSTNAME:8980/opennms/api/v2/nodes/properties` endpoint of your OpenNMS server.
 
 .Example filtering nodes by the "region" asset record
-. On your dashboard, create a variable called `region` and set the datasource to an Entity Datasource pointing to your server.
+. On your dashboard, create a variable called `region` and set the datasource to an entity datasource pointing to your server.
 . Set the query to be `nodes(assetRecord.region)`.
-. Save the variable and return to list of variables.
-. Create a second variable called `node` and set the datasource to a Performance Datasource.
+. Save the variable and return to the list of variables.
+. Create a second variable called `node` and set the datasource to a performance datasource.
 . Set the query to be `nodeFilter(region='$region')`.
 . Save the variable and return to your dashboard.
 . As you change the "region" variable, the options in the "node" variable should update to show only the matching nodes.
