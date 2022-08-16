@@ -1,4 +1,5 @@
 [[getting-started-index]]
+
 = Overview
 
 [.lead]

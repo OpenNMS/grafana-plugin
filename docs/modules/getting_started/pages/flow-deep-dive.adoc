@@ -3,10 +3,10 @@
 = Flow Deep-Dive Dashboard
 
 The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays flow data.
-Access this dashboard from the home page or from the *Dashboards>Manage* menu.
+Access this dashboard from the home page or from the menu:Dashboards[Manage] menu.
 The dashboard can help with quality of service (QoS) monitoring and includes panels that display data in the following categories:
 
-* flow interface statistics (throughput and data use by application)
+* Flow interface statistics (throughput and data use by application)
 * SNMP interface statistics (interface throughput and errors/discards)
 * conversations (throughput and data use by conversation)
 * hosts (throughput and data use by host)
@@ -14,9 +14,9 @@ The dashboard can help with quality of service (QoS) monitoring and includes pan
 
 == QoS options
 
-The dashboard exposes nodes and interfaces with flows, that you can filter on in the *Node* and *Interface* drop-down lists.
+The dashboard exposes nodes and interfaces with flows that you can filter on in the *Node* and *Interface* drop-down lists.
 
-You can also filter flows traffic by ToS/DSCP for nodes and interfaces with these values.
+You can also filter flows traffic by type of service (ToS) and differentiated services code point (DSCP) for nodes and interfaces with these values.
 
 Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding).
 
@@ -26,13 +26,13 @@ The second value indicates if a congestion was encountered (`ce`) or not (`no ce
 This works for aggregated and unaggregated flow data.
 
 [[deep-dive-configure]]
-== Configure a Flow Deep-Dive dashboard
+== Configure a flow deep-dive dashboard
 
-By default, the Flow Deep-Dive dashboard uses the OpenNMS Flow and OpenNMS Performance data sources.
-If you have not already specified these data sources, follow the instructions in xref:basic_walkthrough.adoc#bw-ds-setup[set up datasources] to do so.
+By default, the flow deep-dive dashboard uses the OpenNMS flow and performance data sources.
+If you have not already specified these datasources, see xref:basic_walkthrough.adoc#bw-ds-setup[set up datasources].
 
 You can further configure the dashboard by creating queries or editing existing panels.
 For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
 
-IMPORTANT: Use "Save As" to create your custom version of the Flow Deep-Dive dashboard.
-Otherwise, changes you make to the default dashboard are overwritten when you update the plugin or re-import the dashboard.
+IMPORTANT: Use *Save As* to create your custom version of the flow deep-dive dashboard.
+Otherwise, changes you make to the default dashboard are overwritten when you update the plugin or reimport the dashboard.

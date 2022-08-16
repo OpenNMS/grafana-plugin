@@ -3,10 +3,10 @@
 
 [.lead]
 Every network is unique, with different monitoring requirements.
-{page-component-title} has the flexibility to enable users to customize dashboards to display data in a way that best meets their needs and workflow.
+{page-component-title} has the flexibility to let users customize dashboards to display data in a way that best meets their needs and workflow.
 
-A dashboard you create in {page-component-title} will contain multiple panels, each of which displays specific data.
-For example, the following sample dashboard displays performance metrics collected via SNMP.
+{page-component-title} dashboards contain multiple panels, each of which displays specific data.
+For example, the following sample dashboard displays performance metrics collected through SNMP.
 
 image::gf-helm-sample-dash.png[Dash, 800]
 
@@ -28,3 +28,4 @@ Check out https://grafana.com/grafana/dashboards?search=opennms[existing OpenNMS
 ====
 
 You're ready to xref:basic_walkthrough.adoc[create your first dashboard].
+
