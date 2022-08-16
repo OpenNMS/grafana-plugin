@@ -5,7 +5,7 @@
 
 {page-component-title} supports https://commons.apache.org/proper/commons-jexl/index.html[JEXL] mathematical and conditional operators in performance data queries.
 Use them to combine or otherwise transform one or more series into a new series.
-For example, you could specify a filter to display the SUM of data from different attribute queries (e.g., available memory on two nodes).
+For example, you could specify a filter to display the SUM of data from different attribute queries (such as available memory on two nodes).
 
 This section provides sample expressions to illustrate how to use them.
 For additional documentation on expressions, see the following:
@@ -13,7 +13,7 @@ For additional documentation on expressions, see the following:
 * https://docs.opennms.org/opennms/releases/latest/guide-development/guide-development.html#_measurements_api[Measurements API documentation] of your OpenNMS version
 * https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL syntax]
 
-== Creating an expression
+== Create an expression
 
 Before creating an expression, you need to define one or more attribute queries on a performance datasource.
 You can then use the attribute name or the series label (attribute alias) as part of the expression you create.
@@ -33,13 +33,12 @@ Note that in this case, there is no series label, so the expression uses the `If
 
 image::pc-expression3.png[expression, 300]
 
-=== Adding several series together
+=== Add several series together
 
 You are running a distributed cache across multiple servers.
 You want to determine the amount of memory available across all of the servers.
 
-First, create attribute queries on `memAvailReal` (the amount of real/physical memory currently unused
-or available) for each server:
+First, create attribute queries on `memAvailReal` (the amount of real/physical memory currently unused or available) for each server:
 
 image::pc-server1.png[server,300]
 
@@ -49,15 +48,16 @@ Then create an expression query that adds each series together:
 
 image::pc-sum.png[sum, 300]
 
-=== Adding a series with null value expression
+=== Add a series with null value expression
 
-In situations where a value returned in a series is not a number (NA), using a null value will ensure your expression returns a number and not NA.
+In situations where a value returned in a series is not a number (`NA`), using a null value will ensure your expression returns a number.
 
-For example, if you are adding `Series A` plus `Series B`, and `Series B` is NA, but `Series A` is a number (e.g., "5"), then it becomes 5+NA, which equals NA.
-An expression that treats NA as a null value means the result would be 5+0, which provides a numeric answer, as in the following expression:
+For example, if you are adding `Series A` plus `Series B`, and `Series B` is NA, but `Series A` is a number (for example, "5"), then it becomes 5+NA, which equals NA.
+An expression that treats `NA` as a null value means the result would be 5+0, which provides a numeric answer, as in the following expression:
 
 `(A == null ? 0 : A) + (B == null ? 0 : B)`
 
 In fact, JEXL has an abbreviation for non-null, non-false ternary:
 
 `(A ?: 0) + (B ?: 0)`
+
