@@ -36,23 +36,22 @@ image::gf-plugins.png[Plugins, 100]
 If the OpenNMS Helm plugin is not listed, try restarting the Grafana server.
 If the issue persists, make sure the plugin is in the grafana plugins directory (default is var/lib/grafana/plugins).
 
-. In the Config tab, click *Enable*.
+. In the *Config* tab, click *Enable*.
 +
-
 A *Disable* button indicates the plugin is already enabled.
-Skip to the next step (creating <<Custom actions>>).
+Skip to the next step (create <<custom actions>>).
 You may also choose *Update* for the latest version of {page-component-title}.
 
 === Custom actions
 
-A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledgebase article, that might help users better diagnosis an alarm.
+A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledge base article, that might help users better diagnose an alarm.
 Once created, custom actions appear when you right-click an alarm in an alarms table:
 
 image::gf-cust-action-context.png[Custom Actions, 300]
 
-Created in the Helm Config tab, a custom action includes a label and URL.
-Custom action URLs may contain `$variables` that reference properties of an OpenNMS alarm.
-See https://docs.opennms.com/opennms-js/2.1.0/index.html[OpenNMS.js documentation] for a list of available properties.
+A custom action is created in the Helm Config tab, and includes a label and a URL.
+Custom action URLs may contain `$variables` that reference OpenNMS alarm properties.
+See the https://docs.opennms.com/opennms-js/2.1.0/index.html[OpenNMS.js docs] for a list of available properties.
 
 [NOTE]
 ====
@@ -68,12 +67,11 @@ image::gf-custom-actions.png[Custom Actions, 500]
 To create a custom action, follow these steps:
 
 . Navigate to the home page of your Grafana instance.
-. In the left menu, click on the Configuration icon and click *Plugins*:
+. In the left menu, click on the Configuration icon and click *Plugins*.
 . Select *OpenNMS Helm*.
-. On the Config tab, click *Add Custom Action*:
+. On the Config tab, click *Add Custom Action*.
 . Specify a label and enter a URL.
-.. In most cases the URL will be your OpenNMS instance, for example, `http://localhost:8980/opennms/`, appended with the $variable that references a property of an OpenNMS alarm.
-. Repeat for each custom action you want to create.
+.. In most cases the URL will point to your OpenNMS instance (for example, `http://localhost:8980/opennms/`, appended with the `$variable` that references an OpenNMS alarm property).
 . Click *Update*.
 
 [[bw-ds-setup]]
@@ -84,10 +82,10 @@ Before you create a dashboard, you need to set up the datasource.
 OpenNMS datasources include performance, flow, and entity.
 For more information on OpenNMS datasources, see  xref:datasources:performance_datasource.adoc[Datasources].
 
-In this section, you will configure the Entity datasource.
-Follow the same process to configure a Flow or Performance datasource.
-The only fields you *need* to configure are the following: URL, Basic auth, and Basic Auth Details (user and password).
-Refer to Grafana's https://grafana.com/docs/grafana/latest/datasources/[documentation] for information on configuring the other fields.
+In this section, you will configure the entity datasource.
+Follow the same process to configure a flow or performance datasource.
+The only fields you _need_ to configure are the URL, Basic Auth, and Basic Auth Details (user and password) fields.
+Refer to https://grafana.com/docs/grafana/latest/datasources/[Grafana's documentation] for information on configuring other fields.
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click on the Configuration icon, and click *Data Sources*:
@@ -112,40 +110,30 @@ The URL to your OpenNMS instance should normally end with `/opennms`.
 . In the *Auth* area, click the toggle next to *Basic Auth*.
 
 . Enter the credentials for an OpenNMS user in the *User* and *Password* fields.
-
 . Click *Save & Test*.
 +
 A success message should appear.
 If the message indicates a failure, review the information you entered and click *Save & Test* to retest the datasource.
 
 [[bw-dash-setup]]
-== Dashboard Setup
+== Dashboard setup
 
-This section describes how to create a dashboard with an alarm table.
+This section describes how to create a dashboard with an alarms table.
 For information on displaying additional or different types of data, see xref:bw-panel-create[creating a panel].
 
-. Create a new dashboard by clicking the *+* sign in the left menu and choosing *Create>Dashboard*.
-
-. Click *Add new panel*.
-
-+
-A screen similar to the following appears.
-Configure the panel in the lower half of the screen:
-
+. Create a new dashboard by clicking the *+* sign in the left sidebar to open the Create menu and choose *Dashboard*.
+. Click *Add New Panel* and configure the panel in the lower half of the screen:
 +
 image::gf-panel-config.png[Configure Panel, 500]
 
 . In the *Query* drop-down, select the datasource we previously created in xref:bw-ds-setup[Datasource Setup].
 
 . Select *Alarms* in the *SELECT* drop-down.
-+
 .. Configure additional information and add filters as desired (click *+Query* to add queries).
 
-. In the *Panel* tab, under the *Settings>Panel title* add a name for the panel.
-
+. In the *Panel* tab, add a name for the panel under *Settings > Panel*.
 . Under *Visualization*, select *Alarm Table*.
 The graph appears in the top of the panel.
-+
 .. You can further customize the graph by specifying information in the *Panel* tab.
 
 . In the top-right menu, click *Save*.
@@ -154,60 +142,63 @@ The graph appears in the top of the panel.
 That's it!
 Now, you have your first dashboard.
 
-Try changing the time range at the top right of the screen, or right click on an alarm row to perform actions against an alarm.
+Try changing the time range at the top-right of the screen, or right-click on an alarm to perform actions against it.
 
 Create more panels to display other data, or xref:importing.adoc#gs-dashboard-import[import] an existing dashboard to learn more about how to design your own.
 
 [[bw-panel-create]]
-== Create a Panel
+== Create a panel
+
 A panel is the part of your dashboard that displays the fault and performance management data you specify.
 Before you add a panel, determine the type of data you want to display (performance, metrics, alarms/nodes), and make sure that you have xref:bw-ds-setup[set up the associated datasource].
-Default graph types in Grafana work only with the appropriate data source (for example, an alarm table visualization will not display data if a flow datasource is specified.)
+Default graph types in Grafana work only with the appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified.)
 
-. In your dashboard, click the `Add panel` icon and *Add new panel*.
+. In your dashboard, click the *Add Panel* icon and *Add New Panel*.
 
-. In the *Query* drop-down, select the datasource.
+. Select the datasource from the *Query* list.
 
 . Configure additional information as appropriate.
 Options are dependent on the type of datasource selected.
 
-. In the *Visualization* area of the panel tab, click the visualization icon.
+. In the *Visualization* area of the *Panel* tab, click the *Visualization* icon.
 . Click *Graph* or select another type of visualization (Stat, Gauge, Bar gauge).
 +
 The graph appears in the top of the panel.
 
 .. Specify information in the bottom half of the panel to customize the graph.
-. In *Panel* tab, change the name of the panel and specify additional information.
-
-. In the top-right, click the *Save*.
+. In the *Panel* tab, change the name of the panel and specify additional information.
+. In the top-right, click *Save*.
 
 [[bw-alarm-panel]]
-== Create an Alarm Panel
+== Create an alarm panel
+
 An alarm panel displays alarms from an xref:datasources:entity_datasource.adoc#[entities datasource].
-Visualization of entity datasource information (currently nodes and alarms) is normally done in tables.
+Visualization of entity datasource information (nodes and alarms) is normally done in tables.
 
-This procedure creates an alarm panel using an alarm table visualization.
+This procedure creates an alarm panel using an alarm table visualization:
 
-. In your dashboard, click the `Add panel` icon  icon and *Add new panel*.
+. In your dashboard, click the *Add Panel* icon and select *Add New Panel*.
 
-. In the *Query* drop-down, select an entity datasource.
+. Select an entity datasource from the *Query* list.
 
-. From *SELECT*, choose `Alarms`.
+. Choose Alarms from the *Select* list.
 
-. Create filters and conditions to specify the nodes/alarms to display:
+. Create filters and conditions to specify the nodes and alarms to display:
 .. Note that you can use nested "and/or" logic.
-.. You can order by ascending (oldest alarms first) or descending (most recent alarms) and limit the number of alarms displayed.
+.. You can order alarms by ascending (oldest alarms first) or descending (most recent alarms).
+.. You can limit the number of alarms displayed.
 .. Toggle featured attributes on to display select attributes.
 Toggle it off to display all attributes in the drop-down lists.
-
 +
 .Sample alarm table configuration
 image::gf-alarm-table.png[Alarm table, 500]
 
-. In the *Visualization* area of the panel tab, click the visualization icon.
-. Select and *Alarm Table* graph.
-.. With alarms, you can also choose `Table` or `Alarm histogram`; with nodes, choose `Table`
-.. The graph appears in the top of the panel.
-.. You can further customize the graph by (including alarm severity theme colors) in the bottom half of the screen and in other sections of the Panel tab.
+. In the *Visualization* area of the *Panel* tab, click the *Visualization* icon.
+. Select an *Alarm Table* graph.
+The graph appears in the top of the panel.
+.. You can choose Table or Histogram graphs for alarms.
+For nodes, you can configure only a Table graph.
+.. You can further customize the graph (including alarm severity theme colors) in the bottom half of the screen and in other sections of the *Panel* tab.
 . Change the name of the panel.
 . In the top-right menu, click *Save*.
+
