@@ -1,5 +1,6 @@
 :imagesdir: ../assets/images
 = Write and Build Documentation
 
-The OpenNMS Helm software is free and open source. We welcome any kind of contribution.
-For guidelines on writing docs for the project and information on how to build the documentation locally, see "Develop Documentation" in the Horizon/Meridian "Development" section.
+The OpenNMS Helm software is free and open source.
+We welcome any kind of contribution.
+For guidelines on writing docs for the project and information on how to build the documentation locally, see "Develop Documentation" in the Horizon or Meridian "Development" section.
