@@ -1,5 +1,5 @@
 [[helm-install-debian]]
-= Install On Debian/Ubuntu
+= Install on Debian/Ubuntu
 
 [IMPORTANT]
 ====

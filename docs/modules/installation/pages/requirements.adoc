@@ -1,3 +1,4 @@
+
 = Requirements
 
 == Runtime requirements
@@ -14,4 +15,5 @@ https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Render
 * https://nodejs.org/en/download[Node.js >= 10.x]
 
 == And of course ...
-* https://www.opennms.org[OpenNMS Horizon] and/or https://www.opennms.com[OpenNMS Meridian] 
+
+* https://www.opennms.org[OpenNMS Horizon] or https://www.opennms.com[OpenNMS Meridian] 

@@ -1,5 +1,5 @@
 [[helm-rpm-install]]
-= Install On RPM-based Linux
+= Install on RPM-based Linux
 
 [IMPORTANT]
 ====

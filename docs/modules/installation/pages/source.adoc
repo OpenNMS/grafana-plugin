@@ -1,8 +1,8 @@
-= Installing From Source
+= Install from Source
 
-== Building
+== Build
 
-Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory i.e.:
+Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory:
 
 [source, console]
 ----
@@ -29,7 +29,7 @@ systemctl restart grafana-server
 
 == Build Docker Image from source
 
-The source code needs to be compiled as described in section "Building".
+The source code needs to be compiled as described in the "Building" section.
 Create a tarball artifact from compiled source code:
 
 [source, console]
@@ -41,7 +41,7 @@ tar --exclude='.git' \
     -czf "./artifacts/opennms-helm.tar.gz" .
 ----
 
-Build Docker image and install the plugin from the tarball artifact.
+Build Docker image and install the plugin from the tarball artifact:
 
 [source, console]
 ----
@@ -51,7 +51,7 @@ docker build \
     -t myhelm:snapshot .
 ----
 
-Run the build Docker image with:
+Run the build Docker image:
 
 [source, console]
 ----
