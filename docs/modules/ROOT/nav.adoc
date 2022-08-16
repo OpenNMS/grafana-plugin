@@ -34,4 +34,3 @@
 
 .Reference
 * xref:reference:severities.adoc[Severities]
-* xref:reference:how-to-build-with-docker.adoc[Build with Docker]
