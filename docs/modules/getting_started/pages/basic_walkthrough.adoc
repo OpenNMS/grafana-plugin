@@ -18,12 +18,12 @@ The walk-through assumes that you have:
 * an instance of OpenNMS that is reachable from the Grafana instance above
 * one or more nodes being monitored by OpenNMS
 
-If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] to for information on how to switch to {page-component-title}. 
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] to for information on how to switch to {page-component-title}.
 
 [[bw-app-setup]]
-== Setup plugin
+== Set up plugin
 
-In this section, you will enable the {page-component-title} plugin in Grafana and create <<Custom actions>> to help with alarm diagnosis. 
+In this section, you will enable the {page-component-title} plugin in Grafana and create <<Custom actions>> to help with alarm diagnosis.
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click the Configuration icon, and click *Plugins*:
@@ -53,10 +53,7 @@ A custom action is created in the Helm Config tab, and includes a label and a UR
 Custom action URLs may contain `$variables` that reference OpenNMS alarm properties.
 See the https://docs.opennms.com/opennms-js/2.1.0/index.html[OpenNMS.js docs] for a list of available properties.
 
-[NOTE]
-====
-Special case: you can access event parameters on the alarm either by index ($parameters[1]) or by name ($parameters[reason]).
-====
+NOTE: Special case: you can access event parameters on the alarm either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
 
 If a variable cannot be matched against the row, the action will not appear in the context menu.
 Variables are URL-encoded when injected into the URL.
@@ -201,4 +198,3 @@ For nodes, you can configure only a Table graph.
 .. You can further customize the graph (including alarm severity theme colors) in the bottom half of the screen and in other sections of the *Panel* tab.
 . Change the name of the panel.
 . In the top-right menu, click *Save*.
-
