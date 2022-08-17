@@ -238,7 +238,7 @@ export class FlowDatasource {
   }
 
   // Used by template queries
-  metricFindQuery(query) {
+  async metricFindQuery(query) {
     if (query === null || query === undefined || query === "") {
       return Promise.resolve([]);
     }
@@ -332,48 +332,47 @@ export class FlowDatasource {
     return Promise.resolve([]);
   }
 
-  metricFindLocations() {
-    return this.simpleRequest.getLocations();
+  async metricFindLocations() {
+    return await this.simpleRequest.getLocations();
   }
 
-  metricFindApplications(start: number, end: number, limit = 0) {
-    return this.simpleRequest.getApplications(start, end, limit);
+  async metricFindApplications(start: number, end: number, limit = 0) {
+    return await this.simpleRequest.getApplications(start, end, limit);
   }
 
-  metricFindHosts(start: number, end: number, pattern: string | null = null, limit = 0) {
-    return this.simpleRequest.getHosts(start, end, pattern, limit);
+  async metricFindHosts(start: number, end: number, pattern: string | null = null, limit = 0) {
+    return await this.simpleRequest.getHosts(start, end, pattern, limit);
   }
 
-  metricFindConversations(start: number, end: number, application: string | null = null, 
+  async metricFindConversations(start: number, end: number, application: string | null = null,
     location: string | null = null, protocol: string | null = null, limit = 0) {
-    return this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
+    return await this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
   }
-  
 
-  metricFindExporterNodes(query?: any, filter?: string) {
+
+  async metricFindExporterNodes(query?: any, filter?: string) {
     let self = this;
-    return this.client.getExporters().then((exporters) => {
-      let results = [] as any[];
-      _.each(exporters, function (exporter) {
-        results.push({text: exporter.label, value: exporter.id, expandable: true});
-      });
-      return self.getFilteredNodes(results, filter);
+    const exporters = await this.client.getExporters();
+    let results = [] as any[];
+    _.each(exporters, function (exporter) {
+      results.push({ text: exporter.label, value: exporter.id, expandable: true });
     });
+    return await self.getFilteredNodes(results, filter);
   }
 
-  metricFindInterfacesOnExporterNode(query) {
-    return this.client.getExporter(query).then((exporter) => {
-      let results = [] as any[];
-      _.each(exporter.interfaces, function (iff) {
-        results.push({text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true});
-      });
-      return results;
+  async metricFindInterfacesOnExporterNode(query) {
+    const node = await this.simpleRequest.getNodeByIdOrFsFsId(query);
+    const exporter = await this.client.getExporter(node.id);
+    let results = [] as any[];
+    _.each(exporter.interfaces, function (iff) {
+      results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
     });
+    return results;
   }
 
-  metricFindDscpOnExporterNodeAndInterface(node, iface, start, end) {
-    return this.client.getDscpValues(node,  iface, start, end).then(
-        values => dscpSelectOptions(values)
+  async metricFindDscpOnExporterNodeAndInterface(node, iface, start, end) {
+    return await this.client.getDscpValues(node, iface, start, end).then(
+      values => dscpSelectOptions(values)
     );
   }
 
