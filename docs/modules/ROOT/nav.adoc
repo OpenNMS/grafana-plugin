@@ -8,7 +8,6 @@
 * xref:installation:debian.adoc[Install on Debian/Ubuntu]
 * xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
 * xref:installation:source.adoc[Install from Source]
-* xref:installation:upgrading.adoc[Upgrade from Older Versions]
 
 .Get started with Helm
 * xref:getting_started:index.adoc[Overview]
@@ -35,4 +34,3 @@
 
 .Reference
 * xref:reference:severities.adoc[Severities]
-

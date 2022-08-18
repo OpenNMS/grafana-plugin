@@ -3,9 +3,8 @@
 
 == Runtime requirements
 
-* http://docs.grafana.org/installation[Grafana]
-{page-component-title} works with Grafana Server version *8.0* and up.
-It has been tested with Grafana versions up to 8.5 at the time of release.
+* OpenNMS {page-component-title} works with http://docs.grafana.org/installation[Grafana Server] version {grafana-version-required} and up.
+It has been tested with Grafana versions up to {grafana-version-tested} at the time of release.
 
 The Grafana Dashboard Report feature in Meridian/Horizon requires the
 https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
@@ -17,4 +16,3 @@ https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Render
 == And of course ...
 
 * https://www.opennms.org[OpenNMS Horizon] or https://www.opennms.com[OpenNMS Meridian]
-
