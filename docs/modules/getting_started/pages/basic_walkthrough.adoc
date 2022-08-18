@@ -26,7 +26,7 @@ If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrati
 In this section, you will enable the {page-component-title} plugin in Grafana and create <<custom actions>> to help with alarm diagnosis.
 
 . Navigate to the home page of your Grafana instance.
-. In the left menu, click the Configuration icon, and click *Plugins*:
+. In the left menu, click the *Configuration* icon, and click *Plugins*:
 +
 image::gf-plugins.png[Plugins, 100]
 
@@ -64,7 +64,7 @@ image::gf-custom-actions.png[Custom Actions, 500]
 To create a custom action, follow these steps:
 
 . Navigate to the home page of your Grafana instance.
-. In the left menu, click on the Configuration icon and click *Plugins*.
+. In the left menu, click on the *Configuration* icon and click *Plugins*.
 . Select *OpenNMS Helm*.
 . On the Config tab, click *Add Custom Action*.
 . Specify a label and enter a URL.
@@ -85,7 +85,7 @@ The only fields you need to configure are the URL, Basic Auth, and Basic Auth De
 Refer to https://grafana.com/docs/grafana/latest/datasources/[Grafana's documentation] for information on configuring other fields.
 
 . Navigate to the home page of your Grafana instance.
-. In the left menu, click on the Configuration icon, and click *Data Sources*:
+. In the left menu, click on the *Configuration* icon, and click *Data Sources*:
 +
 image::gf-data-sources.png[Data Sources, 100]
 
@@ -104,9 +104,8 @@ image::gf-data-config.png[settings screen, 300]
 +
 The URL to your OpenNMS instance should normally end with `/opennms`.
 
-. In the *Auth* area, click the toggle next to *Basic Auth*.
-
-. Enter the credentials for an OpenNMS user in the *User* and *Password* fields.
+. In the Auth area, click the toggle next to *Basic Auth*.
+. Enter the credentials for an OpenNMS user in the User and Password boxes.
 . Click *Save & Test*.
 +
 A success message should appear.
@@ -124,11 +123,10 @@ For information on displaying additional or different types of data, see xref:bw
 image::gf-panel-config.png[Configure Panel, 500]
 
 . In the *Query* drop-down, select the datasource we previously created in xref:bw-ds-setup[Datasource Setup].
-
-. Select *Alarms* in the *SELECT* drop-down.
+. Select *Alarms* in the Select list.
 .. Configure additional information and add filters as desired (click *+Query* to add queries).
 
-. In the *Panel* tab, add a name for the panel under *Settings > Panel*.
+. In the *Panel* tab, add a name for the panel under menu:Settings[Panel].
 . Under *Visualization*, select *Alarm Table*.
 The graph appears in the top of the panel.
 .. You can further customize the graph by specifying information in the *Panel* tab.
@@ -150,14 +148,13 @@ A panel is the part of your dashboard that displays the fault and performance ma
 Before you add a panel, determine the type of data you want to display (performance, metrics, alarms/nodes), and make sure that you have xref:bw-ds-setup[set up the associated datasource].
 Default graph types in Grafana work only with the appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified).
 
-. In your dashboard, click the *Add Panel* icon and *Add New Panel*.
-
+. In your dashboard, click the *Add Panel* icon and select *Add New Panel*.
 . Select the datasource from the *Query* list.
 
 . Configure additional information as appropriate.
 Options are dependent on the type of datasource selected.
 
-. In the *Visualization* area of the *Panel* tab, click the *Visualization* icon.
+. In the Visualization area of the *Panel* tab, click the *Visualization* icon.
 . Click *Graph* or select another type of visualization (Stat, Gauge, Bar gauge).
 +
 The graph appears in the top of the panel.
@@ -178,8 +175,7 @@ This procedure creates an alarm panel using an alarm table visualization:
 
 . Select an entity datasource from the *Query* list.
 
-. Choose Alarms from the *Select* list.
-
+. Choose *Alarms* from the *Select* list.
 . Create filters and conditions to specify the nodes and alarms to display:
 .. Note that you can use nested "and/or" logic.
 .. You can order alarms by ascending (oldest alarms first) or descending (most recent alarms).
@@ -190,7 +186,7 @@ Toggle it off to display all attributes in the drop-down lists.
 .Sample alarm table configuration
 image::gf-alarm-table.png[Alarm table, 500]
 
-. In the *Visualization* area of the *Panel* tab, click the *Visualization* icon.
+. In the Visualization area of the *Panel* tab, click the *Visualization* icon.
 . Select an *Alarm Table* graph.
 The graph appears in the top of the panel.
 .. You can choose table or histogram graphs for alarms.
@@ -198,3 +194,4 @@ For nodes, you can configure only a table graph.
 .. You can further customize the graph (including alarm severity theme colors) in the bottom half of the screen and in other sections of the *Panel* tab.
 . Change the name of the panel.
 . In the top-right menu, click *Save*.
+
