@@ -513,7 +513,7 @@ export class SimpleOpenNMSRequest {
     }
   }
 
-  async getNodeByIdOrFsFsId(query:string){
+  async getNodeByIdOrFsFsId(query: string){
     const response = await this.doOpenNMSRequest({
       url: this.nodes + '/' + query.trim(),
       method: 'GET',
