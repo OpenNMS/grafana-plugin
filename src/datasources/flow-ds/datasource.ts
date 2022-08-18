@@ -257,13 +257,13 @@ export class FlowDatasource {
 
     let locationsQuery = query.match(locations);
     if (locationsQuery) {
-      return this.metricFindLocations();
+      return await this.metricFindLocations();
     }
 
     let applicationsQuery = query.match(applications);
     if (applicationsQuery) {
       let limit = applicationsQuery.length > 1 && !isNaN(parseInt(applicationsQuery[1].trim(), 10)) ? parseInt(applicationsQuery[1].trim(), 10) : 0;
-      return this.metricFindApplications(start, end, limit);
+      return await this.metricFindApplications(start, end, limit);
     }
 
     let conversationsQuery = query.match(conversations);
@@ -273,22 +273,22 @@ export class FlowDatasource {
         //first argument should be application, then location, then protocol, and last limit which should be a number
         //when multiple args are passed assume last is limit
         if (args.length === 1 && !isNaN(parseInt(args[0], 10))) {
-          return this.metricFindConversations(start, end, null, null, null, parseInt(args[0], 10));
+          return await this.metricFindConversations(start, end, null, null, null, parseInt(args[0], 10));
         } else if (args.length === 1) {          
-          return this.metricFindConversations(start, end, args[0]);
+          return await this.metricFindConversations(start, end, args[0]);
         } else if (args.length === 2 && _.every(args, s => isNaN(parseInt(s, 10)))) {
-          return this.metricFindConversations(start, end, args[0], args[1] );
+          return await this.metricFindConversations(start, end, args[0], args[1] );
         } else if (args.length === 2 && !_.every(args, s => isNaN(parseInt(s, 10)))) {
-          return this.metricFindConversations(start, end, args[0], null, null, parseInt(args[1], 10) );
+          return await this.metricFindConversations(start, end, args[0], null, null, parseInt(args[1], 10) );
         } else if (args.length === 3 && _.every(args, s =>  isNaN(parseInt(s, 10)))) {
-          return this.metricFindConversations(start, end, args[0], args[1], args[2] );
+          return await this.metricFindConversations(start, end, args[0], args[1], args[2] );
         } else if (args.length === 3 && !_.every(args, s =>  isNaN(parseInt(s, 10)))) {
-          return this.metricFindConversations(start, end, args[0], args[1], null, parseInt(args[2], 10) );
+          return await this.metricFindConversations(start, end, args[0], args[1], null, parseInt(args[2], 10) );
         } else if (args.length === 4 && !_.every(args, s =>  isNaN(parseInt(s, 10)))) {
-          return this.metricFindConversations(start, end, args[0], args[1], args[2], parseInt(args[3], 10) );
+          return await this.metricFindConversations(start, end, args[0], args[1], args[2], parseInt(args[3], 10) );
         }
       }
-      return this.metricFindConversations(start, end);
+      return await this.metricFindConversations(start, end);
     }
 
     let hostsQuery = query.match(hosts);
@@ -296,14 +296,14 @@ export class FlowDatasource {
       let args = hostsQuery.length > 1 ? hostsQuery[1].split(',').map(v => v.trim()) : null;
       if (args) {
         if (args.length === 1 &&  !isNaN(parseInt(args[0], 10))) {
-          return this.metricFindHosts(start, end, null, parseInt(args[0], 10));
+          return await this.metricFindHosts(start, end, null, parseInt(args[0], 10));
         } else if (args.length === 1) {
-          return this.metricFindHosts(start, end, args[0]);
+          return await this.metricFindHosts(start, end, args[0]);
         } else if (args.length === 2 && !isNaN(parseInt(args[1], 10))) {
-          return this.metricFindHosts(start, end, args[0], parseInt(args[1], 10));
+          return await this.metricFindHosts(start, end, args[0], parseInt(args[1], 10));
         }
       }
-      return this.metricFindHosts(start, end);
+      return await this.metricFindHosts(start, end);
 
 
     }
@@ -311,17 +311,17 @@ export class FlowDatasource {
     let exporterNodesQuery = query.match(exporterNodesRegex);
     if (exporterNodesQuery) {
       let exporterNodesQueryFilter = exporterNodesQuery.length > 1 ? exporterNodesQuery[1] : null;
-      return this.metricFindExporterNodes(query, exporterNodesQueryFilter);
+      return await this.metricFindExporterNodes(query, exporterNodesQueryFilter);
     }
 
     let interfacesOnExporterNodeQuery = query.match(interfacesOnExporterNodeRegex);
     if (interfacesOnExporterNodeQuery) {
-      return this.metricFindInterfacesOnExporterNode(interfacesOnExporterNodeQuery[1]);
+      return await this.metricFindInterfacesOnExporterNode(interfacesOnExporterNodeQuery[1]);
     }
 
     let dscpOnExporterNodeAndInterfaceQuery = query.match(dscpOnExporterNodeAndInterfaceRegex);
     if (dscpOnExporterNodeAndInterfaceQuery) {
-      return this.metricFindDscpOnExporterNodeAndInterface(
+      return await this.metricFindDscpOnExporterNodeAndInterface(
           dscpOnExporterNodeAndInterfaceQuery[1], // node
           dscpOnExporterNodeAndInterfaceQuery[2], // interface
           dscpOnExporterNodeAndInterfaceQuery[3], // start millis
@@ -329,7 +329,7 @@ export class FlowDatasource {
       );
     }
 
-    return Promise.resolve([]);
+    return await Promise.resolve([]);
   }
 
   async metricFindLocations() {
