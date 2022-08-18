@@ -2,20 +2,22 @@
 
 == Simple build
 
-The source can be compiled from source with a Docker builder image.
+Helm can be compiled from source with a Docker build image.
 
-```
+[source, console]
+----
 docker build -t myopennmshelmimage .
-```
+----
 
 will checkout the source from GitHub URL of the project, compile and installs the plugin.
 The result is a runnable image which can be executed with
 
-```
+[source, console]
+----
 docker run -p 3000:3000 -t myopennmshelmimage
-```
+----
 
-Login on `http://your-ip:3000` with login admin:admin and go to Plugins and enable the Helm app.
+Log in on `\http://your-ip:3000` with login admin:admin and go to Plugins and enable the Helm app.
 
 IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins` because the base grafana image defines the `/var/lib/grafana` as a _VOLUME_ which can't be changed.
 
@@ -23,11 +25,12 @@ IMPORTANT: The plugin directory location is changed from `/var/lib/grafana/plugi
 
 If you want to build an image based on a specific GitHub fork or branch you can use `--build-arg`:
 
-```
+[source, console]
+----
 docker build -t mycustomforkbranch \
             --build-arg OPENNMS_HELM_GIT_URL=https://github.com/OpenNMS/opennms-helm.git \
             --build-arg OPENNMS_HELM_GIT_BRANCH_REF=myBranch
-```
+----
 
 This will create the plugin from the given GitHub URL and branch.
 
@@ -37,16 +40,17 @@ There is an example `docker-compose.yml` which builds a whole service stack with
 
 Modify the build arguments in the `docker-compose.yml` if you want to build from a GitHub fork, branch or version tag.
 
-With first running `docker-compose up -d` the _Grafana OpenNMS Helm App_ will be compiled from source.
+When you first run `docker-compose up -d`, the Grafana OpenNMS Helm plugin will be compiled from source.
 Any run will use the compiled image from on the local system.
 If you want to rebuild the image run `docker-compose build --no-cache` to rebuild the image with the build configuration in the given `docker-compose.yml`.
 
-The URL for the data source in Grafana for the OpenNMS Horizon server is `http://opennms:8980/opennms`.
+The URL for the data source in Grafana for the OpenNMS Horizon or Meridian server is `\http://opennms:8980/opennms`.
 
 == Docker configuration for PDF dashboard reports
 
-OpenNMS Horizon/Meridian includes three templates to create a PDF report from an existing Grafana dashboard (see "Creating a PDF of a Grafana Dashboard" in the Horizon/Meridian documentation). 
+OpenNMS Horizon and Meridian include three templates to create a PDF report from an existing Grafana dashboard (see "Creating a PDF of a Grafana Dashboard" in the Horizon or Meridian documentation).
 If you plan to use this feature and are running Helm with Docker, you must complete additional configuration.
 
-Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information on how to set up remote rendering. 
+Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[remote rendering service documentation] for more information on how to set up remote rendering.
 Additional details are available on https://github.com/grafana/grafana-image-renderer/blob/master/docs/remote_rendering_using_docker.md[GitHub].
+

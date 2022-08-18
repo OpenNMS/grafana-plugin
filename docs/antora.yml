@@ -4,5 +4,7 @@ title: HELM
 asciidoc:
   attributes:
     full-display-version: '8.0.3-SNAPSHOT'
+    grafana-version-required: "8.0"
+    grafana-version-tested: 8.5
 nav:
   - modules/ROOT/nav.adoc

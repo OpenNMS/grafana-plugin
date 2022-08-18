@@ -1,39 +1,36 @@
+
 .About
 * xref:about:introduction.adoc[What is Helm?]
-* xref:about:legal_notice.adoc[Legal Notice]
 
 .Installation
 * xref:installation:requirements.adoc[Requirements]
 * xref:installation:rpm.adoc[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
 * xref:installation:debian.adoc[Install on Debian/Ubuntu]
-* xref:installation:plugin.adoc[Install via plugin (for existing Grafana installations)]
-* xref:installation:source.adoc[Install from source]
-* xref:installation:upgrading.adoc[Upgrade from older versions]
+* xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
+* xref:installation:source.adoc[Install from Source]
 
 .Get started with Helm
 * xref:getting_started:index.adoc[Overview]
-* xref:getting_started:dashboard_planning.adoc[Plan your dashboard]
-* xref:getting_started:basic_walkthrough.adoc[Basic walk-through]
-* xref:getting_started:migrating_from_opennms_datasource.adoc[Migrate from the OpenNMS datasource plugin]
-* xref:getting_started:importing.adoc[Import a dashboard]
-* xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive dashboard]
+* xref:getting_started:dashboard_planning.adoc[Plan Your Dashboard]
+* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
+* xref:getting_started:importing.adoc[Import a Dashboard]
+* xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
 
 .Panel configuration
 * xref:panel_configuration:index.adoc[Overview]
-* xref:panel_configuration:forecasting.adoc[Use filters to forecast metrics]
-* xref:panel_configuration:dynamic-dashboard.adoc[Create dynamic dashboards]
+* xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
+* xref:panel_configuration:dynamic-dashboard.adoc[Create Dynamic Dashboards]
 * xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
-* xref:datasources:performance_datasource.adoc[Performance datasource]
-* xref:datasources:entity_datasource.adoc[Entities datasource]
-* xref:datasources:flow_datasource.adoc[Flow datasource]
+* xref:datasources:performance_datasource.adoc[Performance Datasource]
+* xref:datasources:entity_datasource.adoc[Entities Datasource]
+* xref:datasources:flow_datasource.adoc[Flow Datasource]
 
 .Contribute
 * xref:contributing:index.adoc[Contribute]
 * xref:contributing:developing.adoc[Develop]
-* xref:contributing:how-to-build-docs.adoc[Write and build the docs]
+* xref:contributing:how-to-build-docs.adoc[Write and Build Docs]
 
 .Reference
 * xref:reference:severities.adoc[Severities]
-* xref:reference:how-to-build-with-docker.adoc[Build with Docker]

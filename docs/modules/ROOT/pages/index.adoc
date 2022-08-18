@@ -8,14 +8,12 @@
 :icons:
 
 [.lead]
-Welcome to the {page-component-title} {page-version} documentation: information and guides to help you learn about {page-component-title} and start exploring its features. From installation to creating your first dashboard to using advanced filtering, learn how to set up and manage your {page-component-title} environment. 
-
-[TIP]
-====
-Use the left navigation bar to browse the documentation or the links below to access some highlights.
-====
+Welcome to the {page-component-title} {page-version} documentation.
+Here, you will find information and guides to help you learn about {page-component-title} and start exploring its features.
+Learn how to set up and manage your {page-component-title} environment, from installation to creating your first dashboard and using advanced filtering.
 
 [big]*Need help?*
 
-* talk to us in https://chat.opennms.com/opennms[chat]
-* join our community on https://opennms.discourse.group/latest[Discourse]
+* Talk to us on https://chat.opennms.com/opennms[Mattermost].
+* Join our community on https://opennms.discourse.group/latest[Discourse].
+
