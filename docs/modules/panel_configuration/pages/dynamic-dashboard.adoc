@@ -75,7 +75,7 @@ To create a filter panel, follow these steps:
 
 . In the dashboard, click the *Add Panel* icon.
 . Click *Choose Visualization* and choose *Filter Panel*.
-. In the *Filter Columns* area, choose an entities datasource.
+. In the Filter Columns area, choose an entities datasource.
 +
 image::pc-filter-ds.png[]
 
@@ -89,7 +89,7 @@ image::pc-alarm-attributes.png[]
 +
 image::pc-filter-panel-cust.png[Filter Panel, 300]
 
-.  Repeat steps 4–7 to add additional filters.
+. Repeat steps 4–7 to add additional filters.
 . In the left menu, click the *General* icon to change the name of the filter panel and specify additional information.
 . In the top-right menu, click the *Save Dashboard* icon.
 

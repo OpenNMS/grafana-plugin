@@ -33,7 +33,7 @@ To display this information in bits, create an expression:
 
 . Click *Add Query*.
 . Choose *Filter* from the *Type* list.
-. Click the Filter type label, select `HoltWinters` from the dialog, and click *Select*.
+. Click the *Filter Type* label, select `HoltWinters` from the dialog, and click *Select*.
 .. Note that the far-right column displays requirements on the node being queried (for example, R, Java).
 . For the Input column, specify the name of the attribute or expression you wish to forecast, in this case, `Out`.
 . Specify an output, or accept the default (`HW`).

@@ -1,3 +1,4 @@
+
 = Upgrade from Older Versions
 
 Usually, upgrading simply involves installing the new package.
@@ -52,3 +53,4 @@ Finally, publish your changes back to Grafana:
 ----
 wizzy export datasources
 ----
+
