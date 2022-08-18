@@ -1,5 +1,9 @@
 name: helm
 version: '9-SNAPSHOT'
 title: HELM
+asciidoc:
+  attributes:
+    grafana-version-required: "8.0"
+    grafana-version-tested: 8.5
 nav:
   - modules/ROOT/nav.adoc
