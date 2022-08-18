@@ -15,8 +15,8 @@ This section demonstrates how to create a simple dashboard with {page-component-
 The walk-through assumes that you have:
 
 * an instance of Grafana with the {page-component-title} application installed
-* an instance of OpenNMS that is reachable from the Grafana instance above
-* one or more nodes being monitored by OpenNMS
+* An instance of OpenNMS that is reachable from the Grafana instance above.
+* One or more nodes being monitored by OpenNMS.
 
 If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc#[Migrate from the OpenNMS data source plugin] for information on how to switch to {page-component-title}.
 
