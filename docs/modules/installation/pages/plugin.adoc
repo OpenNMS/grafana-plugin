@@ -1,4 +1,4 @@
-= Install via plugin
+= Install by Plugin
 
 [IMPORTANT]
 ====
@@ -15,8 +15,8 @@ Use the grafana-cli tool to install {page-component-title} from the command line
 grafana-cli plugins install opennms-helm-app
 ----
 
-This installs the plugin into your grafana plugins directory. 
-The default is /var/lib/grafana/plugins. 
+This installs the plugin into your grafana plugins directory.
+The default is /var/lib/grafana/plugins.
 http://docs.grafana.org/plugins/installation/[More information on the cli tool].
 
 == Next steps
