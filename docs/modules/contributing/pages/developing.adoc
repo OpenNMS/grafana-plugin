@@ -1,20 +1,19 @@
-# Development and production versions
 
-## Codebase
+= Development
 
-Development is done in the https://github.com/opennms/opennms-helm/tree/develop[`develop`] (default GitHub) branch.
+== Codebase
 
-Commits to the `develop` branch are automatically compiled, tested, and merged to the https://github.com/opennms/opennms-helm/tree/develop[`master`] branch.
+Development is done in the https://github.com/opennms/opennms-helm/tree/develop[default GitHub] branch (`develop`).
+Commits are automatically compiled, tested, and merged to the https://github.com/opennms/opennms-helm/tree/develop[`master`] branch.
 
 Releases will be tagged from the `master` branch and submitted to the https://github.com/grafana/grafana-plugin-repository[Grafana plugin repository].
 
-## Setting Up Helm and Grafana for Development
+== Set up Helm and Grafana for development
 
-1. Install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana] for your platform.
-
-2. Configure Grafana to allow unsigned plugin development by editing `grafana.ini`:
+. Download and install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana] for your platform.
+. Configure Grafana to allow unsigned plugin development by editing `grafana.ini`:
 +
-[source]
+[source, ini]
 ----
 app_mode = development
 # further down in the file:
@@ -22,17 +21,17 @@ app_mode = development
 allow_loading_unsigned_plugins = opennms-helm-app
 ----
 
-3. Check out the https://github.com/OpenNMS/opennms-helm[Helm git repository]:
+. Check out the https://github.com/OpenNMS/opennms-helm[Helm Git repository]:
 +
-[source]
+[source, console]
 ----
 git clone https://github.com/OpenNMS/opennms-helm.git
 cd opennms-helm
 ----
 
-4. Build Helm and symlink the `dist` directory in your Helm source tree into the Grafana plugin path (you will need to change these paths to match your system).
+. Build Helm and symlink the `dist` directory in your Helm source tree into the Grafana plugin path:
 +
-[source]
+[source, console]
 ----
 # install Helm's build and runtime dependencies
 npm ci
