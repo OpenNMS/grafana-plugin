@@ -35,5 +35,5 @@ You must specify a flow and performance data source.
 +
 The dashboard appears.
 +
-. Click *Dashboards > Manage* to view a list of your dashboards.
+. Click menu:Dashboards[Manage] to view a list of your dashboards.
 

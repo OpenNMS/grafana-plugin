@@ -15,4 +15,5 @@ Learn how to set up and manage your {page-component-title} environment, from ins
 [big]*Need help?*
 
 * Talk to us on https://chat.opennms.com/opennms[Mattermost].
-* join our community on https://opennms.discourse.group/latest[Discourse]
+* Join our community on https://opennms.discourse.group/latest[Discourse].
+

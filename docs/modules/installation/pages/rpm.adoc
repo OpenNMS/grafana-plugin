@@ -64,3 +64,4 @@ sudo systemctl enable grafana-server.service
 == Next steps
 
 xref:getting_started:index.adoc#[Set up your first dashboard].
+

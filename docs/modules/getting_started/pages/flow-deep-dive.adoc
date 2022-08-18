@@ -8,13 +8,13 @@ The dashboard can help with quality of service (QoS) monitoring and includes pan
 
 * Flow interface statistics (throughput and data use by application)
 * SNMP interface statistics (interface throughput and errors/discards)
-* conversations (throughput and data use by conversation)
-* hosts (throughput and data use by host)
+* Conversations (throughput and data use by conversation)
+* Hosts (throughput and data use by host)
 * DCSPs (throughput and data use by Differentiated Services Code Points)
 
 == QoS options
 
-The dashboard exposes nodes and interfaces with flows that you can filter on in the *Node* and *Interface* drop-down lists.
+The dashboard exposes nodes and interfaces with flows that you can filter on in the *Node* and *Interface* lists.
 
 You can also filter flows traffic by type of service (ToS) and differentiated services code point (DSCP) for nodes and interfaces with these values.
 
@@ -36,3 +36,4 @@ For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Con
 
 IMPORTANT: Use *Save As* to create your custom version of the flow deep-dive dashboard.
 Otherwise, changes you make to the default dashboard are overwritten when you update the plugin or reimport the dashboard.
+

@@ -22,3 +22,4 @@ http://docs.grafana.org/plugins/installation/[More information on the cli tool].
 == Next steps
 
 xref:getting_started:index.adoc#[Set up your first dashboard].
+
