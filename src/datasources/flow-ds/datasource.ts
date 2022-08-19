@@ -609,7 +609,7 @@ export class FlowDatasource {
 
   async getFilteredNodes(exporterNodes?: any[], filterParam?: string): Promise<any> {
     const filters = filterParam ? filterParam.split('&') : [];
-    if (filters.length == 0) {
+    if (filters.length === 0) {
       return await Promise.resolve(exporterNodes);
     }
 
