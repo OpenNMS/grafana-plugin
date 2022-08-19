@@ -57,7 +57,7 @@ exporterNodesWithFlows()
 ```
 
 The filter expression must be an existing node attribute and its corresponding value.
-Can accespt more than one filter expression separated by an '&' (<attribute1>=<value1> & <attribute2>=<value2> & ...)
+Separate multiple filter expressions with an '&' (<attribute1>=<value1> & <attribute2>=<value2> & ...).
 The value can be a constant, a variable, or a regular expression.
 
 .Example variable expression
