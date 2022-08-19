@@ -361,6 +361,7 @@ export class SimpleOpenNMSRequest {
   readonly flows = "/rest/flows";
   readonly locations = "/rest/monitoringLocations";
   readonly nodes = "/rest/nodes"
+  readonly interfaces = "/api/v2/snmpinterfaces";
 
   constructor(backendSrv, url) {
     this.backendSrv = backendSrv;
@@ -511,6 +512,31 @@ export class SimpleOpenNMSRequest {
       });
       return results;
     }
+  }
+
+  async getNodeByIdOrFsFsId(query: string){
+    const response = await this.doOpenNMSRequest({
+      url: this.nodes + '/' + query.trim(),
+      method: 'GET',
+      params: {
+        limit: 0
+      }
+    })
+
+    return response.data;
+  }
+
+  async getInterfaceIfIndexByName(nodeId: string | number, ifName: string){
+    const node = this.getNodeByIdOrFsFsId(nodeId.toString());
+    const response = await this.doOpenNMSRequest({
+      url: this.interfaces + '/_s=node.id==' + node.toString().trim() + ';ifName==' + ifName.trim(),
+      method: 'GET',
+      params: {
+        limit: 0
+      }
+    })
+
+    return response.ifIndex;
   }
 }
 

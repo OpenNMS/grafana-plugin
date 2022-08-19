@@ -35,7 +35,7 @@ export class FlowDatasource {
     this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
   }
 
-  query(options: DataQueryRequest<FlowDataQuery>): Promise<DataQueryResponse> {
+  async query(options: DataQueryRequest<FlowDataQuery>): Promise<DataQueryResponse> {
 
     // filter queries that have their metric set
     // -> when we initially create a query no metric is selected
@@ -78,20 +78,21 @@ export class FlowDatasource {
         step = Math.floor((end - start) / options.maxDataPoints);
       }
 
-      const seriesPromises = queriesWithMetrics.map(query => this.querySeries(options, query, step))
+      const seriesPromises = await queriesWithMetrics.map(async (query) => await this.querySeries(options, query, step))
 
-      return Promise.all(seriesPromises).then(series => {
-        return {
-          // querySeries returns TimeSeries[]
-          // -> flatMap it
-          data: series.flatMap(s => s)
-        }
-      })
+      const series = await Promise.all(seriesPromises);
+
+      return {
+        // querySeries returns TimeSeries[]
+        // -> flatMap it
+        data: series.flatMap(s => s)
+      }
+
     }
 
   }
 
-  querySummary(options: DataQueryRequest, query: FlowDataQuery): Promise<TableData> {
+  async querySummary(options: DataQueryRequest, query: FlowDataQuery): Promise<TableData> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
@@ -101,7 +102,7 @@ export class FlowDatasource {
     let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
-    let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
+    let ifIndex = await this.getIfIndexIfExistsFromInterface(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
     let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
     let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
@@ -110,36 +111,36 @@ export class FlowDatasource {
     switch (query.metric) {
       case 'conversations':
         if (conversations && conversations.length > 0) {
-          return this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForConversations(conversations, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         } else {
-          return this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForTopNConversations(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         }
       case 'applications':
         if (applications && applications.length > 0) {
-          return this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForApplications(applications, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         } else {
-          return this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForTopNApplications(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         }
       case 'hosts':
         if (hosts && hosts.length > 0) {
-          return this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForHosts(hosts, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         } else {
-          return this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
+          return await this.client.getSummaryForTopNHosts(N, start, end, includeOther, exporterNode, ifIndex, dscp).then(table => {
             return this.toTable(query, table)
           });
         }
       case 'dscps':
-        return this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
+        return await this.client.getSummaryForDscps(start, end, exporterNode, ifIndex, dscp).then(table => {
           return this.toTable(query, table, dscpLabel)
         });
       default:
@@ -147,7 +148,7 @@ export class FlowDatasource {
     }
   }
 
-  querySeries(options: DataQueryRequest, query: FlowDataQuery, step: number): Promise<TimeSeries[]> {
+  async querySeries(options: DataQueryRequest, query: FlowDataQuery, step: number): Promise<TimeSeries[]> {
 
     let start = options.range.from.valueOf();
     let end = options.range.to.valueOf();
@@ -157,7 +158,7 @@ export class FlowDatasource {
     let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
-    let ifIndex = this.getFunctionParameterOrDefault(query, 'withIfIndex', 0);
+    let ifIndex = await this.getIfIndexIfExistsFromInterface(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
     let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
     let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
@@ -166,36 +167,36 @@ export class FlowDatasource {
     switch (query.metric) {
       case 'conversations':
         if (conversations && conversations.length > 0) {
-          return this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForConversations(conversations, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         } else {
-          return this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForTopNConversations(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         }
       case 'applications':
         if (applications && applications.length > 0) {
-          return this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForApplications(applications, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         } else {
-          return this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForTopNApplications(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         }
       case 'hosts':
         if (hosts && hosts.length > 0) {
-          return this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForHosts(hosts, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         } else {
-          return this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
+          return await this.client.getSeriesForTopNHosts(N, start, end, step, includeOther, exporterNode, ifIndex, dscp).then(series => {
             return this.toSeries(query, series)
           });
         }
       case 'dscps':
-        return this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
+        return await this.client.getSeriesForDscps(start, end, step, exporterNode, ifIndex, dscp).then(series => {
           return this.toSeries(query, series, dscpLabel)
         });
       default:
@@ -510,8 +511,8 @@ export class FlowDatasource {
 
     if (combineIngressEgress) {
       const uniqueColumns =  [...new Set(flowSeries.columns.map(col => col.label))];
-      
-      return uniqueColumns          
+
+      return uniqueColumns
           .map(col => {
 
             const datapoints = timestampsInRange
@@ -522,7 +523,7 @@ export class FlowDatasource {
                       // get the values of those columns ...
                       .map(({colIdx}) => {
                         const v = values[colIdx][timestampIdx]
-                       return isNaN(Number(v)) && nanToZero ? 0 : v 
+                       return isNaN(Number(v)) && nanToZero ? 0 : v
                       })
                       // ... and sum them up
                       .reduce((previous, current) => previous + (current ? current : 0), 0)
@@ -630,6 +631,17 @@ export class FlowDatasource {
         return results.filter(result => result)
       });
     } else { return Promise.resolve(exporterNodes); }
+  }
+
+  async getIfIndexIfExistsFromInterface(nodeId: number | string, iface: any) {
+    if (isNaN(iface) && typeof iface === 'string') {
+      const ifIndex = await this.simpleRequest.getInterfaceIfIndexByName(nodeId, iface);
+      if (!ifIndex) {
+        throw new Error('Could not find ifIndex from ifName: ' + iface);
+      } else {
+        return ifIndex;
+      }
+    } else return iface;
   }
 
 }
