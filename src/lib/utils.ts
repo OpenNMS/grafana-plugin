@@ -514,5 +514,18 @@ export class SimpleOpenNMSRequest {
   }
 }
 
+export function getNodeFilterMap(filterParam?: string): Map<string, string>{
+  const filters = filterParam ? filterParam.split('&') : [];
+  let filtermap = new Map<string, string>(); 
+  filters.forEach((filter, index, arr) => {
+    let propValue = filter ? filter.split('=') : null;
+    if (propValue && propValue.length === 2) {
+      let propertyKey = propValue[0].trim();
+      let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+      filtermap.set(propertyKey, propertyValue);
+    }
+  });
+  return filtermap;
+}
 
 

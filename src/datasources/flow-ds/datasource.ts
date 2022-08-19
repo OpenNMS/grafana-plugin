@@ -11,7 +11,7 @@ import {
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
-import { processSelectionVariables, swapColumns, SimpleOpenNMSRequest } from 'lib/utils';
+import { processSelectionVariables, swapColumns, SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
 
@@ -608,22 +608,12 @@ export class FlowDatasource {
   }
 
   async getFilteredNodes(exporterNodes?: any[], filterParam?: string): Promise<any> {
-    const filters = filterParam ? filterParam.split('&') : [];
-    if (filters.length === 0) {
+    
+    let results: any[] = [];
+    const filtermap = getNodeFilterMap(filterParam);
+    if (filtermap.size === 0) {
       return await Promise.resolve(exporterNodes);
     }
-
-    let filtermap = new Map<string, string>();
-    let results: any[] = [];
-
-    filters.forEach((filter, index, arr) => {
-      let propValue = filter ? filter.split('=') : null;
-      if (propValue && propValue.length === 2) {
-        let propertyKey = propValue[0].trim();
-        let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
-        filtermap.set(propertyKey, propertyValue);
-      }
-    });
     if (exporterNodes) {
       for (const exportedNode of exporterNodes) {
         let matchAll = true;
