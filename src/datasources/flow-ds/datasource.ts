@@ -348,17 +348,15 @@ export class FlowDatasource {
     location: string | null = null, protocol: string | null = null, limit = 0) {
     return this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
   }
-  
 
-  metricFindExporterNodes(query?: any, filter?: string) {
+  async metricFindExporterNodes(query?: any, filter?: string) {
     let self = this;
-    return this.client.getExporters().then((exporters) => {
-      let results = [] as any[];
-      _.each(exporters, function (exporter) {
-        results.push({text: exporter.label, value: exporter.id, expandable: true});
-      });
-      return self.getFilteredNodes(results, filter);
+    const exporters = await this.client.getExporters();
+    let results = [] as any[];
+    exporters.forEach((exporter) => {
+      results.push({ text: exporter.label, value: exporter.id, expandable: true });
     });
+    return await self.getFilteredNodes(results, filter);
   }
 
   metricFindInterfacesOnExporterNode(query) {
@@ -609,27 +607,44 @@ export class FlowDatasource {
     return returnFuncs;
   }
 
-  getFilteredNodes(exporterNodes?: any[], filter?: string): Promise<any> {
-    let promises: Array<Promise<any>> = [];
-    let propValue = filter ? filter.split('=') : null;
-    if (propValue && propValue.length === 2) {
-      let propertyKey = propValue[0].trim();
-      let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+  async getFilteredNodes(exporterNodes?: any[], filterParam?: string): Promise<any> {
+    const filters = filterParam ? filterParam.split('&') : [];
+    if (filters.length == 0) {
+      return await Promise.resolve(exporterNodes);
+    }
 
-      _.each(exporterNodes, (exportedNode) => {
-        let promise = this.client.getNode(exportedNode.value)
-          .then(n => {
-            let p = n[propertyKey];
-            if (p === propertyValue) {
-              return exportedNode;
-            }
-          });
-        promises.push(promise);
-      });
-      return Promise.all(promises).then(results => {
-        return results.filter(result => result)
-      });
-    } else { return Promise.resolve(exporterNodes); }
+    let filtermap = new Map<string, string>();
+    let results: any[] = [];
+
+    filters.forEach((filter, index, arr) => {
+      let propValue = filter ? filter.split('=') : null;
+      if (propValue && propValue.length === 2) {
+        let propertyKey = propValue[0].trim();
+        let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+        filtermap.set(propertyKey, propertyValue);
+      }
+    });
+    if (exporterNodes) {
+      for (const exportedNode of exporterNodes) {
+        let matchAll = true;
+        for (const pair of filtermap) {
+          const node = await this.client.getNode(exportedNode.value);
+          let nodePropertyValue = node[pair[0]];
+          const regex = new RegExp(pair[1]);
+          if (!regex.test(nodePropertyValue)) {
+            matchAll = false;
+            break;
+          }
+        }
+        if (matchAll) {
+          results.push(exportedNode);
+        }
+      }
+      return results.filter(result => result);
+    }
+    else {
+      return await Promise.resolve(exporterNodes);
+    }
   }
 
 }
