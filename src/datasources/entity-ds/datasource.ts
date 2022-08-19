@@ -420,10 +420,10 @@ export class OpenNMSEntityDatasource {
         let filter = new API.Filter();
 
         for (const pair of filtermap) {
-            const propertyKey = entity.getAttributeMapping().getApiAttribute(pair[0].trim());
-            const propertyValue = pair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+            const propertyKey = entity.getAttributeMapping().getApiAttribute(pair[0]);
+            const propertyValue = pair[1];
 
-            if (propertyValue.trim().startsWith('$')) {
+            if (propertyValue.startsWith('$')) {
                 const variableName = this.templateSrv.getVariableName(propertyValue);
                 const templateVariable = this._getTemplateVariable(variableName);
                 if (templateVariable && templateVariable.current.value) {
