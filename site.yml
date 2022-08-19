@@ -1,22 +1,22 @@
-site: 
+site:
   title: OpenNMS Helm Documentation
   url: https://opennms-helm-doc.netlify.com
   start_page: helm::index.adoc
-content: 
-  sources: 
+content:
+  sources:
   - url: https://github.com/OpenNMS/opennms-helm.git
     branches: HEAD
     tags: v*
     start_path: docs
 ui:
   bundle:
-    url: https://github.com/opennms-forge/antora-ui-opennms/releases/download/v1.0.1/ui-bundle.zip
+    url: https://github.com/opennms-forge/antora-ui-opennms/releases/download/v3.0.1/ui-bundle.zip
 asciidoc:
   attributes:
     stem: latexmath
-output: 
-  clean: true 
-  dir: ./public 
-  destinations: 
+output:
+  clean: true
+  dir: ./public
+  destinations
   - provider: fs
-  - provider: archive 
+  - provider: archive
