@@ -11,7 +11,7 @@ https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Render
 
 == Build requirements
 
-* https://nodejs.org/en/download[Node.js >= 10.x]
+* https://nodejs.org/en/download[Node.js >= {node-js-version}]
 
 == And of course ...
 

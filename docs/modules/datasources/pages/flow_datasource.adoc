@@ -1,8 +1,8 @@
-= Flow datasource
+= Flow Datasource
 
 == General
 
-Use the _Flow Datasource_ to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
+Use the flow datasource to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
 
 The query editor supports the following functions:
 
@@ -37,7 +37,7 @@ The query editor supports the following functions:
 
 === locations()
 
-The `locations()` query returns a list of all available node locations. 
+The `locations()` query returns a list of all available node locations.
 Use this inside `exporterNodesWithFlows()` to filter the number of nodes displayed by location.
 
 .Example variable expression
@@ -122,16 +122,17 @@ Currently this function accepts an optional number of records which ensures that
 NOTE: The application values retrieved come "as is" from the `flows/applications/enumerate` API.
 
 .Examples: variable expression
-* applications()  
-* applications(1000)  
+* applications()
+* applications(1000)
 
 .Use with filter function withApplications()
 * withApplications($applications)
 
 === conversations(<application>,<location>,<protocol>,<limit>)
 
-The `conversations()` query returns a list of all available conversations. This function is intended to be used inside the Filter function `withConversation()` as a template variable if needed. 
-Currently this function accepts the following arguments: 
+The `conversations()` query returns a list of all available conversations.
+This function is intended for use inside the filter function `withConversation()` as a template variable if needed.
+Currently this function accepts the following arguments:
 
 [options="header, %autowidth"]
 |===
@@ -145,27 +146,27 @@ Currently this function accepts the following arguments:
 .Examples variable expression
 Get all conversations (will return a maximum of 25 records).
 
-* conversations()  
+* conversations()
 
 Get all conversations and return a maximum of 10 records.
 
-* conversations(10)  
+* conversations(10)
 
 Get all conversations with application app0 and return a maximum of 10 records.
 
-* conversations(app0, 10) 
+* conversations(app0, 10)
 
 Get all conversations with app0 under Default location and return a maximum of 10 records.
 
-* conversations(app0, Default, 10)  
+* conversations(app0, Default, 10)
 
 Get all conversations with app0 under Default location with http protocol and return a maximum of 10 records.
 
-* conversations(app0, Default, http, 10)  
+* conversations(app0, Default, http, 10)
 
 Get all conversations with application that start with app under location that start with Def and protocols http and https.
 
-* conversations(app.\*, Def.\*, http.*, 1000)  
+* conversations(app.\*, Def.\*, http.*, 1000)
 
 .Usage with filter function withConversation()
 * withConversation($conversations)
@@ -174,7 +175,8 @@ NOTE: The conversations values retrieved come `as is` from `flows/conversations/
 
 === hosts(<pattern>,<limit>)
 
-The `hosts()` query returns a list of all available hosts. This function is intended to be used inside the Filter function `withHost()` as a template variable if needed. 
+The `hosts()` query returns a list of all available hosts.
+This function is intended for use inside the filter function `withHost()` as a template variable if needed.
 Currently this function accepts the following arguments:
 
 [options="header, %autowidth"]
@@ -188,18 +190,17 @@ Currently this function accepts the following arguments:
 
 Get all hosts (will return a maximum of 25 records).
 
-* hosts()  
+* hosts()
 
 Get all hosts and return a maximum of 10 records.
 
-* hosts(10)  
+* hosts(10)
 
 Get all hosts that match the pattern 192.168.0.* and return a maximum of 10 records.
 
-* hosts(192.168.0.*, 10)  
+* hosts(192.168.0.*, 10)
 
 .Use with filter function withHost()
 * withHost($hosts)
 
 NOTE: The host values retrieved come "as is" from the `flows/hosts/enumerate` API.
-
