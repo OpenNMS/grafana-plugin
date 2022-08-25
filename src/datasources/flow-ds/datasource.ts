@@ -102,7 +102,7 @@ export class FlowDatasource {
     let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
-    let ifIndex = await this.getIfIndexIfExistsFromInterface(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
+    let ifIndex = await this.simpleRequest.getIfIndexFromSnmpResourceIfExixts(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
     let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
     let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
@@ -158,7 +158,7 @@ export class FlowDatasource {
     let includeOther = FlowDatasource.isFunctionPresent(query, 'includeOther');
     // Filter
     let exporterNode = this.getFunctionParameterOrDefault(query, 'withExporterNode', 0);
-    let ifIndex = await this.getIfIndexIfExistsFromInterface(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
+    let ifIndex = await this.simpleRequest.getIfIndexFromSnmpResourceIfExixts(exporterNode, this.getFunctionParameterOrDefault(query, 'withIfIndex', 0));
     let dscp = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withDscp', 0, null));
     let applications = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withApplication', 0, null));
     let conversations = processSelectionVariables(this.getFunctionParametersOrDefault(query, 'withConversation', 0, null));
@@ -632,16 +632,5 @@ export class FlowDatasource {
       });
     } else { return Promise.resolve(exporterNodes); }
   }
-
-  async getIfIndexIfExistsFromInterface(nodeId: number | string, iface: any) {
-    if (isNaN(iface) && typeof iface === 'string') {
-      const ifIndex = await this.simpleRequest.getInterfaceIfIndexByName(nodeId, iface);
-      if (!ifIndex) {
-        throw new Error('Could not find ifIndex from ifName: ' + iface);
-      } else {
-        return ifIndex;
-      }
-    } else return iface;
-  }
-
 }
+

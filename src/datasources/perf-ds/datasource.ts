@@ -6,7 +6,7 @@ import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "
 import {DataQueryResponseData} from "@grafana/data/types/datasource";
 import {ClientDelegate} from '../../lib/client_delegate'
 import {Client, ServerMetadata} from 'opennms'
-import {SimpleOpenNMSRequest,OpenNMSGlob} from '../../lib/utils'
+import {SimpleOpenNMSRequest,OpenNMSGlob, getNodeResource} from '../../lib/utils'
 
 const lodashClonedeep = require('lodash.clonedeep');
 
@@ -516,9 +516,9 @@ export class OpenNMSDatasource {
   }
 
   // Used by template queries
-  metricFindQuery(query) {
+  async metricFindQuery(query) {
     if (query === null || query === undefined || query === "") {
-      return Promise.resolve([]);
+      return await Promise.resolve([]);
     }
 
     var interpolatedQuery = _.first(this.interpolateValue(query));
@@ -528,22 +528,21 @@ export class OpenNMSDatasource {
 
       for (const func of functions) {
         if(func.name === 'locations'){
-          return this.metricFindLocations.apply(this, func.arguments);
+          return await this.metricFindLocations.apply(this, func.arguments);
         } else if (func.name === 'nodeFilter') {
-          return this.metricFindNodeFilterQuery.apply(this, func.arguments);
+          return await this.metricFindNodeFilterQuery.apply(this, func.arguments);
         } else if (func.name === 'nodeResources') {
-          return this.metricFindNodeResourceQuery.apply(this, func.arguments);
+          return await this.metricFindNodeResourceQuery.apply(this, func.arguments);
         } else {
           console.warn('Unknown function in interpolated query: ' + interpolatedQuery, func);
         }
       }
     }
-
-    return Promise.resolve([]);
+    return await Promise.resolve([]);
   }
 
-  metricFindLocations() {
-    return this.simpleRequest.getLocations();
+  async metricFindLocations() {
+    return await this.simpleRequest.getLocations();
   }
 
   async metricFindNodeFilterQuery(query) {
@@ -559,7 +558,7 @@ export class OpenNMSDatasource {
     return results;
   }
 
-  metricFindNodeResourceQuery(query, ...options) {
+  async metricFindNodeResourceQuery(query, ...options) {
     var textProperty = "id", resourceType = '*', regex = null;
     if (options.length > 0) {
       textProperty = options[0];
@@ -570,13 +569,7 @@ export class OpenNMSDatasource {
     if (options.length > 2) {
       regex = options[2];
     }
-    return this.simpleRequest.doOpenNMSRequest({
-      url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
-      method: 'GET',
-      params: {
-        depth: 1
-      }
-    }).then(function (response) {
+    const response = await this.simpleRequest.getResources(query);
       var results = [] as any[];
       _.each(response.data.children.resource, function (resource) {
         var resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
@@ -602,7 +595,6 @@ export class OpenNMSDatasource {
         }
       });
       return results;
-    });
   }
 
   buildQuery(options): [Query, string[]] {
@@ -849,18 +841,8 @@ export class OpenNMSDatasource {
     return resourcesWithAttributes;
   }
 
-  static getNodeResource(nodeId) {
-    var prefix = "";
-    if (nodeId.indexOf(":") > 0) {
-      prefix = "nodeSource[";
-    } else {
-      prefix = "node[";
-    }
-    return prefix + nodeId + "]";
-  }
-
   static getRemoteResourceId(nodeId, resourceId) {
-    return OpenNMSDatasource.getNodeResource(nodeId) + "." + resourceId;
+    return getNodeResource(nodeId) + "." + resourceId;
   }
 
   searchForNodes(query, offset) {

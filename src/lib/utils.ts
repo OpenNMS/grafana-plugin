@@ -346,8 +346,16 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
     }
   }
   return rows;
+}
 
-
+export function getNodeResource(nodeId: string) {
+  let prefix = "";
+  if (nodeId.indexOf(":") > 0) {
+    prefix = "nodeSource[";
+  } else {
+    prefix = "node[";
+  }
+  return prefix + nodeId + "]";
 }
 
 export class SimpleOpenNMSRequest {
@@ -362,6 +370,7 @@ export class SimpleOpenNMSRequest {
   readonly locations = "/rest/monitoringLocations";
   readonly nodes = "/rest/nodes"
   readonly interfaces = "/api/v2/snmpinterfaces";
+  readonly resources = "/rest/resources"
 
   constructor(backendSrv, url) {
     this.backendSrv = backendSrv;
@@ -451,7 +460,7 @@ export class SimpleOpenNMSRequest {
   }
 
   async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
-    if(!pattern){
+    if (!pattern) {
       pattern = ".*"
     }
 
@@ -478,7 +487,7 @@ export class SimpleOpenNMSRequest {
     }
   }
 
-  async getConversations(start: number, end: number, application: string | null = null, 
+  async getConversations(start: number, end: number, application: string | null = null,
     location: string | null = null, protocol: string | null = null, limit = 0) {
     if(!application){
       application = ".*";
@@ -526,19 +535,29 @@ export class SimpleOpenNMSRequest {
     return response.data;
   }
 
-  async getInterfaceIfIndexByName(nodeId: string | number, ifName: string){
-    const node = this.getNodeByIdOrFsFsId(nodeId.toString());
-    const response = await this.doOpenNMSRequest({
-      url: this.interfaces + '/_s=node.id==' + node.toString().trim() + ';ifName==' + ifName.trim(),
+  async getResources(query: string) {
+    return await this.doOpenNMSRequest({
+      url: this.resources + encodeURIComponent(getNodeResource(query)),
       method: 'GET',
       params: {
-        limit: 0
+        depth: 1
       }
-    })
+    });
+  }
 
-    return response.ifIndex;
+  async getIfIndexFromSnmpResourceIfExixts(node: any, iface: any) {
+    const response = await this.getResources(node);
+    if (response.data.children.resource) {
+      for (const resource of response.data.children.resource) {
+        if (resource.id === iface || resource.label === iface || resource.name === iface) {
+          const regexSnmpIface = /element\/snmpinterface\.jsp\?node=\d+&ifindex=(\d+)/;
+          let ifIndexMatch = resource.link.match(regexSnmpIface);
+          if (ifIndexMatch) {
+            return ifIndexMatch[0];
+          }
+        }
+      }
+    }
+    return iface;
   }
 }
-
-
-
