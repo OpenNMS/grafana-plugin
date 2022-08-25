@@ -460,7 +460,7 @@ export class SimpleOpenNMSRequest {
   }
 
   async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
-    if (!pattern) {
+    if(!pattern){
       pattern = ".*"
     }
 
