@@ -560,12 +560,15 @@ export class OpenNMSDatasource {
   }
 
   metricFindNodeResourceQuery(query, ...options) {
-    var textProperty = "id", resourceType = '*';
+    var textProperty = "id", resourceType = '*', regex = null;
     if (options.length > 0) {
       textProperty = options[0];
     }
     if (options.length > 1) {
       resourceType = options[1];
+    }
+    if (options.length > 2) {
+      regex = options[2];
     }
     return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(OpenNMSDatasource.getNodeResource(query)),
@@ -592,8 +595,10 @@ export class OpenNMSDatasource {
             textValue = resourceWithoutNodePrefix[2];
             console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
         }
-        if ((resourceType === '*' && resourceWithoutNodePrefix) || (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) {
-          results.push({text: textValue, value: resourceWithoutNodePrefix[2], expandable: true});
+        if (((resourceType === '*' && resourceWithoutNodePrefix) || 
+        (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) && 
+        (!regex || new RegExp(regex).test(textValue) )) {
+            results.push({text: textValue, value: resourceWithoutNodePrefix[2], expandable: true});
         }
       });
       return results;
