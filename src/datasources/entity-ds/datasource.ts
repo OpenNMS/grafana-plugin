@@ -11,7 +11,7 @@ import NodeEntity from './NodeEntity';
 import OutageEntity from './OutageEntity';
 import SnmpInterfaceEntity from './SnmpInterfaceEntity';
 import Entity from "./Entity";
-import { SimpleOpenNMSRequest } from "lib/utils";
+import { SimpleOpenNMSRequest, getNodeFilterMap } from "lib/utils";
 
 const isNumber = function isNumber(num) {
     return ((parseInt(num,10) + '') === (num + ''));
@@ -415,32 +415,29 @@ export class OpenNMSEntityDatasource {
         return this.simpleRequest.getLocations();
     }
 
-    metricFindNodeFilterQuery(entity, attribute) {
-        let propValuePair = attribute ? attribute.split('=') : null;
-        let filter = new API.Filter();        
+    async metricFindNodeFilterQuery(entity, attribute) {
+        const filtermap = getNodeFilterMap(attribute);
+        let filter = new API.Filter();
 
-        if (propValuePair && propValuePair.length === 2) {
-            const propertyKey =  entity.getAttributeMapping().getApiAttribute( propValuePair[0].trim());
-            const propertyValue = propValuePair[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
-            if (propertyValue.trim().startsWith('$')) {
+        for (const pair of filtermap) {
+            const propertyKey = entity.getAttributeMapping().getApiAttribute(pair[0]);
+            const propertyValue = pair[1];
 
+            if (propertyValue.startsWith('$')) {
                 const variableName = this.templateSrv.getVariableName(propertyValue);
                 const templateVariable = this._getTemplateVariable(variableName);
                 if (templateVariable && templateVariable.current.value) {
                     filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value));
-                    filter.limit = 0;
                 }
             } else if (propertyKey && propertyValue) {
                 filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, propertyValue));
-                filter.limit = 0;
             }
         }
 
-        return this.opennmsClient.getNodeByFilter(filter)
-        .then(nodes => {
-            return nodes.map(node =>  {
-                return {id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
-            });
+        filter.limit = 0;
+        const nodes = await this.opennmsClient.getNodeByFilter(filter);
+        return nodes.map(node => {
+            return { id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
         });
     }
 
