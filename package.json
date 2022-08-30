@@ -16,7 +16,7 @@
     "@antora/cli": "^3.0.1",
     "@antora/site-generator-default": "^3.0.1",
     "@antora/xref-validator": "gitlab:antora/xref-validator",
-    "@grafana/data": "^8.3.4",
+    "@grafana/data": "^9.1.2",
     "@grafana/toolkit": "^8.3.4",
     "@grafana/ui": "^8.3.4",
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
