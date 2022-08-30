@@ -11,7 +11,7 @@ import {
 
 import { ClientDelegate } from 'lib/client_delegate';
 import { dscpLabel, dscpSelectOptions } from 'lib/tos_helper';
-import { processSelectionVariables, swapColumns, SimpleOpenNMSRequest } from 'lib/utils';
+import { processSelectionVariables, swapColumns, SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils';
 import { OnmsFlowTable } from 'opennms/src/model/OnmsFlowTable';
 import { OnmsFlowSeries } from 'opennms/src/model/OnmsFlowSeries';
 
@@ -354,7 +354,7 @@ export class FlowDatasource {
     let self = this;
     const exporters = await this.client.getExporters();
     let results = [] as any[];
-    _.each(exporters, function (exporter) {
+    exporters.forEach((exporter) => {
       results.push({ text: exporter.label, value: exporter.id, expandable: true });
     });
     return await self.getFilteredNodes(results, filter);
@@ -608,27 +608,34 @@ export class FlowDatasource {
     return returnFuncs;
   }
 
-  getFilteredNodes(exporterNodes?: any[], filter?: string): Promise<any> {
-    let promises: Array<Promise<any>> = [];
-    let propValue = filter ? filter.split('=') : null;
-    if (propValue && propValue.length === 2) {
-      let propertyKey = propValue[0].trim();
-      let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
+  async getFilteredNodes(exporterNodes?: any[], filterParam?: string): Promise<any> {
 
-      _.each(exporterNodes, (exportedNode) => {
-        let promise = this.client.getNode(exportedNode.value)
-          .then(n => {
-            let p = n[propertyKey];
-            if (p === propertyValue) {
-              return exportedNode;
-            }
-          });
-        promises.push(promise);
-      });
-      return Promise.all(promises).then(results => {
-        return results.filter(result => result)
-      });
-    } else { return Promise.resolve(exporterNodes); }
+    let results: any[] = [];
+    const filtermap = getNodeFilterMap(filterParam);
+    if (filtermap.size === 0) {
+      return await Promise.resolve(exporterNodes);
+    }
+    if (exporterNodes) {
+      for (const exportedNode of exporterNodes) {
+        let matchAll = true;
+        for (const pair of filtermap) {
+          const node = await this.client.getNode(exportedNode.value);
+          let nodePropertyValue = node[pair[0]];
+          const regex = new RegExp(pair[1]);
+          if (!regex.test(nodePropertyValue)) {
+            matchAll = false;
+            break;
+          }
+        }
+        if (matchAll) {
+          results.push(exportedNode);
+        }
+      }
+      return results.filter(result => result);
+    }
+    else {
+      return await Promise.resolve(exporterNodes);
+    }
   }
 
 }

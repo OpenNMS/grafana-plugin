@@ -57,12 +57,15 @@ exporterNodesWithFlows()
 ```
 
 The filter expression must be an existing node attribute and its corresponding value.
-The value can be a constant or a variable.
+Separate multiple filter expressions with an '&' (<attribute1>=<value1> & <attribute2>=<value2> & ...).
+The value can be a constant, a variable, or a regular expression.
 
 .Example variable expression
 * exporterNodesWithFlows(<node_attribute>='<value>')
 * exporterNodesWithFlows(location='Default')
 * exporterNodesWithFlows(location='$location')
+* exporterNodesWithFlows(location='$location' & label='localhost')
+* exporterNodesWithFlows(location='$location' & label='.\*com.*')
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
