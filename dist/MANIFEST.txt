@@ -7,10 +7,9 @@ Hash: SHA512
   "signatureType": "community",
   "signedByOrg": "opennms",
   "signedByOrgName": "The OpenNMS Group Inc.",
-  "rootUrls": [],
   "plugin": "opennms-helm-app",
   "version": "9.0.0-SNAPSHOT",
-  "time": 1662152691471,
+  "time": 1662154125918,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "96b5c72df82990dcdab8b190be4dbba4ea0d7eeb2a947773e77903cafa5587d4",
@@ -24,18 +23,18 @@ Hash: SHA512
     "dashboards/cortex_flow_deep_dive.json": "3298a6d4955a38bad9d45c897659f6fe8d981cbfe041d751a8ad0af7df634102",
     "dashboards/flow_deep_dive.json": "19fdb0ff9b3bbc197ad19a91ec26a97c0fd6eaff946974633bdf35b7b2aa047b",
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
-    "datasources/entity-ds/module.js": "ee83e1e1d197970e09b24feba74bdc26b10320f0074d5e66122aab78ba1092fb",
+    "datasources/entity-ds/module.js": "3b5122f9db5508524d658cad59a9ef6abbe8854e2954786cfff75d1b9f084f45",
     "datasources/entity-ds/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
-    "datasources/entity-ds/module.js.map": "593483b1b96dc25911d3ddef8986214d13560de1d41fb0a8399fcdbbe0c27e09",
+    "datasources/entity-ds/module.js.map": "b7f809dd4092aabdb1a2d4fe42f69058c87f05f6db3f8e1883e642701c100c64",
     "datasources/entity-ds/partials/config.html": "3a1ecc8df03f13e9472c989060aa05967ff6690f60a915668e60c110c7f21113",
     "datasources/entity-ds/partials/query.editor.html": "7129d9a5d370cd133ced79e53dcb0181353ec9fcb2e47c7376cbb6d684d59a93",
     "datasources/entity-ds/partials/query.html": "191db0afb4f2ac041a9bf5644706e6344eb79ec4fc96f72e6f0403c80329cb4d",
     "datasources/entity-ds/partials/query.options.html": "63beadc7210dc238a634e1734c55ced378c18ffd97883fa2b684b6fd90a387c1",
     "datasources/entity-ds/plugin.json": "bf4332a8eb3ca454887d0b6003968d194242207f0145b46bd01300d8d550f5b8",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
-    "datasources/flow-ds/module.js": "9d1a14352e667dd66d85df2954d5efd367e6399b51f975ed82661fd2c8fa0ddc",
+    "datasources/flow-ds/module.js": "3989d54ac1a4e6e6694f6c36214e1d8c6543ea93839ded075f84a29d18f5a05e",
     "datasources/flow-ds/module.js.LICENSE.txt": "5e4c8cf03b14f3953cfd991bd012e336e26b25be1ac922812e99d463ea609e17",
-    "datasources/flow-ds/module.js.map": "892d8718118d4112594c176c2e154ee234fc252879e8a095130499efd08b37bb",
+    "datasources/flow-ds/module.js.map": "14bc694bfdb9a677e01fc45698e469ebb6e54aa6f7af58acf5647e83bd9a6d92",
     "datasources/flow-ds/partials/config.html": "f99ef59ab65fb2dd92290f5d79d74abb6e0d03b2a68425348b14e0fbea1b4742",
     "datasources/flow-ds/partials/query.editor.html": "d0551bb55ff0800345c2c37252daea55cc9ab6b94b2724837e8bc04e4eaede9d",
     "datasources/flow-ds/partials/query.options.html": "01570a3c97a66d192bf4986355a52b92b3ff5b45fe528d9e5849464e8b4e213d",
@@ -140,10 +139,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmMSb/MAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm54u+Agj1NZHLG/BCNa5vwW4kKHGqPBmLjdnst1vVptD+WCbvPzImvIwM
-auj/gXPcHJpADjhT+i7W8uXp3lR2yw9kWWugOQIJAZPd9wD7ZbuAji8uf1lH
-cvTrY6wqzyzNeA7FErq9TSjVfm3/a24KlOUPriWLvZrA6pS69jsGdqaAptg5
-wCZ7Kg88
-=CpPO
+wrcEARMKAAYFAmMSdY4AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5/sYAgjx0X4U+3yYxRNEKISuNINELTBf7i/f2Z1S5UILX12MBMnmYFBI
++Ihc1XA2NaHmfrenbRkClt9r1xEFr7LgJPCGrQIIxbBSC2jgOHx9KqQfGMTB
+LT0KWUMOA5tQk0RZloavlkiMKlhBbsd22S2hB67ToLUuUx8xCny4iYCBXazl
+P2yrcXg=
+=vaRX
 -----END PGP SIGNATURE-----
