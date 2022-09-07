@@ -89,7 +89,7 @@ jobs:
           name: Clean Old Cache Entries
           command: |
               if [ -d ~/.npm ]; then
-                find ~/.npm -type d -maxdepth 2 -ctime +14 -exec rm -rf {} \;
+                find ~/.npm -maxdepth 2 -type d -ctime +14 -exec rm -rf {} \;
               fi
       - run:
           name: Set Up Github Host Key
