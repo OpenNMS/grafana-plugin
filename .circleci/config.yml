@@ -12,11 +12,11 @@ executors:
 
   node-executor:
     docker:
-      - image: circleci/node:16
+      - image: cimg/node:lts
 
   docker-executor:
     docker:
-      - image: docker:20-git
+      - image: cimg/base:stable
 
   docs-executor:
     docker:
@@ -62,6 +62,7 @@ commands:
 jobs:
   pre-build:
     executor: node-executor
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -73,6 +74,7 @@ jobs:
             - project
   build:
     executor: node-executor
+    resource_class: medium+
     steps:
       - attach_workspace:
           at: ~/
@@ -89,7 +91,7 @@ jobs:
           name: Clean Old Cache Entries
           command: |
               if [ -d ~/.npm ]; then
-                find ~/.npm -type d -maxdepth 2 -ctime +14 -exec rm -rf {} \;
+                find ~/.npm -maxdepth 2 -type d -ctime +14 -exec rm -rf {} \;
               fi
       - run:
           name: Set Up Github Host Key
@@ -148,6 +150,7 @@ jobs:
   create-merge-branch:
     <<: *defaults
     <<: *docker_container_config
+    resource_class: small
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -170,6 +173,7 @@ jobs:
 
   build-and-merge-branch:
     executor: node-executor
+    resource_class: small
     <<: *defaults
     steps:
       - add_ssh_keys:
@@ -214,6 +218,7 @@ jobs:
 
   make-tarball:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -235,6 +240,7 @@ jobs:
 
   make-zip:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -251,6 +257,7 @@ jobs:
 
   make-docker-image:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -273,6 +280,7 @@ jobs:
             - ./project/opennms-helm.oci
   make-rpm:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -301,6 +309,7 @@ jobs:
 
   make-deb:
     executor: build-executor-debian
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -329,6 +338,7 @@ jobs:
 
   publish-docker-image-latest:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -373,6 +383,7 @@ jobs:
 
   publish-docker-image-bleeding:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -415,6 +426,7 @@ jobs:
 
   publish-rpm:
     executor: cloudsmith/default
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -428,6 +440,7 @@ jobs:
 
   publish-deb:
     executor: cloudsmith/default
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
