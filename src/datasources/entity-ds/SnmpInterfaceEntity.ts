@@ -18,6 +18,7 @@ const columns = [
   { text: 'Polled?', resource: 'poll' },
   { text: 'Last SNMP Poll', resource: 'lastSnmpPoll' },
   { text: 'Physical Address', resource: 'physAddr' },
+  { text: 'Node ID', resource: 'nodeId' }, 
   { text: 'Data Source' }
 ];
 
@@ -71,6 +72,7 @@ export default class SnmpInterfaceEntity extends Entity {
         iface.poll,
         iface.lastSnmpPoll,
         iface.physAddr?.toString(),
+        iface.nodeId,
         this.name,
       ];
     });
