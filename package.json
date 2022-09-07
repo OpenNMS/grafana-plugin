@@ -51,7 +51,7 @@
     "flot": "^0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash": "^4.17.21",
-    "opennms": "^2.4.1",
+    "opennms": "^2.5.0",
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.5.5",
     "q": "^1.5.1",
