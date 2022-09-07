@@ -12,11 +12,11 @@ executors:
 
   node-executor:
     docker:
-      - image: circleci/node:16
+      - image: cimg/node:lts
 
   docker-executor:
     docker:
-      - image: docker:20-git
+      - image: cimg/base:stable
 
   docs-executor:
     docker:
