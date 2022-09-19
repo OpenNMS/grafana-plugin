@@ -2,7 +2,7 @@
 :imagesdir: ../assets/images
 
 [[welcome-index]]
-= {page-component-title} {page-version} Documentation
+= {page-component-title} {full-display-version} Documentation
 
 :data-uri:
 :icons:
