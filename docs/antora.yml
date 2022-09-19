@@ -3,6 +3,10 @@ version: '8'
 title: HELM
 asciidoc:
   attributes:
+<<<<<<< HEAD
     full-display-version: '8.0.1'
+=======
+    full-display-version: '7.3.0'
+>>>>>>> 59aab7d (feat(docs): show full display version)
 nav:
   - modules/ROOT/nav.adoc
