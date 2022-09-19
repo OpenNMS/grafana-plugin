@@ -12,11 +12,11 @@ executors:
 
   node-executor:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:lts
 
   docker-executor:
     docker:
-      - image: docker:20-git
+      - image: cimg/base:stable
 
   docs-executor:
     docker:
@@ -58,10 +58,51 @@ commands:
           name: DockerHub Login
           command: |
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+  generate-node-cache-checksum:
+    steps:
+      - run:
+          name: Generate Node Package Checksum
+          command: |
+            cat package-lock.json | jq '.packages | with_entries(select(.key != ""))' > /tmp/filtered-package-lock.json
+  install-node-dependencies:
+    steps:
+      - generate-node-cache-checksum
+      - restore_cache:
+          name: Restore NPM Cache
+          keys:
+            - npm-packages-v3-{{ checksum "/tmp/filtered-package-lock.json" }}-{{ .Branch }}-{{ .Revision }}
+            - npm-packages-v3-{{ checksum "/tmp/filtered-package-lock.json" }}-{{ .Branch }}
+            - npm-packages-v3-{{ checksum "/tmp/filtered-package-lock.json" }}-
+            - npm-packages-v3-
+      - run:
+          name: Install Dependencies
+          command: npm --no-progress ci
+  save-node-cache:
+    steps:
+      - generate-node-cache-checksum
+      - run:
+          name: Clean Old Cache Entries
+          command: |
+              if [ -d ~/.npm ]; then
+                find ~/.npm -maxdepth 2 -type d -ctime +14 -exec rm -rf {} \;
+              fi
+      - save_cache:
+          name: Save Package Cache
+          key: npm-packages-v3-{{ checksum "/tmp/filtered-package-lock.json" }}-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/.npm
+  build-and-sign:
+    steps:
+      - run:
+          name: Run Build, Tests, and Sign
+          command: |
+            node --optimize-for-size --memory-reducer --max-old-space-size=12288 node_modules/.bin/grafana-toolkit plugin:build
+            node --optimize-for-size --memory-reducer --max-old-space-size=12288 node_modules/.bin/grafana-toolkit plugin:sign
 
 jobs:
   pre-build:
     executor: node-executor
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -73,24 +114,13 @@ jobs:
             - project
   build:
     executor: node-executor
+    resource_class: medium+
     steps:
       - attach_workspace:
           at: ~/
       - add_ssh_keys:
           fingerprints:
             - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
-      - restore_cache:
-          name: Restore Package Cache
-          keys:
-            - npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-v2-{{ .Branch }}
-            - npm-packages-v2-
-      - run:
-          name: Clean Old Cache Entries
-          command: |
-              if [ -d ~/.npm ]; then
-                find ~/.npm -type d -maxdepth 2 -ctime +14 -exec rm -rf {} \;
-              fi
       - run:
           name: Set Up Github Host Key
           command: |
@@ -100,17 +130,9 @@ jobs:
               echo "|1|SZ/U1VP2X+BY4ewvW3j9yIQDXTU=|34DiVLA+NU6P9Acg0Fk5LSbxIdg= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
               echo "|1|jopvDXD+uqD0jpXcT1YtIRhc8jQ=|KkoqYK0ZpHiiNZE6GBiYlI3cRmQ= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
               chmod 600 ~/.ssh/known_hosts
-      - run:
-          name: Install Dependencies
-          command: npm --no-progress ci
-      - save_cache:
-          name: Save Package Cache
-          key: npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/.npm
-      - run:
-          name: Run Build, Tests, and Sign
-          command: npm run build && npm run sign
+      - install-node-dependencies
+      - build-and-sign
+      - save-node-cache
       - store_test_results:
           path: coverage
       - store_artifacts:
@@ -146,6 +168,7 @@ jobs:
   create-merge-branch:
     <<: *defaults
     <<: *docker_container_config
+    resource_class: small
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -168,12 +191,14 @@ jobs:
 
   build-and-merge-branch:
     executor: node-executor
+    resource_class: small
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: ~/
       - add_ssh_keys:
           fingerprints:
             - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
-      - checkout
       - run:
           name: Create git identity
           command: |
@@ -185,18 +210,8 @@ jobs:
             export GIT_MERGE_AUTOEDIT=no
             git checkout << parameters.to_branch >>
             git merge origin/merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
-      - restore_cache:
-          name: Restore Package Cache
-          keys:
-            - npm-packages-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-v2-{{ .Branch }}
-            - npm-packages-v2-
-      - run:
-          name: Install Dependencies
-          command: npm --no-progress ci
-      - run:
-          name: Run Build, Tests, and Sign
-          command: npm run build && npm run sign
+      - install-node-dependencies
+      - build-and-sign
       - run:
           name: Commit Build Output
           command: |
@@ -210,6 +225,7 @@ jobs:
 
   make-tarball:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -231,6 +247,7 @@ jobs:
 
   make-zip:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -247,6 +264,7 @@ jobs:
 
   make-docker-image:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -259,7 +277,7 @@ jobs:
               --build-arg GRAFANA_VERSION=$(cat grafana.version) \
               -t helm:$(.circleci/get-version.sh) .
       - run:
-          name: Export Docker Image as artefact
+          name: Export Docker Image as Artifact
           command: docker image save helm:$(.circleci/get-version.sh) -o opennms-helm.oci
       - store_artifacts:
           path: ./opennms-helm.oci
@@ -269,6 +287,7 @@ jobs:
             - ./project/opennms-helm.oci
   make-rpm:
     executor: build-executor-centos
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -297,6 +316,7 @@ jobs:
 
   make-deb:
     executor: build-executor-debian
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -325,6 +345,7 @@ jobs:
 
   publish-docker-image-latest:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -369,6 +390,7 @@ jobs:
 
   publish-docker-image-bleeding:
     executor: docker-executor
+    resource_class: small
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -411,6 +433,7 @@ jobs:
 
   publish-rpm:
     executor: cloudsmith/default
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
@@ -424,6 +447,7 @@ jobs:
 
   publish-deb:
     executor: cloudsmith/default
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/
