@@ -63,7 +63,7 @@ commands:
       - run:
           name: Generate Node Package Checksum
           command: |
-            cat package-lock.json | jq '.packages | with_entries(select(.key != ""))' > /tmp/filtered-package-lock.json
+            cat package-lock.json | jq '.dependencies | with_entries(select(.key != ""))' > /tmp/filtered-package-lock.json
   install-node-dependencies:
     steps:
       - generate-node-cache-checksum
