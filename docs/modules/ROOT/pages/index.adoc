@@ -2,7 +2,7 @@
 :imagesdir: ../assets/images
 
 [[welcome-index]]
-= {page-component-title} {page-version} Documentation
+= {page-component-title} {full-display-version} Documentation
 
 :data-uri:
 :icons:
@@ -14,6 +14,5 @@ Learn how to set up and manage your {page-component-title} environment, from ins
 
 [big]*Need help?*
 
-* Talk to us on https://chat.opennms.com/opennms[Mattermost].
-* Join our community on https://opennms.discourse.group/latest[Discourse].
-
+* talk to us in https://chat.opennms.com/opennms[chat]
+* join our community on https://opennms.discourse.group/latest[Discourse]
