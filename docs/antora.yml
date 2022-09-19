@@ -1,5 +1,8 @@
 name: helm
 version: '7'
 title: HELM
+asciidoc:
+  attributes:
+    full-display-version: '7.3.0'
 nav:
   - modules/ROOT/nav.adoc
