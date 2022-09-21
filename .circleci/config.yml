@@ -453,7 +453,10 @@ workflows:
             - publish-rpm
           filters:
             branches:
-              only: << parameters.from_branch >>
+              only:
+                - /^release-.*/
+                - develop
+                - master
       - make-tarball:
           requires:
             - build
