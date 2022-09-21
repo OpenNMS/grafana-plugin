@@ -26,24 +26,14 @@ orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.4
   sign-packages: opennms/sign-packages@2.3.0
 
-# NOTE: the "_label" versions of these are for the case when your source or target
-# branches have slashes in them, that way the merge branch gets created properly
 defaults: &defaults
   parameters:
     from_branch:
       description: the auto-merge source branch
       type: string
       default: release-8.x
-    from_branch_label:
-      description: the auto-merge source branch (escaped, no slashes)
-      type: string
-      default: release-8.x
     to_branch:
       description: the auto-merge target branch
-      type: string
-      default: develop
-    to_branch_label:
-      description: the auto-merge target branch (escaped, no slashes)
       type: string
       default: develop
 
@@ -188,7 +178,7 @@ jobs:
             git merge origin/<< parameters.from_branch >>
       - run:
           name: Push to github
-          command: git push -f origin << parameters.to_branch >>:merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
+          command: git push -f origin << parameters.to_branch >>:merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
 
   build-and-merge-branch:
     executor: node-executor
@@ -210,7 +200,7 @@ jobs:
           command: |
             export GIT_MERGE_AUTOEDIT=no
             git checkout << parameters.to_branch >>
-            git merge origin/merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
+            git merge origin/merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
       - install-node-dependencies
       - build-and-sign
       - run:
@@ -218,7 +208,7 @@ jobs:
           command: |
             git add -A
             if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
-              git commit -a -m 'build output for << parameters.to_branch_label >> branch'
+              git commit -a -m 'build output for << parameters.to_branch >> branch'
             fi
       - run:
           name: Push to github
@@ -502,7 +492,7 @@ workflows:
             - pre-build
           filters:
             branches:
-              only: merge/<< parameters.from_branch_label >>-to-<< parameters.to_branch_label >>
+              only: merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
       - make-tarball:
           requires:
             - build
