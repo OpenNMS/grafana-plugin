@@ -155,7 +155,7 @@ jobs:
   create-merge-branch:
     <<: *defaults
     <<: *docker_container_config
-    resource_class: small
+    resource_class: medium
     steps:
       - add_ssh_keys:
           fingerprints:
