@@ -31,11 +31,11 @@ defaults: &defaults
     from_branch:
       description: the auto-merge source branch
       type: string
-      default: develop
+      default: master
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: master
+      default: ""
 
 docker_container_config: &docker_container_config
   executor: docker-executor
@@ -487,6 +487,7 @@ workflows:
           filters:
             branches:
               only: << parameters.from_branch >>
+              ignore: master
       - build-and-merge-branch:
           requires:
             - pre-build
