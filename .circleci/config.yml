@@ -97,8 +97,8 @@ commands:
           name: Run Build, Tests, and Sign
           command: |
             export PATH="./node_modules/.bin:${PATH}"
-            node --optimize-for-size --memory-reducer --max-old-space-size=12288 grafana-toolkit plugin:build
-            node --optimize-for-size --memory-reducer --max-old-space-size=12288 grafana-toolkit plugin:sign
+            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v grafana-toolkit)" plugin:build
+            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v grafana-toolkit)" plugin:sign
 
 jobs:
   pre-build:
