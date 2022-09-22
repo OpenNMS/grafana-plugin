@@ -14,10 +14,6 @@ executors:
     docker:
       - image: cimg/node:lts
 
-  docker-executor:
-    docker:
-      - image: cimg/base:stable
-
   docs-executor:
     docker:
       - image: opennms/antora:2.3.4-b7274
@@ -38,7 +34,7 @@ defaults: &defaults
       default: ""
 
 docker_container_config: &docker_container_config
-  executor: docker-executor
+  executor: node-executor
 
 commands:
   docker-registry-login:
@@ -159,7 +155,7 @@ jobs:
   create-merge-branch:
     <<: *defaults
     <<: *docker_container_config
-    resource_class: small
+    resource_class: medium+
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -174,45 +170,14 @@ jobs:
           name: Checkout target branch and merge from source
           command: |
             export GIT_MERGE_AUTOEDIT=no
-            git checkout << parameters.to_branch >>
-            git merge origin/<< parameters.from_branch >>
-      - run:
-          name: Push to github
-          command: git push -f origin << parameters.to_branch >>:merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
-
-  build-and-merge-branch:
-    executor: node-executor
-    resource_class: small
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/
-      - add_ssh_keys:
-          fingerprints:
-            - "66:40:61:8c:3b:99:12:df:00:ea:68:a3:61:d1:90:49"
-      - run:
-          name: Create git identity
-          command: |
-            git config user.email "cicd-system@opennms.com"
-            git config user.name "CI/CD System"
-      - run:
-          name: Checkout target and merge with merge branch
-          command: |
-            export GIT_MERGE_AUTOEDIT=no
-            git checkout << parameters.to_branch >>
-            git merge origin/merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
+            git checkout "<< parameters.to_branch >>"
+            git pull
+            git merge "origin/<< parameters.from_branch >>"
       - install-node-dependencies
       - build-and-sign
       - run:
-          name: Commit Build Output
-          command: |
-            git add -A
-            if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
-              git commit -a -m 'build output for << parameters.to_branch >> branch'
-            fi
-      - run:
           name: Push to github
-          command: git push origin << parameters.to_branch >>:<< parameters.to_branch >>
+          command: git push
 
   make-tarball:
     executor: build-executor-centos
@@ -254,7 +219,7 @@ jobs:
             - ./project/artifacts
 
   make-docker-image:
-    executor: docker-executor
+    executor: node-executor
     resource_class: small
     steps:
       - setup_remote_docker
@@ -335,7 +300,7 @@ jobs:
             - ./project/artifacts
 
   publish-docker-image-latest:
-    executor: docker-executor
+    executor: node-executor
     resource_class: small
     steps:
       - setup_remote_docker
@@ -380,7 +345,7 @@ jobs:
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
 
   publish-docker-image-bleeding:
-    executor: docker-executor
+    executor: node-executor
     resource_class: small
     steps:
       - setup_remote_docker
@@ -465,8 +430,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - build-docs:
           requires:
             - pre-build
@@ -486,54 +449,40 @@ workflows:
             - publish-rpm
           filters:
             branches:
-              only: << parameters.from_branch >>
-              ignore: master
-      - build-and-merge-branch:
-          requires:
-            - pre-build
-          filters:
-            branches:
-              only: merge/<< parameters.from_branch >>-to-<< parameters.to_branch >>
+              only:
+                - /^release-.*/
+                - develop
+                - master
       - make-tarball:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - make-docker-image:
           requires:
             - make-tarball
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - make-rpm:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - make-deb:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - make-zip:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /^merge\/.*/
       - publish-docker-image-latest:
           requires:
             - make-docker-image
