@@ -452,7 +452,6 @@ workflows:
               only:
                 - /^release-.*/
                 - develop
-                - master
       - make-tarball:
           requires:
             - build
