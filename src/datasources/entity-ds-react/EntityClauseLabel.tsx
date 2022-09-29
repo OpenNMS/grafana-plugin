@@ -1,8 +1,9 @@
 import { InlineFormLabel } from '@grafana/ui';
 import React from 'react'
-import { OnmsEntityNestType, OnmsEntityType } from './types';
+import { EntityClauseLabelProps, OnmsEntityNestType, OnmsEntityType } from './types';
 const FormWithStyle = InlineFormLabel as any;
-export const EntityClauseLabel = ({ type, nestingType, index, setClauseType }: ) => {
+
+export const EntityClauseLabel = ({ type, nestingType, index, setClauseType }: EntityClauseLabelProps) => {
 
     const boxLabel = () => {
         let topLabel = '';

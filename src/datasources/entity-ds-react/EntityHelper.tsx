@@ -132,22 +132,22 @@ export const queryEntity = async (label: string | undefined, filter: API.Filter,
     let queryResult;
     switch (label) {
         case EntityTypes.Nodes:
-            queryResult = await queryNodes(client,filter);
+            queryResult = await queryNodes(client, filter);
             break;
         case EntityTypes.Alarms:
-            queryResult = await queryAlarms(client,filter);
+            queryResult = await queryAlarms(client, filter);
             break;
         case EntityTypes.IPInterfaces:
-            queryResult = await queryIPInterfaces(client,filter);
+            queryResult = await queryIPInterfaces(client, filter);
             break;
         case EntityTypes.MonitoredServices:
-            queryResult = await queryMonitoredServices(client,filter);
+            queryResult = await queryMonitoredServices(client, filter);
             break;
         case EntityTypes.SNMPInterfaces:
-            queryResult = await querySNMPInterfaces(client,filter);
+            queryResult = await querySNMPInterfaces(client, filter);
             break;
         case EntityTypes.Outages:
-            queryResult = await queryOutages(client,filter);
+            queryResult = await queryOutages(client, filter);
             break;
     }
     return queryResult

@@ -1,7 +1,7 @@
 import { ToolButtonProps } from "./types";
 
 export const ToolButton = ({ onClick, children, style }: ToolButtonProps) => {
-    const [hover,setHover] = useState(false);
+    const [hover, setHover] = useState(false);
     return <div
         onClick={onClick}
         onMouseEnter={() => setHover(true)}

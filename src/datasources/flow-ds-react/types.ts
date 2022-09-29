@@ -66,40 +66,40 @@ export type FlowParsedQueryRow = {
 export type FlowParsedQueryData = FlowParsedQueryRow[];
 
 export interface FlowQueryFunctionProps {
-    autofocus: boolean,
-    options: Array<{
-        label: string;
-        options?: Array<{
-            label: string;
-        }>;
+  autofocus: boolean,
+  options: Array<{
+    label: string;
+    options?: Array<{
+      label: string;
     }>;
-    onChange: (functionName: SelectableValue<string>) => void;
-    value: SelectableValue<string>;
-    moveMeLeft: (index: number) => void;
-    moveMeRight: (index: number) => void;
-    removeMe: (index: number) => void;
-    index: number;
-    last: boolean;
-    activeParameter: string | undefined,
-    setActiveParameter: (activeParam: string, index: number) => void,
-    parameterOption: SelectableValue<string>,
-    setParameterOption: (parameterOption: SelectableValue<string>, index: number) => void
-    client: ClientDelegate;
-    start: number | undefined;
-    end: number | undefined;
+  }>;
+  onChange: (functionName: SelectableValue<string>) => void;
+  value: SelectableValue<string>;
+  moveMeLeft: (index: number) => void;
+  moveMeRight: (index: number) => void;
+  removeMe: (index: number) => void;
+  index: number;
+  last: boolean;
+  activeParameter: string | undefined,
+  setActiveParameter: (activeParam: string, index: number) => void,
+  parameterOption: SelectableValue<string>,
+  setParameterOption: (parameterOption: SelectableValue<string>, index: number) => void
+  client: ClientDelegate;
+  start: number | undefined;
+  end: number | undefined;
 }
 
 export interface ToolsProps {
-    moveMeLeft: (index: number) => void,
-    moveMeRight: (index: number) => void,
-    index: number,
-    hideTools: () => void,
-    visible: boolean,
-    last: boolean
+  moveMeLeft: (index: number) => void,
+  moveMeRight: (index: number) => void,
+  index: number,
+  hideTools: () => void,
+  visible: boolean,
+  last: boolean
 }
 
 export interface ToolButtonProps {
-    onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
-    children: any,
-    style?: {}
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+  children: any,
+  style?: {}
 }
