@@ -1,0 +1,16 @@
+{
+  "name": "OpenNMS Flow React",
+  "id": "opennms-helm-flow-datasource-react",
+  "type": "datasource",
+
+  "metrics": true,
+  "annotations": false,
+
+  "info": {
+    "description": "OpenNMS Flow Datasource",
+    "logos": {
+      "small": "img/flow-ds.svg",
+      "large": "img/flow-ds.svg"
+    }
+  }
+}
