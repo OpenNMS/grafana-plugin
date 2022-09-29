@@ -1,3 +1,4 @@
+import React from 'react';
 import { ToolButtonProps } from "./types";
 
 export const ToolButton = ({ onClick, children, style }: ToolButtonProps) => {
