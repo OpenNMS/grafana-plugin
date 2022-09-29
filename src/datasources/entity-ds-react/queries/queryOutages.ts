@@ -1,7 +1,8 @@
 
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsOutage } from "opennms/src/model/OnmsOutage";
-import { API } from '../../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
+
 export const queryOutages = async (client: ClientDelegate, filter: API.Filter) => {
     let outages: OnmsOutage[] = [];
     try {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { EntityClause } from './EntityClause'
 import { OnmsEntityClause, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types'
-import { API } from '../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 import { defaultClause } from './constants'
 
 interface EntityClauseEditorProps {

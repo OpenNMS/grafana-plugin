@@ -1,6 +1,6 @@
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsIpInterface } from "opennms/src/model/OnmsIpInterface";
-import { API } from '../../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 
 export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filter) => {
     let ifaces: OnmsIpInterface[] = [];

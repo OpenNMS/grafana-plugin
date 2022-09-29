@@ -1,6 +1,6 @@
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
-import { API } from '../../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 
 export const queryAlarms = async (client: ClientDelegate, filter: API.Filter) => {
 

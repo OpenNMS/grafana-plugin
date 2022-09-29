@@ -4,7 +4,6 @@ import { SelectableValue } from '@grafana/data';
 import { FlowFunctions } from './constants';
 import { FlowFunction, FlowQueryFunctionProps } from './types';
 import { Tools } from './Tools';
-import { ClientDelegate } from 'lib/client_delegate';
 
 
 export const FlowQueryFunction = ({

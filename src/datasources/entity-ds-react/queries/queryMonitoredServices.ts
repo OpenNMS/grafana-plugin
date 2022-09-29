@@ -1,6 +1,6 @@
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsMonitoredService } from "opennms/src/model/OnmsMonitoredService";
-import { API } from '../../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 
 export const queryMonitoredServices = async (client: ClientDelegate, filter: API.Filter) => {
     let services: OnmsMonitoredService[] = [];

@@ -1,4 +1,5 @@
-import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue } from "@grafana/data";
+import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue, QueryEditorProps } from "@grafana/data";
+import { EntityDataSource } from "./EntityDataSource";
 
 /**
  * These are options configured for each DataSource instance

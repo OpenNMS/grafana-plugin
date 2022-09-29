@@ -1,4 +1,4 @@
-import { API } from '../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 import { EntityTypes } from './constants'
 import { AlarmProperties, IpInterfaceProperties, MonitoredServiceProperties, NodeProperties, OutagesProperties, Properties, SearchOption, SNMPInterfaceProperties } from './types';
 import { ClientDelegate } from 'lib/client_delegate';

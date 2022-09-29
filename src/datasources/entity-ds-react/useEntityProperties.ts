@@ -1,4 +1,4 @@
-import { API } from '../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 import { ClientDelegate } from 'lib/client_delegate'
 import { useState, useEffect } from 'react'
 import { EntityHelper } from '.';

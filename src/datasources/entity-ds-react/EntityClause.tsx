@@ -2,7 +2,7 @@ import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui';
 import React, { useEffect, useState } from 'react'
 import { EntityClauseLabel } from './EntityClauseLabel';
-import { Comparator, EntityClauseProps, OnmsEntityClause, OnmsEntityNestType, OnmsEntityType, SearchOption, SearchType } from './types';
+import { Comparator, EntityClauseProps, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types';
 
 export const EntityClause = ({
     clause,

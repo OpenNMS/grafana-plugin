@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Segment, SegmentSection, Spinner, Button, InlineField, InlineFieldRow, Input, Switch } from '@grafana/ui'
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { EntityDataSource } from './EntityDataSource';
-import { EntityDataSourceOptions, EntityQuery } from './types';
+import { SelectableValue } from '@grafana/data';
+
 import { useEntityProperties } from './useEntityProperties';
-import { API } from '../../../../../../opennmsdev/opennms-js'
 import { EntityClauseEditor } from './EntityClauseEditor';
-import { defaultClause } from './constants';
+import { defaultClause, defaultOrder } from './constants';
+import { EntityQueryEditorProps } from './types';
+import { getSmallerAPIFilter } from './EntityHelper';
 
 
 export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {

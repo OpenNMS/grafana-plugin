@@ -1,7 +1,7 @@
 
 import { OnmsSnmpInterface } from "opennms/src/model/OnmsSnmpInterface";
 import { ClientDelegate } from "lib/client_delegate";
-import { API } from '../../../../../../../opennmsdev/opennms-js'
+import { API } from 'opennms'
 
 export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Filter) => {
     let ifaces: OnmsSnmpInterface[] = [];
