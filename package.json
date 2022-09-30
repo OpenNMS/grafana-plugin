@@ -23,7 +23,7 @@
     "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/grafana": "github:CorpGlory/types-grafana",
-    "@types/jest": "^28.1.0",
+    "@types/jest": "^29.1.1",
     "@types/jquery": "^3.5.13",
     "commander": "^9.2.0",
     "fs-extra": "^10.0.0",
