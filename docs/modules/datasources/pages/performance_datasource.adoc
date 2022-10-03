@@ -168,7 +168,7 @@ The available arguments are as follows:
 | filterQuery         | Any valid node query syntax as used by core OpenNMS services.
 |===
 
-=== nodeResources(<resourceId>[,textProperty[,resourceType]])
+=== nodeResources(<resourceId>[,textProperty[,resourceType[,regexFilter]]])
 
 The `nodeResources()` query will return the list of resource IDs which are available on the given node.
 An optional second argument specifies whether to show the resource's ID (the default), label, or name in the template value chooser and elsewhere.
@@ -198,11 +198,31 @@ nodeResources(42, label, *, .*DPN.*)
 The available arguments are as follows:
 [options="header, %autowidth"]
 |===
-| Name              | Required | Default  | Description
-| resourceId        | Required | `(none)` | The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
-| textProperty      | Optional | `id`     | One of `id`, `label`, or `name` to display alternate string values in the variable drop-down menu.
-| resourceType      | Optional | `*`      | Resource type filter to limit the types of resources returned.
-| Regular expression| Optional | RegExp   | Regular expression filter applied to the resource field specified by the `textProperty` argument.
+| Name
+| Required
+| Default
+| Description
+
+| resourceId
+| Required
+| `(none)`
+| The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
+
+| textProperty
+| Optional
+| `id`
+| One of `id`, `label`, or `name` to display alternate string values in the variable drop-down menu.
+
+| resourceType
+| Optional
+| `*`
+| Resource type filter to limit the types of resources returned.
+
+| regexFilter
+| Optional
+| `.*`
+| Regular expression filter applied to the resource field specified by the `textProperty` argument.
+This filter is applied to the value of the selected `textProperty` field.
 |===
 
 == Label formatters
