@@ -1,7 +1,7 @@
 import { FlowDatasource } from '../datasources/flow-ds/datasource';
-import {TemplateSrv} from "./template_srv";
-import {dateTimeAsMoment} from "@grafana/data";
-import {OnmsFlowSeries} from "opennms/src/model/OnmsFlowSeries";
+import { TemplateSrv } from "./template_srv";
+import { dateTimeAsMoment } from "@grafana/data";
+import { OnmsFlowSeries } from "opennms/src/model/OnmsFlowSeries";
 import { OnmsFlowTable } from "opennms/src/model/OnmsFlowTable";
 
 describe("OpenNMS_Flow_Datasource", function () {
@@ -11,7 +11,7 @@ describe("OpenNMS_Flow_Datasource", function () {
   let flowSeriesExample, flowSeriesExampleNaN, flowSummaryExample, exporterNodes, flowSeriesExampleCalc;
 
   beforeEach(() => {
-    
+
     flowSeriesExample = {
       "start": dateTimeAsMoment(1516358909932),
       "end": dateTimeAsMoment(1516373309932),
@@ -140,11 +140,25 @@ describe("OpenNMS_Flow_Datasource", function () {
         ]
       ]
     } as OnmsFlowSeries
+
+    flowDatasource.simpleRequest.getResourcesForNode = async (node) => [
+      {
+        "id": "node[selfmonitor:1].interfaceSnmp[opennms-jvm]",
+        "label": "opennms-jvm (*)",
+        "name": "opennms-jvm",
+        "link": "element/snmpinterface.jsp?node=1&ifindex=2",
+        "typeLabel": "SNMP Interface Data",
+        "parentId": "node[selfmonitor:1]",
+        "stringPropertyAttributes": {},
+        "externalValueAttributes": {},
+        "rrdGraphAttributes": {}
+      }
+    ]
   });
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
+      let actualResponse = flowDatasource.toSeries({ metric: '', refId: '' }, flowSeriesExample);
       let expectedResponse = [
         {
           "datapoints": [
@@ -327,7 +341,7 @@ describe("OpenNMS_Flow_Datasource", function () {
 
       expect(expectedResponse).toEqual(actualResponse);
       done();
-    })
+    });
 
     it("should convert 'NaN' to 0 values in response to Grafana series", function (done) {
       let target = {
@@ -512,27 +526,28 @@ describe("OpenNMS_Flow_Datasource", function () {
     });
 
     it("Filter exporter nodes by location", function (done) {
-      flowDatasource.client.getNode = (nodeId: any) => { 
+      flowDatasource.client.getNode = (nodeId: any) => {
         let location = "Default"
-        if(nodeId > 2 ){
+        if (nodeId > 2) {
           location = "Unknown";
         }
         return Promise.resolve(
-        {
-          "id": 1,
-          "label": "localhost",
-          "labelSource": {},
-          "foreignSource": "selfmonitor",
-          "foreignId": "1",
-          "location": location,
-          "createTime": "",
-          "type": {},
-          "lastCapsdPoll": "",
-          "snmpInterfaces": [],
-          "ipInterfaces": [],
-          "categories": [],
-          "assets": {}
-      }); };
+          {
+            "id": 1,
+            "label": "localhost",
+            "labelSource": {},
+            "foreignSource": "selfmonitor",
+            "foreignId": "1",
+            "location": location,
+            "createTime": "",
+            "type": {},
+            "lastCapsdPoll": "",
+            "snmpInterfaces": [],
+            "ipInterfaces": [],
+            "categories": [],
+            "assets": {}
+          });
+      };
 
       let actualResponse = flowDatasource.getFilteredNodes(exporterNodes, "location='Default'");
       let expectedResponse = [
@@ -545,13 +560,13 @@ describe("OpenNMS_Flow_Datasource", function () {
           "text": "LON-Juniper-T4000-Core-Router",
           "value": 2,
           "expandable": true
-        }       
+        }
       ];
-      actualResponse.then(response => { 
-          expect(response.length).toEqual(2);
-          expect(response).toEqual(expectedResponse); 
-        });
-      
+      actualResponse.then(response => {
+        expect(response.length).toEqual(2);
+        expect(response).toEqual(expectedResponse);
+      });
+
       done();
     });
 
@@ -565,8 +580,8 @@ describe("OpenNMS_Flow_Datasource", function () {
           }
         ]
       };
-      let actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
-      
+      let actualResponse = flowDatasource.toSeries(target, flowSeriesExampleCalc);
+
       let expectedResponse = [
         {
           "datapoints": [
@@ -593,11 +608,11 @@ describe("OpenNMS_Flow_Datasource", function () {
 
       flowSeriesExampleCalc.columns.push(
         {
-        "label": "domain1",
-        "ingress": false
-      });
+          "label": "domain1",
+          "ingress": false
+        });
       flowSeriesExampleCalc.values.push([10]);
-      actualResponse = flowDatasource.toSeries(target,  flowSeriesExampleCalc);
+      actualResponse = flowDatasource.toSeries(target, flowSeriesExampleCalc);
 
       expectedResponse = [
         {
@@ -623,6 +638,30 @@ describe("OpenNMS_Flow_Datasource", function () {
       expect(expectedResponse).toEqual(actualResponse);
 
       done();
+    });
+
+    it("should return ifIndex when interface name or label are passed instead", async () => {
+      let expectedResponse = "2";
+      let nodeQuery = "node[20]";
+      let iface = "interfaceSnmp[opennms-jvm]";
+
+      let actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      nodeQuery = "node[20]";
+      iface = "2";
+
+      actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      nodeQuery = "node[20]";
+      iface = "opennms-jvm";
+
+      actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
     });
 
   });

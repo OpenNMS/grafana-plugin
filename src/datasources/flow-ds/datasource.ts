@@ -641,14 +641,16 @@ export class FlowDatasource {
   }
 
   async lookupIfIndex(nodeQuery: any, iface: any) {
-    if(!nodeQuery) { return iface; }
+    if(!nodeQuery || !iface || !isNaN(iface)) { return iface; }
     const resources = await this.simpleRequest.getResourcesForNode(nodeQuery);
-    if (resources && iface && isNaN(iface)) {
+    const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
+    if (resources) {
       for (const resource of resources) {
-        if ((resource.id === iface || resource.label === iface || resource.name === iface) && resource.link) {
+        let idMatch = resource.id.match(regexSnmpIfaceId);
+        if (idMatch && (idMatch[0] === iface || (idMatch[1] && idMatch[1] === iface)) && resource.link) {
           const regexSnmpIface = /element\/snmpinterface\.jsp\?node=.*&ifindex=(\d+)/;
           let ifIndexMatch = resource.link.match(regexSnmpIface);
-          if (ifIndexMatch) {
+          if (ifIndexMatch && ifIndexMatch[1]) {
             return ifIndexMatch[1];
           }
         }
