@@ -346,6 +346,7 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
     }
   }
   return rows;
+}
 
 export function getNodeAsResourceQuery(nodeId: string | undefined) {
   if (!nodeId) { return nodeId; }
@@ -568,5 +569,3 @@ export function getNodeFilterMap(filterParam?: string): Map<string, string>{
   });
   return filtermap;
 }
-
-
