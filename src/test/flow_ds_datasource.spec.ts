@@ -660,7 +660,7 @@ describe("OpenNMS_Flow_Datasource", function () {
       expect(expectedResponse).toEqual(actualResponse);
 
       actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, null);
-      expect(expectedResponse).toBeNaN();
+      expect(actualResponse).toBeNull();
 
       let numExpectedResponse = 2;
       let numIface = 2;
