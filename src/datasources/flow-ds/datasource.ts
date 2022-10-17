@@ -641,7 +641,7 @@ export class FlowDatasource {
   }
 
   async lookupIfIndex(nodeQuery: any, iface: any) {
-    if(!nodeQuery || !iface || !isNaN(iface)) { return iface; }
+    if (!nodeQuery || !iface || !isNaN(iface)) { return iface; }
     const resources = await this.simpleRequest.getResourcesForNode(nodeQuery);
     const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
     if (resources) {
@@ -655,8 +655,8 @@ export class FlowDatasource {
           }
         }
       }
-    } else {
-      return iface;
     }
+
+    return iface;
   }
 }

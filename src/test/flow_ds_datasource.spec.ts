@@ -648,15 +648,31 @@ describe("OpenNMS_Flow_Datasource", function () {
       expect(expectedResponse).toEqual(actualResponse);
 
       expectedResponse = "2";
-      nodeQuery = "node[20]";
       iface = "2";
 
       actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
       expect(expectedResponse).toEqual(actualResponse);
 
       expectedResponse = "2";
-      nodeQuery = "node[20]";
       iface = "opennms-jvm";
+
+      actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = null;
+      iface = null;
+
+      actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = 2;
+      iface = 2;
+
+      actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "opennms-jvm-notfound";
+      iface = "opennms-jvm-notfound";
 
       actualResponse = await flowDatasource.lookupIfIndex(nodeQuery, iface);
       expect(expectedResponse).toEqual(actualResponse);
