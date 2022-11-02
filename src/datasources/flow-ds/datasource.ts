@@ -451,11 +451,12 @@ export class FlowDatasource {
     }) : [];
 
     return {
-        refId: query.refId,
-        "columns": columns,
-        "rows": table.rows,
-        "type": "table",
-      }
+      meta: toBits ? { custom: { "metric": query.metric , "toBits": toBits} } : { custom: { "metric": query.metric } },
+      refId: query.refId,
+      "columns": columns,
+      "rows": table.rows,
+      "type": "table",
+    }
   }
 
   toSeries(
@@ -531,6 +532,8 @@ export class FlowDatasource {
                 })
 
             return {
+              refId: query.refId,
+              meta: toBits ? { custom: { "metric": query.metric , "toBits": toBits} } : { custom: { "metric": query.metric } },
               target: _.flow(ensuredLabelTranformer, prefixSuffixLabelTransformer)(col),
               datapoints
             }
@@ -550,11 +553,13 @@ export class FlowDatasource {
                   return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
                 })
 
-            return {
-              target: _.flow(ensuredLabelTranformer, inOutLabelTransformer, prefixSuffixLabelTransformer)(column.label),
-              datapoints
-            }
-          })
+          return {
+            refId: query.refId,
+            meta: toBits ? { custom: { "metric": query.metric , "toBits": toBits} } : { custom: { "metric": query.metric } },
+            target: _.flow(ensuredLabelTranformer, inOutLabelTransformer, prefixSuffixLabelTransformer)(column.label),
+            datapoints
+          }
+        })
     }
 
   }

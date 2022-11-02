@@ -158,7 +158,7 @@ describe("OpenNMS_Flow_Datasource", function () {
 
   describe('Mapping', function () {
     it("should map series response to Grafana series", function (done) {
-      let actualResponse = flowDatasource.toSeries({ metric: '', refId: ''}, flowSeriesExample);
+      let actualResponse = flowDatasource.toSeries({ metric: '', refId: '' }, flowSeriesExample);
       let expectedResponse = [
         {
           "datapoints": [
@@ -167,6 +167,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         },
         {
@@ -176,6 +182,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -204,6 +216,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain"
         }
       ];
@@ -231,6 +249,13 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+              "toBits": true,
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         },
         {
@@ -240,6 +265,13 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+              "toBits": true,
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -267,6 +299,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         }
       ];
@@ -294,6 +332,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -326,6 +370,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "prefix-domain (In)-suffix"
         },
         {
@@ -335,6 +385,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "prefix-domain (Out)-suffix"
         }
       ];
@@ -362,6 +418,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         },
         {
@@ -371,6 +433,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -393,6 +461,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         },
         {
@@ -402,6 +476,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -429,6 +509,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         },
         {
@@ -438,6 +524,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         }
       ];
@@ -460,6 +552,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (In)"
         },
         {
@@ -469,6 +567,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain (Out)"
         }
       ];
@@ -489,6 +593,11 @@ describe("OpenNMS_Flow_Datasource", function () {
       };
       let actualResponse = flowDatasource.toTable(target, flowSummaryExample);
       let expectedResponse = {
+        "meta": {
+          "custom": {
+            "metric": "",
+          },
+        },
         refId: '',
         "columns": [
           {
@@ -589,6 +698,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",          
           "target": "domain"
         }
         ,
@@ -599,6 +714,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",          
           "target": "domain1"
         }
       ];
@@ -621,6 +742,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain"
         }
         ,
@@ -631,6 +758,12 @@ describe("OpenNMS_Flow_Datasource", function () {
               1516358909932
             ]
           ],
+          "meta": {
+            "custom": {
+              "metric": "",
+            },
+          },
+          "refId": "",
           "target": "domain1"
         }
       ];
