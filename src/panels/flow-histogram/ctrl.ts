@@ -173,7 +173,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
   getLabeledValues(data) {
     const dataElement = data[0];
-    const metric = dataElement && dataElement.meta ? dataElement.meta.metric : undefined;
+    const metric = dataElement && dataElement.meta && dataElement.meta.custom ? dataElement.meta.custom['metric'] : undefined;
     let labelFunc;
 
     switch (metric) {
@@ -209,7 +209,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
       };
     }
 
-    const toBits = dataElement && dataElement.meta ? dataElement.meta.toBits : null;
+    const toBits = dataElement && dataElement.meta && dataElement.meta.custom['toBits'] ? dataElement.meta.custom['toBits'] : null;
     let inByLabel = HelmHistogramCtrl.extractValueAndLabel(data, toBits ? 'Bits In' : 'Bytes In', 'In', labelFunc);
     let outByLabel = HelmHistogramCtrl.extractValueAndLabel(data, toBits ? 'Bits Out' : 'Bytes Out', 'Out', labelFunc);
 
@@ -527,7 +527,7 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
 
   static getUnits(data, panelUnits) {
     const dataElement = data[0];
-    const toBits = dataElement && dataElement.meta ? dataElement.meta.toBits : null;
+    const toBits = dataElement && dataElement.meta && dataElement.meta.custom['toBits'] ? dataElement.meta.custom['toBits'] : null;
     let divisor = 1;
     let units;
     switch (panelUnits) {
