@@ -1,8 +1,8 @@
 name: helm
-version: '8-SNAPSHOT'
+version: '8'
 title: HELM
 asciidoc:
   attributes:
-    full-display-version: '8.0.2-SNAPSHOT'
+    full-display-version: '8.0.2'
 nav:
   - modules/ROOT/nav.adoc
