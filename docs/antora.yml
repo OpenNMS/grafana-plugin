@@ -3,6 +3,6 @@ version: '8-SNAPSHOT'
 title: HELM
 asciidoc:
   attributes:
-    full-display-version: '8.0.2-SNAPSHOT'
+    full-display-version: '8.0.3-SNAPSHOT'
 nav:
   - modules/ROOT/nav.adoc
