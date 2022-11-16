@@ -6,13 +6,13 @@
 
 This section demonstrates how to create a simple dashboard with {page-component-title}:
 
-* xref:bw-app-setup[set up the application and custom actions]
-* xref:bw-ds-setup[set up datasources]
-* xref:bw-dash-setup[create a dashboard]
-* xref:bw-panel-create[create a panel]
+* xref:bw-app-setup[Set up the application and custom actions].
+* xref:bw-ds-setup[Set up datasources].
+* xref:bw-dash-setup[Create a dashboard].
+* xref:bw-panel-create[Create a panel].
 
 
-The walk-through assumes that you have:
+The walk-through assumes that you have the following:
 
 * An instance of Grafana with the {page-component-title} application installed.
 * An instance of OpenNMS that is reachable from the Grafana instance above.
@@ -23,7 +23,7 @@ If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrati
 [[bw-app-setup]]
 == Set up plugin
 
-In this section, you will enable the {page-component-title} plugin in Grafana and create <<custom actions>> to help with alarm diagnosis.
+In this section, you will enable the {page-component-title} plugin in Grafana and create <<custom-actions, custom actions>> to help with alarm diagnosis.
 
 . Navigate to the home page of your Grafana instance.
 . In the left menu, click the *Configuration* icon, and click *Plugins*:
@@ -39,9 +39,10 @@ If the issue persists, make sure the plugin is in the grafana plugins directory 
 . In the *Config* tab, click *Enable*.
 +
 A *Disable* button indicates the plugin is already enabled.
-Skip to the next step (create <<custom actions>>).
+Skip to the next step (create <<custom-actions, custom actions>>).
 You may also choose *Update* for the latest version of {page-component-title}.
 
+[[custom-actions]]
 === Custom actions
 
 A custom action is a user-defined operation, such as a link to a node detail page or a Wiki knowledge base article, that might help users better diagnose an alarm.
@@ -118,7 +119,7 @@ This section describes how to create a dashboard with an alarms table.
 For information on displaying additional or different types of data, see xref:bw-panel-create[creating a panel].
 
 . Create a new dashboard by clicking the *+* sign in the left sidebar to open the Create menu and choose *Dashboard*.
-. Click *Add New Panel* and configure the panel in the lower half of the screen:
+. Click *Add Panel>Add an empty panel* and configure the panel in the lower half of the screen:
 +
 image::gf-panel-config.png[Configure Panel, 500]
 
@@ -126,10 +127,10 @@ image::gf-panel-config.png[Configure Panel, 500]
 . Select *Alarms* in the Select list.
 .. Configure additional information and add filters as desired (click *+Query* to add queries).
 
-. In the *Panel* tab, add a name for the panel under menu:Settings[Panel].
+. In the *Panel Options* area on the right, add a name for the panel in the *Title* box.
 . Under *Visualization*, select *Alarm Table*.
 The graph appears in the top of the panel.
-.. You can further customize the graph by specifying information in the *Panel* tab.
+.. You can further customize the graph by specifying information in the *Panel Options* area.
 
 . In the top-right menu, click *Save*.
 . Enter a name for the dashboard and click *Save*.
@@ -145,8 +146,19 @@ Create more panels to display other data, or xref:importing.adoc#gs-dashboard-im
 == Create a panel
 
 A panel is the part of your dashboard that displays the fault and performance management data you specify.
+
 Before you add a panel, determine the type of data you want to display (performance, metrics, alarms/nodes), and make sure that you have xref:bw-ds-setup[set up the associated datasource].
+
 Default graph types in Grafana work only with the appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified).
+
+{page-component-title} includes the following custom panels:
+
+* Alarm Histogram
+* Alarm Table
+* Filter Panel
+* Flow Histogram
+
+For more information about them, see xref:panel_configuration:index.adoc#custom-panel[Default custom panels].
 
 . In your dashboard, click the *Add Panel* icon and select *Add New Panel*.
 . Select the datasource from the *Query* list.
