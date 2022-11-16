@@ -12,6 +12,24 @@ The available configuration options depend on the type of datasource associated 
 
 This section describes the following types of panel configuration:
 
-* xref:forecasting.adoc[forecast metrics]
-* xref:dynamic-dashboard.adoc[dynamic dashboards]
-* xref:expressions.adoc[working with expressions]
+* xref:forecasting.adoc[Forecast metrics]
+* xref:dynamic-dashboard.adoc[Dynamic dashboards]
+* xref:expressions.adoc[Working with expressions]
+
+[[custom-panel]]
+== Default custom panels
+
+{page-component-title} comes with several pre-configured, custom panels, described in this section.
+
+=== Alarm Histogram
+Calculates and shows value distribution of alarms in a bar chart.
+
+=== Alarm Table
+Displays alarms in table format.
+
+image::alarm-table.png[table of alarms, 500]
+
+=== Filter Panel
+
+=== Flow Histogram
+Calculates and shows value distribution of flows data in a bar chart.
