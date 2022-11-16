@@ -7,5 +7,7 @@ module.exports.getWebpackConfig = (config, options) => {
     'jquery.flot.time',
   ].concat(config.externals);
 
+  config.output.hashFunction = 'sha256';
+
   return config;
 };
