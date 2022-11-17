@@ -273,7 +273,7 @@ const buildStepFromQuery = (query: FlowParsedQueryData, options: FlowQueryReques
         }
         return step;
     } catch (e) {
-        console.error('error building step from query',e);
+        console.error('error building step from query', e);
     }
 }
 
@@ -308,10 +308,10 @@ const buildTopNParams = (type: string, query: FlowParsedQueryRow, options: FlowQ
  * @param nanToZero Should we convert NaN to Zero?
  * @returns Datapoints ready for Grafana
  */
-const convertTimeStampedDataToDataFrame = (timestamps: number[], colIdx: number, responseData: any, nanToZero: boolean) => {
+const convertTimeStampedDataToDataFrame = (timestamps: number[], colIdx: number, responseData: any, nanToZero: boolean, multiplier: number, sign: number) => {
     return timestamps.map((timestamp, timestampIdx) => {
         const v = Number(responseData.values[colIdx][timestampIdx]);
-        return [isNaN(v) ? nanToZero ? 0 : null : v, timestamp]
+        return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
     })
 }
 
@@ -487,7 +487,7 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
  * @param dataFromOpenNMS The data returned by OpenNMS by our query
  * @returns Based on the provided type (summary or series) transform the OpenNMS data into Grafana Data Frames
  */
-const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: any) => {
+export const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: any) => {
     return type === 'series' ? processRawSeriesData(query, options, dataFromOpenNMS) : processRawSummaryData(query, options, dataFromOpenNMS)
 }
 
@@ -516,10 +516,13 @@ const convertLabel = (label: string, column: any, queryRow: FlowParsedQueryRow) 
         convertedLabel = dscpLabel(label);
     }
 
-    if (column && column.ingress) {
-        convertedLabel += ' (In)'
-    } else if (column && !column.ingress) {
-        convertedLabel += ' (Out)'
+    const combineIngressEgress = isFunctionSet(queryRow, FlowFunctionStrings.combineIngressEgress);
+    if (!combineIngressEgress) {
+        if (column && column.ingress) {
+            convertedLabel += ' (In)'
+        } else if (column && !column.ingress) {
+            convertedLabel += ' (Out)'
+        }
     }
     const prefixValue = getFunctionValue(queryRow, FlowFunctionStrings.withPrefix);
     const suffixValue = getFunctionValue(queryRow, FlowFunctionStrings.withSuffix);
@@ -556,31 +559,49 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
 
     const multiplier = getMultiplier(queryData, responseData.timestamps)
     const combineIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.combineIngressEgress);
+    const onlyIngress = isFunctionSet(queryData, FlowFunctionStrings.onlyIngress);
+    const onlyEgress = isFunctionSet(queryData, FlowFunctionStrings.onlyEgress);
+    const negativeIngress = isFunctionSet(queryData, FlowFunctionStrings.negativeIngress);
+    const negativeEgress = isFunctionSet(queryData, FlowFunctionStrings.negativeEgress);
 
-    let processedData = responseData.columns.map((column, colIdx) => {
-        const datapoints = convertTimeStampedDataToDataFrame(timestampsInRange, colIdx, responseData, !!nanToZero);
-        return {
-            target: convertLabel(column.label, column, queryData),
-            datapoints
-        }
-    })
-
-    if (combineIngressEgress) {
-        const uniqueColumns = [...new Set(responseData.columns.map(col => col.label))]
-        processedData = uniqueColumns.map((uniqueColumn) => {
-            const datapoints = timestampsInRange.map((timestamp, tindex) => {
-                const sum = responseData.columns.filter((col) => col.label === uniqueColumn).map((_, columnIndex) => {
-                    const v = responseData.values[columnIndex][tindex];
-                    return isNaN(Number(v) && nanToZero ? 0 : v)
-                }).reduce((prv, cur) => prv + (cur ? cur : 0), 0)
-                return [sum * multiplier, timestamp]
-            })
-            const columnIndexb = responseData.columns.findIndex((d) => d.label === uniqueColumn);
+    let processedData = responseData.columns
+        .filter((column) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+        .map((column, colIdx) => {
+            const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
+            const datapoints = convertTimeStampedDataToDataFrame(timestampsInRange, colIdx, responseData, !!nanToZero, multiplier, sign);
             return {
-                target: convertLabel(uniqueColumn as string, responseData.columns[columnIndexb], queryData),
+                target: convertLabel(column.label, column, queryData),
                 datapoints
             }
         })
+
+    if (combineIngressEgress) {
+        const uniqueColumns = [...new Set(responseData.columns.map(col => col.label))]
+        const columnsWithIndex = responseData.columns.map((column, colIdx) => { return { column, colIdx } });
+
+        processedData = uniqueColumns
+            .map((uniqueColumn) => {
+
+                const datapoints = timestampsInRange
+                    .map((timestamp, tindex) => {
+                        const sum = columnsWithIndex
+                            // determine the indexes of those columns that have the same label as the current column
+                            .filter(({ column }) => column.label === uniqueColumn)
+                            // get the values of those columns ...
+                            .map(({ colIdx }) => {
+                                const v = responseData.values[colIdx][tindex];
+                                return isNaN(Number(v)) && nanToZero ? 0 : v
+                            })
+                            // ... and sum them up
+                            .reduce((prv, cur) => prv + (cur ? cur : 0), 0)
+                        return [sum * multiplier, timestamp]
+                    })
+                const columnIndexb = responseData.columns.findIndex((d) => d.label === uniqueColumn);
+                return {
+                    target: convertLabel(uniqueColumn as string, responseData.columns[columnIndexb], queryData),
+                    datapoints
+                }
+            })
     }
 
     return processedData
