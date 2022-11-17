@@ -127,6 +127,14 @@ export const withSuffixFunction: FlowFunction = {
     parameter: ''
 }
 
+export const toBitsFunction: FlowFunction = { 
+    parameter: '' 
+}
+
+export const swapIngressEgressFunction: FlowFunction = { 
+    parameter: '' 
+}
+
 export const withDscpFunction: FlowFunction = {
     allowMultiple: true,
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
@@ -196,9 +204,9 @@ export const FlowFunctions = new Map([
     [FlowFunctionNames[FlowFunctionNames.withHost], withHostFunction],
     [FlowFunctionNames[FlowFunctionNames.withConversation], withConversationFunction],
     [FlowFunctionNames[FlowFunctionNames.perSecond], perSecondFunction],
-    [FlowFunctionNames[FlowFunctionNames.toBits], {}],
+    [FlowFunctionNames[FlowFunctionNames.toBits], toBitsFunction],
     [FlowFunctionNames[FlowFunctionNames.nanToZero], nanToZeroFunction],
-    [FlowFunctionNames[FlowFunctionNames.swapIngressEgress], {}],
+    [FlowFunctionNames[FlowFunctionNames.swapIngressEgress], swapIngressEgressFunction],
     [FlowFunctionNames[FlowFunctionNames.negativeEgress], negativeEgressFunction],
     [FlowFunctionNames[FlowFunctionNames.asTableSummary], asTableSummaryFunction],
     [FlowFunctionNames[FlowFunctionNames.combineIngressEgress], combineIngressEgressFunction],
