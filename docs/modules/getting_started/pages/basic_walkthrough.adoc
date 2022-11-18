@@ -38,7 +38,6 @@ If the issue persists, make sure the plugin is in the grafana plugins directory 
 . In the *Config* tab, click *Enable*.
 +
 A *Disable* button indicates that the plugin is already enabled.
-Skip to the next step (create <<custom-actions, custom actions>>).
 You may also choose *Update* for the latest version of {page-component-title}.
 
 [[custom-actions]]
