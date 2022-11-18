@@ -11,7 +11,6 @@ This section demonstrates how to create a simple dashboard with {page-component-
 * xref:bw-dash-setup[Create a dashboard].
 * xref:bw-panel-create[Create a panel].
 
-
 The walk-through assumes that you have the following:
 
 * An instance of Grafana with the {page-component-title} application installed.
