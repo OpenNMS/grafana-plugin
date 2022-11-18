@@ -308,10 +308,10 @@ const buildTopNParams = (type: string, query: FlowParsedQueryRow, options: FlowQ
  * @param nanToZero Should we convert NaN to Zero?
  * @returns Datapoints ready for Grafana
  */
-const convertTimeStampedDataToDataFrame = (timestamps: number[], colIdx: number, responseData: any, nanToZero: boolean, multiplier: number, sign: number) => {
-    return timestamps.map((timestamp, timestampIdx) => {
-        const v = Number(responseData.values[colIdx][timestampIdx]);
-        return [isNaN(v) ? nanToZero ? 0 : null : v * multiplier * sign, timestamp]
+const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, params: any) => {
+    return parsedData['timestamps'].map((timestamp, timestampIdx) => {
+        const v = Number(parsedData['values'][colIdx][timestampIdx]);
+        return [isNaN(v) ? params['nanToZero'] ? 0 : null : v * params['multiplier'] * params['sign'], timestamp]
     })
 }
 
@@ -528,10 +528,10 @@ const convertLabel = (label: string, column: any, queryRow: FlowParsedQueryRow) 
     const suffixValue = getFunctionValue(queryRow, FlowFunctionStrings.withSuffix);
 
     if (prefixValue) {
-        convertedLabel = prefixValue + label;
+        convertedLabel = prefixValue + convertedLabel;
     }
     if (suffixValue) {
-        convertedLabel = label + suffixValue;
+        convertedLabel = convertedLabel + suffixValue;
     }
 
     return convertedLabel;
@@ -556,19 +556,22 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
 
     const nanToZero = isFunctionSet(queryData, FlowFunctionStrings.nanToZero);
     const timestampsInRange = getInRangeTimestamps(data.timestamps, start, end);
+    const columnsWithIndex: any[] = data.columns.map((column, colIdx) => { return { column, colIdx } });
+    const parsedData = { timestamps: timestampsInRange, columns: columnsWithIndex, values: data.values };
 
-    const multiplier = getMultiplier(queryData, responseData.timestamps)
+    const multiplier = getMultiplier(queryData, data.timestamps)
     const combineIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.combineIngressEgress);
     const onlyIngress = isFunctionSet(queryData, FlowFunctionStrings.onlyIngress);
     const onlyEgress = isFunctionSet(queryData, FlowFunctionStrings.onlyEgress);
     const negativeIngress = isFunctionSet(queryData, FlowFunctionStrings.negativeIngress);
     const negativeEgress = isFunctionSet(queryData, FlowFunctionStrings.negativeEgress);
+    const functionsParam = { nanToZero: nanToZero, multiplier: multiplier };
 
-    let processedData = responseData.columns
-        .filter((column) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
-        .map((column, colIdx) => {
+    let processedData = columnsWithIndex
+        .filter(({ column }) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+        .map(({ column, colIdx }) => {
             const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
-            const datapoints = convertTimeStampedDataToDataFrame(timestampsInRange, colIdx, responseData, !!nanToZero, multiplier, sign);
+            const datapoints = convertTimeStampedDataToDataFrame(colIdx, parsedData, { ...functionsParam, sign: sign });
             return {
                 target: convertLabel(column.label, column, queryData),
                 datapoints
@@ -576,29 +579,16 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
         })
 
     if (combineIngressEgress) {
-        const uniqueColumns = [...new Set(responseData.columns.map(col => col.label))]
-        const columnsWithIndex = responseData.columns.map((column, colIdx) => { return { column, colIdx } });
+        const uniqueColumns = [...new Set(data.columns.map(col => col.label))]
+
 
         processedData = uniqueColumns
             .map((uniqueColumn) => {
 
-                const datapoints = timestampsInRange
-                    .map((timestamp, tindex) => {
-                        const sum = columnsWithIndex
-                            // determine the indexes of those columns that have the same label as the current column
-                            .filter(({ column }) => column.label === uniqueColumn)
-                            // get the values of those columns ...
-                            .map(({ colIdx }) => {
-                                const v = responseData.values[colIdx][tindex];
-                                return isNaN(Number(v)) && nanToZero ? 0 : v
-                            })
-                            // ... and sum them up
-                            .reduce((prv, cur) => prv + (cur ? cur : 0), 0)
-                        return [sum * multiplier, timestamp]
-                    })
-                const columnIndexb = responseData.columns.findIndex((d) => d.label === uniqueColumn);
+                const datapoints = sumValuesGroupedByColumn(uniqueColumn, parsedData, functionsParam);
+                const columnIndexb = data.columns.findIndex((d) => d.label === uniqueColumn);
                 return {
-                    target: convertLabel(uniqueColumn as string, responseData.columns[columnIndexb], queryData),
+                    target: convertLabel(uniqueColumn as string, data.columns[columnIndexb], queryData),
                     datapoints
                 }
             })
@@ -648,11 +638,30 @@ const queryOpenNMSClientWithFunctionAndParams = async (functionName, parameters,
  */
 const shouldWeSwapIngressAndEgress = (inData: any, queryData: FlowParsedQueryRow) => {
     const outData = { ...inData };
-    if (!!getFunctionValue(queryData, FlowFunctionStrings.swapIngressEgress)) {
+    const swapIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.swapIngressEgress);
+    if (!!swapIngressEgress) {
         outData.columns = outData.columns.map((col) => {
             col.ingress = !col.ingress;
             return col;
         })
     }
     return outData;
+}
+
+const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: any) => {
+
+    return parsedData['timestamps']
+        .map((timestamp, tindex) => {
+            const sum = parsedData['columns']
+                // determine the indexes of those columns that have the same label as the current column
+                .filter(({ column }) => column.label === groupByColumn)
+                // get the values of those columns ...
+                .map(({ colIdx }) => {
+                    const v = parsedData['values'][colIdx][tindex];
+                    return isNaN(Number(v)) && params['nanToZero'] ? 0 : v
+                })
+                // ... and sum them up
+                .reduce((prv, cur) => prv + (cur ? cur : 0), 0)
+            return [sum * params['multiplier'], timestamp]
+        })
 }
