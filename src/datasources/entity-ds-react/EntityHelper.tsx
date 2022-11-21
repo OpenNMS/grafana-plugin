@@ -153,6 +153,20 @@ export const queryEntity = async (label: string | undefined, filter: API.Filter,
     return queryResult
 }
 
+export const queryProperties = async (queryWithNodeFilterWrapper: string, client: ClientDelegate) => {
+    const results: Array<{text: string,value: string}> = []
+    const query = queryWithNodeFilterWrapper.replace('nodes(','').replace(')','')
+    const nodeProps = await client.getNodeProperties();
+    const property = nodeProps.find((d) => d.id === query)
+    if (property){
+        for (const [key,value] of Object.entries(property.values)){
+            results.push({text:value as string,value:key as string})
+        }
+    }   
+    return results
+}
+
+
 export const getSmallerAPIFilter = () => {
     const b = new API.Filter()
     b.limit = 10;
