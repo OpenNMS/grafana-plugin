@@ -158,14 +158,14 @@ export const queryProperties = async (queryWithNodeFilterWrapper: string, client
     const query = queryWithNodeFilterWrapper.replace('nodes(','').replace(')','')
     const nodeProps = await client.getNodeProperties();
     const property = nodeProps.find((d) => d.id === query)
-    if (property){
+
+    if (property && property.values) {
         for (const [key,value] of Object.entries(property.values)){
-            results.push({text:value as string,value:key as string})
+            results.push({ text: value as string, value: key as string })
         }
     }   
     return results
 }
-
 
 export const getSmallerAPIFilter = () => {
     const b = new API.Filter()
