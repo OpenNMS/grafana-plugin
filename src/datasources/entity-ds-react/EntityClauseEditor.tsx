@@ -45,7 +45,6 @@ export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArr
     const setClause = (col: number, value: any, property: string) => {
         const newAttributes = [...clauses]
         newAttributes[col][property] = value;
-        console.log('setting a clause',newAttributes)
         setClauses(newAttributes);
     }
 
@@ -61,7 +60,6 @@ export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArr
         //Build the filter. This could be extracted to a helper function.
         clauses.forEach((d, i) => {
             if (d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST && clauses[i].comparator?.value) {
-                console.log('clau',clauses[i].comparedString || clauses[i].comparedValue.value || clauses[i])
                 updatedFilter.withAndRestriction(
                     new API.Restriction(
                         clauses[i].attribute?.value?.id,
