@@ -47,7 +47,6 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
             const target = options.targets[i];
             const newQuery = { ...query };
             newQuery.source = []
-            console.log('HERE IS MY NEW QUERY!',newQuery);
             const source = {
                 attribute: target.attribute.attribute.name,
                 ['fallback-attribute']: target.attribute.fallbackAttribute.name,
@@ -69,7 +68,6 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                 console.error(e);
             }
         }
-        console.log('HERE IS MY DATA!',{data})
         return { data }
     }
 
