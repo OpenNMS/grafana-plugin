@@ -1,7 +1,10 @@
 import { rangeUtil, SelectableValue } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { dscpLabel } from '../../lib/tos_helper';
-
+import {
+    dscpLabel,
+    dscpSelectOptions
+} from '../../lib/tos_helper';
+import { swapColumns } from "lib/utils";
 import {
     defaultSegmentOptions,
     FlowFunctionNames,
@@ -303,9 +306,9 @@ const buildTopNParams = (type: string, query: FlowParsedQueryRow, options: FlowQ
 
 /**
  * 
- * @param timestamps An array of timestamps
- * @param responeData Data returned directly from OpenNMS
- * @param nanToZero Should we convert NaN to Zero?
+ * @param colIdx current column to evalueate
+ * @param parsedData an object containing timestamps, columns and data
+ * @param params an object with param functions to be used in the conversion (nanToZero, multiplier and sign)
  * @returns Datapoints ready for Grafana
  */
 const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, params: any) => {
@@ -318,12 +321,71 @@ const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, para
 /**
  * 
  * @param headers Headers from RawData returned from OpenNMS (rawData.headers)
+ * @param query FlowParsedQueryRow used to identify additional conversions
  * @returns A data object ready to be used as column headers in a Grafana Table
  */
-const convertDataHeaderstoTableColumns = (headers: string[]) => {
+const convertDataHeaderstoTableColumns = (headers: string[], query: FlowParsedQueryRow) => {
     return headers ? headers.map((column) => {
+        const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
+        if (toBits) {
+            if (column.includes('Bytes In')) {
+                column = 'Bits In';
+            } else if (column.includes('Bytes Out')) {
+                column = 'Bits Out';
+            }
+        }
         return { "text": column }
     }) : [];
+}
+
+/**
+ * 
+ * @param rows rows from RawData to convert
+ * @param headers headers to from RawData to identify row-column position
+ * @param query FlowParsedQueryRow used to identify additional conversions
+ * @returns array of converted rows
+ */
+const convertDataRowsToTableRows = (rows: Array<any>, headers: string[], query: FlowParsedQueryRow) => {
+
+    const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
+    const swapIngressEgress = isFunctionSet(query, FlowFunctionStrings.swapIngressEgress);
+    const inIndex = headers.indexOf('Bytes In');
+    const outIndex = headers.indexOf('Bytes Out');
+    const ecnIndex = headers.lastIndexOf('ECN');
+
+    rows.map((row) => {
+
+        row[0] = convertLabel(row[0], null, query);
+
+        if (ecnIndex > 0) {
+            let label;
+            switch (row[ecnIndex]) {
+                // all flows used ecn capable transports / no congestions were reported
+                case 0: label = 'ect / no ce'; break;
+                // at least some flows used non-ecn-capable transports / no congestions were reported
+                case 1: label = 'non-ect / no ce'; break;
+                // all flows used ecn capable transports / congestions were reported
+                case 2: label = 'ect / ce'; break;
+                // at least some flows used non-ecn-capable transports / congestions were reported
+                case 3: label = 'non-ect / ce'; break;
+            }
+            if (label) {
+                row[ecnIndex] = label;
+            }
+        }
+
+        if (toBits) {
+            row[inIndex] *= 8;
+            row[outIndex] *= 8;
+        }
+        return row;
+    });
+
+    if (swapIngressEgress && Array.isArray(rows) && rows.length > 0) {
+        rows = swapColumns(rows, inIndex, outIndex);
+    }
+
+    return rows;
 }
 
 /**
@@ -393,7 +455,7 @@ const getFunctionParameters = (query: FlowParsedQueryRow, functionName: string, 
  * @param name the name of the function we want the value for
  * @returns The value for the specified row and function.
  */
-const getFunctionValue = (query: FlowParsedQueryRow, name: string): string | undefined => {
+export const getFunctionValue = (query: FlowParsedQueryRow, name: string): string | undefined => {
     return query.queryFunctions.find((d) => d[name])?.[name];
 }
 
@@ -417,7 +479,7 @@ const getInRangeTimestamps = (timestamps: number[], start: number, end: number) 
  * @returns Our data response multiplier if we want one set.
  */
 const getMultiplier = (queryData: FlowParsedQueryRow, timestamps: number[]) => {
-    const step = timestamps[1] - timestamps[0]
+    const step = timestamps[1] - timestamps[0];
     let multiplier = 1;
     if (isFunctionSet(queryData, FlowFunctionStrings.perSecond)) {
         multiplier /= step / 1000;
@@ -468,7 +530,7 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
     if (func.label) {
         const fullFunction = FlowFunctions.get(func.label);
 
-        if (fullFunction?.parameter && queryData.functionParameters) { //If there's a parameter, get it.
+        if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
             inputParams = queryData.functionParameters[index]
         } else if (fullFunction?.parameterOptions && queryData.parameterOptions) { //If there's an option set, get it.
             inputParams = queryData.parameterOptions[index].label
@@ -609,12 +671,13 @@ const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequ
         throw new Error('table response did not contain all necessary information')
     }
 
-    const columns = convertDataHeaderstoTableColumns(rawData.headers);
+    const columns = convertDataHeaderstoTableColumns(rawData.headers, query);
+    const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, query);
 
     return [{
         refId: query.refId,
         columns,
-        rows: rawData.rows,
+        rows: rows,
         type: 'table'
     }]
 }
@@ -648,6 +711,13 @@ const shouldWeSwapIngressAndEgress = (inData: any, queryData: FlowParsedQueryRow
     return outData;
 }
 
+/**
+ * 
+ * @param groupByColumn current column name
+ * @param parsedData object with timestamps, columns and data values
+ * @param params functions selected by the user if any (nanToZero, multiplier)
+ * @returns 
+ */
 const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: any) => {
 
     return parsedData['timestamps']
@@ -665,3 +735,47 @@ const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: a
             return [sum * params['multiplier'], timestamp]
         })
 }
+
+// export const metricFindLocations = async () => {
+//     return await this.simpleRequest.getLocations();
+// }
+
+// export const metricFindApplications = async (start: number, end: number, limit = 0) {
+//     return await this.simpleRequest.getApplications(start, end, limit);
+// }
+
+// export const metricFindHosts = async (start: number, end: number, pattern: string | null = null, limit = 0) => {
+//     return await this.simpleRequest.getHosts(start, end, pattern, limit);
+// }
+
+// export const metricFindConversations = async (start: number, end: number, application: string | null = null,
+//     location: string | null = null, protocol: string | null = null, limit = 0) => {
+//     return await this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
+// }
+
+
+// export const metricFindExporterNodes = async (query?: any, filter?: string) => {
+//     let self = this;
+//     const exporters = await this.client.getExporters();
+//     let results = [] as any[];
+//     exporters.forEach((exporter) => {
+//         results.push({ text: exporter.label, value: exporter.id, expandable: true });
+//     });
+//     return await self.getFilteredNodes(results, filter);
+// }
+
+// export const metricFindInterfacesOnExporterNode = async (query) => {
+//     const node = await this.simpleRequest.getNodeByIdOrFsFsId(query);
+//     const exporter = await this.client.getExporter(node.id);
+//     let results = [] as any[];
+//     exporter.interfaces.forEach(iff => {
+//         results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
+//     });
+//     return results;
+// }
+
+// export const metricFindDscpOnExporterNodeAndInterface = async (node, iface, start, end) => {
+//     let dscpValues = await client.getDscpValues(node, iface, start, end);
+//     return dscpSelectOptions(dscpValues);
+// }
+

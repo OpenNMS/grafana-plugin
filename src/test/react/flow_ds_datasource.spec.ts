@@ -56,21 +56,6 @@ describe("OpenNMS_Flow_Datasource", function () {
       }
     ] as FlowQueryData[];
 
-    fullQueryData = [
-      {
-        "segment": {
-          "id": 0,
-          "label": "Applications"
-        },
-        "queryFunctions": [
-          {
-            "topN": "10"
-          }
-        ],
-        "refId": "A"
-      }
-    ] as FlowParsedQueryData;
-
     dataFromOpenNMS = {
       "start": dateTimeAsMoment(1516358909932),
       "end": dateTimeAsMoment(1516358909932),
@@ -134,7 +119,44 @@ describe("OpenNMS_Flow_Datasource", function () {
     });
 
     it("Should return return FlowParsedQueryData, an array of FlowParsedQueryRow ", function (done) {
-      const expected: FlowParsedQueryData = fullQueryData;
+      const expected: FlowParsedQueryData = [
+        {
+          "segment": {
+            "id": 0,
+            "label": "Applications"
+          },
+          "queryFunctions": [
+            { "topN": "10", },
+            { "withPrefix": "pre-" },
+            { "withExporterNode": "1" },
+            { "swapIngressEgress": '' },
+            { "toBits": '' }
+          ],
+          "refId": "A"
+        }
+      ] as FlowParsedQueryData;
+
+      partialQueryData = [
+        {
+          "segment": 0,
+          "functionParameters": [
+            "10",
+            "pre-",
+            "1",
+            undefined,
+            null
+          ],
+          "functions": [
+            { "label": "topN" },
+            { "label": "withPrefix" },
+            { "label": "withExporterNode" },
+            { "label": "swapIngressEgress" },
+            { "label": "toBits" }
+          ],
+          "parameterOptions": [],
+          "refId": "A"
+        }
+      ] as FlowQueryData[];
       expect(helpers.buildFullQueryData(partialQueryData)).toEqual(expected);
       done();
     });
@@ -271,7 +293,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -313,7 +335,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -348,8 +370,8 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
-       {
+      let expectedResponse = [
+        {
           "datapoints": [
             [
               3,
@@ -392,7 +414,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -401,7 +423,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             ]
           ],
           "target": "prefix-domain (Out)-suffix"
-        },{
+        }, {
           "datapoints": [
             [
               2,
@@ -442,7 +464,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -451,7 +473,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             ]
           ],
           "target": "domain (Out)"
-        },{
+        }, {
           "datapoints": [
             [
               0,
@@ -485,14 +507,14 @@ describe("OpenNMS_Flow_Datasource", function () {
           },
           queryFunctions: [
             {
-              
+
             }
           ],
           refId: ''
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -501,7 +523,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             ]
           ],
           "target": "domain (Out)"
-        },{
+        }, {
           "datapoints": [
             [
               null,
@@ -542,7 +564,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         }
       ] as FlowParsedQueryData;
 
-      let expectedResponse = [        
+      let expectedResponse = [
         {
           "datapoints": [
             [
@@ -551,7 +573,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             ]
           ],
           "target": "domain (In)"
-        },{
+        }, {
           "datapoints": [
             [
               2,
@@ -575,6 +597,168 @@ describe("OpenNMS_Flow_Datasource", function () {
       done();
     });
 
+    it("should Swap Ingress/Egress and convert toBits, labels in response to Grafana series", function (done) {
+      dataFromOpenNMS = {
+        "start": null,
+        "end": null,
+        "headers": [
+          "Application",
+          "Bytes In",
+          "Bytes Out",
+          "ECN"
+        ],
+        "rows": [
+          [
+            "app0",
+            1,
+            2,
+            3
+          ],
+          [
+            "app1",
+            5,
+            null,
+            3
+          ]
+        ]
+      }
+
+      fullQueryData = [
+        {
+          segment: {
+            id: 0,
+            label: ''
+          },
+          queryFunctions: [
+            { swapIngressEgress: '' },
+            { toBits: '' }
+          ],
+          refId: ''
+        }
+      ] as FlowParsedQueryData;
+
+      let expectedResponse = [{
+        refId: '',
+        "columns": [
+          {
+            "text": "Application"
+          },
+          {
+            "text": "Bits In"
+          },
+          {
+            "text": "Bits Out"
+          },
+          {
+            "text": "ECN"
+          }
+        ],
+        "rows": [
+          [
+            "app0",
+            16,
+            8,
+            "non-ect / ce"
+          ],
+          [
+            "app1",
+            0,
+            40,
+            "non-ect / ce"
+          ]
+        ],
+        "type": "table",
+      }];
+      let actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS);
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    it("should combine multiple with uneven qty of ingress and egress when set", function (done) {
+
+      fullQueryData = [
+        {
+          segment: {
+            id: 0,
+            label: ''
+          },
+          queryFunctions: [
+            {
+              combineIngressEgress: ''
+            }
+          ],
+          refId: ''
+        }
+      ] as FlowParsedQueryData;
+
+      let expectedResponse = [
+        {
+          "datapoints": [
+            [
+              3,
+              1516358909932
+            ]
+          ],
+          "target": "domain"
+        }, 
+        {
+          "datapoints": [
+            [
+              5,
+              1516358909932
+            ]
+          ],
+          "target": "domain1"
+        }
+      ];
+      let actualResponse = helpers.processDataBasedOnType(FlowStrings.series, fullQueryData[0], options, dataFromOpenNMS);
+      expect(expectedResponse).toEqual(actualResponse);
+      done();
+    });
+
+    // it("Filter exporter nodes by location", function (done) {
+    //   flowDatasource.client.getNode = (nodeId: any) => { 
+    //     let location = "Default"
+    //     if(nodeId > 2 ){
+    //       location = "Unknown";
+    //     }
+    //     return Promise.resolve(
+    //     {
+    //       "id": 1,
+    //       "label": "localhost",
+    //       "labelSource": {},
+    //       "foreignSource": "selfmonitor",
+    //       "foreignId": "1",
+    //       "location": location,
+    //       "createTime": "",
+    //       "type": {},
+    //       "lastCapsdPoll": "",
+    //       "snmpInterfaces": [],
+    //       "ipInterfaces": [],
+    //       "categories": [],
+    //       "assets": {}
+    //   }); };
+
+    //   let actualResponse = flowDatasource.getFilteredNodes(exporterNodes, "location='Default'");
+    //   let expectedResponse = [
+    //     {
+    //       "text": "NYC-Cisco-ASR100-Core-Router",
+    //       "value": 1,
+    //       "expandable": true
+    //     },
+    //     {
+    //       "text": "LON-Juniper-T4000-Core-Router",
+    //       "value": 2,
+    //       "expandable": true
+    //     }       
+    //   ];
+    //   actualResponse.then(response => { 
+    //       expect(response.length).toEqual(2);
+    //       expect(response).toEqual(expectedResponse); 
+    //     });
+      
+    //   done();
+    // });
 
   });
 });

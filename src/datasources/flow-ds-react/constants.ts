@@ -87,7 +87,8 @@ export const withExporterNodeFunction: FlowFunction = {
         FlowSegments.Applications,
         FlowSegments.Conversations,
         FlowSegments.Hosts,
-    ]
+    ],
+    parameter: ""
 }
 
 export const topNFunction: FlowFunction = {
@@ -127,18 +128,12 @@ export const withSuffixFunction: FlowFunction = {
     parameter: ''
 }
 
-export const toBitsFunction: FlowFunction = { 
-    parameter: '' 
-}
-
-export const swapIngressEgressFunction: FlowFunction = { 
-    parameter: '' 
-}
+export const toBitsFunction: FlowFunction = {}
 
 export const withDscpFunction: FlowFunction = {
     allowMultiple: true,
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-        return client.getDscpValues(false, undefined,start,end)
+        return client.getDscpValues(false, undefined, start, end)
     }
 }
 
@@ -146,7 +141,7 @@ export const withApplicationFunction: FlowFunction = {
     excludeFunctions: [FlowFunctionNames.topN],
     parentSegments: [FlowSegments.Applications],
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-        return client.getApplications(input,start,end,false,undefined,undefined);
+        return client.getApplications(input, start, end, false, undefined, undefined);
     }
 }
 
@@ -154,13 +149,16 @@ export const withHostFunction: FlowFunction = {
     excludeFunctions: [FlowFunctionNames.topN],
     parentSegments: [FlowSegments.Hosts],
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-      return client.getHosts(input, start,end,false,undefined,undefined);
+        return client.getHosts(input, start, end, false, undefined, undefined);
     }
 }
 
 export const tableSummaryDefault = {
     excludeFunctions: [FlowFunctionNames.asTableSummary]
 }
+
+export const swapIngressEgressFunction: FlowFunction =
+    { ...tableSummaryDefault }
 
 export const perSecondFunction: FlowFunction =
     { ...tableSummaryDefault }
