@@ -17,7 +17,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState(query.filter || getSmallerAPIFilter());
     const [orderedValue, setOrderedValue] = useState<SelectableValue<string>>(defaultOrder);
-    const [bounce, setBounce] = useState(-1);
     const [limit, setLimit] = useState(100);
     const [featuredAttributes, setFeaturedAttributes] = useState(true);
 
@@ -32,9 +31,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     }, [propertiesLoading, setLoading])
 
     useEffect(() => {
-        if (bounce === -1) {
-            setBounce(window.setTimeout(updateQuery, 1000))
-        }
+        updateQuery()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter, clauses, value]);
 
@@ -47,7 +44,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         })
 
         onRunQuery();
-        setBounce(-1);
     }
 
     const addOrderBy = () => {
