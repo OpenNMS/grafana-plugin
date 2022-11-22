@@ -12,9 +12,9 @@ The available configuration options depend on the type of datasource associated 
 
 This section describes the following types of panel configuration:
 
-* xref:forecasting.adoc[Forecast metrics]
-* xref:dynamic-dashboard.adoc[Dynamic dashboards]
-* xref:expressions.adoc[Working with expressions]
+* xref:forecasting.adoc[Forecast metrics].
+* xref:dynamic-dashboard.adoc[Dynamic dashboards].
+* xref:expressions.adoc[Working with expressions].
 
 [[custom-panel]]
 == Default custom panels
@@ -30,7 +30,7 @@ Alarm Table:: Displays alarms in table format.
 +
 image::alarm-panel.png[Two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms, 500]
 
-Filter Panel:: A filter panel lets you specify data to include other panels.
+Filter Panel:: Panel that lets you specify data to include in other panels.
 +
 image::filter-panel.png[Blank fields in a filter panel, 500]
 
