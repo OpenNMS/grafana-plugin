@@ -39,7 +39,7 @@ If the issue persists, make sure the plugin is in the grafana plugins directory 
 . In the *Config* tab, click *Enable*.
 +
 A *Disable* button indicates that the plugin is already enabled.
-You may also choose *Update* for the latest version of the {page-component-title} plugin.
+You may also choose *Update* to download the latest version of the {page-component-title} plugin.
 
 [[custom-actions]]
 === Custom actions
@@ -160,10 +160,9 @@ Follow the steps below to create a new panel in your existing dashboard:
 
 . Navigate to your dashboard and click the *Add Panel* symbol.
 . Click *Add New Panel*.
-. Select the datasource from the *Query* list.
+. Select a datasource from the *Query* list.
 . Configure additional information as appropriate.
 Options are dependent on the type of datasource selected.
-
 . In the Visualization area of the *Panel* tab, click the *Visualization* icon.
 . Click *Graph* or select another type of visualization (Stat, Gauge, Bar gauge).
 +
