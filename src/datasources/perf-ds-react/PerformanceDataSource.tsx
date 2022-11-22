@@ -1,11 +1,8 @@
-import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from "@grafana/data";
+import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
 import { SimpleOpenNMSRequest } from "lib/utils";
+import { measurementResponseToGrafanaSeries } from "./PerformanceHelpers";
 import { PerformanceDataSourceOptions, PerformanceQuery, PerformanceQueryRequest } from "./types";
-
-export interface OnmsQueryResultMeta extends QueryResultMeta {
-    entity_metadata: any[];
-}
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -62,8 +59,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                 headers: { 'Content-Type': 'application/json' }
             });
             try {
-
-                data.push(this.processMeasurementsResponse(response))
+                data.push(measurementResponseToGrafanaSeries(response))
             } catch (e) {
                 console.error(e);
             }
@@ -71,59 +67,6 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return { data }
     }
 
-    processMeasurementsResponse(response) {
-        const labels = response.data.labels;
-        const columns = response.data.columns;
-        const timestamps = response.data.timestamps;
-        const metadata = response.data.metadata;
-        let series: { target: string, label: string, datapoints: [[string, string]] } = { target: '', label: '', datapoints: [['', '']] };
-        let datapoints: [[string, string]] = [['', '']];
-        var value, atLeastOneNonNaNValue;
-
-        if (timestamps !== undefined) {
-            const nRows = timestamps.length;
-            const nCols = columns.length;
-
-            for (let i = 0; i < nCols; i++) {
-                atLeastOneNonNaNValue = false;
-                datapoints = [['', '']];
-                for (let j = 0; j < nRows; j++) {
-                    // Skip rows that are out-of-ranges - this can happen with RRD data in narrow time spans
-                    if (timestamps[j] < response.data.start || timestamps[j] > response.data.end) {
-                        continue;
-                    }
-
-                    value = columns[i].values[j];
-                    // Replace literal 'NaN' values with nulls
-                    if (value === 'NaN') {
-                        value = null;
-                    }
-
-                    if (!atLeastOneNonNaNValue && !isNaN(value)) {
-                        atLeastOneNonNaNValue = true;
-                    }
-                    datapoints.push([value, timestamps[j]]);
-                }
-
-                let label = labels[i];
-                if (metadata && metadata.resources) {
-                    //    label = FunctionFormatter.format(label, metadata);
-                }
-
-                // Skip series that are all NaNs
-                // When querying in relaxed mode, expressions that operate against attribute that are missing may only contain
-                // NaNs. In this case, we don't want to show them at all.
-                if (atLeastOneNonNaNValue) {
-                    series = {
-                        target: label,
-                        label: labels[i],
-                        datapoints: datapoints
-                    }
-                }
-            }
-        }
-        return series;
-    }
     async testDatasource(): Promise<any> {
         console.log('Testing the data source!');
         try {

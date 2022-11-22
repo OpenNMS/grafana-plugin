@@ -1,5 +1,5 @@
 
-import { DataQuery, DataQueryRequest, DataSourceJsonData, QueryEditorProps } from "@grafana/data";
+import { DataQuery, DataQueryRequest, DataSourceJsonData, QueryEditorProps, QueryResultMeta } from "@grafana/data";
 import { PerformanceAttributeState } from "./PerformanceAttribute";
 import { PerformanceDataSource } from "./PerformanceDataSource";
 
@@ -27,3 +27,13 @@ export interface QuickSelect {
 }
 
 export type PerformanceQueryEditorProps = QueryEditorProps<PerformanceDataSource, PerformanceQuery, PerformanceDataSourceOptions>;
+
+export interface OnmsQueryResultMeta extends QueryResultMeta {
+    entity_metadata: any[];
+}
+
+export interface SeriesResponse {
+    target: string,
+    label: string,
+    datapoints: [[string, string]]
+}
