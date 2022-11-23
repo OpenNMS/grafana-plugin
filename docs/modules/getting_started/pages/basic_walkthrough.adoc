@@ -14,7 +14,7 @@ The process includes the following steps:
 
 This walk-through assumes that you have the following:
 
-* An instance of Grafana with the {page-component-title} application installed.
+* An instance of Grafana with the {page-component-title} plugin installed.
 * An instance of OpenNMS that is reachable from your Grafana instance.
 * One or more nodes being monitored by OpenNMS.
 

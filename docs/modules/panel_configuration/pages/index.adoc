@@ -34,6 +34,7 @@ Filter Panel:: Panel that lets you specify data to include in other panels.
 +
 image::filter-panel.png[Blank fields in a filter panel, 500]
 
-Flow Histogram:: Bar chart that shows the distribution of flows data.
+Flow Histogram:: Bar chart that shows the distribution of flow data.
+This panel expects the Flow Datasource query to have a `asTableSummary()` transform included.
 +
 image::flow-histogram.png[Horizontal bar graph that displays network flow data, 500]
