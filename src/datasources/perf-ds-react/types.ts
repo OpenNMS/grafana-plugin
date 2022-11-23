@@ -13,6 +13,8 @@ export interface PerformanceDataSourceOptions extends DataSourceJsonData {
 export interface PerformanceQuery extends DataQuery {
   queryText?: string;
   constant?: number;
+  expression?: string;
+  label?: string;
   performanceType: QuickSelect;
   attribute: PerformanceAttributeState;
 }

@@ -1,6 +1,7 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
 import { SimpleOpenNMSRequest } from "lib/utils";
+import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToGrafanaSeries } from "./PerformanceHelpers";
 import { PerformanceDataSourceOptions, PerformanceQuery, PerformanceQueryRequest } from "./types";
 
@@ -42,19 +43,25 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
         for (let i = 0; i < options.targets.length; i++) {
             const target = options.targets[i];
-            const newQuery = { ...query };
-            newQuery.source = []
-            const source = {
-                attribute: target.attribute.attribute.name,
-                ['fallback-attribute']: target.attribute.fallbackAttribute.name,
-                label: target.attribute.label || target.attribute.attribute.name,
-                resourceId: target.attribute.resource.id.replace('node[', 'nodeSource['),
-                transient: false
+            if (target.performanceType.value === PerformanceTypeOptions.Attribute.value) {
+                const source = {
+                    attribute: target.attribute.attribute.name,
+                    ['fallback-attribute']: target.attribute.fallbackAttribute.name,
+                    label: target.attribute.label || target.attribute.attribute.name,
+                    resourceId: target.attribute.resource.id.replace('node[', 'nodeSource['),
+                    transient: false
+                }
+                query.source.push(source)
+            } else if (target.performanceType.value === PerformanceTypeOptions.Expression.value) {
+                query.expression.push({
+                    label: target.label || 'expression' + i,
+                    value: target.expression,
+                    transient: target.hide
+                })
             }
-            newQuery.source.push(source)
             const response = await this.simpleRequest.doOpenNMSRequest({
                 url: '/rest/measurements',
-                data: newQuery,
+                data: query,
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });

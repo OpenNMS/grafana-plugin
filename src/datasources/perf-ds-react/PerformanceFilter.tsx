@@ -1,5 +1,5 @@
 import { SelectableValue } from '@grafana/data';
-import { Segment, SegmentAsync, SegmentInput, SegmentSection } from '@grafana/ui';
+import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import React, { useState } from 'react'
 
@@ -40,7 +40,7 @@ export const PerformanceFilter: React.FC<{ updateQuery: Function, loadFilters: (
                 return (
                     <>
                         <div className='spacer' />
-                        <SegmentSection label={param.displayName} key={index} >
+                        <SegmentSectionWithIcon label={param.displayName} key={index} >
                             {param.type === 'boolean' &&
                                 <Segment
                                     placeholder={param.key}
@@ -72,10 +72,10 @@ export const PerformanceFilter: React.FC<{ updateQuery: Function, loadFilters: (
                                         updateFilterState(param.displayName, value)
                                     }}
                                 />}
-                            <p>
+                            <p style={{margin:0,paddingTop:6,paddingLeft:5}}>
                                 {param.description}
                             </p>
-                        </SegmentSection>
+                        </SegmentSectionWithIcon>
                     </>
                 )
             })}

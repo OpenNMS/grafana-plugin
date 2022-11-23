@@ -12,10 +12,21 @@ import { PerformanceQueryEditorProps, QuickSelect } from './types';
 export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
     const [performanceType, setPerformanceType] = useState<QuickSelect>({});
 
-    const updateQuery = (attribute) => {
+    const updateAttributeQuery = (attribute) => {
         onChange({
             ...query,
+            performanceType,
             attribute
+        })
+        onRunQuery();
+    }
+
+    const updateExpressionQuery = (expression,label) => {
+        onChange({
+            ...query,
+            performanceType,
+            expression,
+            label
         })
         onRunQuery();
     }
@@ -102,7 +113,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 performanceType.value === PerformanceTypeOptions.Attribute.value &&
 
                 <PerformanceAttribute
-                    updateQuery={updateQuery}
+                    updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}
                     loadResourcesByNodeId={loadResourcesByNodeId}
                     loadAttributesByResourceAndNode={loadAttributesByResourceAndNode}
@@ -112,20 +123,20 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             {
                 performanceType.value === PerformanceTypeOptions.Expression.value &&
 
-                <PerformanceExpression updateQuery={updateQuery} />
+                <PerformanceExpression updateQuery={updateExpressionQuery} />
             }
 
             {
                 performanceType.value === PerformanceTypeOptions.Filter.value &&
 
-                <PerformanceFilter updateQuery={updateQuery} loadFilters={loadFilters} />
+                <PerformanceFilter updateQuery={updateAttributeQuery} loadFilters={loadFilters} />
             }
 
             {
                 performanceType.value === PerformanceTypeOptions.StringProperty.value &&
 
                 <PerformanceStringProperty
-                    updateQuery={updateQuery}
+                    updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}
                     loadResourcesByNodeId={loadResourcesByNodeId}
                 />

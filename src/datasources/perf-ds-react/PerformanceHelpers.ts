@@ -28,7 +28,7 @@ export const measurementResponseToGrafanaSeries = (response) => {
     const { labels, columns, timestamps, metadata } = response.data;
 
     let series: SeriesResponse = { target: '', label: '', datapoints: [['', '']] }
-    for (let i = 0; i < columns.length; i++) {
+    for (let i = 0; i < columns?.length; i++) {
 
         const { datapoints, thereIsAtLeastOneValidValue } = timestampsToDatapoints(timestamps, columns, i, response.data);
 
