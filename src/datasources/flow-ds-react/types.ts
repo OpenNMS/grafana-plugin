@@ -117,12 +117,12 @@ export interface FlowTemplateVariableQueryService {
   limit?: number,
   pattern?: string,
   application?: string,
-  location?:string, 
+  location?: string,
   protocol?: string,
   nodeFilter?: string,
   nodeCriteria?: string,
-  nodeId? : string,
-  node?: string, 
+  nodeId?: string,
+  node?: string,
   iface?: string,
 }
 

@@ -361,7 +361,7 @@ const convertDataHeaderstoTableColumns = (headers: string[], query: FlowParsedQu
  * @param query FlowParsedQueryRow used to identify additional conversions
  * @returns array of converted rows
  */
-const convertDataRowsToTableRows = (rows: Array<any>, headers: string[], query: FlowParsedQueryRow) => {
+const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowParsedQueryRow) => {
 
     const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
     const swapIngressEgress = isFunctionSet(query, FlowFunctionStrings.swapIngressEgress);
