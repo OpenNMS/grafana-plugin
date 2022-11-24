@@ -4,7 +4,12 @@ import {
     dscpLabel,
     dscpSelectOptions
 } from '../../lib/tos_helper';
-import { swapColumns } from "lib/utils";
+import {
+    swapColumns,
+    getNodeFilterMap,
+    SimpleOpenNMSRequest,
+    getNumberOrDefault
+} from "lib/utils";
 import {
     defaultSegmentOptions,
     FlowFunctionNames,
@@ -14,7 +19,15 @@ import {
     FlowSegmentStrings,
     segmentFunctionMapping,
     segmentMapping,
-    FlowStrings
+    FlowStrings,
+    FlowTemplateVariableFunctionExpression,
+    FlowTemplateVariablesStrings,
+    ConversationParams,
+    ApplicationsParams,
+    HostsParams,
+    ExporterNodesParams,
+    InterfacesOnExporterNodeWithFlowsParams,
+    DscpOnExporterNodeAndInterfaceParams
 } from "./constants";
 
 import {
@@ -23,8 +36,11 @@ import {
     FlowQuery,
     FlowQueryData,
     FlowQueryRequest,
+    FlowTemplateVariableClientService,
+    FlowTemplateVariableQueryService,
     SegmentOption
 } from "./types";
+import _ from 'lodash';
 
 /**
  * Pieces together UI data into data appropriate to query the BE with.
@@ -736,46 +752,177 @@ const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: a
         })
 }
 
-// export const metricFindLocations = async () => {
-//     return await this.simpleRequest.getLocations();
-// }
-
-// export const metricFindApplications = async (start: number, end: number, limit = 0) {
-//     return await this.simpleRequest.getApplications(start, end, limit);
-// }
-
-// export const metricFindHosts = async (start: number, end: number, pattern: string | null = null, limit = 0) => {
-//     return await this.simpleRequest.getHosts(start, end, pattern, limit);
-// }
-
-// export const metricFindConversations = async (start: number, end: number, application: string | null = null,
-//     location: string | null = null, protocol: string | null = null, limit = 0) => {
-//     return await this.simpleRequest.getConversations(start, end, application, location, protocol, limit);
-// }
+export const queryTemplateVariable = async (query: string, templateSrv: any, client: ClientDelegate, simpleRequest: SimpleOpenNMSRequest) => {
 
 
-// export const metricFindExporterNodes = async (query?: any, filter?: string) => {
-//     let self = this;
-//     const exporters = await this.client.getExporters();
-//     let results = [] as any[];
-//     exporters.forEach((exporter) => {
-//         results.push({ text: exporter.label, value: exporter.id, expandable: true });
-//     });
-//     return await self.getFilteredNodes(results, filter);
-// }
+    const clients: FlowTemplateVariableClientService = { client, simpleRequest };
+    const templateVariableQuery: FlowTemplateVariableQueryService = getTemplateVariableQuery(query, templateSrv);
+    if (!templateVariableQuery.function || !templateVariableQuery.function.name) {
+        return Promise.resolve([]);
+    }
+    return await getTemplateVariableResultsFor(templateVariableQuery, clients);
 
-// export const metricFindInterfacesOnExporterNode = async (query) => {
-//     const node = await this.simpleRequest.getNodeByIdOrFsFsId(query);
-//     const exporter = await this.client.getExporter(node.id);
-//     let results = [] as any[];
-//     exporter.interfaces.forEach(iff => {
-//         results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
-//     });
-//     return results;
-// }
+}
+const getTemplateVariableQuery = (query: string, templateSrv: any) => {
+    return {
+        function: getTemplateVariableFunction(templateSrv.replace(query)),
+        start: templateSrv.timeRange.from.valueOf(),
+        end: templateSrv.timeRange.to.valueOf()
+    }
+}
 
-// export const metricFindDscpOnExporterNodeAndInterface = async (node, iface, start, end) => {
-//     let dscpValues = await client.getDscpValues(node, iface, start, end);
-//     return dscpSelectOptions(dscpValues);
-// }
+const getTemplateVariableFunction = (query: string) => {
+    return FlowTemplateVariableFunctionExpression
+        .map(({ name, expression }) => ({ name: name, result: query.match(expression) }))
+        .find(({ name, result }) => result) ?? {};
+}
+
+const getTemplateVariableResultsFor = async (templateQueryFunction: FlowTemplateVariableQueryService,
+    clients: FlowTemplateVariableClientService) => {
+    const queryName = templateQueryFunction.function.name ?? '';
+    templateQueryFunction = retrieveParametersFor(templateQueryFunction);
+
+    switch (queryName) {
+        case FlowTemplateVariablesStrings.locations:
+            return await metricFindLocations(clients);
+        case FlowTemplateVariablesStrings.applications:
+            return await metricFindApplications(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.conversations:
+            return await metricFindConversations(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.hosts:
+            return await metricFindHosts(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.exporterNodesWithFlows:
+            return await metricFindExporterNodes(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
+            return await metricFindInterfacesOnExporterNode(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
+            return await metricFindDscpOnExporterNodeAndInterface(clients, templateQueryFunction);
+        default: return Promise.resolve([]);
+    }
+}
+
+const retrieveParametersFor = (templateQueryFunction: FlowTemplateVariableQueryService) => {
+    const queryResult = templateQueryFunction.function.result ?? '';
+    const queryName = templateQueryFunction.function.name ?? '';
+
+    let args = queryResult.length > 1 ? queryResult[1] : null;
+    //params need to be added in order
+    let params: any[] = [templateQueryFunction.start, templateQueryFunction.end];
+
+    switch (queryName) {
+        case FlowTemplateVariablesStrings.applications:
+            params.push(getNumberOrDefault(args, 0));
+            params.forEach((p, idx) => templateQueryFunction[ApplicationsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.conversations:
+            if (args) {
+                args = args.split(',').map(v => v.trim());
+                if (args.length === 4 || _.every(args, s => isNaN(parseInt(s, 10)))) {
+                    params.push(args);
+                } else if (args.length === 1) {
+                    params.push([null, null, null, getNumberOrDefault(args[0], 0)]);
+                } else if (args.length === 2) {
+                    params.push([args[0], null, null, getNumberOrDefault(args[1], 0)]);
+                } else if (args.length === 3) {
+                    params.push([args[0], args[1], null, getNumberOrDefault(args[2], 0)]);
+                }
+            }
+            params.forEach((p, idx) => templateQueryFunction[ConversationParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.hosts:
+            if (args) {
+                args = args.split(',').map(v => v.trim());
+                if (args.length === 2 || _.every(args, s => isNaN(parseInt(s, 10)))) {
+                    params.push(args);
+                } else if (args.length === 1) {
+                    params.push([null, ...args]);
+                }
+            }
+            params.forEach((p, idx) => templateQueryFunction[HostsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.exporterNodesWithFlows:
+            params = args;
+            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
+            params = args;
+            params.forEach((p, idx) => templateQueryFunction[InterfacesOnExporterNodeWithFlowsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
+            params = queryResult.slice(1, 4);
+            params.forEach((p, idx) => templateQueryFunction[DscpOnExporterNodeAndInterfaceParams[idx].name] = p);
+            break
+    }
+    return templateQueryFunction;
+}
+
+const metricFindLocations = async ({ client, simpleRequest }) => {
+    return await simpleRequest.getLocations();
+}
+
+const metricFindApplications = async ({ client, simpleRequest },  service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getApplications(service.start, service.end, getNumberOrDefault(service.limit, 0));
+}
+
+const metricFindHosts = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getHosts(service.start, service.end, service.pattern, getNumberOrDefault(service.limit, 0));
+}
+
+const metricFindConversations = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getConversations(service.start, service.end, service.application, service.location, service.protocol, service.limit);
+}
+
+const metricFindExporterNodes = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    const exporters = await client.getExporters();
+    let results = [] as any[];
+    exporters.forEach((exporter) => {
+        results.push({ text: exporter.label, value: exporter.id, expandable: true });
+    });
+    return await getFilteredNodes({ client, simpleRequest }, results, service.nodeFilter);
+}
+
+const metricFindInterfacesOnExporterNode = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    const node = await simpleRequest.getNodeByIdOrFsFsId(service.nodeId);
+    const exporter = await client.getExporter(node.id);
+    let results = [] as any[];
+    exporter.interfaces.forEach(iff => {
+        results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
+    });
+    return results;
+}
+
+const metricFindDscpOnExporterNodeAndInterface = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    let dscpValues = await client.getDscpValues(service.nodeCriteria, service.iface, service.start, service.end);
+    return dscpSelectOptions(dscpValues);
+}
+
+const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?: any[], filterParam?: string): Promise<any> => {
+
+    let results: any[] = [];
+    const filtermap = getNodeFilterMap(filterParam);
+    if (filtermap.size === 0) {
+        return await Promise.resolve(exporterNodes);
+    }
+    if (exporterNodes) {
+        for (const exportedNode of exporterNodes) {
+            let matchAll = true;
+            for (const pair of filtermap) {
+                const node = await client.getNode(exportedNode.value);
+                let nodePropertyValue = node[pair[0]];
+                const regex = new RegExp(pair[1]);
+                if (!regex.test(nodePropertyValue)) {
+                    matchAll = false;
+                    break;
+                }
+            }
+            if (matchAll) {
+                results.push(exportedNode);
+            }
+        }
+        return results.filter(result => result);
+    }
+    else {
+        return await Promise.resolve(exporterNodes);
+    }
+}
 

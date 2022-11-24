@@ -540,4 +540,8 @@ export function getNodeFilterMap(filterParam?: string): Map<string, string>{
   return filtermap;
 }
 
+export const getNumberOrDefault = (value: any, defaultValue: number) => {
+  return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10);
+}
+
 
