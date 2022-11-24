@@ -39,6 +39,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
             maxrows: maxDataPoints,
             source: [] as any[],
             expression: [] as any[],
+            filter: [] as any[]
         };
 
         for (let i = 0; i < options.targets.length; i++) {
@@ -59,9 +60,20 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                     transient: target.hide
                 })
             } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
-
+                const filter: Array<{ key: string, value: string | { value: string } }> = []
+                for (let [_, item] of Object.entries(target.filterState)) {
+                    const filterItem = item as { value: { value: string }, filter: { key: string } }
+                    let value: any = filterItem.value
+                    if (value.value) {
+                        value = value.value
+                    }
+                    if (value) {
+                        filter.push({ key: filterItem.filter.key, value })
+                    }
+                }
+                query.filter.push({ parameter: filter, name: target.filter.name })
             }
-            if (query.source.length > 0 || query.expression.length > 0) {
+            if (query.source.length > 0 || query.expression.length > 0 || query.filter.length > 0) {
 
                 const response = await this.simpleRequest.doOpenNMSRequest({
                     url: '/rest/measurements',
@@ -77,6 +89,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
             }
         }
         return { data }
+    }
+    async metricFindQuery(query, options) {
+        let queryResults: Array<{ text: string, value: string }> = []
+
+        return queryResults
     }
 
     async testDatasource(): Promise<any> {

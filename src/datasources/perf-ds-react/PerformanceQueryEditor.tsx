@@ -31,6 +31,16 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
+    const updateFilterQuery = (filter,filterState) => {
+        onChange({
+            ...query,
+            performanceType,
+            filter,
+            filterState
+        })
+        onRunQuery();
+    }
+
     const loadNodes = async () => {
         const nodes = await datasource.client.findNodes(new API.Filter(), true)
         return nodes;
@@ -129,7 +139,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             {
                 performanceType.value === PerformanceTypeOptions.Filter.value &&
 
-                <PerformanceFilter updateQuery={updateAttributeQuery} loadFilters={loadFilters} />
+                <PerformanceFilter updateQuery={updateFilterQuery} loadFilters={loadFilters} />
             }
 
             {

@@ -17,6 +17,8 @@ export interface PerformanceQuery extends DataQuery {
   label?: string;
   performanceType: QuickSelect;
   attribute: PerformanceAttributeState;
+  filter: {name: string};
+  filterState: {};
 }
 
 export interface PerformanceQueryRequest<T extends DataQuery> extends DataQueryRequest<T> {
