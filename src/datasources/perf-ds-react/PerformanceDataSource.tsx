@@ -43,7 +43,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
         for (let i = 0; i < options.targets.length; i++) {
             const target = options.targets[i];
-            if (target.performanceType.value === PerformanceTypeOptions.Attribute.value) {
+            if (target.performanceType?.value === PerformanceTypeOptions.Attribute.value) {
                 const source = {
                     attribute: target.attribute.attribute.name,
                     ['fallback-attribute']: target.attribute.fallbackAttribute.name,
@@ -52,23 +52,28 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                     transient: false
                 }
                 query.source.push(source)
-            } else if (target.performanceType.value === PerformanceTypeOptions.Expression.value) {
+            } else if (target.performanceType?.value === PerformanceTypeOptions.Expression.value) {
                 query.expression.push({
                     label: target.label || 'expression' + i,
                     value: target.expression,
                     transient: target.hide
                 })
+            } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
+
             }
-            const response = await this.simpleRequest.doOpenNMSRequest({
-                url: '/rest/measurements',
-                data: query,
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            try {
-                data.push(measurementResponseToGrafanaSeries(response))
-            } catch (e) {
-                console.error(e);
+            if (query.source.length > 0 || query.expression.length > 0) {
+
+                const response = await this.simpleRequest.doOpenNMSRequest({
+                    url: '/rest/measurements',
+                    data: query,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                try {
+                    data.push(measurementResponseToGrafanaSeries(response))
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
         return { data }
