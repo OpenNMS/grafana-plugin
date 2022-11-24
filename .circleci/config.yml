@@ -87,7 +87,7 @@ commands:
             node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v grafana-toolkit)" plugin:build
             node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v grafana-toolkit)" plugin:sign
             unset NODE_OPTIONS
-            
+
 jobs:
   pre-build:
     executor: node-executor

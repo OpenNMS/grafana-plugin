@@ -346,8 +346,17 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
     }
   }
   return rows;
+}
 
-
+export function getNodeAsResourceQuery(nodeId: string | undefined) {
+  if (!nodeId) { return nodeId; }
+  var prefix = "";
+  if (nodeId.indexOf(":") > 0) {
+    prefix = "nodeSource[";
+  } else {
+    prefix = "node[";
+  }
+  return prefix + nodeId + "]";
 }
 
 export class SimpleOpenNMSRequest {
@@ -360,7 +369,8 @@ export class SimpleOpenNMSRequest {
 
   readonly flows = "/rest/flows";
   readonly locations = "/rest/monitoringLocations";
-  readonly nodes = "/rest/nodes"
+  readonly nodes = "/rest/nodes";
+  readonly resources = "/rest/resources";
 
   constructor(backendSrv, url) {
     this.backendSrv = backendSrv;
@@ -524,11 +534,31 @@ export class SimpleOpenNMSRequest {
 
     return response.data;
   }
+
+  /**
+   *
+   * @param nodeQuery needs to be used with getNodeAsResourceQuery()
+   * @returns Array of resources if they exists for a node
+   */
+  async getResourcesForNode(nodeQuery: string) {
+    const response = await this.doOpenNMSRequest({
+      url: this.resources + '/' + encodeURIComponent(nodeQuery),
+      method: 'GET',
+      params: {
+        depth: 1
+      }
+    });
+    if (response.data.children.resource && Array.isArray(response.data.children.resource)){
+      return response.data.children.resource;
+    }
+    else { return []; }
+  }
+
 }
 
 export function getNodeFilterMap(filterParam?: string): Map<string, string>{
   const filters = filterParam ? filterParam.split('&') : [];
-  let filtermap = new Map<string, string>(); 
+  let filtermap = new Map<string, string>();
   filters.forEach((filter, index, arr) => {
     let propValue = filter ? filter.split('=') : null;
     if (propValue && propValue.length === 2) {
@@ -543,5 +573,4 @@ export function getNodeFilterMap(filterParam?: string): Map<string, string>{
 export const getNumberOrDefault = (value: any, defaultValue: number) => {
   return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10);
 }
-
 
