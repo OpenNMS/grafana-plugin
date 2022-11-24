@@ -105,12 +105,6 @@ export const topNFunction: FlowFunction = {
     parameter: "10"
 }
 
-export const withConversationFunction: FlowFunction = {
-    excludeFunctions: [FlowFunctionNames.topN],
-    parentSegments: [FlowSegments.Conversations],
-    parameter: ''
-}
-
 export const withGroupByIntervalFunction: FlowFunction = {
     excludeFunctions: [FlowFunctionNames.asTableSummary],
     parameter: ''
@@ -143,6 +137,12 @@ export const withApplicationFunction: FlowFunction = {
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
         return client.getApplications(input, start, end, false, undefined, undefined);
     }
+}
+
+export const withConversationFunction: FlowFunction = {
+    excludeFunctions: [FlowFunctionNames.topN],
+    parentSegments: [FlowSegments.Conversations],
+    parameter: ''
 }
 
 export const withHostFunction: FlowFunction = {
@@ -315,3 +315,70 @@ export const FlowStrings = {
     summaries,
     series
 }
+
+export enum FlowTemplateVariablesFunctions {
+    locations,
+    exporterNodesWithFlows,
+    interfacesOnExporterNodeWithFlows,
+    dscpOnExporterNodeAndInterface,
+    applications,
+    conversations,
+    hosts
+}
+
+export const FlowTemplateVariablesStrings = {
+    locations: 'locations',
+    exporterNodesWithFlows: 'exporterNodesWithFlows',
+    interfacesOnExporterNodeWithFlows: 'interfacesOnExporterNodeWithFlows',
+    dscpOnExporterNodeAndInterface: 'dscpOnExporterNodeAndInterface',
+    applications: 'applications',
+    conversations: 'conversations',
+    hosts: 'hosts'
+}
+
+export const FlowTemplateVariableFunctionExpression = [
+    { name: 'applications', expression: /applications\((.*)\)/ },
+    { name: 'conversations', expression: /conversations\((.*)\)/ },
+    { name: 'hosts', expression: /hosts\((.*)\)/ },
+    { name: 'locations', expression: /locations\((.*)\)/ },
+    { name: 'exporterNodesRegex', expression: /exporterNodesWithFlows\((.*)\)/ },
+    { name: 'interfacesOnExporterNodeRegex', expression: /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/ }, // just pick the first arg and ignore anything else
+    { name: 'dscpOnExporterNodeAndInterfaceRegex', expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/ }
+]
+
+export const ConversationParams = [
+    { name: 'start' },
+    { name: 'end' },
+    { name: 'application' },
+    { name: 'location' },
+    { name: 'protocol' },
+    { name: 'limit' }
+]
+
+export const ApplicationsParams = [  
+    { name: 'start' },
+    { name: 'end' }, 
+    { name: 'limit' }
+]
+
+export const HostsParams = [  
+    { name: 'start' },
+    { name: 'end' }, 
+    { name: 'pattern' },
+    { name: 'limit' }
+]
+
+export const ExporterNodesParams = [      
+    { name: 'filter' }
+]
+
+export const InterfacesOnExporterNodeWithFlowsParams = [      
+    { name: 'nodeId' }
+]
+
+export const DscpOnExporterNodeAndInterfaceParams = [
+    { name: 'node'},
+    { name: 'iface'},
+    { name: 'start'},
+    { name: 'end'}
+]

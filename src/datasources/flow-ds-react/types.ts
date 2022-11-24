@@ -1,5 +1,6 @@
 import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
+import { SimpleOpenNMSRequest } from "lib/utils";
 
 //Workaround for this not being available in all browsers.
 //We check for it's use and fall back to a random number
@@ -102,4 +103,30 @@ export interface ToolButtonProps {
   onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
   children: any,
   style?: {}
+}
+
+export interface FlowTemplateVariableClientService {
+  client: ClientDelegate,
+  simpleRequest: SimpleOpenNMSRequest
+}
+
+export interface FlowTemplateVariableQueryService {
+  function: FlowTemplateVariableQueryFunction,
+  start: number,
+  end: number,
+  limit?: number,
+  pattern?: string,
+  application?: string,
+  location?:string, 
+  protocol?: string,
+  nodeFilter?: string,
+  nodeCriteria?: string,
+  nodeId? : string,
+  node?: string, 
+  iface?: string,
+}
+
+export interface FlowTemplateVariableQueryFunction {
+  name?: any,
+  result?: any
 }
