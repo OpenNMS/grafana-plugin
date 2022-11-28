@@ -1,19 +1,9 @@
-import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentAsync } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types';
 
-export interface PerformanceStringPropertyProps {
-    updateQuery: Function;
-    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
-    loadResourcesByNodeId: Function;
-}
 
-export interface PerformanceStringPropertyState {
-    node: { id: string };
-    resource: { id: string, stringPropertyAttributes: Record<string, string> };
-    stringProperty: { label: string, value: string };
-}
 
 export const defaultPerformanceStringState = {
     node: { id: '' },
@@ -31,6 +21,13 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
         setPerformanceState({ ...performanceState, [propertyName]: propertyValue })
     }
+
+    useEffect(() => {
+        if (performanceState?.stringProperty){
+            updateQuery(performanceState)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[performanceState])
 
     const stringPropertyAttributes = Object.entries(performanceState?.resource?.stringPropertyAttributes).map(([key, item]) => {
         return { label: key, value: key }

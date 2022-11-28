@@ -21,7 +21,38 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
     }
 
+    isQueryValidStringPropertySearch = (targets: PerformanceQuery[]) => {
+        const totalStrings = targets.filter((d) => d.performanceState?.stringProperty?.value)
+        let typeOfQuery = 'normal'
+        if (totalStrings.length > 0 && totalStrings.length === targets.length) {
+            typeOfQuery = 'string'
+        } else if (totalStrings.length > 0 && totalStrings.length < targets.length) {
+            typeOfQuery = 'invalid'
+        }
+        return typeOfQuery;
+    }
+   
+    async stringPropertySearch(targets: PerformanceQuery[]){
+        console.log('string property search!',targets)
+        for (let i = 0; i < targets.length; i++){
+            const nodeId = targets[i].performanceState.node?.id
+            const nodeResources = await this.simpleRequest.doOpenNMSRequest( {
+                url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
+                method: 'GET'
+              });
+              console.log('MY NODE RESOURCES!',nodeResources);
+        }
+        return {data:[]}
+    }
     async query(options: PerformanceQueryRequest<PerformanceQuery>): Promise<DataQueryResponse> {
+        const searchType = this.isQueryValidStringPropertySearch(options?.targets);
+ 
+        if (searchType === 'string') {
+            return this.stringPropertySearch(options?.targets);
+        } else if (searchType === 'invalid') {
+            throw new Error('string property queries can not be mixed with other kinds of queries')
+        }
+
         const data: Array<{ target: string; label: string; datapoints: [[string, string]]; }> = []
         const maxDataPoints = options.maxDataPoints || 300;
         const intervalMs = options.intervalMs || 60 * 1000;
