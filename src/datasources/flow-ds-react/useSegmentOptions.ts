@@ -11,6 +11,8 @@ export const useSegmentOptions = (selectedOptions: Array<SelectableValue<string>
 
     useEffect(() => {
         if (selectedOptions) {
+            setExcludedFunctions([])
+            setParentSegments([])
             for (let activeFunction of selectedOptions) {
                 if (activeFunction.label) {
                     const { excludeFunctions, parentSegments } = FlowFunctions.get(activeFunction.label) || {} as FlowFunction;
