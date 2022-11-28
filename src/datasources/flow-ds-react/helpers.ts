@@ -48,7 +48,7 @@ import _ from 'lodash';
  * @param queryItems All of the queries
  * @returns An object with all the query values, in easy to parse formats for later steps in the process.
  */
-export const buildFullQueryData = (queryItems: FlowQueryData[]): FlowParsedQueryData => {
+export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
 
@@ -65,7 +65,7 @@ export const buildFullQueryData = (queryItems: FlowQueryData[]): FlowParsedQuery
             data.segment.label = FlowSegments[queryData.segment]
         }
 
-        fullData.push(buildActiveFunctionList(data, queryData))
+        fullData.push(buildActiveFunctionList(data, queryData, templateSrv))
     }
     return fullData;
 }
@@ -226,13 +226,13 @@ export const toggleTableViewIfRelevant = (type: string) => {
  * @param queryData Our raw query data.
  * @returns An array of active functions, with their associated options/parameters if set.
  */
-const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQueryData) => {
+const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQueryData, templateSrv: any) => {
     let data: FlowParsedQueryRow = { ...oldData }
     let funcIndex = 0;
     if (queryData.functions) {
         try {
             for (let func of queryData.functions) {
-                data = parseActiveFunctionsAndValues(func, queryData, data, funcIndex);
+                data = parseActiveFunctionsAndValues(func, queryData, data, funcIndex, templateSrv);
                 funcIndex += 1;
             }
         } catch (e) {
@@ -540,14 +540,14 @@ const getTimeRange = (options: FlowQueryRequest<FlowQuery>) => {
  * @param index Which query row are we on
  * @returns A list of UI set functions and their associated values
  */
-const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number) => {
+const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number, templateSrv: any) => {
     const data = { ...oldData }
     let inputParams: string | undefined = '';
     if (func.label) {
         const fullFunction = FlowFunctions.get(func.label);
 
         if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
-            inputParams = queryData.functionParameters[index]
+            inputParams = templateSrv.replace(queryData.functionParameters[index]);
         } else if (fullFunction?.parameterOptions && queryData.parameterOptions) { //If there's an option set, get it.
             inputParams = queryData.parameterOptions[index].label
         }
@@ -841,11 +841,11 @@ const retrieveParametersFor = (templateQueryFunction: FlowTemplateVariableQueryS
             params.forEach((p, idx) => templateQueryFunction[HostsParams[idx].name] = p);
             break;
         case FlowTemplateVariablesStrings.exporterNodesWithFlows:
-            params = args;
-            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p);
+            params = [args];
+            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p) ;
             break;
         case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
-            params = args;
+            params = [args];
             params.forEach((p, idx) => templateQueryFunction[InterfacesOnExporterNodeWithFlowsParams[idx].name] = p);
             break;
         case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
@@ -860,7 +860,7 @@ const metricFindLocations = async ({ client, simpleRequest }) => {
     return await simpleRequest.getLocations();
 }
 
-const metricFindApplications = async ({ client, simpleRequest },  service: FlowTemplateVariableQueryService) => {
+const metricFindApplications = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
     return await simpleRequest.getApplications(service.start, service.end, getNumberOrDefault(service.limit, 0));
 }
 

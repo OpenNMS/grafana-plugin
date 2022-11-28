@@ -337,13 +337,13 @@ export const FlowTemplateVariablesStrings = {
 }
 
 export const FlowTemplateVariableFunctionExpression = [
-    { name: 'applications', expression: /applications\((.*)\)/ },
-    { name: 'conversations', expression: /conversations\((.*)\)/ },
-    { name: 'hosts', expression: /hosts\((.*)\)/ },
-    { name: 'locations', expression: /locations\((.*)\)/ },
-    { name: 'exporterNodesRegex', expression: /exporterNodesWithFlows\((.*)\)/ },
-    { name: 'interfacesOnExporterNodeRegex', expression: /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/ }, // just pick the first arg and ignore anything else
-    { name: 'dscpOnExporterNodeAndInterfaceRegex', expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/ }
+    { name: FlowTemplateVariablesStrings.applications, expression: /applications\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.conversations, expression: /conversations\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.hosts, expression: /hosts\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.locations, expression: /locations\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.exporterNodesWithFlows, expression: /exporterNodesWithFlows\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows, expression: /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/ }, // just pick the first arg and ignore anything else
+    { name: FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface, expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/ }
 ]
 
 export const ConversationParams = [
