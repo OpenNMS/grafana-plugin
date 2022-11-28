@@ -896,7 +896,7 @@ const metricFindDscpOnExporterNodeAndInterface = async ({ client, simpleRequest 
     return dscpSelectOptions(dscpValues);
 }
 
-const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?: any[], filterParam?: string): Promise<any> => {
+export const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?: any[], filterParam?: string): Promise<any> => {
 
     let results: any[] = [];
     const filtermap = getNodeFilterMap(filterParam);

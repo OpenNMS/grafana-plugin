@@ -14,7 +14,8 @@ describe("OpenNMS_Flow_Datasource", function () {
     partialQueryData,
     fullQueryData,
     dataFromOpenNMS,
-    dataFromOpenNMSWithNaN;
+    dataFromOpenNMSWithNaN,
+    exporterNodes;
 
   beforeEach(() => {
 
@@ -107,6 +108,24 @@ describe("OpenNMS_Flow_Datasource", function () {
         "NaN",
         [5]]
     } as OnmsFlowSeries;
+
+    exporterNodes = [
+      {
+        "text": "NYC-Cisco-ASR100-Core-Router",
+        "value": 1,
+        "expandable": true
+      },
+      {
+        "text": "NYC-Cisco-ASR100-Core-Router-MIMIC27-172.16.33.101",
+        "value": 23,
+        "expandable": true
+      },
+      {
+        "text": "LON-Juniper-T4000-Core-Router",
+        "value": 2,
+        "expandable": true
+      }
+    ]
 
   });
 
@@ -716,49 +735,53 @@ describe("OpenNMS_Flow_Datasource", function () {
       done();
     });
 
-    // it("Filter exporter nodes by location", function (done) {
-    //   flowDatasource.client.getNode = (nodeId: any) => { 
-    //     let location = "Default"
-    //     if(nodeId > 2 ){
-    //       location = "Unknown";
-    //     }
-    //     return Promise.resolve(
-    //     {
-    //       "id": 1,
-    //       "label": "localhost",
-    //       "labelSource": {},
-    //       "foreignSource": "selfmonitor",
-    //       "foreignId": "1",
-    //       "location": location,
-    //       "createTime": "",
-    //       "type": {},
-    //       "lastCapsdPoll": "",
-    //       "snmpInterfaces": [],
-    //       "ipInterfaces": [],
-    //       "categories": [],
-    //       "assets": {}
-    //   }); };
+    it("Filter exporter nodes by location", function (done) {
+      let simpleRequest = {};
+      let client = { 
+        getNode : (nodeId: any) => { 
+        let location = "Default"
+        if(nodeId > 2 ){
+          location = "Unknown";
+        }
+        return Promise.resolve(
+        {
+          "id": 1,
+          "label": "localhost",
+          "labelSource": {},
+          "foreignSource": "selfmonitor",
+          "foreignId": "1",
+          "location": location,
+          "createTime": "",
+          "type": {},
+          "lastCapsdPoll": "",
+          "snmpInterfaces": [],
+          "ipInterfaces": [],
+          "categories": [],
+          "assets": {}
+      }); 
+    }
+    };
 
-    //   let actualResponse = flowDatasource.getFilteredNodes(exporterNodes, "location='Default'");
-    //   let expectedResponse = [
-    //     {
-    //       "text": "NYC-Cisco-ASR100-Core-Router",
-    //       "value": 1,
-    //       "expandable": true
-    //     },
-    //     {
-    //       "text": "LON-Juniper-T4000-Core-Router",
-    //       "value": 2,
-    //       "expandable": true
-    //     }       
-    //   ];
-    //   actualResponse.then(response => { 
-    //       expect(response.length).toEqual(2);
-    //       expect(response).toEqual(expectedResponse); 
-    //     });
+      let actualResponse = helpers.getFilteredNodes({client, simpleRequest}, exporterNodes, "location='Default'");
+      let expectedResponse = [
+        {
+          "text": "NYC-Cisco-ASR100-Core-Router",
+          "value": 1,
+          "expandable": true
+        },
+        {
+          "text": "LON-Juniper-T4000-Core-Router",
+          "value": 2,
+          "expandable": true
+        }       
+      ];
+      actualResponse.then(response => { 
+          expect(response.length).toEqual(2);
+          expect(response).toEqual(expectedResponse); 
+        });
       
-    //   done();
-    // });
+      done();
+    });
 
   });
 });
