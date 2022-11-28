@@ -49,6 +49,10 @@ import _ from 'lodash';
  * @returns An object with all the query values, in easy to parse formats for later steps in the process.
  */
 export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
+
+    // convert the template variables into their selected values for each query.
+    queryItems.forEach(item => item.functionParameters = item.functionParameters.map(p => templateSrv.replace(p)));
+
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
 
@@ -65,7 +69,7 @@ export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any
             data.segment.label = FlowSegments[queryData.segment]
         }
 
-        fullData.push(buildActiveFunctionList(data, queryData, templateSrv))
+        fullData.push(buildActiveFunctionList(data, queryData))
     }
     return fullData;
 }
@@ -226,13 +230,13 @@ export const toggleTableViewIfRelevant = (type: string) => {
  * @param queryData Our raw query data.
  * @returns An array of active functions, with their associated options/parameters if set.
  */
-const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQueryData, templateSrv: any) => {
+const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQueryData) => {
     let data: FlowParsedQueryRow = { ...oldData }
     let funcIndex = 0;
     if (queryData.functions) {
         try {
             for (let func of queryData.functions) {
-                data = parseActiveFunctionsAndValues(func, queryData, data, funcIndex, templateSrv);
+                data = parseActiveFunctionsAndValues(func, queryData, data, funcIndex);
                 funcIndex += 1;
             }
         } catch (e) {
@@ -540,14 +544,14 @@ const getTimeRange = (options: FlowQueryRequest<FlowQuery>) => {
  * @param index Which query row are we on
  * @returns A list of UI set functions and their associated values
  */
-const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number, templateSrv: any) => {
+const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number) => {
     const data = { ...oldData }
     let inputParams: string | undefined = '';
     if (func.label) {
         const fullFunction = FlowFunctions.get(func.label);
 
         if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
-            inputParams = templateSrv.replace(queryData.functionParameters[index]);
+            inputParams = queryData.functionParameters[index];
         } else if (fullFunction?.parameterOptions && queryData.parameterOptions) { //If there's an option set, get it.
             inputParams = queryData.parameterOptions[index].label
         }
@@ -842,7 +846,7 @@ const retrieveParametersFor = (templateQueryFunction: FlowTemplateVariableQueryS
             break;
         case FlowTemplateVariablesStrings.exporterNodesWithFlows:
             params = [args];
-            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p) ;
+            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p);
             break;
         case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
             params = [args];
