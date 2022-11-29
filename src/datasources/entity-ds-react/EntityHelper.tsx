@@ -1,42 +1,149 @@
 import { API } from 'opennms'
 import { EntityTypes } from './constants'
-import { AlarmProperties, IpInterfaceProperties, MonitoredServiceProperties, NodeProperties, OutagesProperties, Properties, SearchOption, SNMPInterfaceProperties } from './types';
+import {
+    AlarmProperties,
+    IpInterfaceProperties,
+    MonitoredServiceProperties,
+    NodeProperties,
+    OnmsTableData,
+    OutagesProperties,
+    Properties,
+    SearchOption,
+    SNMPInterfaceProperties
+} from './types';
 import { ClientDelegate } from 'lib/client_delegate';
-import { queryNodes } from './queries/index';
-import { queryAlarms } from './queries/queryAlarms';
-import { queryIPInterfaces } from './queries/queryIPInterfaces';
-import { queryMonitoredServices } from './queries/queryMonitoredServices';
-import { queryOutages } from './queries/queryOutages';
-import { querySNMPInterfaces } from './queries/querySNMPInterfaces';
+import { FunctionFormatter } from '../../lib/function_formatter';
+import { SimpleOpenNMSRequest } from 'lib/utils';
+import {
+    getAlarmColumns,
+    getIPInterfaceColumns,
+    getMonitoredServicesColumns,
+    getNodeColumns,
+    getOutageColumns,
+    getSNMPInterfaceColumns,
+    queryAlarms,
+    queryIPInterfaces,
+    queryMonitoredServices,
+    queryNodes,
+    queryOutages,
+    querySNMPInterfaces,
+} from './queries/index';
 
-export const filterProperties = (entityName: string, fullProperties: API.SearchOptions[]): Properties => {
-    let filteredProperties: Properties = {};
+export const getColumns = (entityName: string) => {
     switch (entityName) {
         case EntityTypes.Alarms:
-            filteredProperties = filterAlarmProperties(fullProperties);
-            break;
+            return getAlarmColumns()
         case EntityTypes.Nodes:
-            filteredProperties = filterNodeProperties(fullProperties);
-            break;
+            return getNodeColumns()
         case EntityTypes.IPInterfaces:
-            filteredProperties = filterIPInterfaceProperties(fullProperties);
-            break;
+            return getIPInterfaceColumns()
         case EntityTypes.SNMPInterfaces:
-            filteredProperties = filterSNMPInterfaces(fullProperties);
-            break;
+            return getSNMPInterfaceColumns()
         case EntityTypes.MonitoredServices:
-            filteredProperties = filterMonitoredServiceProperties(fullProperties);
-            break;
+            return getMonitoredServicesColumns()
         case EntityTypes.Outages:
-            filteredProperties = filterOutagesProperties(fullProperties);
-            break;
+            return getOutageColumns()
+        default:
+            return []
     }
-    return filteredProperties;
 }
 
+export const getSearchProperties = (entityName: string, client: ClientDelegate): Promise<API.SearchProperty[]> => {
+    switch (entityName) {
+        case EntityTypes.Alarms:
+            return client.getAlarmProperties()
+        case EntityTypes.Nodes:
+            return client.getNodeProperties()
+        case EntityTypes.IPInterfaces:
+            return client.getIpInterfaceProperties()
+        case EntityTypes.SNMPInterfaces:
+            return client.getSnmpInterfaceProperties()
+        case EntityTypes.MonitoredServices:
+            return client.getMonitoredServiceProperties()
+        case EntityTypes.Outages:
+            return client.getOutageProperties()
+        default:
+            return Promise.resolve([] as API.SearchProperty[])
+    }
+}
+
+export const getPropertyComparators = (entityName: string, propertyId: string, client: ClientDelegate): Promise<API.Comparator[]> => {
+    switch (entityName) {
+        case EntityTypes.Alarms:
+            return client.getAlarmPropertyComparators(propertyId)
+        case EntityTypes.Nodes:
+            return client.getNodeProperties()
+        case EntityTypes.IPInterfaces:
+            return client.getIpInterfaceProperties()
+        case EntityTypes.SNMPInterfaces:
+            return client.getSnmpInterfaceProperties()
+        case EntityTypes.MonitoredServices:
+            return client.getMonitoredServiceProperties()
+        case EntityTypes.Outages:
+            return client.getOutageProperties()
+        default:
+            return Promise.resolve([] as API.SearchProperty[])
+    }
+}
+
+export const filterProperties = (entityName: string, fullProperties: API.SearchOptions[]): Properties => {
+    switch (entityName) {
+        case EntityTypes.Alarms:
+            return filterAlarmProperties(fullProperties);
+        case EntityTypes.Nodes:
+            return filterNodeProperties(fullProperties);
+        case EntityTypes.IPInterfaces:
+            return filterIPInterfaceProperties(fullProperties);
+        case EntityTypes.SNMPInterfaces:
+            return filterSNMPInterfaces(fullProperties);
+        case EntityTypes.MonitoredServices:
+            return filterMonitoredServiceProperties(fullProperties);
+        case EntityTypes.Outages:
+            return filterOutagesProperties(fullProperties);
+        default:
+            return {} as Properties;
+    }
+}
+
+export const getEntityTypeFromFuncName = (funcName: string) => {
+    // key is start of function name, this will also match e.g. 'outage()' and 'outages()'
+    const entityQueries = [
+        ['alarms', EntityTypes.Alarms],
+        ['ipInterface', EntityTypes.IPInterfaces],
+        ['monitoredService', EntityTypes.MonitoredServices],
+        ['nodes', EntityTypes.Nodes],
+        ['nodeFilter', EntityTypes.Nodes],
+        ['outage', EntityTypes.Outages],
+        ['snmpInterface', EntityTypes.SNMPInterfaces]
+    ]
+
+    if (funcName) {
+        const item = entityQueries.find(d => funcName.startsWith(d[0]))
+        if (item) {
+            return item[1]
+        }
+    }
+
+    return null
+}
+
+/**
+ * Given a query, parse out the function names and get the EntityTypes value for the first function.
+ */
+export const getQueryEntityType = (query) => {
+    const q = query && query.hasOwnProperty('query') ? query.query : query
+
+    if (!q || !q.trim()) {
+        // no query defined, assuming 'alarm' entity type
+        return EntityTypes.Alarms
+    }
+
+    let functionName = FunctionFormatter.findFunctions(q).filter(x => !!x && !!x.name).map(x => x.name)?.at(0)
+
+    return getEntityTypeFromFuncName(functionName)
+}
 
 const generateFilteredProperties = (fullProperties: SearchOption[], mappedItems: Record<string, string>) => {
-
     const filteredArray = fullProperties.filter((f) => {
         return !!mappedItems[f.id]
     })
@@ -50,7 +157,6 @@ const generateFilteredProperties = (fullProperties: SearchOption[], mappedItems:
 
     return filteredProperties as unknown
 }
-
 
 const filterAlarmProperties = (fullProperties: API.SearchOptions[]): AlarmProperties => {
     const mappedItems = {
@@ -72,18 +178,19 @@ const filterAlarmProperties = (fullProperties: API.SearchOptions[]): AlarmProper
         'lastEvent.severity.label': 'Last Event Severity',
         'troubleTicketState.label': 'Trouble Ticket State',
     }
+
     return generateFilteredProperties(fullProperties, mappedItems) as AlarmProperties;
 }
 
 const filterNodeProperties = (fullProperties: SearchOption[]): NodeProperties => {
-
     const mappedItems = {
         'category.name': 'category',
         'label': 'Label',
         'foreignSource': 'Foreign Source',
-        'foreignId': 'ForiegnId',
-        'craeteTime': 'Created Time',
+        'foreignId': 'ForeignId',
+        'createTime': 'Created Time',
     }
+
     return generateFilteredProperties(fullProperties, mappedItems) as NodeProperties;
 }
 
@@ -93,6 +200,7 @@ const filterIPInterfaceProperties = (fullProperties: SearchOption[]): IpInterfac
         'hostname': 'hostname',
         'snmpPrimary': 'snmpPrimary'
     }
+
     return generateFilteredProperties(fullProperties, mappedItems) as IpInterfaceProperties;
 };
 
@@ -103,6 +211,7 @@ const filterSNMPInterfaces = (fullProperties: SearchOption[]): SNMPInterfaceProp
         ifSpeed: 'ifSpeed',
         ifAlias: 'ifAlias',
     }
+
     return generateFilteredProperties(fullProperties, mappedItems) as SNMPInterfaceProperties;
 }
 
@@ -112,6 +221,7 @@ const filterMonitoredServiceProperties = (fullProperties: SearchOption[]): Monit
         type: 'type',
         statusId: 'statusId',
     }
+
     return generateFilteredProperties(fullProperties, mappedItems) as MonitoredServiceProperties;
 }
 
@@ -125,45 +235,40 @@ const filterOutagesProperties = (fullProperties: SearchOption[]): OutagesPropert
         ifRegainedService: 'ifRegainedService',
         perspective: 'perspective'
     }
-    return generateFilteredProperties(fullProperties, mappedItems) as OutagesProperties
+
+    return generateFilteredProperties(fullProperties, mappedItems) as OutagesProperties;
 }
 
-export const queryEntity = async (label: string | undefined, filter: API.Filter, client: ClientDelegate) => {
-    let queryResult;
+export const queryEntity = async (label: string | undefined, filter: API.Filter, client: ClientDelegate): Promise<OnmsTableData> => {
     switch (label) {
         case EntityTypes.Nodes:
-            queryResult = await queryNodes(client, filter);
-            break;
+            return queryNodes(client, filter);
         case EntityTypes.Alarms:
-            queryResult = await queryAlarms(client, filter);
-            break;
+            return queryAlarms(client, filter);
         case EntityTypes.IPInterfaces:
-            queryResult = await queryIPInterfaces(client, filter);
-            break;
+            return queryIPInterfaces(client, filter);
         case EntityTypes.MonitoredServices:
-            queryResult = await queryMonitoredServices(client, filter);
-            break;
+            return queryMonitoredServices(client, filter);
         case EntityTypes.SNMPInterfaces:
-            queryResult = await querySNMPInterfaces(client, filter);
-            break;
+            return querySNMPInterfaces(client, filter);
         case EntityTypes.Outages:
-            queryResult = await queryOutages(client, filter);
-            break;
+            return queryOutages(client, filter);
+        default:
+            return Promise.resolve({
+                name: '',
+                columns: [],
+                rows: [],
+                type: 'table',
+            } as OnmsTableData);
     }
-    return queryResult
 }
 
-export const queryProperties = async (queryWithNodeFilterWrapper: string, client: ClientDelegate) => {
-    const results: Array<{text: string,value: string}> = []
-    const query = queryWithNodeFilterWrapper.replace('nodes(','').replace(')','')
-    const nodeProps = await client.getNodeProperties();
-    const property = nodeProps.find((d) => d.id === query)
+export const isLocationQuery = (query: string) => {
+    return query && query.match(/locations\([^\)]*\)/i)
+}
 
-    if (property && property.values) {
-        for (const [key,value] of Object.entries(property.values)){
-            results.push({ text: value as string, value: key as string })
-        }
-    }   
+export const metricFindLocations = async (simpleRequest: SimpleOpenNMSRequest) => {
+    const results = await simpleRequest.getLocations();
     return results
 }
 
