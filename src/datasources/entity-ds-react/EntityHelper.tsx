@@ -5,6 +5,7 @@ import {
     IpInterfaceProperties,
     MonitoredServiceProperties,
     NodeProperties,
+    OnmsColumn,
     OnmsTableData,
     OutagesProperties,
     Properties,
@@ -29,7 +30,7 @@ import {
     querySNMPInterfaces,
 } from './queries/index';
 
-export const getColumns = (entityName: string) => {
+export const getColumns = (entityName: string): readonly OnmsColumn[] => {
     switch (entityName) {
         case EntityTypes.Alarms:
             return getAlarmColumns()
@@ -43,66 +44,90 @@ export const getColumns = (entityName: string) => {
             return getMonitoredServicesColumns()
         case EntityTypes.Outages:
             return getOutageColumns()
-        default:
-            return []
     }
+
+    return [] as OnmsColumn[]
 }
 
-export const getSearchProperties = (entityName: string, client: ClientDelegate): Promise<API.SearchProperty[]> => {
+export const getSearchProperties = async (entityName: string, client: ClientDelegate): Promise<API.SearchProperty[]> => {
+    let properties: API.SearchProperty[] = []
+
     switch (entityName) {
         case EntityTypes.Alarms:
-            return client.getAlarmProperties()
+            properties = await client.getAlarmProperties()
+            break
         case EntityTypes.Nodes:
-            return client.getNodeProperties()
+            properties = await client.getNodeProperties()
+            break
         case EntityTypes.IPInterfaces:
-            return client.getIpInterfaceProperties()
+            properties = await client.getIpInterfaceProperties()
+            break
         case EntityTypes.SNMPInterfaces:
-            return client.getSnmpInterfaceProperties()
+            properties = await client.getSnmpInterfaceProperties()
+            break
         case EntityTypes.MonitoredServices:
-            return client.getMonitoredServiceProperties()
+            properties = await client.getMonitoredServiceProperties()
+            break
         case EntityTypes.Outages:
-            return client.getOutageProperties()
-        default:
-            return Promise.resolve([] as API.SearchProperty[])
+            properties = await client.getOutageProperties()
+            break
     }
+
+    return properties
 }
 
-export const getPropertyComparators = (entityName: string, propertyId: string, client: ClientDelegate): Promise<API.Comparator[]> => {
+export const getPropertyComparators = async (entityName: string, propertyId: string, client: ClientDelegate): Promise<API.Comparator[]> => {
+    let comparators: API.Comparator[] = []
+
     switch (entityName) {
         case EntityTypes.Alarms:
-            return client.getAlarmPropertyComparators(propertyId)
+            comparators = await client.getAlarmPropertyComparators(propertyId)
+            break
         case EntityTypes.Nodes:
-            return client.getNodePropertyComparators(propertyId)
+            comparators = await client.getNodePropertyComparators(propertyId)
+            break
         case EntityTypes.IPInterfaces:
-            return client.getIpInterfacePropertyComparators(propertyId)
+            comparators = await client.getIpInterfacePropertyComparators(propertyId)
+            break
         case EntityTypes.SNMPInterfaces:
-            return client.getSnmpInterfacePropertyComparators(propertyId)
+            comparators = await client.getSnmpInterfacePropertyComparators(propertyId)
+            break
         case EntityTypes.MonitoredServices:
-            return client.getMonitoredServicePropertyComparators(propertyId)
+            comparators = await client.getMonitoredServicePropertyComparators(propertyId)
+            break
         case EntityTypes.Outages:
-            return client.getOutagePropertyComparators(propertyId)
-        default:
-            return Promise.resolve([] as API.Comparator[])
+            comparators = await client.getOutagePropertyComparators(propertyId)
+            break
     }
+
+    return comparators
 }
 
 export const filterProperties = (entityName: string, fullProperties: API.SearchOptions[]): Properties => {
+    let properties: Properties = {}
+
     switch (entityName) {
         case EntityTypes.Alarms:
-            return filterAlarmProperties(fullProperties);
+            properties = filterAlarmProperties(fullProperties);
+            break
         case EntityTypes.Nodes:
-            return filterNodeProperties(fullProperties);
+            properties = filterNodeProperties(fullProperties);
+            break
         case EntityTypes.IPInterfaces:
-            return filterIPInterfaceProperties(fullProperties);
+            properties = filterIPInterfaceProperties(fullProperties);
+            break
         case EntityTypes.SNMPInterfaces:
-            return filterSNMPInterfaces(fullProperties);
+            properties = filterSNMPInterfaces(fullProperties);
+            break
         case EntityTypes.MonitoredServices:
-            return filterMonitoredServiceProperties(fullProperties);
+            properties = filterMonitoredServiceProperties(fullProperties);
+            break
         case EntityTypes.Outages:
-            return filterOutagesProperties(fullProperties);
-        default:
-            return {} as Properties;
+            properties = filterOutagesProperties(fullProperties);
+            break
     }
+
+    return properties
 }
 
 export const getEntityTypeFromFuncName = (funcName: string) => {
@@ -240,27 +265,35 @@ const filterOutagesProperties = (fullProperties: SearchOption[]): OutagesPropert
 }
 
 export const queryEntity = async (label: string | undefined, filter: API.Filter, client: ClientDelegate): Promise<OnmsTableData> => {
+    let data: OnmsTableData = {
+        name: '',
+        columns: [],
+        rows: [],
+        type: 'table'
+    }    
+
     switch (label) {
         case EntityTypes.Nodes:
-            return queryNodes(client, filter);
+            data = await queryNodes(client, filter)
+            break
         case EntityTypes.Alarms:
-            return queryAlarms(client, filter);
+            data = await queryAlarms(client, filter)
+            break
         case EntityTypes.IPInterfaces:
-            return queryIPInterfaces(client, filter);
+            data = await queryIPInterfaces(client, filter)
+            break
         case EntityTypes.MonitoredServices:
-            return queryMonitoredServices(client, filter);
+            data = await queryMonitoredServices(client, filter)
+            break
         case EntityTypes.SNMPInterfaces:
-            return querySNMPInterfaces(client, filter);
+            data = await querySNMPInterfaces(client, filter)
+            break
         case EntityTypes.Outages:
-            return queryOutages(client, filter);
-        default:
-            return Promise.resolve({
-                name: '',
-                columns: [],
-                rows: [],
-                type: 'table',
-            } as OnmsTableData);
+            data = await queryOutages(client, filter)
+            break
     }
+
+    return data
 }
 
 export const isLocationQuery = (query: string) => {
@@ -276,4 +309,49 @@ export const getSmallerAPIFilter = () => {
     const b = new API.Filter()
     b.limit = 10;
     return b;
+}
+
+export const isMetricMetadataQuery = (queryType) => {
+    const metadataQueryTypes = ['attributes', 'comparators', 'operators']
+    return metadataQueryTypes.includes(queryType)
+}
+
+export const isSituationAttribute = (attribute) => {
+    const situations = ['isSituation', 'isInSituation', 'isAcknowledged']
+    return situations.includes(attribute)
+}
+
+export const getTemplateVariable = (templateSrv, name) => {
+    if (templateSrv.getVariables() && templateSrv.getVariables().length > 0) {
+        return templateSrv.getVariables().filter((v) => {
+            return v.name === name
+        })[0]
+    }
+    return undefined
+}
+
+/** Parse some relevant Helm function info out of an attribute or query. */
+export const parseFunctionInfo = (attribute: string) => {
+    let entityType = ''
+    let funcName = ''
+    let attr = attribute
+
+    const functions = FunctionFormatter.findFunctions(attribute)
+
+    for (const func of functions) {
+        funcName = func.name
+        attr = func.arguments[0] || 'id'
+        const e = getEntityTypeFromFuncName(func.name)
+
+        if (e) {
+            entityType = e
+            break
+        }
+    }
+
+    return {
+        entityType,
+        funcName,
+        attribute: attr
+    }
 }

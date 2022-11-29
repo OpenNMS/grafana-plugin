@@ -11,22 +11,30 @@ export const getAttributeMapping = (entityType: string, attribute: string): stri
 }
 
 const getAttributeMap = (entityType: string) => {
+    let mapping: any = {}
+
     switch (entityType) {
         case EntityTypes.Alarms:
-            return alarmAttributeMapping
+            mapping = alarmAttributeMapping
+            break
         case EntityTypes.Nodes:
-            return nodeAttributeMapping
+            mapping = nodeAttributeMapping
+            break
         case EntityTypes.IPInterfaces:
-            return ipInterfaceAttributeMapping
+            mapping = ipInterfaceAttributeMapping
+            break
         case EntityTypes.SNMPInterfaces:
-            return snmpInterfaceAttributeMapping
+            mapping = snmpInterfaceAttributeMapping
+            break
         case EntityTypes.MonitoredServices:
-            return monitoredServiceAttributeMapping
+            mapping = monitoredServiceAttributeMapping
+            break
         case EntityTypes.Outages:
-            return outageAttributeMapping
-        default:
-            return {}
+            mapping = outageAttributeMapping
+            break
     }
+
+    return mapping
 }
 
 const nodeAttributeMapping = {

@@ -307,7 +307,7 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getMonitoredServiceProperties(): Promise<any[]> {
+    getMonitoredServiceProperties(): Promise<API.SearchProperty[]> {
         return this.getMonitoredServiceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
@@ -355,7 +355,7 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getOutageProperties(): Promise<any[]> {
+    getOutageProperties(): Promise<API.SearchProperty[]> {
         return this.getOutageDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
