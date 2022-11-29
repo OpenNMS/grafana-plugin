@@ -35,7 +35,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     async stringPropertySearch(targets: PerformanceQuery[]){
         for (let i = 0; i < targets.length; i++){
             const nodeId = targets[i].performanceState.node?.id
-            const nodeResources = await this.simpleRequest.doOpenNMSRequest( {
+            await this.simpleRequest.doOpenNMSRequest( {
                 url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
                 method: 'GET'
               });
