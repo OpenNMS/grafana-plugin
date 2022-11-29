@@ -72,17 +72,17 @@ export const getPropertyComparators = (entityName: string, propertyId: string, c
         case EntityTypes.Alarms:
             return client.getAlarmPropertyComparators(propertyId)
         case EntityTypes.Nodes:
-            return client.getNodeProperties()
+            return client.getNodePropertyComparators(propertyId)
         case EntityTypes.IPInterfaces:
-            return client.getIpInterfaceProperties()
+            return client.getIpInterfacePropertyComparators(propertyId)
         case EntityTypes.SNMPInterfaces:
-            return client.getSnmpInterfaceProperties()
+            return client.getSnmpInterfacePropertyComparators(propertyId)
         case EntityTypes.MonitoredServices:
-            return client.getMonitoredServiceProperties()
+            return client.getMonitoredServicePropertyComparators(propertyId)
         case EntityTypes.Outages:
-            return client.getOutageProperties()
+            return client.getOutagePropertyComparators(propertyId)
         default:
-            return Promise.resolve([] as API.SearchProperty[])
+            return Promise.resolve([] as API.Comparator[])
     }
 }
 
