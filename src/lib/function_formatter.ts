@@ -30,6 +30,7 @@ export class FunctionFormatter {
      * Preprocess the parenthesized output so that format object arguments are parameterized
      */
     static parenthesizeWithArguments(label) {
+        try {
         const parenthesized = FunctionFormatter.parenthesize(label);
         return parenthesized.map(entry => {
             if (entry && entry.arguments) {
@@ -41,6 +42,9 @@ export class FunctionFormatter {
             }
             return entry;
         });
+        } catch (e) {
+            return []
+        }
     }
 
     /**

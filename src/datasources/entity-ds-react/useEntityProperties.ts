@@ -12,6 +12,7 @@ export const useEntityProperties = (entityName: string, client: ClientDelegate) 
 
     const loadProperties = async () => {
         let newProperties: API.SearchProperty[] = []
+
         switch (entityName) {
             case EntityTypes.Alarms:
                 newProperties = await client.getAlarmProperties();
@@ -33,6 +34,7 @@ export const useEntityProperties = (entityName: string, client: ClientDelegate) 
                 break;
         }
         let filteredProps = EntityHelper.filterProperties(entityName, newProperties);
+
         setProperties(() => filteredProps)
     }
 

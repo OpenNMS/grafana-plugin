@@ -163,13 +163,13 @@ export class ClientDelegate {
         .catch(this.decorateError);
     }
 
-    getNodeProperties(): Promise<any[]> {
+    getNodeProperties(): Promise<API.SearchProperty[]> {
         return this.getNodeDao()
             .then((nodeDao) => nodeDao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findNodeProperty(propertyId) {
+    findNodeProperty(propertyId): API.SearchProperty {
         return this.getNodeProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
@@ -211,13 +211,13 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getIpInterfaceProperties(): Promise<any[]> {
+    getIpInterfaceProperties(): Promise<API.SearchProperty[]> {
         return this.getIpInterfaceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findIpInterfaceProperty(propertyId) {
+    findIpInterfaceProperty(propertyId): API.SearchProperty {
         return this.getIpInterfaceProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
@@ -259,13 +259,13 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getSnmpInterfaceProperties(): Promise<any[]> {
+    getSnmpInterfaceProperties(): Promise<API.SearchProperty[]> {
         return this.getSnmpInterfaceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findSnmpInterfaceProperty(propertyId) {
+    findSnmpInterfaceProperty(propertyId): API.SearchProperty {
         return this.getSnmpInterfaceProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
