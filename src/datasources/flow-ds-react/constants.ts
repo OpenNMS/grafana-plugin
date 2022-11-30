@@ -87,7 +87,8 @@ export const withExporterNodeFunction: FlowFunction = {
         FlowSegments.Applications,
         FlowSegments.Conversations,
         FlowSegments.Hosts,
-    ]
+    ],
+    parameter: ""
 }
 
 export const topNFunction: FlowFunction = {
@@ -102,12 +103,6 @@ export const topNFunction: FlowFunction = {
         FlowSegments.Hosts,
     ],
     parameter: "10"
-}
-
-export const withConversationFunction: FlowFunction = {
-    excludeFunctions: [FlowFunctionNames.topN],
-    parentSegments: [FlowSegments.Conversations],
-    parameter: ''
 }
 
 export const withGroupByIntervalFunction: FlowFunction = {
@@ -127,10 +122,12 @@ export const withSuffixFunction: FlowFunction = {
     parameter: ''
 }
 
+export const toBitsFunction: FlowFunction = {}
+
 export const withDscpFunction: FlowFunction = {
     allowMultiple: true,
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-        return client.getDscpValues(false, undefined,start,end)
+        return client.getDscpValues(false, undefined, start, end)
     }
 }
 
@@ -138,21 +135,30 @@ export const withApplicationFunction: FlowFunction = {
     excludeFunctions: [FlowFunctionNames.topN],
     parentSegments: [FlowSegments.Applications],
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-        return client.getApplications(input,start,end,false,undefined,undefined);
+        return client.getApplications(input, start, end, false, undefined, undefined);
     }
+}
+
+export const withConversationFunction: FlowFunction = {
+    excludeFunctions: [FlowFunctionNames.topN],
+    parentSegments: [FlowSegments.Conversations],
+    parameter: ''
 }
 
 export const withHostFunction: FlowFunction = {
     excludeFunctions: [FlowFunctionNames.topN],
     parentSegments: [FlowSegments.Hosts],
     parameterOptions: async (input, client: ClientDelegate, start: number | undefined, end: number | undefined) => {
-      return client.getHosts(input, start,end,false,undefined,undefined);
+        return client.getHosts(input, start, end, false, undefined, undefined);
     }
 }
 
 export const tableSummaryDefault = {
     excludeFunctions: [FlowFunctionNames.asTableSummary]
 }
+
+export const swapIngressEgressFunction: FlowFunction =
+    { ...tableSummaryDefault }
 
 export const perSecondFunction: FlowFunction =
     { ...tableSummaryDefault }
@@ -196,9 +202,9 @@ export const FlowFunctions = new Map([
     [FlowFunctionNames[FlowFunctionNames.withHost], withHostFunction],
     [FlowFunctionNames[FlowFunctionNames.withConversation], withConversationFunction],
     [FlowFunctionNames[FlowFunctionNames.perSecond], perSecondFunction],
-    [FlowFunctionNames[FlowFunctionNames.toBits], {}],
+    [FlowFunctionNames[FlowFunctionNames.toBits], toBitsFunction],
     [FlowFunctionNames[FlowFunctionNames.nanToZero], nanToZeroFunction],
-    [FlowFunctionNames[FlowFunctionNames.swapIngressEgress], {}],
+    [FlowFunctionNames[FlowFunctionNames.swapIngressEgress], swapIngressEgressFunction],
     [FlowFunctionNames[FlowFunctionNames.negativeEgress], negativeEgressFunction],
     [FlowFunctionNames[FlowFunctionNames.asTableSummary], asTableSummaryFunction],
     [FlowFunctionNames[FlowFunctionNames.combineIngressEgress], combineIngressEgressFunction],
@@ -309,3 +315,70 @@ export const FlowStrings = {
     summaries,
     series
 }
+
+export enum FlowTemplateVariablesFunctions {
+    locations,
+    exporterNodesWithFlows,
+    interfacesOnExporterNodeWithFlows,
+    dscpOnExporterNodeAndInterface,
+    applications,
+    conversations,
+    hosts
+}
+
+export const FlowTemplateVariablesStrings = {
+    locations: 'locations',
+    exporterNodesWithFlows: 'exporterNodesWithFlows',
+    interfacesOnExporterNodeWithFlows: 'interfacesOnExporterNodeWithFlows',
+    dscpOnExporterNodeAndInterface: 'dscpOnExporterNodeAndInterface',
+    applications: 'applications',
+    conversations: 'conversations',
+    hosts: 'hosts'
+}
+
+export const FlowTemplateVariableFunctionExpression = [
+    { name: FlowTemplateVariablesStrings.applications, expression: /applications\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.conversations, expression: /conversations\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.hosts, expression: /hosts\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.locations, expression: /locations\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.exporterNodesWithFlows, expression: /exporterNodesWithFlows\((.*)\)/ },
+    { name: FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows, expression: /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/ }, // just pick the first arg and ignore anything else
+    { name: FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface, expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/ }
+]
+
+export const ConversationParams = [
+    { name: 'start' },
+    { name: 'end' },
+    { name: 'application' },
+    { name: 'location' },
+    { name: 'protocol' },
+    { name: 'limit' }
+]
+
+export const ApplicationsParams = [  
+    { name: 'start' },
+    { name: 'end' }, 
+    { name: 'limit' }
+]
+
+export const HostsParams = [  
+    { name: 'start' },
+    { name: 'end' }, 
+    { name: 'pattern' },
+    { name: 'limit' }
+]
+
+export const ExporterNodesParams = [      
+    { name: 'filter' }
+]
+
+export const InterfacesOnExporterNodeWithFlowsParams = [      
+    { name: 'nodeId' }
+]
+
+export const DscpOnExporterNodeAndInterfaceParams = [
+    { name: 'node'},
+    { name: 'iface'},
+    { name: 'start'},
+    { name: 'end'}
+]

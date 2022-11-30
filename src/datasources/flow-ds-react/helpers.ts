@@ -1,7 +1,15 @@
 import { rangeUtil, SelectableValue } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { dscpLabel } from '../../lib/tos_helper';
-
+import {
+    dscpLabel,
+    dscpSelectOptions
+} from '../../lib/tos_helper';
+import {
+    swapColumns,
+    getNodeFilterMap,
+    SimpleOpenNMSRequest,
+    getNumberOrDefault
+} from "lib/utils";
 import {
     defaultSegmentOptions,
     FlowFunctionNames,
@@ -11,7 +19,15 @@ import {
     FlowSegmentStrings,
     segmentFunctionMapping,
     segmentMapping,
-    FlowStrings
+    FlowStrings,
+    FlowTemplateVariableFunctionExpression,
+    FlowTemplateVariablesStrings,
+    ConversationParams,
+    ApplicationsParams,
+    HostsParams,
+    ExporterNodesParams,
+    InterfacesOnExporterNodeWithFlowsParams,
+    DscpOnExporterNodeAndInterfaceParams
 } from "./constants";
 
 import {
@@ -20,8 +36,11 @@ import {
     FlowQuery,
     FlowQueryData,
     FlowQueryRequest,
+    FlowTemplateVariableClientService,
+    FlowTemplateVariableQueryService,
     SegmentOption
 } from "./types";
+import _ from 'lodash';
 
 /**
  * Pieces together UI data into data appropriate to query the BE with.
@@ -29,7 +48,11 @@ import {
  * @param queryItems All of the queries
  * @returns An object with all the query values, in easy to parse formats for later steps in the process.
  */
-export const buildFullQueryData = (queryItems: FlowQueryData[]): FlowParsedQueryData => {
+export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
+
+    // convert the template variables into their selected values for each query.
+    queryItems.forEach(item => item.functionParameters = item.functionParameters.map(p => templateSrv.replace(p)));
+
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
 
@@ -273,7 +296,7 @@ const buildStepFromQuery = (query: FlowParsedQueryData, options: FlowQueryReques
         }
         return step;
     } catch (e) {
-        console.error('error building step from query',e);
+        console.error('error building step from query', e);
     }
 }
 
@@ -303,27 +326,86 @@ const buildTopNParams = (type: string, query: FlowParsedQueryRow, options: FlowQ
 
 /**
  * 
- * @param timestamps An array of timestamps
- * @param responeData Data returned directly from OpenNMS
- * @param nanToZero Should we convert NaN to Zero?
+ * @param colIdx current column to evalueate
+ * @param parsedData an object containing timestamps, columns and data
+ * @param params an object with param functions to be used in the conversion (nanToZero, multiplier and sign)
  * @returns Datapoints ready for Grafana
  */
-const convertTimeStampedDataToDataFrame = (timestamps: number[], colIdx: number, responseData: any, nanToZero: boolean) => {
-    return timestamps.map((timestamp, timestampIdx) => {
-        const v = Number(responseData.values[colIdx][timestampIdx]);
-        return [isNaN(v) ? nanToZero ? 0 : null : v, timestamp]
+const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, params: any) => {
+    return parsedData['timestamps'].map((timestamp, timestampIdx) => {
+        const v = Number(parsedData['values'][colIdx][timestampIdx]);
+        return [isNaN(v) ? params['nanToZero'] ? 0 : null : v * params['multiplier'] * params['sign'], timestamp]
     })
 }
 
 /**
  * 
  * @param headers Headers from RawData returned from OpenNMS (rawData.headers)
+ * @param query FlowParsedQueryRow used to identify additional conversions
  * @returns A data object ready to be used as column headers in a Grafana Table
  */
-const convertDataHeaderstoTableColumns = (headers: string[]) => {
+const convertDataHeaderstoTableColumns = (headers: string[], query: FlowParsedQueryRow) => {
     return headers ? headers.map((column) => {
+        const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
+        if (toBits) {
+            if (column.includes('Bytes In')) {
+                column = 'Bits In';
+            } else if (column.includes('Bytes Out')) {
+                column = 'Bits Out';
+            }
+        }
         return { "text": column }
     }) : [];
+}
+
+/**
+ * 
+ * @param rows rows from RawData to convert
+ * @param headers headers to from RawData to identify row-column position
+ * @param query FlowParsedQueryRow used to identify additional conversions
+ * @returns array of converted rows
+ */
+const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowParsedQueryRow) => {
+
+    const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
+    const swapIngressEgress = isFunctionSet(query, FlowFunctionStrings.swapIngressEgress);
+    const inIndex = headers.indexOf('Bytes In');
+    const outIndex = headers.indexOf('Bytes Out');
+    const ecnIndex = headers.lastIndexOf('ECN');
+
+    rows.map((row) => {
+
+        row[0] = convertLabel(row[0], null, query);
+
+        if (ecnIndex > 0) {
+            let label;
+            switch (row[ecnIndex]) {
+                // all flows used ecn capable transports / no congestions were reported
+                case 0: label = 'ect / no ce'; break;
+                // at least some flows used non-ecn-capable transports / no congestions were reported
+                case 1: label = 'non-ect / no ce'; break;
+                // all flows used ecn capable transports / congestions were reported
+                case 2: label = 'ect / ce'; break;
+                // at least some flows used non-ecn-capable transports / congestions were reported
+                case 3: label = 'non-ect / ce'; break;
+            }
+            if (label) {
+                row[ecnIndex] = label;
+            }
+        }
+
+        if (toBits) {
+            row[inIndex] *= 8;
+            row[outIndex] *= 8;
+        }
+        return row;
+    });
+
+    if (swapIngressEgress && Array.isArray(rows) && rows.length > 0) {
+        rows = swapColumns(rows, inIndex, outIndex);
+    }
+
+    return rows;
 }
 
 /**
@@ -393,7 +475,7 @@ const getFunctionParameters = (query: FlowParsedQueryRow, functionName: string, 
  * @param name the name of the function we want the value for
  * @returns The value for the specified row and function.
  */
-const getFunctionValue = (query: FlowParsedQueryRow, name: string): string | undefined => {
+export const getFunctionValue = (query: FlowParsedQueryRow, name: string): string | undefined => {
     return query.queryFunctions.find((d) => d[name])?.[name];
 }
 
@@ -417,7 +499,7 @@ const getInRangeTimestamps = (timestamps: number[], start: number, end: number) 
  * @returns Our data response multiplier if we want one set.
  */
 const getMultiplier = (queryData: FlowParsedQueryRow, timestamps: number[]) => {
-    const step = timestamps[1] - timestamps[0]
+    const step = timestamps[1] - timestamps[0];
     let multiplier = 1;
     if (isFunctionSet(queryData, FlowFunctionStrings.perSecond)) {
         multiplier /= step / 1000;
@@ -468,8 +550,8 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
     if (func.label) {
         const fullFunction = FlowFunctions.get(func.label);
 
-        if (fullFunction?.parameter && queryData.functionParameters) { //If there's a parameter, get it.
-            inputParams = queryData.functionParameters[index]
+        if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
+            inputParams = queryData.functionParameters[index];
         } else if (fullFunction?.parameterOptions && queryData.parameterOptions) { //If there's an option set, get it.
             inputParams = queryData.parameterOptions[index].label
         }
@@ -487,7 +569,7 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
  * @param dataFromOpenNMS The data returned by OpenNMS by our query
  * @returns Based on the provided type (summary or series) transform the OpenNMS data into Grafana Data Frames
  */
-const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: any) => {
+export const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: any) => {
     return type === 'series' ? processRawSeriesData(query, options, dataFromOpenNMS) : processRawSummaryData(query, options, dataFromOpenNMS)
 }
 
@@ -516,19 +598,22 @@ const convertLabel = (label: string, column: any, queryRow: FlowParsedQueryRow) 
         convertedLabel = dscpLabel(label);
     }
 
-    if (column && column.ingress) {
-        convertedLabel += ' (In)'
-    } else if (column && !column.ingress) {
-        convertedLabel += ' (Out)'
+    const combineIngressEgress = isFunctionSet(queryRow, FlowFunctionStrings.combineIngressEgress);
+    if (!combineIngressEgress) {
+        if (column && column.ingress) {
+            convertedLabel += ' (In)'
+        } else if (column && !column.ingress) {
+            convertedLabel += ' (Out)'
+        }
     }
     const prefixValue = getFunctionValue(queryRow, FlowFunctionStrings.withPrefix);
     const suffixValue = getFunctionValue(queryRow, FlowFunctionStrings.withSuffix);
 
     if (prefixValue) {
-        convertedLabel = prefixValue + label;
+        convertedLabel = prefixValue + convertedLabel;
     }
     if (suffixValue) {
-        convertedLabel = label + suffixValue;
+        convertedLabel = convertedLabel + suffixValue;
     }
 
     return convertedLabel;
@@ -553,34 +638,42 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
 
     const nanToZero = isFunctionSet(queryData, FlowFunctionStrings.nanToZero);
     const timestampsInRange = getInRangeTimestamps(data.timestamps, start, end);
+    const columnsWithIndex: any[] = data.columns.map((column, colIdx) => { return { column, colIdx } });
+    const parsedData = { timestamps: timestampsInRange, columns: columnsWithIndex, values: data.values };
 
-    const multiplier = getMultiplier(queryData, responseData.timestamps)
+    const multiplier = getMultiplier(queryData, data.timestamps)
     const combineIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.combineIngressEgress);
+    const onlyIngress = isFunctionSet(queryData, FlowFunctionStrings.onlyIngress);
+    const onlyEgress = isFunctionSet(queryData, FlowFunctionStrings.onlyEgress);
+    const negativeIngress = isFunctionSet(queryData, FlowFunctionStrings.negativeIngress);
+    const negativeEgress = isFunctionSet(queryData, FlowFunctionStrings.negativeEgress);
+    const functionsParam = { nanToZero: nanToZero, multiplier: multiplier };
 
-    let processedData = responseData.columns.map((column, colIdx) => {
-        const datapoints = convertTimeStampedDataToDataFrame(timestampsInRange, colIdx, responseData, !!nanToZero);
-        return {
-            target: convertLabel(column.label, column, queryData),
-            datapoints
-        }
-    })
-
-    if (combineIngressEgress) {
-        const uniqueColumns = [...new Set(responseData.columns.map(col => col.label))]
-        processedData = uniqueColumns.map((uniqueColumn) => {
-            const datapoints = timestampsInRange.map((timestamp, tindex) => {
-                const sum = responseData.columns.filter((col) => col.label === uniqueColumn).map((_, columnIndex) => {
-                    const v = responseData.values[columnIndex][tindex];
-                    return isNaN(Number(v) && nanToZero ? 0 : v)
-                }).reduce((prv, cur) => prv + (cur ? cur : 0), 0)
-                return [sum * multiplier, timestamp]
-            })
-            const columnIndexb = responseData.columns.findIndex((d) => d.label === uniqueColumn);
+    let processedData = columnsWithIndex
+        .filter(({ column }) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
+        .map(({ column, colIdx }) => {
+            const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
+            const datapoints = convertTimeStampedDataToDataFrame(colIdx, parsedData, { ...functionsParam, sign: sign });
             return {
-                target: convertLabel(uniqueColumn as string, responseData.columns[columnIndexb], queryData),
+                target: convertLabel(column.label, column, queryData),
                 datapoints
             }
         })
+
+    if (combineIngressEgress) {
+        const uniqueColumns = [...new Set(data.columns.map(col => col.label))]
+
+
+        processedData = uniqueColumns
+            .map((uniqueColumn) => {
+
+                const datapoints = sumValuesGroupedByColumn(uniqueColumn, parsedData, functionsParam);
+                const columnIndexb = data.columns.findIndex((d) => d.label === uniqueColumn);
+                return {
+                    target: convertLabel(uniqueColumn as string, data.columns[columnIndexb], queryData),
+                    datapoints
+                }
+            })
     }
 
     return processedData
@@ -598,12 +691,13 @@ const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequ
         throw new Error('table response did not contain all necessary information')
     }
 
-    const columns = convertDataHeaderstoTableColumns(rawData.headers);
+    const columns = convertDataHeaderstoTableColumns(rawData.headers, query);
+    const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, query);
 
     return [{
         refId: query.refId,
         columns,
-        rows: rawData.rows,
+        rows: rows,
         type: 'table'
     }]
 }
@@ -627,7 +721,8 @@ const queryOpenNMSClientWithFunctionAndParams = async (functionName, parameters,
  */
 const shouldWeSwapIngressAndEgress = (inData: any, queryData: FlowParsedQueryRow) => {
     const outData = { ...inData };
-    if (!!getFunctionValue(queryData, FlowFunctionStrings.swapIngressEgress)) {
+    const swapIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.swapIngressEgress);
+    if (!!swapIngressEgress) {
         outData.columns = outData.columns.map((col) => {
             col.ingress = !col.ingress;
             return col;
@@ -635,3 +730,203 @@ const shouldWeSwapIngressAndEgress = (inData: any, queryData: FlowParsedQueryRow
     }
     return outData;
 }
+
+/**
+ * 
+ * @param groupByColumn current column name
+ * @param parsedData object with timestamps, columns and data values
+ * @param params functions selected by the user if any (nanToZero, multiplier)
+ * @returns 
+ */
+const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: any) => {
+
+    return parsedData['timestamps']
+        .map((timestamp, tindex) => {
+            const sum = parsedData['columns']
+                // determine the indexes of those columns that have the same label as the current column
+                .filter(({ column }) => column.label === groupByColumn)
+                // get the values of those columns ...
+                .map(({ colIdx }) => {
+                    const v = parsedData['values'][colIdx][tindex];
+                    return isNaN(Number(v)) && params['nanToZero'] ? 0 : v
+                })
+                // ... and sum them up
+                .reduce((prv, cur) => prv + (cur ? cur : 0), 0)
+            return [sum * params['multiplier'], timestamp]
+        })
+}
+
+export const queryTemplateVariable = async (query: string, templateSrv: any, client: ClientDelegate, simpleRequest: SimpleOpenNMSRequest) => {
+
+
+    const clients: FlowTemplateVariableClientService = { client, simpleRequest };
+    const templateVariableQuery: FlowTemplateVariableQueryService = getTemplateVariableQuery(query, templateSrv);
+    if (!templateVariableQuery.function || !templateVariableQuery.function.name) {
+        return Promise.resolve([]);
+    }
+    return await getTemplateVariableResultsFor(templateVariableQuery, clients);
+
+}
+const getTemplateVariableQuery = (query: string, templateSrv: any) => {
+    return {
+        function: getTemplateVariableFunction(templateSrv.replace(query)),
+        start: templateSrv.timeRange.from.valueOf(),
+        end: templateSrv.timeRange.to.valueOf()
+    }
+}
+
+const getTemplateVariableFunction = (query: string) => {
+    return FlowTemplateVariableFunctionExpression
+        .map(({ name, expression }) => ({ name: name, result: query.match(expression) }))
+        .find(({ name, result }) => result) ?? {};
+}
+
+const getTemplateVariableResultsFor = async (templateQueryFunction: FlowTemplateVariableQueryService,
+    clients: FlowTemplateVariableClientService) => {
+    const queryName = templateQueryFunction.function.name ?? '';
+    templateQueryFunction = retrieveParametersFor(templateQueryFunction);
+
+    switch (queryName) {
+        case FlowTemplateVariablesStrings.locations:
+            return await metricFindLocations(clients);
+        case FlowTemplateVariablesStrings.applications:
+            return await metricFindApplications(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.conversations:
+            return await metricFindConversations(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.hosts:
+            return await metricFindHosts(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.exporterNodesWithFlows:
+            return await metricFindExporterNodes(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
+            return await metricFindInterfacesOnExporterNode(clients, templateQueryFunction);
+        case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
+            return await metricFindDscpOnExporterNodeAndInterface(clients, templateQueryFunction);
+        default: return Promise.resolve([]);
+    }
+}
+
+const retrieveParametersFor = (templateQueryFunction: FlowTemplateVariableQueryService) => {
+    const queryResult = templateQueryFunction.function.result ?? '';
+    const queryName = templateQueryFunction.function.name ?? '';
+
+    let args = queryResult.length > 1 ? queryResult[1] : null;
+    //params need to be added in order
+    let params: any[] = [templateQueryFunction.start, templateQueryFunction.end];
+
+    switch (queryName) {
+        case FlowTemplateVariablesStrings.applications:
+            params.push(getNumberOrDefault(args, 0));
+            params.forEach((p, idx) => templateQueryFunction[ApplicationsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.conversations:
+            if (args) {
+                args = args.split(',').map(v => v.trim());
+                if (args.length === 4 || _.every(args, s => isNaN(parseInt(s, 10)))) {
+                    params.push(args);
+                } else if (args.length === 1) {
+                    params.push([null, null, null, getNumberOrDefault(args[0], 0)]);
+                } else if (args.length === 2) {
+                    params.push([args[0], null, null, getNumberOrDefault(args[1], 0)]);
+                } else if (args.length === 3) {
+                    params.push([args[0], args[1], null, getNumberOrDefault(args[2], 0)]);
+                }
+            }
+            params.forEach((p, idx) => templateQueryFunction[ConversationParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.hosts:
+            if (args) {
+                args = args.split(',').map(v => v.trim());
+                if (args.length === 2 || _.every(args, s => isNaN(parseInt(s, 10)))) {
+                    params.push(args);
+                } else if (args.length === 1) {
+                    params.push([null, ...args]);
+                }
+            }
+            params.forEach((p, idx) => templateQueryFunction[HostsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.exporterNodesWithFlows:
+            params = [args];
+            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
+            params = [args];
+            params.forEach((p, idx) => templateQueryFunction[InterfacesOnExporterNodeWithFlowsParams[idx].name] = p);
+            break;
+        case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
+            params = queryResult.slice(1, 4);
+            params.forEach((p, idx) => templateQueryFunction[DscpOnExporterNodeAndInterfaceParams[idx].name] = p);
+            break
+    }
+    return templateQueryFunction;
+}
+
+const metricFindLocations = async ({ client, simpleRequest }) => {
+    return await simpleRequest.getLocations();
+}
+
+const metricFindApplications = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getApplications(service.start, service.end, getNumberOrDefault(service.limit, 0));
+}
+
+const metricFindHosts = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getHosts(service.start, service.end, service.pattern, getNumberOrDefault(service.limit, 0));
+}
+
+const metricFindConversations = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    return await simpleRequest.getConversations(service.start, service.end, service.application, service.location, service.protocol, service.limit);
+}
+
+const metricFindExporterNodes = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    const exporters = await client.getExporters();
+    let results = [] as any[];
+    exporters.forEach((exporter) => {
+        results.push({ text: exporter.label, value: exporter.id, expandable: true });
+    });
+    return await getFilteredNodes({ client, simpleRequest }, results, service.nodeFilter);
+}
+
+const metricFindInterfacesOnExporterNode = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    const node = await simpleRequest.getNodeByIdOrFsFsId(service.nodeId);
+    const exporter = await client.getExporter(node.id);
+    let results = [] as any[];
+    exporter.interfaces.forEach(iff => {
+        results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
+    });
+    return results;
+}
+
+const metricFindDscpOnExporterNodeAndInterface = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
+    let dscpValues = await client.getDscpValues(service.nodeCriteria, service.iface, service.start, service.end);
+    return dscpSelectOptions(dscpValues);
+}
+
+export const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?: any[], filterParam?: string): Promise<any> => {
+
+    let results: any[] = [];
+    const filtermap = getNodeFilterMap(filterParam);
+    if (filtermap.size === 0) {
+        return await Promise.resolve(exporterNodes);
+    }
+    if (exporterNodes) {
+        for (const exportedNode of exporterNodes) {
+            let matchAll = true;
+            for (const pair of filtermap) {
+                const node = await client.getNode(exportedNode.value);
+                let nodePropertyValue = node[pair[0]];
+                const regex = new RegExp(pair[1]);
+                if (!regex.test(nodePropertyValue)) {
+                    matchAll = false;
+                    break;
+                }
+            }
+            if (matchAll) {
+                results.push(exportedNode);
+            }
+        }
+        return results.filter(result => result);
+    }
+    else {
+        return await Promise.resolve(exporterNodes);
+    }
+}
+
