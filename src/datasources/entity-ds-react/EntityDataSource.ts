@@ -2,7 +2,6 @@ import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResu
 import { getTemplateSrv } from '@grafana/runtime';
 import { EntityTypes } from "./constants";
 import { ClientDelegate } from "lib/client_delegate";
-import { FunctionFormatter } from "lib/function_formatter";
 import { SimpleOpenNMSRequest, getNodeFilterMap } from "lib/utils";
 import { API, Model } from "opennms";
 import { getAttributeMapping } from "./queries/attributeMappings";
@@ -12,8 +11,12 @@ import {
     getPropertyComparators,
     getQueryEntityType,
     getSearchProperties,
+    getTemplateVariable,
     isLocationQuery,
+    isMetricMetadataQuery,
+    isSituationAttribute,
     metricFindLocations,
+    parseFunctionInfo,
     queryEntity
 } from "./EntityHelper";
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from "./types";
@@ -96,16 +99,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         // this may be an attribute, a mapped attribute, or just the original query
         let attribute = getAttributeMapping(entityType, query)
 
-        if (this._isMetricMetadataQuery(options.queryType)) {
-            return this._handleMetricMetadataQuery(entityType, options.queryType, attribute, options.strategy)
+        if (isMetricMetadataQuery(options.queryType)) {
+            return this.handleMetricMetadataQuery(entityType, options.queryType, attribute, options.strategy)
         }
 
         if (!attribute) {
             console.warn('entity-ds-react: metricFindQuery: no attribute specified')
-            return Promise.resolve([])
+            return []
         }
 
-        const info = this._parseFunctionInfo(attribute)
+        const info = parseFunctionInfo(attribute)
         entityType = info.entityType || entityType
         attribute = info.attribute
 
@@ -113,26 +116,29 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             return this.metricFindNodeFilterQuery(entityType, attribute)
         }
 
-        if (this._attributeIsSituation(attribute)) {
-            return Promise.resolve([{ id: 'false', label: 'false', text: 'false'}, {id: 'true', label: 'true', text: 'true'}])
+        if (isSituationAttribute(attribute)) {
+            return [
+                { id: 'false', label: 'false', text: 'false'},
+                { id: 'true', label: 'true', text: 'true' }
+            ]
         }
 
         const searchProperties: API.SearchProperty[] = await getSearchProperties(entityType, this.client)
         const searchProperty: API.SearchProperty = searchProperties.filter(p => p.id === attribute)?.at(0)
 
         if (!searchProperty) {
-            return Promise.resolve([])
+            return []
         }
 
         // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
         // used, but that may not be ideal for the user
         if (searchProperty.id === 'severity') {
-            return Promise.resolve(Model.Severities.map(severity => {
+            return Model.Severities.map(severity => {
                 return {
                     id: severity.id,
                     label: severity.label
                 }
-            }))
+            })
         }
 
         const propertyValues = await searchProperty.findValues({limit: 0})
@@ -165,7 +171,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
             if (propertyValue.startsWith('$')) {
                 const variableName = this.templateSrv.getVariableName(propertyValue)
-                const templateVariable = this._getTemplateVariable(variableName)
+                const templateVariable = getTemplateVariable(this.templateSrv, variableName)
 
                 if (templateVariable && templateVariable.current.value) {
                     filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value))
@@ -183,68 +189,22 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         })
     }
 
-    private _isMetricMetadataQuery(queryType) {
-        const metadataQueryTypes = ['attributes', 'comparators', 'operators']
-
-        return metadataQueryTypes.includes(queryType)
-    }
-
-    private _getTemplateVariable(name) {
-        if (this.templateSrv.variables && this.templateSrv.variables.length > 0) {
-            return this.templateSrv.variables.filter((v) => {
-                return v.name === name
-            })[0]
-        }
-        return undefined
-    }
-
-    private async _handleMetricMetadataQuery(entityType: string, queryType: string, attribute: string, strategy?: string) {
+    async handleMetricMetadataQuery(entityType: string, queryType: string, attribute: string, strategy?: string) {
         // special case queries to fill in metadata
         if (queryType === 'attributes') {
             if (strategy && strategy === 'featured') {
-                return Promise.resolve(getColumns(entityType).filter(col => col.featured).map(col => {
+                return getColumns(entityType).filter(col => col.featured).map(col => {
                     return { id: col.resource, value: col.text }
-                }))
+                })
             }
             // assume all
-            return getSearchProperties(entityType, this.client)
+            return await getSearchProperties(entityType, this.client)
         } else if (queryType === 'comparators') {
-            return getPropertyComparators(entityType, attribute, this.client)
+            return await getPropertyComparators(entityType, attribute, this.client)
         } else if (queryType === 'operators') {
-            return this.client.findOperators()
+            return await this.client.findOperators()
         }
 
-        return Promise.resolve([])
-    }
-
-    private _parseFunctionInfo(attribute: string) {
-        let entityType = ''
-        let funcName = ''
-        let attr = attribute
-
-        const functions = FunctionFormatter.findFunctions(attribute)
-
-        for (const func of functions) {
-            funcName = func.name
-            attr = func.arguments[0] || 'id'
-            const e = getEntityTypeFromFuncName(func.name)
-
-            if (e) {
-                entityType = e
-                break
-            }
-        }
-
-        return {
-            entityType,
-            funcName,
-            attribute: attr
-        }
-    }
-
-    private _attributeIsSituation(attribute) {
-        return attribute === 'isSituation' ||
-            attribute === 'isInSituation' ||
-            attribute === 'isAcknowledged'
+        return []
     }
 }
