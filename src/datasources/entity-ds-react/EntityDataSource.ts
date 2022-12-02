@@ -1,10 +1,6 @@
-import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from "@grafana/data";
-import { getTemplateSrv } from '@grafana/runtime';
-import { EntityTypes } from "./constants";
-import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest, getNodeFilterMap } from "lib/utils";
-import { API, Model } from "opennms";
-import { getAttributeMapping } from "./queries/attributeMappings";
+import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
+import { API, Model } from 'opennms'
+import { EntityTypes } from './constants'
 import {
     getColumns,
     getEntityTypeFromFuncName,
@@ -18,11 +14,15 @@ import {
     metricFindLocations,
     parseFunctionInfo,
     queryEntity
-} from "./EntityHelper";
-import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from "./types";
+} from './EntityHelper'
+import { ClientDelegate } from 'lib/client_delegate'
+import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
+import { getAttributeMapping } from './queries/attributeMappings'
+import { buildQueryFilter } from './queries/queryBuilder'
+import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
-    entity_metadata: any[];
+    entity_metadata: any[]
 }
 
 export class EntityDataSource extends DataSourceApi<EntityQuery> {
@@ -39,54 +39,23 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         this.name = instanceSettings.name;
         this.client = new ClientDelegate(instanceSettings, backendSrv);
         this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
-    };
-
-    addVariablesToFilter(filter: API.Filter): API.Filter {
-        const templateVariables = getTemplateSrv().getVariables();
-
-        const nodeVariable: any = templateVariables.find((d: any) => d.query.startsWith('nodes('));
-        let localFilter = new API.Filter();
-
-        filter.clauses?.forEach((existingFilter: API.Filter) => {
-            if (existingFilter.operator.label === 'AND') {
-                localFilter.withAndRestriction(new API.Restriction(existingFilter.restriction.attribute, existingFilter.restriction.comparator))
-            }
-        })
-
-        if (nodeVariable) {
-            // get the query attribute, this is the restriction key
-            const match = nodeVariable.query.match(/^nodes\((\w+)\)/)
-
-            const matchValue = match ? match[1] : ''
-            const restrictionKey = getAttributeMapping(EntityTypes.Nodes, matchValue)
-            localFilter.withAndRestriction(new API.Restriction(restrictionKey, API.Comparators.EQ, nodeVariable.current.value))
-        }
-
-        templateVariables.filter((d: any) => !d.query.startsWith('node')).forEach((key: any, value) => {
-            if (key.query.startsWith('locations')) {
-                if (key.current.text) {
-                    const locationKey = getAttributeMapping(EntityTypes.Nodes, 'location')
-                    localFilter.withAndRestriction(new API.Restriction(locationKey, API.Comparators.EQ, key.current.value))
-                }
-            }
-        })
-
-        return localFilter;
     }
 
-    async query(options: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
-        const fullData: OnmsTableData[] = [];
+    async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
+        const fullData: OnmsTableData[] = []
 
-        for (let target of options.targets) {
-            const filter = this.addVariablesToFilter(target?.filter || new API.Filter());
+        for (let target of request.targets) {
+            const entityType = target?.selectType?.label || EntityTypes.Alarms
+            const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 
             try {
-                const rowData = await queryEntity(target?.selectType?.label, filter, this.client);
-                fullData.push(rowData);
+                const rowData = await queryEntity(entityType, filter, this.client)
+                fullData.push(rowData)
             } catch (e) {
-                console.error(e);
+                console.error(e)
             }
         }
+
         return { data: fullData }
     }
 
