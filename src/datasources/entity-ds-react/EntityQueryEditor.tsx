@@ -20,7 +20,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     const [limit, setLimit] = useState(100);
     const [featuredAttributes, setFeaturedAttributes] = useState(true);
 
-    const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', client);
+    const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', featuredAttributes, client);
 
     useEffect(() => {
         if (propertiesLoading) {
@@ -122,7 +122,9 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         <InlineFieldRow>
             <InlineField label='Featured attributes'>
                 <div style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
-                    <Switch value={featuredAttributes} onChange={(b) => setFeaturedAttributes(!!b.currentTarget.value)} />
+                    <Switch
+                        value={featuredAttributes}
+                        onChange={() => setFeaturedAttributes(!featuredAttributes)} />
                 </div>
             </InlineField>
         </InlineFieldRow>
