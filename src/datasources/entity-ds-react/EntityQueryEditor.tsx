@@ -46,6 +46,14 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         onRunQuery();
     }
 
+    const updateLimit = (newLimit) => {
+        setLimit(newLimit)
+        setFilter({
+            ...filter,
+            limit: newLimit
+        })
+    }
+
     const addOrderBy = () => {
         //TODO: This logic.
     }
@@ -115,7 +123,13 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         <div className='spacer' />
         <InlineFieldRow>
             <InlineField label='Limit'>
-                <Input className='max-input' type='number' value={limit} onChange={(b) => setLimit(Number(b.currentTarget.value))} />
+                <Input className='max-input' type='number' value={limit}
+                    onChange={(b) => {
+                        const elem = (b.target as HTMLInputElement)
+                        if (elem) {
+                            updateLimit(Number(elem.value))
+                        }
+                    }} />
             </InlineField>
         </InlineFieldRow>
         <div className='spacer' />
