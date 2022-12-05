@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import { Segment, SegmentSection, Spinner, Button, InlineField, InlineFieldRow, Input, Switch } from '@grafana/ui'
+import {
+    InlineField,
+    InlineFieldRow,
+    Input,
+    Segment,
+    SegmentSection,
+    Spinner,
+    Switch,
+} from '@grafana/ui'
 import { SelectableValue } from '@grafana/data';
 
 import { useEntityProperties } from './useEntityProperties';
 import { EntityClauseEditor } from './EntityClauseEditor';
-import { defaultClause, defaultOrder } from './constants';
+import { EntityOrderByEditor } from './EntityOrderByEditor';
+import { defaultClause } from './constants';
 import { EntityQueryEditorProps } from './types';
 import { getSmallerAPIFilter } from './EntityHelper';
-
 
 export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
 
     const client = datasource.client;
-    const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' });
+    const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' })
     const [clauses, setClauses] = useState<any>(query.clauses || [{ ...defaultClause }])
-    const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState(query.filter || getSmallerAPIFilter());
-    const [orderedValue, setOrderedValue] = useState<SelectableValue<string>>(defaultOrder);
-    const [limit, setLimit] = useState(100);
-    const [featuredAttributes, setFeaturedAttributes] = useState(true);
-
-    const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', featuredAttributes, client);
+    const [loading, setLoading] = useState(false)
+    const [filter, setFilter] = useState(query.filter || getSmallerAPIFilter())
+    const [limit, setLimit] = useState(query.filter.limit || 99)
+    const [featuredAttributes, setFeaturedAttributes] = useState(true)
+    const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', featuredAttributes, client)
 
     useEffect(() => {
         if (propertiesLoading) {
@@ -33,7 +39,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     useEffect(() => {
         updateQuery()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, clauses, value]);
+    }, [filter, clauses, value])
 
     const updateQuery = () => {
         onChange({
@@ -43,7 +49,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
             clauses
         })
 
-        onRunQuery();
+        onRunQuery()
     }
 
     const updateLimit = (newLimit) => {
@@ -54,13 +60,10 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         })
     }
 
-    const addOrderBy = () => {
-        //TODO: This logic.
-    }
-
     const clearRestrictionsAndOrderBy = () => {
         setClauses([{ ...defaultClause }])
-        setOrderedValue(defaultOrder)
+        // TODO: need hook for this!
+        //setOrderedValue(defaultOrder)
     }
 
     return (<div className='bigger-labels'>
@@ -80,9 +83,9 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         <SegmentSection label='Select'>
             <Segment
                 value={value}
-                onChange={(text) => {
+                onChange={(item) => {
                     clearRestrictionsAndOrderBy();
-                    setValue(text);
+                    setValue(item);
                 }}
                 allowEmptyValue={false}
                 options={[
@@ -109,23 +112,18 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
             propertiesAsArray={propertiesAsArray}
         />
 
-        <SegmentSection label='ORDER BY'>
-            <Segment
-                allowEmptyValue={false}
-                value={orderedValue}
-                onChange={(text) => {
-                    setOrderedValue(text);
-                }}
-                options={[{ label: 'DESC' }, { label: 'ASC' }]}
-            />
-            <Button onClick={() => addOrderBy()} size='xs'>+</Button>
-        </SegmentSection>
+        <EntityOrderByEditor
+            filter={filter}
+            setFilter={setFilter}
+            searchAttributes={propertiesAsArray}
+        />
+
         <div className='spacer' />
         <InlineFieldRow>
             <InlineField label='Limit'>
                 <Input className='max-input' type='number' value={limit}
-                    onChange={(b) => {
-                        const elem = (b.target as HTMLInputElement)
+                    onChange={(ev) => {
+                        const elem = (ev.target as HTMLInputElement)
                         if (elem) {
                             updateLimit(Number(elem.value))
                         }
