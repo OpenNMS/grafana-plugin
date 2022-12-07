@@ -1,13 +1,28 @@
-import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta, TableData } from "@grafana/data";
-import { getTemplateSrv } from '@grafana/runtime';
-import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest } from "lib/utils";
-import { API } from "opennms";
-import { queryEntity, queryProperties } from "./EntityHelper";
-import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest } from "./types";
+import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
+import { API, Model } from 'opennms'
+import { EntityTypes } from './constants'
+import {
+    getColumns,
+    getEntityTypeFromFuncName,
+    getPropertyComparators,
+    getQueryEntityType,
+    getSearchProperties,
+    getTemplateVariable,
+    isLocationQuery,
+    isMetricMetadataQuery,
+    isSituationAttribute,
+    metricFindLocations,
+    parseFunctionInfo,
+    queryEntity
+} from './EntityHelper'
+import { ClientDelegate } from 'lib/client_delegate'
+import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
+import { getAttributeMapping } from './queries/attributeMappings'
+import { buildQueryFilter } from './queries/queryBuilder'
+import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
-    entity_metadata: any[];
+    entity_metadata: any[]
 }
 
 export class EntityDataSource extends DataSourceApi<EntityQuery> {
@@ -25,72 +40,140 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         this.client = new ClientDelegate(instanceSettings, backendSrv);
         this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
     }
-    addVariablesToFilter(filter: API.Filter) {
-        const myVariables = getTemplateSrv().getVariables();
-        const nodeVariable: any = myVariables.find((d: any) => d.query.startsWith('nodes('));
-        let localFilter = new API.Filter();
-        filter.clauses?.forEach((existingFilter) => {
-            if (existingFilter.operator.label === 'AND'){
-                localFilter.withAndRestriction(new API.Restriction(existingFilter.restriction.attribute,existingFilter.restriction.comparator,))
-            }
-        })
-        if (nodeVariable) {
-            localFilter.withAndRestriction(new API.Restriction(nodeVariable.name, API.Comparators.EQ, nodeVariable.current.value))
-        }
-        myVariables.filter((d: any) => !d.query.startsWith('node')).forEach((key: any,value) => {
-            if (key.query.startsWith('locations')){
-                if (key.current.text){
-                    localFilter.withAndRestriction(new API.Restriction('location',API.Comparators.EQ,key.current.value))
-                }
-            }
-        })
-        return localFilter;
-    }
 
-    async query(options: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
-        const fullData: TableData[] = [];
-        for (let target of options.targets) {
-            let filter = target?.filter;
-            filter = this.addVariablesToFilter(filter);
+    async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
+        const fullData: OnmsTableData[] = []
+
+        for (let target of request.targets) {
+            const entityType = target?.selectType?.label || EntityTypes.Alarms
+            const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
+
             try {
-                const rowData = await queryEntity(target?.selectType?.label, filter, this.client);
-                fullData.push(rowData);
+                const rowData = await queryEntity(entityType, filter, this.client)
+                fullData.push(rowData)
             } catch (e) {
-                console.error(e);
+                console.error(e)
             }
         }
+
         return { data: fullData }
     }
 
     async metricFindQuery(query, options) {
-        let queryResults: Array<{ text: string, value: string }> = []
-        if (query) {
-            let entityQueries = [['alarms', 'Alarms'], ['nodeFilter', 'Nodes']]
-            let foundQuery = entityQueries.find((d) => query.startsWith(d[0]))
-            if (foundQuery) {
-                let entityType = foundQuery[1]
-                let filter = new API.Filter();
-                filter = this.addVariablesToFilter(filter);
-                let results = await queryEntity(entityType, filter, this.client);
-                queryResults = results.rows.map((row) => {
-                    return { text: row[1], value: row[0] }
-                })
-            } else if (query.startsWith('nodes')) {
-                queryResults = await queryProperties(query, this.client)
-            }
+        if (isLocationQuery(query)) {
+            return metricFindLocations(this.simpleRequest)
         }
-        return queryResults
+
+        let entityType = getEntityTypeFromFuncName(options.entityType) || getQueryEntityType(query) || ''
+        // this may be an attribute, a mapped attribute, or just the original query
+        let attribute = getAttributeMapping(entityType, query)
+
+        if (isMetricMetadataQuery(options.queryType)) {
+            return this.handleMetricMetadataQuery(entityType, options.queryType, attribute, options.strategy)
+        }
+
+        if (!attribute) {
+            console.warn('entity-ds-react: metricFindQuery: no attribute specified')
+            return []
+        }
+
+        const info = parseFunctionInfo(attribute)
+        entityType = info.entityType || entityType
+        attribute = info.attribute
+
+        if (info.funcName === 'nodeFilter') {
+            return this.metricFindNodeFilterQuery(entityType, attribute)
+        }
+
+        if (isSituationAttribute(attribute)) {
+            return [
+                { id: 'false', label: 'false', text: 'false'},
+                { id: 'true', label: 'true', text: 'true' }
+            ]
+        }
+
+        const searchProperties: API.SearchProperty[] = await getSearchProperties(entityType, this.client)
+        const searchProperty: API.SearchProperty = searchProperties.filter(p => p.id === attribute)?.at(0)
+
+        if (!searchProperty) {
+            return []
+        }
+
+        // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
+        // used, but that may not be ideal for the user
+        if (searchProperty.id === 'severity') {
+            return Model.Severities.map(severity => {
+                return {
+                    id: severity.id,
+                    label: severity.label
+                }
+            })
+        }
+
+        const propertyValues = await searchProperty.findValues({limit: 0})
+
+        return propertyValues.filter(value => value !== null)
+            .map(value => {
+                return { id: value, label: value, text: value ? String(value) : value, value: value }
+        })
     }
 
     async testDatasource(): Promise<any> {
         console.log('Testing the data source!');
-        try {
 
+        try {
             const metadata = await this.client.getClientWithMetadata();
-            console.log('Testing the data source1!', metadata);
+            console.log('Testing the data source!', metadata);
         } catch (e) {
             console.log('CAUGHT!', e);
         }
         return { status: 'success', message: 'Success' }
+    }
+
+    async metricFindNodeFilterQuery(entityType, attribute) {
+        const filtermap = getNodeFilterMap(attribute)
+        let filter = new API.Filter()
+
+        for (const pair of filtermap) {
+            const propertyKey = getAttributeMapping(entityType, pair[0])
+            const propertyValue = pair[1]
+
+            if (propertyValue.startsWith('$')) {
+                const variableName = this.templateSrv.getVariableName(propertyValue)
+                const templateVariable = getTemplateVariable(this.templateSrv, variableName)
+
+                if (templateVariable && templateVariable.current.value) {
+                    filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value))
+                }
+            } else if (propertyKey && propertyValue) {
+                filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, propertyValue))
+            }
+        }
+
+        filter.limit = 0
+        const nodes = await this.client.getNodeByFilter(filter)
+
+        return nodes.map(node => {
+            return { id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
+        })
+    }
+
+    async handleMetricMetadataQuery(entityType: string, queryType: string, attribute: string, strategy?: string) {
+        // special case queries to fill in metadata
+        if (queryType === 'attributes') {
+            if (strategy && strategy === 'featured') {
+                return getColumns(entityType).filter(col => col.featured).map(col => {
+                    return { id: col.resource, value: col.text }
+                })
+            }
+            // assume all
+            return await getSearchProperties(entityType, this.client)
+        } else if (queryType === 'comparators') {
+            return await getPropertyComparators(entityType, attribute, this.client)
+        } else if (queryType === 'operators') {
+            return await this.client.findOperators()
+        }
+
+        return []
     }
 }

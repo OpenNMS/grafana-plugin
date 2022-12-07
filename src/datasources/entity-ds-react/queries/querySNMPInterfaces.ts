@@ -1,9 +1,28 @@
-
+import { OnmsColumn, OnmsTableData } from '../types'
 import { OnmsSnmpInterface } from "opennms/src/model/OnmsSnmpInterface";
 import { ClientDelegate } from "lib/client_delegate";
 import { API } from 'opennms'
 
-export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Filter) => {
+const columns = Object.freeze([
+    { text: 'ID', resource: 'id' },
+    { text: 'Index', resource: 'ifIndex' },
+    { text: 'Description', resource: 'ifDescr', featured: true },
+    { text: 'Type', resource: 'ifType' },
+    { text: 'Name', resource: 'ifName', featured: true },
+    { text: 'Speed', resource: 'ifSpeed', featured: true },
+    { text: 'Admin Status', resource: 'ifAdminStatus' },
+    { text: 'Operational Status', resource: 'ifOperStatus' },
+    { text: 'Alias', resource: 'ifAlias', featured: true },
+    { text: 'Last Capsd Poll', resource: 'lastCapsdPoll' },
+    { text: 'Collected?', resource: 'collect' },
+    { text: 'Polled?', resource: 'poll' },
+    { text: 'Last SNMP Poll', resource: 'lastSnmpPoll' },
+    { text: 'Physical Address', resource: 'physAddr' }
+] as OnmsColumn[]);
+
+export const getSNMPInterfaceColumns = () => columns
+
+export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
     let ifaces: OnmsSnmpInterface[] = [];
 
     try {
@@ -11,23 +30,6 @@ export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Fi
     } catch (e) {
         console.error(e);
     }
-
-    const columns = [
-        { text: 'ID', resource: 'id' },
-        { text: 'Index', resource: 'ifIndex' },
-        { text: 'Description', resource: 'ifDescr', featured: true },
-        { text: 'Type', resource: 'ifType' },
-        { text: 'Name', resource: 'ifName', featured: true },
-        { text: 'Speed', resource: 'ifSpeed', featured: true },
-        { text: 'Admin Status', resource: 'ifAdminStatus' },
-        { text: 'Operational Status', resource: 'ifOperStatus' },
-        { text: 'Alias', resource: 'ifAlias', featured: true },
-        { text: 'Last Capsd Poll', resource: 'lastCapsdPoll' },
-        { text: 'Collected?', resource: 'collect' },
-        { text: 'Polled?', resource: 'poll' },
-        { text: 'Last SNMP Poll', resource: 'lastSnmpPoll' },
-        { text: 'Physical Address', resource: 'physAddr' },
-    ];
 
     const rows = ifaces?.map((iface: OnmsSnmpInterface) => {
         return [
@@ -47,9 +49,11 @@ export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Fi
             iface.physAddr?.toString(),
         ];
     });
+
     return {
-        'columns': columns,
-        'rows': rows,
-        'type': 'table',
-    }
+        name: 'snmpInterfaces',
+        columns: columns,
+        rows: rows,
+        type: 'table',
+    } as OnmsTableData
 }

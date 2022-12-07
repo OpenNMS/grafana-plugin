@@ -1,64 +1,68 @@
+import { OnmsColumn, OnmsTableData } from '../types'
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
 import { API } from 'opennms'
 
-export const queryAlarms = async (client: ClientDelegate, filter: API.Filter) => {
+const columns = Object.freeze([
+    { text: 'ID', resource: 'id' },
+    { text: 'Count', resource: 'count' },
+    { text: 'Acked By', resource: 'ackUser' },
+    { text: 'Ack Time', resource: 'alarmAckTime', featured: true },
+    { text: 'UEI', resource: 'uei', featured: true },
+    { text: 'Severity', resource: 'severity', featured: true },
+    { text: 'Type', resource: 'type.label' },
+    { text: 'Description', resource: 'description' },
+    { text: 'Location', resource: 'location', featured: true },
+    { text: 'Log Message', resource: 'logMessage' },
+    { text: 'Reduction Key', resource: 'reductionKey', featured: true },
+    { text: 'Trouble Ticket', resource: 'troubleTicket' },
+    { text: 'Trouble Ticket State', resource: 'troubleTicketState.label' },
+    { text: 'Node ID', resource: 'node', featured: true },
+    { text: 'Node Label', resource: 'node.label', featured: true },
+    { text: 'Service', resource: 'service.name', featured: true },
+    { text: 'Suppressed Time', resource: 'suppressedTime' },
+    { text: 'Suppressed Until', resource: 'suppressedUntil' },
+    { text: 'Suppressed By', resource: 'suppressedBy' },
+    { text: 'IP Address', resource: 'ipAddress', featured: true },
+    { text: 'Is Acknowledged', resource: 'isAcknowledged', featured: true },
+    { text: 'First Event Time', resource: 'firstEventTime' },
+    { text: 'Last Event ID', resource: 'lastEvent.id' },
+    { text: 'Last Event Time', resource: 'lastEvent.time' },
+    { text: 'Last Event Source', resource: 'lastEvent.source' },
+    { text: 'Last Event Creation Time', resource: 'lastEvent.createTime' },
+    { text: 'Last Event Severity', resource: 'lastEvent.severity' },
+    { text: 'Last Event Label', resource: 'lastEvent.label' },
+    { text: 'Last Event Location', resource: 'lastEvent.location' },
+    { text: 'Sticky ID', resource: 'sticky.id' },
+    { text: 'Sticky Note', resource: 'sticky.body' },
+    { text: 'Sticky Author', resource: 'sticky.author' },
+    { text: 'Sticky Update Time', resource: 'sticky.updated' },
+    { text: 'Sticky Creation Time', resource: 'sticky.created' },
+    { text: 'Journal ID', resource: 'journal.id' },
+    { text: 'Journal Note', resource: 'journal.body' },
+    { text: 'Journal Author', resource: 'journal.author' },
+    { text: 'Journal Update Time', resource: 'journal.updated' },
+    { text: 'Journal Creation Time', resource: 'journal.created' },
+    { text: 'Is Situation', resource: 'isSituation', featured: true },
+    { text: 'Is In Situation', resource: 'isInSituation', featured: true, visible: false },
+    { text: 'Situation Alarm Count', resource: 'situationAlarmCount', featured: true },
+    { text: 'Affected Node Count', resource: 'affectedNodeCount', featured: true },
+    { text: 'Managed Object Instance', resource: 'managedObjectInstance' },
+    { text: 'Managed Object Type', resource: 'managedObjectType' },
+    { text: 'Categories', resource: 'category', featured: true, visible: false },
+    { text: 'Data Source' }
+] as OnmsColumn[]);
 
+export const getAlarmColumns = () => columns
+
+export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
     let alarms: OnmsAlarm[] = [];
+
     try {
         alarms = await client.findAlarms(filter)
     } catch (e) {
         console.error(e);
     }
-    const columns = [
-        { text: 'ID', resource: 'id' },
-        { text: 'Count', resource: 'count' },
-        { text: 'Acked By', resource: 'ackUser' },
-        { text: 'Ack Time', resource: 'alarmAckTime', featured: true },
-        { text: 'UEI', resource: 'uei', featured: true },
-        { text: 'Severity', resource: 'severity', featured: true },
-        { text: 'Type', resource: 'type.label' },
-        { text: 'Description', resource: 'description' },
-        { text: 'Location', resource: 'location', featured: true },
-        { text: 'Log Message', resource: 'logMessage' },
-        { text: 'Reduction Key', resource: 'reductionKey', featured: true },
-        { text: 'Trouble Ticket', resource: 'troubleTicket' },
-        { text: 'Trouble Ticket State', resource: 'troubleTicketState.label' },
-        { text: 'Node ID', resource: 'node', featured: true },
-        { text: 'Node Label', resource: 'node.label', featured: true },
-        { text: 'Service', resource: 'service.name', featured: true },
-        { text: 'Suppressed Time', resource: 'suppressedTime' },
-        { text: 'Suppressed Until', resource: 'suppressedUntil' },
-        { text: 'Suppressed By', resource: 'suppressedBy' },
-        { text: 'IP Address', resource: 'ipAddress', featured: true },
-        { text: 'Is Acknowledged', resource: 'isAcknowledged', featured: true },
-        { text: 'First Event Time', resource: 'firstEventTime' },
-        { text: 'Last Event ID', resource: 'lastEvent.id' },
-        { text: 'Last Event Time', resource: 'lastEvent.time' },
-        { text: 'Last Event Source', resource: 'lastEvent.source' },
-        { text: 'Last Event Creation Time', resource: 'lastEvent.createTime' },
-        { text: 'Last Event Severity', resource: 'lastEvent.severity' },
-        { text: 'Last Event Label', resource: 'lastEvent.label' },
-        { text: 'Last Event Location', resource: 'lastEvent.location' },
-        { text: 'Sticky ID', resource: 'sticky.id' },
-        { text: 'Sticky Note', resource: 'sticky.body' },
-        { text: 'Sticky Author', resource: 'sticky.author' },
-        { text: 'Sticky Update Time', resource: 'sticky.updated' },
-        { text: 'Sticky Creation Time', resource: 'sticky.created' },
-        { text: 'Journal ID', resource: 'journal.id' },
-        { text: 'Journal Note', resource: 'journal.body' },
-        { text: 'Journal Author', resource: 'journal.author' },
-        { text: 'Journal Update Time', resource: 'journal.updated' },
-        { text: 'Journal Creation Time', resource: 'journal.created' },
-        { text: 'Is Situation', resource: 'isSituation', featured: true },
-        { text: 'Is In Situation', resource: 'isInSituation', featured: true, visible: false },
-        { text: 'Situation Alarm Count', resource: 'situationAlarmCount', featured: true },
-        { text: 'Affected Node Count', resource: 'affectedNodeCount', featured: true },
-        { text: 'Managed Object Instance', resource: 'managedObjectInstance' },
-        { text: 'Managed Object Type', resource: 'managedObjectType' },
-        { text: 'Categories', resource: 'category', featured: true, visible: false },
-        { text: 'Data Source' }
-    ];
     const rows = alarms?.map((alarm) => {
         let row = [
             alarm.id,
@@ -118,11 +122,14 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter) =>
             // Data Source
             self.name
         ];
+
         return row;
     });
+
     return {
-        'columns': columns.filter(column => column.visible !== false),
-        'rows': rows,
-        'type': 'table',
-    }
+        name: 'alarms',
+        columns: columns.filter(column => column.visible !== false),
+        rows: rows,
+        type: 'table',
+    } as OnmsTableData
 }

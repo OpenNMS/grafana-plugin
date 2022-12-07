@@ -1,4 +1,13 @@
-import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue, QueryEditorProps } from "@grafana/data";
+import { API } from 'opennms'
+import {
+  Column,
+  DataQuery,
+  DataQueryRequest,
+  DataSourceJsonData,
+  SelectableValue,
+  QueryEditorProps,
+  TableData
+} from "@grafana/data";
 import { EntityDataSource } from "./EntityDataSource";
 
 /**
@@ -12,12 +21,14 @@ export interface EntityQuery extends DataQuery {
   queryText?: string;
   constant?: number;
   selectType: SelectableValue;
-  filter: AnalyserNode;
+  filter: API.Filter;
   clauses: any;
 }
 
 export interface EntityQueryRequest<T extends DataQuery> extends DataQueryRequest<T> {
-  queryText: string;
+  queryText: string
+  enforceTimeRange?: boolean
+  entityType?: string
 }
 
 export interface Comparator {
@@ -27,7 +38,9 @@ export interface Comparator {
 }
 
 export interface SearchType {
-  i: string, l: string, comparators: Comparator[]
+  i: string,
+  l: string,
+  comparators: Comparator[]
 }
 
 export interface SearchOption {
@@ -35,8 +48,8 @@ export interface SearchOption {
   name: string,
   orderBy: boolean,
   label: string,
-  type: SearchType
-  values: string[]
+  type: SearchType,
+  values: string[],
   value?: { values: string[], type: SearchType, id: string, orderBy: boolean, name: string, label: string };
 }
 
@@ -125,7 +138,21 @@ export interface EntityClauseProps {
 }
 
 export interface EntityClauseLabelProps {
-  type: OnmsEntityType, nestingType: OnmsEntityNestType, index: number, setClauseType: Function
+  type: OnmsEntityType,
+  nestingType: OnmsEntityNestType,
+  index: number,
+  setClauseType: Function
+}
+
+export interface OnmsColumn extends Column {
+  resource?: string,
+  featured?: boolean,
+  visible?: boolean
+}
+
+export interface OnmsTableData extends TableData {
+  // override
+  columns: OnmsColumn[]
 }
 
 export type EntityQueryEditorProps = QueryEditorProps<EntityDataSource, EntityQuery, EntityDataSourceOptions>;

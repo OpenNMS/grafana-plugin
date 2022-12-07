@@ -1,8 +1,28 @@
+import { OnmsColumn, OnmsTableData } from '../types'
 import { ClientDelegate } from "lib/client_delegate";
 import { OnmsIpInterface } from "opennms/src/model/OnmsIpInterface";
 import { API } from 'opennms'
 
-export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filter) => {
+const columns = Object.freeze([
+    { text: 'ID', resource: 'id' },
+    { text: 'IP Address', resource: 'ipAddress', featured: true, },
+    { text: 'Hostname', resource: 'hostname', featured: true, },
+    { text: 'Is Down?', resource: 'isDown', },
+    { text: 'Is Managed?', resource: 'isManaged', },
+    { text: 'Last Capsd Poll', resource: 'lastCapsdPoll', },
+    { text: 'Last Ingress Flow', resource: 'lastIngressFlow', },
+    { text: 'Last Egress Flow', resource: 'lastEgressFlow', },
+    { text: 'Service Count', resource: 'monitoredServiceCount', },
+    { text: 'SNMP Primary', resource: 'snmpPrimary', featured: true, },
+    { text: 'SNMP ifAlias', resource: 'snmpInterface.ifAlias' },
+    { text: 'SNMP ifDescr', resource: 'snmpInterface.ifDescr' },
+    { text: 'SNMP ifIndex', resource: 'snmpInterface.ifIndex' },
+    { text: 'SNMP PhysAddr', resource: 'snmpInterface.physAddr' },
+] as OnmsColumn[]);
+
+export const getIPInterfaceColumns = () => columns
+
+export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
     let ifaces: OnmsIpInterface[] = [];
  
     try {
@@ -10,23 +30,6 @@ export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filt
     } catch (e) {
         console.error(e);
     }
-
-    const columns = [
-        { text: 'ID', resource: 'id' },
-        { text: 'IP Address', resource: 'ipAddress', featured: true, },
-        { text: 'Hostname', resource: 'hostname', featured: true, },
-        { text: 'Is Down?', resource: 'isDown', },
-        { text: 'Is Managed?', resource: 'isManaged', },
-        { text: 'Last Capsd Poll', resource: 'lastCapsdPoll', },
-        { text: 'Last Ingress Flow', resource: 'lastIngressFlow', },
-        { text: 'Last Egress Flow', resource: 'lastEgressFlow', },
-        { text: 'Service Count', resource: 'monitoredServiceCount', },
-        { text: 'SNMP Primary', resource: 'snmpPrimary', featured: true, },
-        { text: 'SNMP ifAlias', resource: 'snmpInterface.ifAlias' },
-        { text: 'SNMP ifDescr', resource: 'snmpInterface.ifDescr' },
-        { text: 'SNMP ifIndex', resource: 'snmpInterface.ifIndex' },
-        { text: 'SNMP PhysAddr', resource: 'snmpInterface.physAddr' },
-    ];
 
     const rows = ifaces?.map((iface: OnmsIpInterface) => {
         return [
@@ -48,8 +51,9 @@ export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filt
     });
 
     return {
-        'columns': columns,
-        'rows': rows,
-        'type': 'table',
-    }
+        name: 'ipInterfaces',
+        columns: columns,
+        rows: rows,
+        type: 'table',
+    } as OnmsTableData
 }
