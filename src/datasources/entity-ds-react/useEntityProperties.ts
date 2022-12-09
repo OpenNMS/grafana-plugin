@@ -34,7 +34,7 @@ export const useEntityProperties = (entityName: string, featuredAttributes: bool
                 break;
         }
 
-        let filteredProps = featuredAttributes ?
+        const filteredProps = featuredAttributes ?
             EntityHelper.filterProperties(entityName, newProperties) :
             EntityHelper.generateProperties(newProperties)
 
