@@ -119,7 +119,7 @@ export class ClientDelegate {
 
                     const mapped = {} as [number: Model.OnmsIpInterface];
 
-                    do {
+                    while (clauses.length > 0) {
                         // do this 100 at a time so the query strings don't get too long
                         const temporary = clauses.splice(0, 100);
 
@@ -137,7 +137,7 @@ export class ClientDelegate {
                         } catch (err) {
                             console.warn('An error occurred querying the IP interface')
                         }
-                    } while (clauses.length > 0);
+                    }
 
                     nodes = nodes.map((node) => {
                         if (mapped[node.id]) {

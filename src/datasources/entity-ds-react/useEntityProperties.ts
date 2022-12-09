@@ -5,7 +5,7 @@ import { EntityHelper } from '.';
 import { EntityTypes } from './constants';
 import { Properties, SearchOption } from './types';
 
-export const useEntityProperties = (entityName: string, client: ClientDelegate) => {
+export const useEntityProperties = (entityName: string, featuredAttributes: boolean, client: ClientDelegate) => {
     const [properties, setProperties] = useState<Properties>({});
     const [propertiesAsArray, setPropertiesAsArray] = useState<SearchOption[]>([]);
     const [propertiesLoading, setPropertiesLoading] = useState(false);
@@ -33,7 +33,10 @@ export const useEntityProperties = (entityName: string, client: ClientDelegate) 
                 newProperties = await client.getSnmpInterfaceProperties();
                 break;
         }
-        let filteredProps = EntityHelper.filterProperties(entityName, newProperties);
+
+        const filteredProps = featuredAttributes ?
+            EntityHelper.filterProperties(entityName, newProperties) :
+            EntityHelper.generateProperties(newProperties)
 
         setProperties(() => filteredProps)
     }
@@ -44,7 +47,7 @@ export const useEntityProperties = (entityName: string, client: ClientDelegate) 
         setPropertiesLoading(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [entityName, client])
+    }, [entityName, featuredAttributes, client])
 
     useEffect(() => {
         const newPropertyArray: SearchOption[] = [];
