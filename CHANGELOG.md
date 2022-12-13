@@ -1,3 +1,10 @@
+### v8.0.3
+
+Helm 8.0.3 is a minor release with focus on improving documentations.
+
+* Create documentation for each of the panels provided by Helm (Issue [HELM-348](https://issues.opennms.org/browse/HELM-348))
+* Cleanup Helm Documentation formatting (Issue [HELM-341](https://issues.opennms.org/browse/HELM-341))
+
 ### v8.0.2
 
 Helm 8.0.2 is primarily a bugfix release.
