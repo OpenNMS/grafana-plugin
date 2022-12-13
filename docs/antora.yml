@@ -1,5 +1,5 @@
 name: helm
-version: '8'
+version: '8-SNAPSHOT'
 title: HELM
 asciidoc:
   attributes:
