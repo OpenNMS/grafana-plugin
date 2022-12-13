@@ -3,7 +3,7 @@ version: '8'
 title: HELM
 asciidoc:
   attributes:
-    full-display-version: '8.0.3'
+    full-display-version: '8.0.4'
     grafana-version-required: "8.0"
     grafana-version-tested: 8.5
 nav:

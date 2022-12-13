@@ -1,3 +1,7 @@
+### v8.0.4
+
+Helm 8.0.4 is a re-release of 8.0.3, with a minor test-suite fix.
+
 ### v8.0.3
 
 Helm 8.0.3 is a minor release with focus on improving documentations.
