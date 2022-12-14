@@ -1,16 +1,24 @@
-import { SelectableValue } from '@grafana/data';
+import { PanelOptionsEditorProps } from '@grafana/data';
 import { Select } from '@grafana/ui'
-import { HelmColourThemeDisplay } from 'components/HelmColorThemeDisplay';
+import { HelmColorThemeDisplay } from 'components/HelmColorThemeDisplay';
 import { HelmInlineField } from 'components/HelmInlineField';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { AlarmTableAlarmDataState } from './AlarmTableTypes';
 
-interface AlarmTableAlarmDataState {
-    styleWithSeverity?: SelectableValue<string | number>,
-    severityTheme?: SelectableValue<string | number>
+
+interface AlarmTableAlarmProps {
+
 }
-
-export const AlarmTableAlarms = () => {
-    const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({});
+export const AlarmTableAlarms: React.FC<PanelOptionsEditorProps<AlarmTableAlarmProps>> = (props) => {
+    const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({
+        styleWithSeverity: { label: 'Column', value: 1 },
+        severityTheme: { label: 'Helm Default', value: 0 }
+    });
+ 
+    useEffect(() => {
+        props.onChange(alarmTableAlarmData)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [alarmTableAlarmData])
 
     const setAlarmTableState = (key, value) => {
         const newState = { ...alarmTableAlarmData }
@@ -40,7 +48,7 @@ export const AlarmTableAlarms = () => {
                     ]}
                 />
             </HelmInlineField>
-            <HelmColourThemeDisplay theme={alarmTableAlarmData.severityTheme?.value} />
+            <HelmColorThemeDisplay theme={alarmTableAlarmData.severityTheme?.value} />
         </div>
     )
 }

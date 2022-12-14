@@ -1,151 +1,87 @@
-import { css } from '@emotion/css'
-import { GrafanaTheme2 } from '@grafana/data';
-import { ContextMenu, Menu, MenuItem, Table, useStyles2 } from '@grafana/ui';
+import { PanelProps } from '@grafana/data';
+import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui';
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { AlarmTableMenu } from './AlarmTableMenu';
+import { AlarmTableModalContent } from './modal/AlarmTableModalContent';
+import { AlarmTableSelectionStyles } from './AlarmTableSelectionStyles';
+import { AlarmTableControlProps } from './AlarmTableTypes';
+import { useAlarmHelmProperties } from './hooks/useAlarmHelmProperties';
+import { useAlarmTableActions } from './hooks/useAlarmTableActions';
+import { useAlarmTableConfigDefaults } from './hooks/useAlarmTableConfigDefaults';
+import { useAlarmTableMenu } from './hooks/useAlarmTableMenu';
+import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter';
+import { useAlarmTableSelection } from './hooks/useAlarmTableSelection';
+import { getDataSourceSrv } from '@grafana/runtime';
+import { ClientDelegate } from 'lib/client_delegate';
+import { OnmsAlarm } from 'opennms/src/model';
 
-export const AlarmTableControl = (props) => {
 
-    const getStyles = (theme: GrafanaTheme2) => {
-        return {
-            divider: css({
-                height: 1,
-                backgroundColor: theme.colors.border.weak,
-                margin: theme.spacing(0.5, 0)
-            })
-        }
+export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
+
+    const [client, setClient] = useState<ClientDelegate>()
+    const { state, rowClicked, soloIndex } = useAlarmTableSelection();
+    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked);
+    const { actions, detailsModal, setDetailsModal } = useAlarmTableActions(state.indexes, () => setMenuOpen(false));
+
+    useAlarmTableRowHighlighter(state, table);
+    useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
+    const filteredProps = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTableData);
+    const [tabActive, setTabActive] = useState(0);
+    const tabClick = (e) => {
+        setTabActive(e);
     }
-    const styles = useStyles2(getStyles);
-    const table = useRef<HTMLDivElement>(null);
-    const [state, setState] = useState<{ indexes: boolean[], lastClicked: number }>({ indexes: [], lastClicked: -1 })
-    const [menu, setMenu] = useState({ x: 0, y: 0 })
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const clearIndexes = (oldIndexes) => {
-        const newIndexes = [...oldIndexes];
-        return newIndexes.map(() => false)
-    }
-
-    const contextMenu = (index: number, e: MouseEvent) => {
-        e.preventDefault();
-        setMenu({ x: e.x, y: e.y })
-        setMenuOpen(() => true);
-        console.log('context! and setting menu')
-    }
-
-    const rowClicked = (index: number, e: MouseEvent) => {
-
-        setState((updatedState) => {
-            let newClickedIndexes = [...updatedState.indexes];
-            if (!e.shiftKey || updatedState.lastClicked === -1) {
-                if (!e.ctrlKey) {
-                    newClickedIndexes = clearIndexes(newClickedIndexes);
-                }
-                newClickedIndexes[index] = newClickedIndexes[index] ? false : true;
-            } else {
-                let { start, end } = updatedState.lastClicked > index ?
-                    { start: index, end: updatedState.lastClicked } :
-                    { start: updatedState.lastClicked, end: index };
-                for (let i = start; i <= end; i++) {
-                    newClickedIndexes[i] = true;
-                }
-            }
-            return { indexes: newClickedIndexes, lastClicked: index };
-        });
-
-    }
+    const alarmId = props.data?.series?.[0].fields.find((d) => d.name === 'ID')?.values.get(soloIndex)
 
     useEffect(() => {
-        const rows = table.current?.querySelectorAll('.table-body div[role="row"]')
-        // if previous sibling is not clicked, or first item in entry, select-start
-        // if previous sibling is clicked, and next sibling is clicked, select-continue
-        // if previous sibling is clicked, and next sibling is not clicked, select-end
-        if (rows) {
-            rows.forEach((row, index) => {
-                row.classList.remove('select-start')
-                row.classList.remove('select-continue')
-                row.classList.remove('select-end')
-                if (!state.indexes[index - 1] && state.indexes[index]) {
-                    row.classList.add('select-start')
-                }
-                if (state.indexes[index - 1] && state.indexes[index] && state.indexes[index + 1]) {
-                    row.classList.add('select-continue')
-                }
-                if (state.indexes[index] && !state.indexes[index + 1]) {
-                    row.classList.add('select-end')
-                }
-            })
+        const rawDatasource = props.data?.request?.targets?.[0]?.datasource
+        const updateDatasource = async () => {
+            const datasources = getDataSourceSrv()
+            const datasourceObject: any = await datasources.get(rawDatasource)
+            setClient(datasourceObject.client);
         }
-    }, [state.indexes])
-
+        if (rawDatasource) {
+            updateDatasource();
+        }
+    }, [props?.data?.request?.targets])
+    const [alarm, setAlarm] = useState<OnmsAlarm>();
     useEffect(() => {
-        setTimeout(() => {
-            const headerGroup = table.current?.querySelector('div[role="rowgroup"] + div')
-            headerGroup?.classList.add('table-body')
-            const rows = table.current?.querySelectorAll('.table-body div[role="row"]')
-            rows?.forEach((row, index) => {
-                row.addEventListener('click', (e: unknown) => rowClicked(index, e as MouseEvent))
-                row.addEventListener('contextmenu', (e: unknown) => contextMenu(index, e as MouseEvent))
-            })
-        }, 50)
-    }, [])
-    const getMenu = () => {
-        let items = [{ label: 'Details' }, { type: 'divider', label: '' }, { label: 'Acknowledge' }, { label: 'Escalate' }, { label: 'Clear' }]
-        if (state.indexes.length > 1) {
-            items = items.splice(2, items.length)
+        const updateAlarm = async () => {
+            const returnedAlarm = await client?.getAlarm(alarmId);
+            setAlarm(returnedAlarm)
         }
-
-        return (<Menu>
-            {items.map((item, index) => {
-                let elem = <MenuItem label={item.label} key={index} />
-                if (item.type === 'divider') {
-                    elem = <div className={styles.divider}></div>
-                }
-
-                return elem;
-            })}
-        </Menu>)
+        if (alarmId !== alarm?.id){
+            updateAlarm();
+        }
+    }, [alarm?.id, alarmId, client])
+    const goToAlarm = () => {
+        
+        window.location.href = alarm?.detailsPage
     }
     return (
         <div ref={table}>
-            <style>
-                {
-                    `
-                        div[role="row"] {
-                            border:2px solid transparent;
-                        }
-                        div[role="cell"],div[role="row"] {
-                            user-select:none;
-                        }
-                        div[role="row"].select-start {
-                            border-top:2px dashed white;
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
-                        }
-                        div[role="row"].select-continue {
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
-                        }
-                         div[role="row"].select-end {
-                            border-bottom:2px dashed white;
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
-                        }
- 
-                    `
-                }
-            </style>
-            <Table data={props?.data?.series?.[0]} width={props.width} height={props.height}>
-
-            </Table>
+            <AlarmTableSelectionStyles />
+            <Table data={filteredProps} width={props.width} height={props.height} />
+            <Pagination numberOfPages={5} currentPage={1} onNavigate={() => { }} hideWhenSinglePage={true} />
             {menuOpen && <ContextMenu
                 x={menu.x}
                 y={menu.y}
                 onClose={() => {
                     setMenuOpen(false);
                 }}
-                renderMenuItems={getMenu}
+                renderMenuItems={() => <AlarmTableMenu state={state} actions={actions} />}
             />}
+            <Modal isOpen={detailsModal} title='Alarm Detail' onDismiss={() => setDetailsModal(false)}>
+                <Button style={{ marginBottom: 12 }} onClick={goToAlarm}><i className='fa fa-external-link'></i>&nbsp;Full Details</Button>
+                <TabsBar>
+                    <Tab label='Overview' active={tabActive === 0} onChangeTab={() => tabClick(0)} />
+                    <Tab label='Memos' active={tabActive === 1} onChangeTab={() => tabClick(1)} />
+                    <Tab label='JSON' active={tabActive === 2} onChangeTab={() => tabClick(2)} />
+                </TabsBar>
+                <TabContent>
+                    <AlarmTableModalContent tab={tabActive} alarmId={alarmId} client={client} />
+                </TabContent>
+            </Modal>
         </div>
     )
 }

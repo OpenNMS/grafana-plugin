@@ -1,25 +1,44 @@
-import { SelectableValue } from '@grafana/data';
-import { Select, MultiSelect } from '@grafana/ui'
+import { PanelOptionsEditorProps } from '@grafana/data';
+import { Select } from '@grafana/ui'
+import { HelmDragList } from 'components/HelmDragList';
 import { HelmInlineField } from 'components/HelmInlineField';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { AlarmTableDataState } from './AlarmTableTypes';
 
-interface AlarmTableDataState {
-    transformType?: SelectableValue<string | number>;
-    columns: Array<SelectableValue<string | number>>
+
+
+interface AlarmTableDataProps {
+
 }
 
-export const AlarmTableData = () => {
-    const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>({ columns: [] });
-
+export const AlarmTableData: React.FC<PanelOptionsEditorProps<AlarmTableDataProps>> = (props) => {
+    const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>({
+        columns: [
+            { label: 'Is Acknowledged', value: 20 },
+            { label: 'Severity', value: 5 },
+            { label: 'Count', value: 1 },
+            { label: 'Last Event Time', value: 23 },
+            { label: 'Location', value: 8 },
+            { label: 'Node Label', value: 14 },
+            { label: 'Log Message', value: 9 },
+        ]
+    });
+    useEffect(() => {
+        setAlarmTableState('columns', alarmTableData.columns)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    useEffect(() => {
+        props.onChange(alarmTableData);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [alarmTableData])
     const setAlarmTableState = (key, value) => {
         const newState = { ...alarmTableData }
         newState[key] = value
         setAlarmTableData(newState);
     }
-
     return (
         <div>
-          
+
             <HelmInlineField label="Table Transform">
                 <Select
                     value={alarmTableData.transformType}
@@ -29,14 +48,22 @@ export const AlarmTableData = () => {
             </HelmInlineField>
 
             <HelmInlineField label="Columns">
-                <MultiSelect
-                    value={alarmTableData.columns}
+
+                <Select
+                    placeholder='Add Column'
+                    value={0}
                     onChange={(val) => {
-                        setAlarmTableState('columns', val)
+                        const newColumns = [...alarmTableData.columns]
+                        newColumns.push(val)
+                        setAlarmTableState('columns', newColumns)
                     }}
-                    options={[{ label: 'Is Acknowledged', value: 0 }, { label: 'Severity', value: 1 }]}
+                    options={props?.context?.data?.[0]?.fields.map((field, index) => ({ ...field, value: index, label: field.name }))}
                 />
+
+
             </HelmInlineField>
+            <HelmDragList values={alarmTableData?.columns} onChange={(val) => { setAlarmTableState('columns', val) }} />
+
         </div>
     )
 }
