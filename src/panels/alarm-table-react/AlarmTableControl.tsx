@@ -50,13 +50,14 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
             const returnedAlarm = await client?.getAlarm(alarmId);
             setAlarm(returnedAlarm)
         }
-        if (alarmId !== alarm?.id){
+        if (alarmId !== alarm?.id) {
             updateAlarm();
         }
     }, [alarm?.id, alarmId, client])
     const goToAlarm = () => {
-        
-        window.location.href = alarm?.detailsPage
+        if (alarm?.detailsPage) {
+            window.location.href = alarm.detailsPage
+        }
     }
     return (
         <div ref={table}>
@@ -79,7 +80,7 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
                     <Tab label='JSON' active={tabActive === 2} onChangeTab={() => tabClick(2)} />
                 </TabsBar>
                 <TabContent>
-                    <AlarmTableModalContent tab={tabActive} alarmId={alarmId} client={client} />
+                    <AlarmTableModalContent tab={tabActive} alarm={alarm} client={client} />
                 </TabContent>
             </Modal>
         </div>

@@ -1,17 +1,17 @@
 import { ClientDelegate } from 'lib/client_delegate'
 import { OnmsAlarm } from 'opennms/src/model'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { AlarmTableModalJson } from './AlarmTableModalJson'
 import { AlarmTableModalMemos } from './AlarmTableModalMemos'
 import { AlarmTableModalOverview } from './AlarmTableModalOverview'
 
 interface AlarmTableModalContentProps {
-    tab: number,
-    alarmId: string,
+    tab: number;
+    alarm: OnmsAlarm | undefined;
     client: ClientDelegate | undefined;
 }
 
-export const AlarmTableModalContent: React.FC<AlarmTableModalContentProps> = ({ tab, alarmId, client }) => {
+export const AlarmTableModalContent: React.FC<AlarmTableModalContentProps> = ({ tab, alarm, client }) => {
    
     return (
         <>
