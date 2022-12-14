@@ -1,3 +1,22 @@
+### v8.0.4
+
+Helm 8.0.4 is a re-release of 8.0.3, with a minor test-suite fix.
+
+### v8.0.3
+
+Helm 8.0.3 is a minor release with focus on improving documentations.
+
+* Create documentation for each of the panels provided by Helm (Issue [HELM-348](https://issues.opennms.org/browse/HELM-348))
+* Cleanup Helm Documentation formatting (Issue [HELM-341](https://issues.opennms.org/browse/HELM-341))
+
+### v8.0.2
+
+Helm 8.0.2 is primarily a bugfix release.
+
+* Possible fix when passing snmp interfaces from Perf DS to Flow filters (#543) (Issue [HELM-333](https://issues.opennms.org/browse/HELM-333))
+* nodeResources doc update  (Issue [HELM-351](https://issues.opennms.org/browse/HELM-351))
+* Fix Helm Flow Histogram Panel (#552) (Issue [HELM-353](https://issues.opennms.org/browse/HELM-353))
+
 ### v8.0.1
 
 Helm 8.0.1 is primarily a bugfix release.
