@@ -13,9 +13,18 @@ export interface AlarmTableDataState {
     transformType?: SelectableValue<string | number>;
     columns: Array<SelectableValue<string | number>>
 }
+export interface AlarmTablePaginationState {
+    rowsPerPage?: number;
+    pauseRefresh: boolean;
+    scroll: boolean;
+    fontSize?: SelectableValue<string | number>
+}
 export interface AlarmTableControlProps {
-    alarmTableAlarms: AlarmTableAlarmDataState;
-    alarmTableData: AlarmTableDataState;
+    alarmTable: {
+        alarmTableAlarms: AlarmTableAlarmDataState,
+        alarmTableData: AlarmTableAlarmDataState,
+        alarmTablePagination: AlarmTablePaginationState
+    };
 }
 export interface AlarmTableControlActions {
     clear: () => void;

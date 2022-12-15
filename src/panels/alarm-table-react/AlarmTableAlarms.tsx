@@ -1,4 +1,3 @@
-import { PanelOptionsEditorProps } from '@grafana/data';
 import { Select } from '@grafana/ui'
 import { HelmColorThemeDisplay } from 'components/HelmColorThemeDisplay';
 import { HelmInlineField } from 'components/HelmInlineField';
@@ -7,16 +6,16 @@ import { AlarmTableAlarmDataState } from './AlarmTableTypes';
 
 
 interface AlarmTableAlarmProps {
-
+    onChange: Function
 }
-export const AlarmTableAlarms: React.FC<PanelOptionsEditorProps<AlarmTableAlarmProps>> = (props) => {
+export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange }) => {
     const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({
         styleWithSeverity: { label: 'Column', value: 1 },
         severityTheme: { label: 'Helm Default', value: 0 }
     });
- 
+
     useEffect(() => {
-        props.onChange(alarmTableAlarmData)
+        onChange(alarmTableAlarmData)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [alarmTableAlarmData])
 

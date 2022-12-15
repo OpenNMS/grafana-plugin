@@ -1,4 +1,3 @@
-import { PanelOptionsEditorProps } from '@grafana/data';
 import { Select } from '@grafana/ui'
 import { HelmDragList } from 'components/HelmDragList';
 import { HelmInlineField } from 'components/HelmInlineField';
@@ -8,10 +7,11 @@ import { AlarmTableDataState } from './AlarmTableTypes';
 
 
 interface AlarmTableDataProps {
-
+    onChange: Function;
+    context: any;
 }
 
-export const AlarmTableData: React.FC<PanelOptionsEditorProps<AlarmTableDataProps>> = (props) => {
+export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, context }) => {
     const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>({
         columns: [
             { label: 'Is Acknowledged', value: 20 },
@@ -23,12 +23,9 @@ export const AlarmTableData: React.FC<PanelOptionsEditorProps<AlarmTableDataProp
             { label: 'Log Message', value: 9 },
         ]
     });
+
     useEffect(() => {
-        setAlarmTableState('columns', alarmTableData.columns)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-    useEffect(() => {
-        props.onChange(alarmTableData);
+        onChange(alarmTableData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [alarmTableData])
     const setAlarmTableState = (key, value) => {
@@ -39,25 +36,32 @@ export const AlarmTableData: React.FC<PanelOptionsEditorProps<AlarmTableDataProp
     return (
         <div>
 
-            <HelmInlineField label="Table Transform">
+            {/** 
+              * 
+              * Commented out for now. This is in the original table, but 
+              * from what I can tell there was only ever one transformer
+              * written, so there's no need to have the ability to swap them
+              * TODO: Double check if we need the ability to 'transform' in different ways
+              * 
+              * <HelmInlineField label="Table Transform">
                 <Select
                     value={alarmTableData.transformType}
                     onChange={(val) => setAlarmTableState('transformType', val)}
                     options={[{ label: 'Table', value: 0 }]}
                 />
-            </HelmInlineField>
+            </HelmInlineField> */}
 
             <HelmInlineField label="Columns">
 
                 <Select
                     placeholder='Add Column'
-                    value={0}
+                    value={''}
                     onChange={(val) => {
                         const newColumns = [...alarmTableData.columns]
                         newColumns.push(val)
                         setAlarmTableState('columns', newColumns)
                     }}
-                    options={props?.context?.data?.[0]?.fields.map((field, index) => ({ ...field, value: index, label: field.name }))}
+                    options={context?.data?.[0]?.fields.map((field, index) => ({ ...field, value: index, label: field.name }))}
                 />
 
 

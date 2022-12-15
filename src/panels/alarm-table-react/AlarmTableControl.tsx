@@ -1,73 +1,57 @@
 import { PanelProps } from '@grafana/data';
 import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui';
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { AlarmTableMenu } from './AlarmTableMenu';
 import { AlarmTableModalContent } from './modal/AlarmTableModalContent';
 import { AlarmTableSelectionStyles } from './AlarmTableSelectionStyles';
 import { AlarmTableControlProps } from './AlarmTableTypes';
 import { useAlarmHelmProperties } from './hooks/useAlarmHelmProperties';
-import { useAlarmTableActions } from './hooks/useAlarmTableActions';
+import { useAlarmTableMenuActions } from './hooks/useAlarmTableMenuActions';
 import { useAlarmTableConfigDefaults } from './hooks/useAlarmTableConfigDefaults';
 import { useAlarmTableMenu } from './hooks/useAlarmTableMenu';
 import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter';
 import { useAlarmTableSelection } from './hooks/useAlarmTableSelection';
-import { getDataSourceSrv } from '@grafana/runtime';
-import { ClientDelegate } from 'lib/client_delegate';
-import { OnmsAlarm } from 'opennms/src/model';
+import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs';
+import { useOpenNMSClient } from './hooks/useOpenNMSClient';
+import { useAlarm } from './hooks/useAlarm';
 
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
 
-    const [client, setClient] = useState<ClientDelegate>()
-    const { state, rowClicked, soloIndex } = useAlarmTableSelection();
+  
+    const { state, rowClicked, soloIndex } = useAlarmTableSelection(() => {
+        setDetailsModal(true)
+    });
+
     const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked);
-    const { actions, detailsModal, setDetailsModal } = useAlarmTableActions(state.indexes, () => setMenuOpen(false));
+    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes, () => setMenuOpen(false));
+    const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs();
+    const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
+    const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client);
+    const { filteredProps, page,setPage,totalPages } = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTable);
+
 
     useAlarmTableRowHighlighter(state, table);
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
-    const filteredProps = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTableData);
-    const [tabActive, setTabActive] = useState(0);
-    const tabClick = (e) => {
-        setTabActive(e);
-    }
-    const alarmId = props.data?.series?.[0].fields.find((d) => d.name === 'ID')?.values.get(soloIndex)
-
-    useEffect(() => {
-        const rawDatasource = props.data?.request?.targets?.[0]?.datasource
-        const updateDatasource = async () => {
-            const datasources = getDataSourceSrv()
-            const datasourceObject: any = await datasources.get(rawDatasource)
-            setClient(datasourceObject.client);
-        }
-        if (rawDatasource) {
-            updateDatasource();
-        }
-    }, [props?.data?.request?.targets])
-    const [alarm, setAlarm] = useState<OnmsAlarm>();
-    useEffect(() => {
-        const updateAlarm = async () => {
-            const returnedAlarm = await client?.getAlarm(alarmId);
-            setAlarm(returnedAlarm)
-        }
-        if (alarmId !== alarm?.id) {
-            updateAlarm();
-        }
-    }, [alarm?.id, alarmId, client])
-    const goToAlarm = () => {
-        if (alarm?.detailsPage) {
-            window.location.href = alarm.detailsPage
-        }
-    }
     return (
-        <div ref={table}>
+        <div ref={table} className={alarmQuery ? 'alarm-query' : 'non-alarm-query'}>
             <AlarmTableSelectionStyles />
-            <Table data={filteredProps} width={props.width} height={props.height} />
-            <Pagination numberOfPages={5} currentPage={1} onNavigate={() => { }} hideWhenSinglePage={true} />
+            <div style={{height:'90%'}}>
+            {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height} /> :
+                <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
+            }
+            </div>
+            <div style={{width:'100%',height:'10%'}}>
+                <div>
+                    <Pagination numberOfPages={totalPages === Infinity ? 0 : totalPages} currentPage={page} onNavigate={(b) => { setPage(b) }} hideWhenSinglePage={true} />
+                </div>
+            </div>
             {menuOpen && <ContextMenu
                 x={menu.x}
                 y={menu.y}
                 onClose={() => {
+                    resetTabs();
                     setMenuOpen(false);
                 }}
                 renderMenuItems={() => <AlarmTableMenu state={state} actions={actions} />}

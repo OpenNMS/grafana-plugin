@@ -5,8 +5,17 @@ export const AlarmTableSelectionStyles = () => {
         <style>
             {
                 `
+                        .alarm-query {
+                            height:100%;
+                        }
+                        .non-alarm-query {
+                            height:100%;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                        }
                         div[role="row"] {
-                            border:2px solid transparent;
+                            border:1px solid transparent;
                             padding-bottom:1px;
                         }
                         .table-body div[role="row"]:hover {
@@ -19,22 +28,19 @@ export const AlarmTableSelectionStyles = () => {
                             border-bottom:1px solid transparent;
                         }
 
-                        .table-body div[role="cell"],.table-body div[role="row"] {
-                            user-select:none;
-                        }
                         .table-body div[role="row"].select-start {
-                            border-top:2px dashed white;
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
+                            border-top:1px dashed white;
+                            border-right:1px dashed white;
+                            border-left:1px dashed white;
                         }
                         .table-body div[role="row"].select-continue {
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
+                            border-right:1px dashed white;
+                            border-left:1px dashed white;
                         }
                         .table-body div[role="row"].select-end {
-                            border-bottom:2px dashed white;
-                            border-right:2px dashed white;
-                            border-left:2px dashed white;
+                            border-bottom:1px dashed white;
+                            border-right:1px dashed white;
+                            border-left:1px dashed white;
                         }
  
                     `

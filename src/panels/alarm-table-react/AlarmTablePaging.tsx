@@ -1,24 +1,35 @@
-import { SelectableValue } from '@grafana/data';
 import { Input, Switch, Select } from '@grafana/ui'
 import { HelmInlineField } from 'components/HelmInlineField';
 import { SwitchBox } from 'components/SwitchBox';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { AlarmTablePaginationState } from './AlarmTableTypes';
 
-interface AlarmTablePagingState {
-    rowsPerPage?: number;
-    pauseRefresh: boolean;
-    scroll: boolean;
-    fontSize?: SelectableValue<string | number>
+
+
+interface AlarmTablePagingPanelProps {
+    onChange: Function;
+    context: any;
 }
-export const AlarmTablePaging = () => {
 
-    const [alarmTablePaging, setAlarmTablePaging] = useState<AlarmTablePagingState>({pauseRefresh:false,scroll:false});
+export const AlarmTablePaging: React.FC<AlarmTablePagingPanelProps> = ({ onChange, context }) => {
+
+    const [alarmTablePaging, setAlarmTablePaging] = useState<AlarmTablePaginationState>({
+        pauseRefresh: false,
+        scroll: true,
+        rowsPerPage: 10,
+        fontSize: { label: '100%', value: 2 }
+    });
 
     const setAlarmTablePagingState = (key, value) => {
         const newState = { ...alarmTablePaging }
         newState[key] = value
         setAlarmTablePaging(newState);
     }
+
+    useEffect(() => {
+        onChange(alarmTablePaging)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [alarmTablePaging])
 
     const fontSizeOptions = [
         { label: '80%', value: 0 },
@@ -41,11 +52,15 @@ export const AlarmTablePaging = () => {
             <HelmInlineField label='Rows per page'>
                 <Input type='number' value={alarmTablePaging.rowsPerPage} onChange={(val) => setAlarmTablePagingState('rowsPerPage', val.currentTarget.value)} />
             </HelmInlineField>
-            <HelmInlineField label='Pause refresh'>
+            {/**   
+              * 
+              * This is in the original Alarm Table Panel, but I don't see any use for it currently and it might be a holdover from older functionality.
+              * TODO: Determine if we should keep this or not.
+              *  <HelmInlineField label='Pause refresh'>
                 <SwitchBox>
                     <Switch value={alarmTablePaging.pauseRefresh} onChange={(val) => setAlarmTablePagingState('pauseRefresh', !alarmTablePaging.pauseRefresh)} />
                 </SwitchBox>
-            </HelmInlineField>
+            </HelmInlineField> */}
             <HelmInlineField label='Scroll'>
                 <SwitchBox>
                     <Switch value={alarmTablePaging.scroll} onChange={(val) => setAlarmTablePagingState('scroll', !alarmTablePaging.scroll)} />

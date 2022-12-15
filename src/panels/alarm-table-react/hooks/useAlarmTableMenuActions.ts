@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export const useAlarmTableActions = (indexes, closeMenu) => {
+export const useAlarmTableMenuActions = (indexes, closeMenu) => {
     const [detailsModal, setDetailsModal] = useState(false)
     const clear = () => {
         closeMenu();

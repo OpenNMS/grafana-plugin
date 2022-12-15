@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { AlarmTableControlProps } from "../AlarmTableTypes"
 
 export const useAlarmTableConfigDefaults = (fieldConfig, onFieldConfigChange, options: AlarmTableControlProps) => {
-    const currentIndex = options?.alarmTableAlarms.severityTheme?.value || 0
+    const currentIndex = options?.alarmTable.alarmTableAlarms?.severityTheme?.value || 0
 
     useEffect(() => {
         const oldConfig = { ...fieldConfig }
