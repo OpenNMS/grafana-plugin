@@ -13,15 +13,17 @@ export const AlarmTableOptions: React.FC<PanelOptionsEditorProps<{}>> = ({ conte
             return newOptions
         })
     }
+
     useEffect(() => {
         onChange(internalOptions)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [internalOptions])
+
     return (
         <>
             <AlarmTableData context={context} onChange={(v) => onOptionChange(v, 'alarmTableData')} />
             <AlarmTablePaging context={context} onChange={(v) => onOptionChange(v, 'alarmTablePaging')} />
-            <AlarmTableAlarms onChange={(v) => onOptionChange(v, 'alarmTableAlarms')} />
+            <AlarmTableAlarms onChange={(v) => onOptionChange(v, 'alarmTableAlarms')} alarmTable={context.options?.alarmTable} />
         </>
     )
 }

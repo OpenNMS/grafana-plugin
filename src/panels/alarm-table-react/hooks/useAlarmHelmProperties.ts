@@ -6,7 +6,7 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
 
     const [filteredPropState, setFilteredProps] = useState(_.cloneDeep(oldProperties));
     const [page, setPage] = useState(1);
-    const [totalPages,setTotalPages] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     useEffect(() => {
         const filteredProps = _.cloneDeep(oldProperties);
         const totalRows = filteredProps.fields[0].values.length
@@ -14,12 +14,14 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
         if (filteredProps) {
 
             // Allow background color for severity column.
-            filteredProps.fields = filteredProps.fields.map((field) => {
-                if (field.name === 'Severity') {
-                    field.config.custom = { displayMode: 'color-background' }
-                }
-                return field;
-            })
+            if (alarmTable?.alarmTableAlarms?.styleWithSeverity?.value === 1) {
+                filteredProps.fields = filteredProps.fields.map((field) => {
+                    if (field.name === 'Severity') {
+                        field.config.custom = { displayMode: 'color-background' }
+                    }
+                    return field;
+                })
+            } 
 
             // Filter our columns according to our configured approved fields.
             filteredProps.fields = filteredProps.fields.filter((fil) => {
@@ -55,6 +57,16 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
             setTotalPages(Math.ceil(totalRows / rowsPerPage))
         }
 
-    }, [alarmTable?.alarmTableData,page,alarmTable.alarmTablePaging.rowsPerPage,oldProperties])
+    }, [alarmTable?.alarmTableData, page, alarmTable.alarmTablePaging.rowsPerPage, oldProperties,alarmTable?.alarmTableAlarms?.styleWithSeverity])
+
+    useEffect(() => {
+        const scrollView = document.querySelector('.scroll .scrollbar-view')
+        if (alarmTable?.alarmTablePaging?.scroll) {
+            scrollView?.classList.remove('no-scroll')
+        } else {
+            scrollView?.classList.add('no-scroll')
+        }
+    }, [alarmTable?.alarmTablePaging?.scroll])
+
     return { filteredProps: filteredPropState, page, setPage, totalPages }
 }

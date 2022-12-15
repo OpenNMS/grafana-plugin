@@ -12,7 +12,7 @@ interface AlarmTableDataProps {
 }
 
 export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, context }) => {
-    const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>({
+    const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>(context?.options?.alarmTable?.alarmTableData || {
         columns: [
             { label: 'Is Acknowledged', value: 20 },
             { label: 'Severity', value: 5 },

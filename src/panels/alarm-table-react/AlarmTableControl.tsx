@@ -19,7 +19,7 @@ import { useAlarm } from './hooks/useAlarm';
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
 
-  
+
     const { state, rowClicked, soloIndex } = useAlarmTableSelection(() => {
         setDetailsModal(true)
     });
@@ -29,20 +29,30 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs();
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client);
-    const { filteredProps, page,setPage,totalPages } = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTable);
+    const { filteredProps, page, setPage, totalPages } = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTable);
 
 
     useAlarmTableRowHighlighter(state, table);
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
+    const getFontSize = () => {
+        const fontSize = props.options?.alarmTable.alarmTablePaging.fontSize?.value
+        return `font-size-${fontSize}`
+    }
     return (
-        <div ref={table} className={alarmQuery ? 'alarm-query' : 'non-alarm-query'}>
+        <div ref={table} className={
+            `
+            ${alarmQuery ? 'alarm-query' : 'non-alarm-query'}
+            ${props.options?.alarmTable?.alarmTablePaging?.scroll ? 'scroll' : ' no-scroll'}
+            ${getFontSize()}
+            `
+        }>
             <AlarmTableSelectionStyles />
-            <div style={{height:'90%'}}>
-            {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height} /> :
-                <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
-            }
+            <div style={{ height: '90%' }}>
+                {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height} /> :
+                    <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
+                }
             </div>
-            <div style={{width:'100%',height:'10%'}}>
+            <div style={{ width: '100%', height: '10%' }}>
                 <div>
                     <Pagination numberOfPages={totalPages === Infinity ? 0 : totalPages} currentPage={page} onNavigate={(b) => { setPage(b) }} hideWhenSinglePage={true} />
                 </div>

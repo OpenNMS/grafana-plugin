@@ -7,11 +7,12 @@ import { AlarmTableAlarmDataState } from './AlarmTableTypes';
 
 interface AlarmTableAlarmProps {
     onChange: Function
+    alarmTable: any;
 }
-export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange }) => {
+export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, alarmTable }) => {
     const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({
-        styleWithSeverity: { label: 'Column', value: 1 },
-        severityTheme: { label: 'Helm Default', value: 0 }
+        styleWithSeverity: alarmTable.alarmTableAlarms?.styleWithSeverity || { label: 'Column', value: 1 },
+        severityTheme: alarmTable.alarmTableAlarms?.severityTheme ||{ label: 'Helm Default', value: 0 }
     });
 
     useEffect(() => {
@@ -28,10 +29,14 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange }) =
     return (
         <div>
             <HelmInlineField label="Style with severity">
+                {/** 
+                  * Support for row-level colours is not coded into the current version of Grafana: https://github.com/grafana/grafana/discussions/38151     
+                  * If it's supported in the future, we can re-enable the option here.
+                  *    */}
                 <Select
                     value={alarmTableAlarmData.styleWithSeverity}
                     onChange={(val) => setAlarmTableState('styleWithSeverity', val)}
-                    options={[{ label: 'Row', value: 0 }, { label: 'Column', value: 1 }, { label: 'Off', value: 2 }]}
+                    options={[{ label: 'Column', value: 1 }, { label: 'Off', value: 2 }]}
                 />
             </HelmInlineField>
             <HelmInlineField label="Severity theme">
@@ -44,6 +49,7 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange }) =
                         { label: 'Oh My!', value: 2 },
                         { label: 'No, Never Mind (i)', value: 3 },
                         { label: 'That\'s Cool', value: 4 },
+                        { label: 'Custom', value: 5 },
                     ]}
                 />
             </HelmInlineField>

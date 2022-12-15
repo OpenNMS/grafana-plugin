@@ -5,6 +5,48 @@ export const AlarmTableSelectionStyles = () => {
         <style>
             {
                 `
+                        .font-size-0 {
+                            font-size:80%;
+                        }
+                        .font-size-1 {
+                            font-size:90%;
+                        }
+                        .font-size-2 {
+                            font-size:100%;
+                        }
+                        .font-size-3 {
+                            font-size:110%;
+                        }
+                        .font-size-4 {
+                            font-size:120%;
+                        }
+                        .font-size-5 {
+                            font-size:130%;
+                        }
+                        .font-size-6 {
+                            font-size:140%;
+                        }
+                        .font-size-7 {
+                            font-size:150%;
+                        }
+                        .font-size-8 {
+                            font-size:160%;
+                        }
+                        .font-size-9 {
+                            font-size:180%;
+                        }
+                        .font-size-10 {
+                            font-size:200%;
+                        }
+                        .font-size-11 {
+                            font-size:220%;
+                        }
+                        .font-size-12 {
+                            font-size:250%;
+                        }
+                        .no-scroll .track-horizontal{
+                            display:none;
+                        }
                         .alarm-query {
                             height:100%;
                         }

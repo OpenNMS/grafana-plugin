@@ -13,7 +13,7 @@ interface AlarmTablePagingPanelProps {
 
 export const AlarmTablePaging: React.FC<AlarmTablePagingPanelProps> = ({ onChange, context }) => {
 
-    const [alarmTablePaging, setAlarmTablePaging] = useState<AlarmTablePaginationState>({
+    const [alarmTablePaging, setAlarmTablePaging] = useState<AlarmTablePaginationState>(context?.options?.alarmTable?.alarmTablePaging || {
         pauseRefresh: false,
         scroll: true,
         rowsPerPage: 10,
