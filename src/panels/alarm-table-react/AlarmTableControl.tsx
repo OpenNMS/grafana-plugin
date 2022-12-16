@@ -13,7 +13,7 @@ import { useAlarmTableMenu } from './hooks/useAlarmTableMenu';
 import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter';
 import { useAlarmTableSelection } from './hooks/useAlarmTableSelection';
 import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs';
-import { useOpenNMSClient } from './hooks/useOpenNMSClient';
+import { useOpenNMSClient } from '../../hooks/useOpenNMSClient';
 import { useAlarm } from './hooks/useAlarm';
 
 
@@ -24,10 +24,11 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
         setDetailsModal(true)
     });
 
-    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked);
-    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes, () => setMenuOpen(false));
-    const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs();
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
+    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked);
+   
+    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes, props?.data?.series[0].fields,() => setMenuOpen(false),client);
+    const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs();
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client);
     const { filteredProps, page, setPage, totalPages } = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTable);
 

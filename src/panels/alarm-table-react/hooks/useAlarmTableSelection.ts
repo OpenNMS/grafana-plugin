@@ -16,9 +16,9 @@ export const useAlarmTableSelection = (doubleClicked) => {
         return allFalse
     }
     const rowClicked = (index: number, e: MouseEvent, fromContext = false) => {
-        setState((updatedState) => {
-            let newClickedIndexes = [...updatedState.indexes];
-            if ((!fromContext || allIndexesAreFalse(newClickedIndexes)) && (!e.shiftKey || updatedState.lastClicked === -1)) {
+        setState((previousState) => {
+            let newClickedIndexes = [...previousState.indexes];
+            if ((!fromContext || allIndexesAreFalse(newClickedIndexes)) && (!e.shiftKey || previousState.lastClicked === -1)) {
                 if (!e.ctrlKey) {
                     newClickedIndexes = clearIndexes(newClickedIndexes);
                 }
@@ -28,9 +28,9 @@ export const useAlarmTableSelection = (doubleClicked) => {
                     doubleClicked()
                 }
             } else if (!fromContext) {
-                let { start, end } = updatedState.lastClicked > index ?
-                    { start: index, end: updatedState.lastClicked } :
-                    { start: updatedState.lastClicked, end: index };
+                let { start, end } = previousState.lastClicked > index ?
+                    { start: index, end: previousState.lastClicked } :
+                    { start: previousState.lastClicked, end: index };
                 for (let i = start; i <= end; i++) {
                     newClickedIndexes[i] = true;
                 }

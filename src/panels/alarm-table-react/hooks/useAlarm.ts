@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { DataFrame } from "@grafana/data"
 import { ClientDelegate } from 'lib/client_delegate';
 import { OnmsAlarm } from 'opennms/src/model';
+import { getAlarmIdFromFields } from '../AlarmTableHelper';
 
 export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientDelegate | undefined) => {
     const [alarmQuery, setAlarmQuery] = useState(false);
@@ -11,7 +12,7 @@ export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientD
     useEffect(() => {
         if (series?.[0].name === 'alarms') {
             setAlarmQuery(true)
-            const localAlarmId = series?.[0].fields.find((d) => d.name === 'ID')?.values.get(soloIndex)
+            const localAlarmId = getAlarmIdFromFields(series?.[0].fields,soloIndex)
             setAlarmId(localAlarmId)
         } else {
             setAlarmId(-1)
@@ -36,5 +37,5 @@ export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientD
         }
     }
 
-    return { alarm, alarmId, alarmQuery, goToAlarm }
+    return { alarm, alarmQuery, goToAlarm }
 }
