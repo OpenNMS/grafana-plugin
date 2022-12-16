@@ -43,7 +43,7 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
         <div ref={table} className={
             `
             ${alarmQuery ? 'alarm-query' : 'non-alarm-query'}
-            ${props.options?.alarmTable?.alarmTablePaging?.scroll ? 'scroll' : ' no-scroll'}
+            ${props.options?.alarmTable?.alarmTablePaging?.scroll ? 'scroll' : 'no-scroll'}
             ${getFontSize()}
             `
         }>
