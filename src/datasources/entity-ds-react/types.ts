@@ -26,7 +26,9 @@ export interface EntityQuery extends DataQuery {
 }
 
 export interface EntityQueryRequest<T extends DataQuery> extends DataQueryRequest<T> {
-  queryText: string;
+  queryText: string
+  enforceTimeRange?: boolean
+  entityType?: string
 }
 
 export interface Comparator {

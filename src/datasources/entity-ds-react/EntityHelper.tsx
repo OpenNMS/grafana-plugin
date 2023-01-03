@@ -168,6 +168,17 @@ export const getQueryEntityType = (query) => {
     return getEntityTypeFromFuncName(functionName)
 }
 
+export const generateProperties = (fullProperties: SearchOption[]) => {
+    const newProperties: Record<string, {}> = {}
+
+    for (let props of fullProperties) {
+        const label = props.name || props.id
+        newProperties[label] = { ...props, label }
+    }
+
+    return newProperties as unknown
+}
+
 const generateFilteredProperties = (fullProperties: SearchOption[], mappedItems: Record<string, string>) => {
     const filteredArray = fullProperties.filter((f) => {
         return !!mappedItems[f.id]
