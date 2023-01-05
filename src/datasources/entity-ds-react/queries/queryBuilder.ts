@@ -1,6 +1,6 @@
 import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
-import { EntityTypes } from '../constants'
+import { EntityTypes } from '../../../constants/constants'
 import { EntityQuery, EntityQueryRequest } from '../types'
 
 const isAllVariable = (templateVar, templateSrv) => {

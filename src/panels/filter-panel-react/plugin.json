@@ -1,0 +1,13 @@
+{
+  "type": "panel",
+  "name": "Filter Panel React",
+  "id": "opennms-helm-filter-panel-react",
+
+  "info": {
+    "description": "OpenNMS Filter Panel React",
+    "logos": {
+      "small": "img/filter.svg",
+      "large": "img/filter.svg"
+    }
+  }
+}

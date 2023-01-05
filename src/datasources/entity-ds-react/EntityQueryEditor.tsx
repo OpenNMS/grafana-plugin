@@ -10,7 +10,7 @@ import {
 } from '@grafana/ui'
 import { SelectableValue } from '@grafana/data';
 
-import { useEntityProperties } from './useEntityProperties';
+import { useEntityProperties } from '../../hooks/useEntityProperties';
 import { EntityClauseEditor } from './EntityClauseEditor';
 import { EntityOrderByEditor } from './EntityOrderByEditor';
 import { defaultClause } from './constants';

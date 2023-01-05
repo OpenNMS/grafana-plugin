@@ -1,4 +1,4 @@
-import { EntityTypes } from '../constants'
+import { EntityTypes } from '../../../constants/constants'
 
 /**
  * Given an entity type and query or query attribute, return the DAO mapping for that attribute, or
