@@ -17,7 +17,7 @@ export const FilterControl: React.FC<PanelProps<FilterControlProps>> = (props) =
         //TODO: When these values are real, store this selection.
     }
 
-  
+
     useEffect(() => {
         if (props.options.filterEditor) {
             saveFilterPanel(props.options.filterEditor)
@@ -32,7 +32,11 @@ export const FilterControl: React.FC<PanelProps<FilterControlProps>> = (props) =
                         <FieldDisplay>{props.options.filterEditor.altColumnLabels[index] || filter.attribute.label}</FieldDisplay>
                         {props.options.filterEditor.filterSelectionTypes[index]?.label === 'Text' ?
                             <Input />
-                            : <Select isMulti={props.options.filterEditor.filterSelectionTypes[index]?.label === 'Multi'} options={getSelectOptions(filter)} onChange={selectChanged}></Select>}
+                            : <Select
+                                isMulti={props.options.filterEditor.filterSelectionTypes[index]?.label === 'Multi'}
+                                options={getSelectOptions(filter)}
+                                onChange={selectChanged}></Select>
+                        }
                     </HorizontalGroup>
                 )
             })}
