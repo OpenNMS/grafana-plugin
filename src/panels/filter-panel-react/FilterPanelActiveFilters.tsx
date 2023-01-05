@@ -35,6 +35,7 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
             }
             return newLabels;
         })
+        
     }
 
     const removeFieldRow = (index: number) => {
