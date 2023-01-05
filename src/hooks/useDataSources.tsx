@@ -1,7 +1,7 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { useEffect, useState } from 'react';
 
-interface GrafanaDatasource {name: string, type: string, id: string}
+export interface GrafanaDatasource {name: string, type: string, id: string}
 export const useDatasources = () => {
     const [datasources, setDatasources] = useState<GrafanaDatasource[]>([]);
     const updateDatasources = async () => {

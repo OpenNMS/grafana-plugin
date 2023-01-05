@@ -1,6 +1,6 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
 import { API, Model } from 'opennms'
-import { EntityTypes } from './constants'
+import { EntityTypes } from '../../constants/constants'
 import {
     getColumns,
     getEntityTypeFromFuncName,

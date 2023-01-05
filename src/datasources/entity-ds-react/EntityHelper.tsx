@@ -1,5 +1,5 @@
 import { API } from 'opennms'
-import { EntityTypes } from './constants'
+import { EntityTypes } from '../../constants/constants'
 import {
     AlarmProperties,
     IpInterfaceProperties,
