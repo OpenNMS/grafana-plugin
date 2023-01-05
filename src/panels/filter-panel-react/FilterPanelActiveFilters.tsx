@@ -33,7 +33,6 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
             if (typeof value === 'string') {
                 newLabels[index] = value;
             }
-            console.log('setting labels!', newLabels)
             return newLabels;
         })
     }
@@ -71,10 +70,10 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
             <style>
                 {
                     `
-        .no-margin {
-            margin:0;
-        }
-        `
+                        .no-margin {
+                            margin:0;
+                        }
+                    `
                 }
             </style>
             {activeFilters.length > 0 &&
@@ -88,16 +87,44 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
                             <div style={{ marginBottom: 10 }} key={index}>
                                 <div style={{ display: 'flex' }}>
                                     <FieldDisplay>{filter?.entity?.label}</FieldDisplay>
-                                    <SegmentInput placeholder={filter?.attribute?.label} value={altColumnLabels[index]} onChange={(e) => updateAltColumnLabels(e, index)} />
-                                    <div style={{ display: 'flex', marginLeft: 'auto', columnGap: '12px' }}>
-                                        <Select options={[{ label: 'Single', value: 'single' }, { label: 'Multi', value: 'multi' }, { label: 'Text', value: 'text' }]} onChange={(e) => updateFilterSelectionType(e, index)} value={filterSelectionTypes[index] || { label: 'Single', value: 'single' }} />
-                                        <Button disabled={index === 0} style={{ backgroundColor: 'rgb(61, 113, 217)' }} onClick={() => moveFieldUp(index)} >
+                                    <SegmentInput
+                                        placeholder={filter?.attribute?.label}
+                                        value={altColumnLabels[index]}
+                                        onChange={(e) => updateAltColumnLabels(e, index)}
+                                    />
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            marginLeft: 'auto',
+                                            columnGap: '12px'
+                                        }}>
+                                        <Select
+                                            options={[
+                                                { label: 'Single', value: 'single' },
+                                                { label: 'Multi', value: 'multi' },
+                                                { label: 'Text', value: 'text' }
+                                            ]}
+                                            onChange={(e) => updateFilterSelectionType(e, index)}
+                                            value={filterSelectionTypes[index] || { label: 'Single', value: 'single' }}
+                                        />
+                                        <Button
+                                            disabled={index === 0}
+                                            style={{ backgroundColor: 'rgb(61, 113, 217)' }}
+                                            onClick={() => moveFieldUp(index)}
+                                        >
                                             <i className='fa fa-arrow-up' />
                                         </Button>
-                                        <Button disabled={index === activeFilters.length - 1} style={{ backgroundColor: 'rgb(61, 113, 217)' }} onClick={() => moveFieldDown(index)} >
+                                        <Button
+                                            disabled={index === activeFilters.length - 1}
+                                            style={{ backgroundColor: 'rgb(61, 113, 217)' }}
+                                            onClick={() => moveFieldDown(index)}
+                                        >
                                             <i className='fa fa-arrow-down' />
                                         </Button>
-                                        <Button style={{ backgroundColor: '#AA0000' }} onClick={() => removeFieldRow(index)} >
+                                        <Button
+                                            style={{ backgroundColor: '#AA0000' }}
+                                            onClick={() => removeFieldRow(index)}
+                                        >
                                             <i className='fa fa-trash' />
                                         </Button>
                                     </div>

@@ -20,7 +20,6 @@ export const FilterPanelFilterSelector: React.FC<FilterPanelFilterSelectorProps>
     const [entity, setEntity] = useState<SelectableValue<string>>()
     const [attribute, setAttribute] = useState<SelectableValue<{ id: string }>>()
     const { propertiesAsArray } = useEntityProperties(entity?.label || '', false, client as any)
-    console.log('HI!',entity?.label,propertiesAsArray)
     const disabled = !entity || !attribute || !datasource || attribute.label === 'Select Attribute';
     const addFilterRow = () => {
         setActiveFilters((oldFilters) => {

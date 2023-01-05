@@ -1,34 +1,26 @@
 import { PanelProps } from '@grafana/data'
 import { HorizontalGroup, Input, Select } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay'
+import { saveFilterPanel } from 'lib/localStorageService'
 import React, { useEffect } from 'react'
 import { FilterControlProps } from './FilterPanelTypes'
 
 export const FilterControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
 
     const getSelectOptions = (filter) => {
-        return props?.options?.filterEditor?.properties?.[filter.attribute.value?.id].values || [{ value: "1", label: '1' }, { value: "2", label: '2' }]
+        // TODO: Replace these fake values with the real ones when we can get them from metricfindquery
+        return props?.options?.filterEditor?.properties?.[filter.attribute.value?.id].values ||
+            [{ value: "1", label: '1' }, { value: "2", label: '2' }]
     }
 
     const selectChanged = () => {
-
+        //TODO: When these values are real, store this selection.
     }
-    const getCircularReplacer = () => {
-        const seen = new WeakSet();
-        return (key, value) => {
-            if (typeof value === "object" && value !== null) {
-                if (seen.has(value)) {
-                    return;
-                }
-                seen.add(value);
-            }
-            return value;
-        };
-    };
 
+  
     useEffect(() => {
         if (props.options.filterEditor) {
-            localStorage.setItem('opennms-helm-filter-panel', JSON.stringify(props.options.filterEditor, getCircularReplacer()))
+            saveFilterPanel(props.options.filterEditor)
         }
     }, [props.options.filterEditor])
     return (
