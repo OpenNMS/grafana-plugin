@@ -3,7 +3,7 @@ import { InlineField, Select } from '@grafana/ui'
 import { GrafanaDatasource, useDatasources } from 'hooks/useDataSources';
 import React, { useState, useEffect } from 'react'
 
-export const FilterEditorDataSource: React.FC<{ onChange: Function }> = ({ onChange }) => {
+export const FilterPanelDataSource: React.FC<{ onChange: Function }> = ({ onChange }) => {
 
     const allowedDatasources = ['opennms-helm-entity-datasource-react']
     const { datasources } = useDatasources();

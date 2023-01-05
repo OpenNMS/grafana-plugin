@@ -3,7 +3,7 @@ import { GrafanaDatasource } from 'hooks/useDataSources';
 import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
 import React, { useState, useEffect } from 'react'
 import { ActiveFilter } from './FilterPanelTypes';
-import { FilterEditorDataSource } from './FilterPanelDataSource'
+import { FilterPanelDataSource } from './FilterPanelDataSource'
 import { FilterPanelFilterSelector } from './FilterPanelFilterSelector';
 import { FilterPanelActiveFilters } from './FilterPanelActiveFilters';
 
@@ -11,7 +11,7 @@ interface FilterPanelOptionOptions {
     datasource: SelectableValue<GrafanaDatasource>
     activeFilters: ActiveFilter[]
 }
-export const FilterEditor: React.FC<PanelOptionsEditorProps<{}>> = (props) => {
+export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<{}>> = (props) => {
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([])
     const [internalOptions, setInternalOptions] = useState<FilterPanelOptionOptions>({ datasource: {}, activeFilters: [] })
     const { client } = useOpenNMSClient(internalOptions?.datasource?.value)
@@ -66,7 +66,7 @@ export const FilterEditor: React.FC<PanelOptionsEditorProps<{}>> = (props) => {
 
     return (
         <>
-            <FilterEditorDataSource onChange={(d) => onOptionChange(d, 'datasource')} />
+            <FilterPanelDataSource onChange={(d) => onOptionChange(d, 'datasource')} />
             <FilterPanelFilterSelector
                 activeFilters={activeFilters}
                 setActiveFilters={setActiveFilters}

@@ -5,7 +5,7 @@ import { saveFilterPanel } from 'lib/localStorageService'
 import React, { useEffect } from 'react'
 import { FilterControlProps } from './FilterPanelTypes'
 
-export const FilterControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
+export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
 
     const getSelectOptions = (filter) => {
         // TODO: Replace these fake values with the real ones when we can get them from metricfindquery

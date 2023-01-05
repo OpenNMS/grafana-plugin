@@ -1,7 +1,7 @@
 import { PanelPlugin } from '@grafana/data';
-import { FilterControl } from './FilterPanelControl'
-import { FilterEditor } from './FilterPanelOptions'
+import { FilterPanelControl } from './FilterPanelControl'
+import { FilterPanelOptions } from './FilterPanelOptions'
 
-export const plugin = new PanelPlugin(FilterControl).setPanelOptions((builder) => {
-    builder.addCustomEditor({ id: 'filter-editor', path: 'filterEditor', name: 'Filter', editor: FilterEditor })
+export const plugin = new PanelPlugin(FilterPanelControl).setPanelOptions((builder) => {
+    builder.addCustomEditor({ id: 'filter-editor', path: 'filterEditor', name: 'Filter', editor: FilterPanelOptions })
 });
