@@ -11,8 +11,8 @@ interface AlarmTableAlarmProps {
 }
 export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, alarmTable }) => {
     const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({
-        styleWithSeverity: alarmTable.alarmTableAlarms?.styleWithSeverity || { label: 'Column', value: 1 },
-        severityTheme: alarmTable.alarmTableAlarms?.severityTheme ||{ label: 'Helm Default', value: 0 }
+        styleWithSeverity: alarmTable?.alarmTableAlarms?.styleWithSeverity || { label: 'Column', value: 1 },
+        severityTheme: alarmTable?.alarmTableAlarms?.severityTheme ||{ label: 'Helm Default', value: 0 }
     });
 
     useEffect(() => {

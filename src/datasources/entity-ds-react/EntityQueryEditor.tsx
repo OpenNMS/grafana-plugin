@@ -23,8 +23,8 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' })
     const [clauses, setClauses] = useState<any>(query.clauses || [{ ...defaultClause }])
     const [loading, setLoading] = useState(false)
-    const [filter, setFilter] = useState(query.filter || getSmallerAPIFilter())
-    const [limit, setLimit] = useState(query.filter.limit || 99)
+    const [filter, setFilter] = useState(query?.filter || getSmallerAPIFilter())
+    const [limit, setLimit] = useState(query?.filter?.limit || 99)
     const [featuredAttributes, setFeaturedAttributes] = useState(true)
     const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', featuredAttributes, client)
 

@@ -51,7 +51,7 @@ import _ from 'lodash';
 export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
 
     // convert the template variables into their selected values for each query.
-    queryItems.forEach(item => item.functionParameters = item.functionParameters.map(p => templateSrv.replace(p)));
+    queryItems.forEach(item => item.functionParameters = item?.functionParameters?.map(p => templateSrv.replace(p)));
 
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
@@ -552,8 +552,8 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
 
         if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
             inputParams = queryData.functionParameters[index];
-        } else if (fullFunction?.parameterOptions && queryData.parameterOptions) { //If there's an option set, get it.
-            inputParams = queryData.parameterOptions[index].label
+        } else if (fullFunction?.parameterOptions && queryData?.parameterOptions) { //If there's an option set, get it.
+            inputParams = queryData.parameterOptions?.[index]?.label
         }
 
         data.queryFunctions.push({ [func.label]: inputParams })
