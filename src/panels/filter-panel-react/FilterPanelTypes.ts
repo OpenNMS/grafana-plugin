@@ -4,7 +4,6 @@ import { GrafanaDatasource } from "hooks/useDataSources"
 /**
  * entity: Entity name for filter (e.g. "nodes", "alarms")
  * attribute: Entity attribute to filter on (e.g. "id", "label", "Alarm Type")
- * values: Set of values for that entity and attribute from entityDatasource.metricFindQuery()
  * selectionType: whether this filter is single/multi/text
  * altColumnLabel: User customized label for this filter, to display on FilterPanelControl component
  */

@@ -57,10 +57,6 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
-    /**
-     * Loop through active filters. For all filters that don't have metric values,
-     * retrieve them from Entity Datasource and store them.
-     */
     const getValuesFromDatasource = async (filter: ActiveFilter) => {
         const grafanaDatasource = props.options.filterEditor?.datasource?.value
 
