@@ -18,8 +18,9 @@ import {
 import { ClientDelegate } from 'lib/client_delegate'
 import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
 import { getAttributeMapping } from './queries/attributeMappings'
-import { buildQueryFilter } from './queries/queryBuilder'
+import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
+import { loadFilterEditorData } from '../../lib/localStorageService'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
     entity_metadata: any[]
@@ -44,9 +45,26 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
         const fullData: OnmsTableData[] = []
 
+        // TODO:
+        // - May need to get dashboard info (via backendSrv or direct via Dashboard HTTP API)
+        //   and see if there is actually a FilterPanelReact in the current dashboard.
+        //   Right now just checking for localStorage data, which could
+        //   possibly exist even if the FilterPanelReact had been deleted
+        // - FilterPanelReact should perhaps get events to know when it has been deleted and clear
+        //   localStorage. May be able to subscribe to EventBus
+
+        // get data from any FilterPanels (React-only) that may be active
+        const filterEditorData = loadFilterEditorData()
+        const hasFilterEditorData = (filterEditorData &&
+            filterEditorData?.activeFilters.length > 0 && filterEditorData?.selectableValues.length > 0)
+
         for (let target of request.targets) {
             const entityType = target?.selectType?.label || EntityTypes.Alarms
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
+
+            if (hasFilterEditorData) {
+                mergeFilterPanelFilters(entityType, filter, filterEditorData)
+            }
 
             try {
                 const rowData = await queryEntity(entityType, filter, this.client)
@@ -60,6 +78,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async metricFindQuery(query, options) {
+        // TODO: Might be good to be able to pass in options.entityType + options.attribute
+        // Otherwise callers may have to construct a fake query like 'nodes(label)' which we
+        // have to parse here, instead of passing in say:
+        /*
+            const options = {
+                entityType: 'node',
+                attribute: 'label'
+            }
+        */
+
         if (isLocationQuery(query)) {
             return metricFindLocations(this.simpleRequest)
         }

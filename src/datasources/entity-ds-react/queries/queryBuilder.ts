@@ -1,7 +1,10 @@
 import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
+import { EntityQuery, EntityQueryRequest } from './../types'
+import { getAttributeMapping } from './attributeMappings'
 import { EntityTypes } from '../../../constants/constants'
-import { EntityQuery, EntityQueryRequest } from '../types'
+import { getFilterId } from './../../../panels/filter-panel-react/FilterPanelHelper'
+import { FilterEditorData } from '../../../panels/filter-panel-react/FilterPanelTypes'
 
 const isAllVariable = (templateVar, templateSrv) => {
     return templateVar.current.value &&
@@ -170,4 +173,42 @@ export const buildQueryFilter = (filter: API.Filter, request: EntityQueryRequest
     // Substitute $<variable> or [[variable]] in the restriction value
     substitute(clonedFilter.clauses, request, templateSrv)
     return clonedFilter
+}
+
+/**
+ * Merge any filters having selected values from the FilterPanelReact into the given filter.
+ * @param entityType An EntityTypes value
+ */
+export const mergeFilterPanelFilters = (entityType: string, originalFilter: API.Filter, filterEditorData: FilterEditorData) => {
+    // only include filters targeting the given entityType
+    const filtersToMerge = filterEditorData?.activeFilters.filter(f => f.entity.label === entityType) || []
+
+    for (const filter of filtersToMerge) {
+        const filterId = getFilterId(filter)
+        const selectableValues = filterEditorData?.selectableValues.find(sv => sv.filterId === filterId)
+
+        if (selectableValues?.values) {
+            // get all selected values that are non-empty, converted to strings
+            const values = selectableValues?.values.map(sv => (sv.value || '').toString()).filter(v => v.length > 0)
+
+            if (values) {
+                const queryAttribute = filter.attribute.id || filter.attribute.label || ''
+                const mappedAttribute = getAttributeMapping(entityType, queryAttribute)
+
+                if (values.length === 1) {
+                    const restriction = new API.Restriction(mappedAttribute, API.Comparators.EQ, values[0])
+                    originalFilter.withAndRestriction(restriction)
+                } else if (values.length > 1) {
+                    const nestedRestriction = new API.NestedRestriction()
+
+                    for (const value of values) {
+                        const restriction = new API.Restriction(mappedAttribute, API.Comparators.EQ, value)
+                        nestedRestriction.withOrRestriction(restriction)
+                    }
+
+                    originalFilter.withAndRestriction(nestedRestriction)
+                }
+            }
+        }
+    }
 }
