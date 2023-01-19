@@ -25,7 +25,7 @@
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^29.1.2",
     "@types/jquery": "^3.5.13",
-    "commander": "^9.2.0",
+    "commander": "^10.0.0",
     "fs-extra": "^11.1.0",
     "jest-mock-axios": "^4.7.0-beta2",
     "recursive-copy": "^2.0.13",
