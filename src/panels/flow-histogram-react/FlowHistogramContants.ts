@@ -24,14 +24,21 @@ export const PositionOptions = [
     { label: 'Bottom Left', value: 'sw' },
 ]
 
-export const NiceByteName = (option) => {
-    let name = 'Bytes'
+export const NiceByteName = (option, dataSeries) => {
+    let toBits = dataSeries[0].meta.custom['toBits'] ? true : false
+    let name = toBits ? 'Bits' : 'Bytes'
     if (option.label === 'KB') {
-        name = 'KiloBytes'
+        name = toBits ? 'Kb' : 'KB'
     } else if (option.label === 'MB') {
-        name = 'MegaBytes'
+        name = toBits ? 'Mb' : 'MB'
     } else if (option.label === 'GB') {
-        name = 'GigaBytes'
+        name = toBits ? 'Gb' : 'GB'
     }
     return name;
+}
+
+export const DataPosition = {
+    value: 0,
+    index: 0,
+    metric: 1
 }

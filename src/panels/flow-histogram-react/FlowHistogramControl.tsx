@@ -1,19 +1,21 @@
 import { PanelProps } from '@grafana/data'
 import React, { useEffect, useRef } from 'react'
 import { NiceByteName } from './FlowHistogramContants';
-import { getFlowHistogramPlotConfig, getFlowHistogramPlotData } from './FlowHistogramHelpers';
+import { getFlowHistogramPlotConfig, getFlowHistogramPlotData, getLabeledValues } from './FlowHistogramHelpers';
 import { FlowHistogramOptionsProps } from './FlowHistogramTypes';
+import _ from 'lodash';
 
 interface FlowHistogramControlOptions { flowHistogramOptions: FlowHistogramOptionsProps }
 interface Props extends PanelProps<FlowHistogramControlOptions> { }
 
 export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, options }) => {
     const ref: any = useRef();
- 
-    useEffect(() => {
-        const plotData = getFlowHistogramPlotData(data, options)
-        const plotConfig = getFlowHistogramPlotConfig(options);
 
+    useEffect(() => {
+        const processedData = getLabeledValues(data, options)
+        let plotData = getFlowHistogramPlotData(processedData, options)
+        const plotConfig = getFlowHistogramPlotConfig(processedData, options);
+        
         $.plot(ref.current, plotData, plotConfig)
 
     }, [data, width, height, ref, options]);
@@ -26,7 +28,7 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                    .side-spot {
                         margin-left: 25px;
                         position: relative;
-                    }
+                    }                                     
                     .side-spot .side-spot-label {
                         transform: rotate(-90deg) translateY(-50%);
                         transform-origin: center;
@@ -46,7 +48,7 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                 `
                 }
             </style>
-            <div className={options.flowHistogramOptions.direction.label === 'Horizontal' ? 'side-spot' : ''} >
+            <div className= {options.flowHistogramOptions.direction.label === 'Horizontal' ? '' : 'side-spot'  } >
                 <div ref={ref} style={{ width: width, height: height - 25 }} />
                 <div className='side-spot-label'
                     style={{
@@ -55,7 +57,7 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                    <p style={{ marginTop: 24 }}>{NiceByteName(options?.flowHistogramOptions?.units)}</p>
+                    <p style={{ marginTop: 24 }}>{NiceByteName(options?.flowHistogramOptions?.units, data?.series)}</p>
                 </div>
             </div>
         </>

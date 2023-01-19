@@ -1,96 +1,230 @@
-import { SelectableValue } from "@grafana/data";
-import { FlowHistogramOptionsProps } from "./FlowHistogramTypes";
+// import { SelectableValue } from "@grafana/data";
+import { FlowHistogramOptionsProps, DataProcessed } from "./FlowHistogramTypes";
+import _ from 'lodash';
+import moment from 'moment';
+import { DataPosition } from "./FlowHistogramContants";
 
-const formatFlowHistogram = (histogramUnit: SelectableValue<string>, v) => {
+export const getUnits = (data, panelUnits) => {
+    const dataElement = data[0];
+    const toBits = dataElement && dataElement.meta && dataElement.meta.custom['toBits'] ? dataElement.meta.custom['toBits'] : null;
     let divisor = 1;
-
-    if (histogramUnit.label === 'KB') {
-        divisor = 1000
-    } else if (histogramUnit.label === 'MB') {
-        divisor = 1000000
-    } else if (histogramUnit.label === 'GB') {
-        divisor = 1000000000;
+    let units;
+    switch (panelUnits) {
+        case 'b':
+            units = toBits ? 'Bits' : 'Bytes';
+            break;
+        case 'kb':
+            divisor = 1024;
+            units = toBits ? 'Kb' : 'KB';
+            break;
+        case 'mb':
+            divisor = 1024 ** 2;
+            units = toBits ? 'Mb' : 'MB';
+            break;
+        case 'gb':
+            divisor = 1024 ** 3;
+            units = toBits ? 'Gb' : 'GB';
+            break;
     }
 
-    return v / divisor
-}
-export const getFlowHistogramPlotData = (data, options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
-
-    let totalIn = 0;
-    let totalOut = 0;
-    let countedIn = 0;
-    let countedOut = 0;
-    data?.series?.forEach((sd) => {
-        let counterType;
-        if (sd.name.includes('(In)')) {
-            counterType = 'in'
-        } else if (sd.name.includes('(Out)')) {
-            counterType = 'out'
-        }
-        if (counterType) {
-            const valueField = sd.fields.find((f) => f.name === 'Value')
-            if (valueField) {
-                const valueArray = valueField.values.toArray()
-                valueArray.forEach((v) => {
-                    // OPTIONS LINK: Units. Convert Bytes to selected option.
-                    let formatted = formatFlowHistogram(options.flowHistogramOptions.units, v);
-                    if (counterType === 'in') {
-                        countedIn += 1;
-                        totalIn += formatted
-                    } else if (counterType === 'out') {
-                        totalOut += formatted
-                        countedOut += 1;
-                    }
-                })
-            }
-        }
-    })
-
-    // OPTIONS LINK: Display. Leave alone if Total, if Rate, divide by number of entries.
-    if (options.flowHistogramOptions.display.label === 'Rate') {
-        totalIn = totalIn / countedIn
-        totalOut = totalOut / countedOut
-    }
-    const inData = options.flowHistogramOptions.direction.label === 'Horizontal' ? [totalIn, 0] : [0, totalIn]
-    const stackedIndex = options.flowHistogramOptions.mode.label === 'Separate' ? 1 : 0;
-    const outData = options.flowHistogramOptions.direction.label === 'Horizontal' ? [totalOut, stackedIndex] : [stackedIndex, totalOut]
-    return [
-        { label: 'Out', data: [outData] },
-        { label: 'In', data: [inData] },
-    ]
-}
-
-export const getFlowHistogramPlotConfig = (options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
-    const axis = options.flowHistogramOptions.direction.label === 'Horizontal' ? 'yaxis' : 'xaxis'
-    let ticks = [[0, 'In'], [1, 'Out']];
-    if (options.flowHistogramOptions.mode.label === 'Stacked') {
-        ticks = [[0, options?.flowHistogramOptions?.display?.label || 'Total']]
-    }
     return {
-        grid: {
-            borderWidth: 0
+        divisor: divisor,
+        units: units,
+    };
+}
+
+export const getFlowHistogramPlotData = (data: DataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
+
+    switch (options.flowHistogramOptions.mode.label) {
+        case 'Separate': {
+            let inSeriesData: any = {
+                label: 'In',
+                bars: {
+                    show: true,
+                    barWidth: 0.2,                    
+                    align: options.flowHistogramOptions.direction.label === 'Horizontal' ? 'left' : 'right'
+                },
+                data: data.inByLabel
+            }
+
+            let outSeriesData: any = {
+                label: 'Out',
+                bars: {
+                    show: true,
+                    barWidth: 0.2,                    
+                    align: options.flowHistogramOptions.direction.label === 'Horizontal' ? 'right' : 'left'
+                },
+                data: data.outByLabel,
+            }
+            return [outSeriesData, inSeriesData]
+
+        }
+        case 'Stacked': {
+            // let dataFromSeries = getLabeledValues(data)
+            // let stackedSeriesData: any[] = [];
+            // let seriesIndex = 0;
+            // data?.series?
+            // for (const key of Object.keys(dataFromSeries)) {
+            //     let item: any = {
+            //         label: key,
+            //         // color: this.getColorForSeriesIndex(seriesIndex),
+            //     };
+            //     // if (!this.hiddenSeries[seriesIndex++]) {
+            //         item.data = dataFromSeries[key];
+            //     // }
+            //     stackedSeriesData.push(item);
+            // }
+
+            return [];
+        }
+        default: return []
+    }
+}
+
+export const getFlowHistogramPlotConfig = (data: DataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
+
+    const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
+    const xaxis = {
+        axisLabel: options.flowHistogramOptions.units.label
+    }
+
+    const yaxis = {
+        mode: 'categories',
+        tickLength: 0,
+        ticks: data.indexedLabels,
+        autoscaleMargin: 0.02,
+    }
+
+    const configOptions: any = {
+        legend: {
+            show: true,
+            backgroundOpacity: 0
+        },
+        axisLabels: {
+            show: true,
         },
         series: {
             bars: {
-                align: 'center',
+                align: "center",
                 barWidth: 0.6,
                 fill: 0.8,
                 horizontal: options?.flowHistogramOptions?.direction?.label === 'Horizontal',
                 lineWidth: 1,
                 show: true,
-            }
+                order: 1
+            },
+            stack: stacked,
         },
-        [axis]: {
-            show: true,
-            autoscaleMargin: 0.02,
-            tickLength: 0,
-            ticks,
+        grid: {
+            borderWidth: 0,
         },
-        legend: {
-            show: options?.flowHistogramOptions.showLegend,
-            position: options?.flowHistogramOptions?.position.value,
-            margin: [-45, -45],
-            backgroundColor: '#181b1f'
-        },
+        xaxis: options.flowHistogramOptions.direction.label === 'Horizontal' ? xaxis : yaxis,
+        yaxis: options.flowHistogramOptions.direction.label === 'Horizontal' ? yaxis : xaxis
     }
+
+
+
+    return configOptions
+
 }
+
+export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHistogramOptionsProps }): DataProcessed => {
+
+    let labeledValues: DataProcessed = {
+        inByLabel: [],
+        outByLabel: [],
+        indexedLabels: []
+    }
+    // I believe should be just one data series in this case since this work together with asTableSummary function
+    if (data && data.series && data.series.length === 1) {
+        const sd = data.series[0]
+        const metric = sd && sd.meta && sd.meta.custom ? sd.meta.custom['metric'] : undefined;
+        const inLabel = sd.meta.custom['toBits'] ? 'Bits In' : 'Bytes In'
+        const outLabel = sd.meta.custom['toBits'] ? 'Bits Out' : 'Bytes Out'
+        const inByData: any[] = getSeriesMetricValues(sd.fields, inLabel)
+        const outByData: any[] = getSeriesMetricValues(sd.fields, outLabel)
+        let inResult: any[] = [] // [bytes, metric]
+        let outResult: any[] = [] // [bytes, metric]
+        let metricLabels: any[] = []
+        switch (metric) {
+            case 'Applications':
+                metricLabels = getSeriesMetricValues(sd.fields, 'Application')
+                inResult = metricLabels.map((ml, idx) => { return [inByData[idx], ml] })
+                outResult = metricLabels.map((ml, idx) => { return [outByData[idx], ml] })
+                break
+            case 'Hosts':
+                metricLabels = getSeriesMetricValues(sd.fields, 'Host')
+                inResult = metricLabels.map((ml, idx) => { return [inByData[idx], ml] })
+                outResult = metricLabels.map((ml, idx) => { return [outByData[idx], ml] })
+                break
+            case 'Conversations':
+                metricLabels = getSeriesMetricValues(sd.fields, 'Application')
+                const sourceLabels = getSeriesMetricValues(sd.fields, 'Source')
+                const destLabels = getSeriesMetricValues(sd.fields, 'Dest.')
+                inResult = metricLabels.map((ml, idx) => {
+                    return [inByData[idx], sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + ml + ']']
+                })
+                outResult = metricLabels.map((ml, idx) => {
+                    return [outByData[idx], sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + (ml ? ml : 'Unknown') + ']']
+
+                })
+                break
+        }
+
+        if (!metric) {
+            return {
+                inByLabel: ['unknown'],
+                outByLabel: ['unknown'],
+                indexedLabels: []
+            };
+        }
+
+        // Map the values to rates (average over the given time interval) if selected
+        if (options.flowHistogramOptions.display.label === 'Rate') {
+            let timeRangeInSeconds = moment.duration(data.timeRange.to.diff(data.timeRange.from)).asSeconds();
+            inResult = inResult.map(pair => {
+                return [pair[DataPosition.value] / timeRangeInSeconds, pair[DataPosition.metric]]
+            })
+
+            outResult = outResult.map(pair => {
+                return [pair[DataPosition.value] / timeRangeInSeconds, pair[DataPosition.metric]]
+            })
+        }
+
+        const indexedLabels = [...new Set(inResult.map((pair) => pair[DataPosition.metric])
+            .concat(outResult.map((pair) => pair[DataPosition.metric])))]
+            .sort()
+            .map((label, idx) => [idx, label])
+
+        labeledValues = {
+            inByLabel: swapLabelByIndex(inResult, indexedLabels),
+            outByLabel: swapLabelByIndex(outResult, indexedLabels),
+            indexedLabels: indexedLabels
+        }
+        return labeledValues
+
+    } else {
+        throw new Error('Only one query is permited in this panel');
+    }
+    return labeledValues
+}
+
+export const getSeriesMetricValues = (fields: any[], name: string) => {
+    let match = fields.find(f => f.name === name)
+    if (match && match.values) {
+        return match.values.toArray()
+    }
+    else return []
+
+}
+
+export const swapLabelByIndex = (data: any[], indexedLabels) => {
+    return data.map(pair => {
+        let match = indexedLabels.find(item => item[DataPosition.metric] === pair[DataPosition.metric])
+        if (match) {
+            let index = match[DataPosition.index]
+            return [pair[DataPosition.value], index]
+        } else return []
+    })
+}
+

@@ -9,3 +9,9 @@ export interface FlowHistogramOptionsProps {
     position: SelectableValue<string>,
     height: number
 }
+
+export interface DataProcessed {
+    inByLabel: any[],
+    outByLabel: any[],
+    indexedLabels: any[]
+}
