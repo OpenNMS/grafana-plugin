@@ -196,9 +196,11 @@ export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHist
             .sort()
             .map((label, idx) => [idx, label])
 
+        const isHorizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
+
         labeledValues = {
-            inByLabel: swapLabelByIndex(inResult, indexedLabels),
-            outByLabel: swapLabelByIndex(outResult, indexedLabels),
+            inByLabel: swapLabelByIndex(inResult, indexedLabels, isHorizontal),
+            outByLabel: swapLabelByIndex(outResult, indexedLabels, isHorizontal),
             indexedLabels: indexedLabels
         }
         return labeledValues
@@ -218,12 +220,21 @@ export const getSeriesMetricValues = (fields: any[], name: string) => {
 
 }
 
-export const swapLabelByIndex = (data: any[], indexedLabels) => {
+/**
+ * Convert the result data into a format that takes in consideration the ticks and graph direction 
+ * if graph direction is horizontal then the data should be pairs [value, label_index] otherwise [label_index, value]
+ * where label_index is the index associated to the category in indexedLabels (ticks) 
+ * @param data 
+ * @param indexedLabels 
+ * @param isHorizontal 
+ * @returns array data pairs []
+ */
+export const swapLabelByIndex = (data: any[], indexedLabels: any[], isHorizontal: boolean) => {
     return data.map(pair => {
         let match = indexedLabels.find(item => item[DataPosition.metric] === pair[DataPosition.metric])
         if (match) {
             let index = match[DataPosition.index]
-            return [pair[DataPosition.value], index]
+            return isHorizontal ? [pair[DataPosition.value], index] : [index, pair[DataPosition.value]]
         } else return []
     })
 }
