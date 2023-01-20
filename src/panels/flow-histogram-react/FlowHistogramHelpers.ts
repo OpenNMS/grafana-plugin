@@ -125,8 +125,8 @@ export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHist
                 metricLabels = getSeriesMetricValues(sd.fields, 'Application')
                 const sourceLabels = getSeriesMetricValues(sd.fields, 'Source')
                 const destLabels = getSeriesMetricValues(sd.fields, 'Dest.')
-                labelFunction = (name, idx) => {
-                    sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + (name ? name : 'Unknown') + ']'
+                labelFunction = (name: string, idx: number): string => {
+                    return sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + (name ? name : 'Unknown') + ']'
                 }
                 break
         }
@@ -137,9 +137,9 @@ export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHist
         if (!stacked) {
             inResult = getSeparatedResultData(inByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
             outResult = getSeparatedResultData(outByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
-            
+
         } else {
-            stackedResult = getStackedResultData(indexedMetricLabels, inByData, outByData, horizontal, unitInfo, rate, timeRangeInSeconds)    
+            stackedResult = getStackedResultData(indexedMetricLabels, inByData, outByData, horizontal, unitInfo, rate, timeRangeInSeconds)
         }
 
         labeledValues = {
@@ -198,10 +198,10 @@ export const getStackedResultData = (indexedMetricLabels: any[], inByData: any[]
         const label = imLabel[DataPosition.indexLabel.label]
         const inData = inByData[index] / divisor
         const outData = outByData[index] / divisor
-        return horizontal ? 
-        { label: label, data: [[inData, FLowDataDirection.dataIn.value], [outData, FLowDataDirection.dataOut.value]] } :
-        { label: label, data: [[FLowDataDirection.dataIn.value, inData], [FLowDataDirection.dataOut.value, outData]] } 
-        
+        return horizontal ?
+            { label: label, data: [[inData, FLowDataDirection.dataIn.value], [outData, FLowDataDirection.dataOut.value]] } :
+            { label: label, data: [[FLowDataDirection.dataIn.value, inData], [FLowDataDirection.dataOut.value, outData]] }
+
     })
 }
 
@@ -211,7 +211,7 @@ export const getSeriesMetricValues = (fields: any[], name: string) => {
     if (match && match.values) {
         return match.values.toArray()
     }
-    else return []
+    else { return [] }
 
 }
 
