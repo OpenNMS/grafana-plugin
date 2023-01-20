@@ -10,8 +10,25 @@ export interface FlowHistogramOptionsProps {
     height: number
 }
 
-export interface DataProcessed {
+export interface DataProcessed{
+    ticks?: any[],
+}
+
+export interface SeparateDataProcessed extends DataProcessed{
     inByLabel: any[],
-    outByLabel: any[],
-    indexedLabels: any[]
+    outByLabel: any[],    
+}
+
+export interface StackedDataProcessed extends DataProcessed{
+    metricsByLabel: any[]
+}
+
+export interface FlowPanelDataProcessed {    
+    separateData?: SeparateDataProcessed 
+    stackedData?: StackedDataProcessed
+}
+
+export interface FlowPanelUnitInfo{
+    units: string,
+    divisor: number
 }

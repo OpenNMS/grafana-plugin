@@ -1,6 +1,6 @@
 import { PanelProps } from '@grafana/data'
 import React, { useEffect, useRef } from 'react'
-import { NiceByteName } from './FlowHistogramContants';
+import { UnitInfo } from './FlowHistogramContants';
 import { getFlowHistogramPlotConfig, getFlowHistogramPlotData, getLabeledValues } from './FlowHistogramHelpers';
 import { FlowHistogramOptionsProps } from './FlowHistogramTypes';
 import _ from 'lodash';
@@ -13,9 +13,9 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
 
     useEffect(() => {
         const processedData = getLabeledValues(data, options)
-        let plotData = getFlowHistogramPlotData(processedData, options)
-        const plotConfig = getFlowHistogramPlotConfig(processedData, options);
-        
+        const plotData = getFlowHistogramPlotData(processedData, options)
+        const plotConfig = getFlowHistogramPlotConfig(processedData, options)
+
         $.plot(ref.current, plotData, plotConfig)
 
     }, [data, width, height, ref, options]);
@@ -57,7 +57,7 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                    <p style={{ marginTop: 24 }}>{NiceByteName(options?.flowHistogramOptions?.units, data?.series)}</p>
+                    <p style={{ marginTop: 24 }}>{UnitInfo(options, data?.series).units}</p>
                 </div>
             </div>
         </>
