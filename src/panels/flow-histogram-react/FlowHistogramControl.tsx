@@ -12,6 +12,9 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
     const ref: any = useRef();
 
     useEffect(() => {
+        if (!data?.series || data.series.length === 0 || !data?.series[0].meta || !data?.series[0].meta.custom) {
+            throw new Error('Incorrect or incomplete data, check the datasource is flow-datasource and function asSummaryTable are selected')
+        }
         const processedData = getLabeledValues(data, options)
         const plotData = getFlowHistogramPlotData(processedData, options)
         const plotConfig = getFlowHistogramPlotConfig(processedData, options)

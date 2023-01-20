@@ -28,13 +28,15 @@ export const PositionOptions = [
 ]
 
 export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsProps }, dataSeries): FlowPanelUnitInfo => {
-
+    if (!dataSeries || dataSeries.length === 0 || !dataSeries[0].meta || !dataSeries[0].meta.custom) {
+        throw new Error('Incorrect or incomplete data, check the datasource is flow-datasource and function asSummaryTable are selected')
+    }
     const toBits = dataSeries[0].meta.custom['toBits'] ? true : false
     const rate = options.flowHistogramOptions.display.label === 'Rate'
     const option = options.flowHistogramOptions.units.label
 
-    let divisor = 1;
-    let units;
+    let divisor = 1
+    let units = 'Bytes'
     switch (option) {
         case 'B':
             units = toBits ? 'Bits' : 'Bytes'
