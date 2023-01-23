@@ -1,4 +1,4 @@
-// import { SelectableValue } from "@grafana/data";
+/* eslint-disable no-restricted-imports */
 import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } from "./FlowHistogramTypes";
 import _ from 'lodash';
 import moment from 'moment';
