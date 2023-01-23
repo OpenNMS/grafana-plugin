@@ -42,7 +42,7 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
     const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
     const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
     const container = options.flowHistogramOptions.position.label === 'Under Graph' ? $('.flow-histogram-legend-bottom') : $('.flow-histogram-legend-right') 
-    const noColumns = options.flowHistogramOptions.position.label === 'Under Graph' ? 10 : 2
+    const noColumns = options.flowHistogramOptions.position.label === 'Under Graph' ? 5 : 1
     const showLegend = options.flowHistogramOptions.showLegend
     const legendPosition = options.flowHistogramOptions.position.value 
     
