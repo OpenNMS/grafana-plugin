@@ -76,7 +76,7 @@ export const FlowHistogramOptions: React.FC<PanelOptionsEditorProps<FlowHistogra
                 />
             </HelmInlineField>
             <HelmInlineField label='Height'>
-                <Input type='number' max={75} min={20} value={options?.height} onChange={(e) => updateOptions(e.currentTarget.value, 'height')} />
+                <Input type='number' max={75} min={20} value={options?.height} onChange={(e) => updateOptions((Number.parseInt(e.currentTarget.value) > 0 ? e.currentTarget.value : 0), 'height')} />
             </HelmInlineField>
         </div>
     )
