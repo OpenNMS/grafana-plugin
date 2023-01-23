@@ -41,13 +41,11 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
 
     const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
     const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
-    const rate = options.flowHistogramOptions.display.label === 'Rate'
-
-
-    const xaxis = {
-        axisLabel: rate ? options.flowHistogramOptions.units.label + '/s' : options.flowHistogramOptions.units.label
-    }
-
+    const container = options.flowHistogramOptions.position.label === 'Under Graph' ? $('.flow-histogram-legend-bottom') : $('.flow-histogram-legend-right') 
+    const noColumns = options.flowHistogramOptions.position.label === 'Under Graph' ? 10 : 2
+    const showLegend = options.flowHistogramOptions.showLegend
+    const legendPosition = options.flowHistogramOptions.position.value 
+    
     const yaxis = {
         mode: 'categories',
         tickLength: 0,
@@ -57,12 +55,14 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
 
     const configOptions: any = {
         legend: {
-            show: true,
-            backgroundOpacity: 0
-        },
-        axisLabels: {
-            show: true,
-        },
+            show: showLegend,
+            container: container,
+            position: legendPosition,
+            backgroundOpacity: 0,
+            noColumns: noColumns,
+            placement: container ? 'outsideGrid' : null,
+            labelFormatter: (label, series) => {return '<a style="margin:3px" >' + label + '</a>'; }
+        },        
         series: {
             bars: {
                 align: "center",
@@ -77,8 +77,8 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
         grid: {
             borderWidth: 0,
         },
-        xaxis: horizontal ? xaxis : yaxis,
-        yaxis: horizontal ? yaxis : xaxis
+        xaxis: horizontal ? {} : yaxis,
+        yaxis: horizontal ? yaxis : {}
     }
     return configOptions
 

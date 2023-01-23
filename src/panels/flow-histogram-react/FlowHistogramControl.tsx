@@ -27,7 +27,7 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
         <>
             <style>
                 {
-                `
+                    `
                    .side-spot {
                         margin-left: 25px;
                         position: relative;
@@ -51,17 +51,31 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                 `
                 }
             </style>
-            <div className= {options.flowHistogramOptions.direction.label === 'Horizontal' ? '' : 'side-spot'  } >
-                <div ref={ref} style={{ width: width, height: height - 25 }} />
-                <div className='side-spot-label'
+            <div>
+                <div className={options.flowHistogramOptions.direction.label === 'Horizontal' ? '' : 'side-spot'}
                     style={{
-                        height: 25,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
+                        display: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block'),
+                        float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
                     }}>
-                    <p style={{ marginTop: 24 }}>{UnitInfo(options, data?.series).units}</p>
+                    <div ref={ref} style={{ width: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.8),
+                        height: height - 25 - (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0 )}} />
+                    <div className='side-spot-label'
+                        style={{
+                            height: 25,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                        <p style={{ marginTop: 24 }}>{UnitInfo(options, data?.series).units}</p>
+                    </div>
                 </div>
+                <div className={(options.flowHistogramOptions.position.label === 'Under Graph' ? 'flow-histogram-legend-bottom' : 'flow-histogram-legend-right')}
+                    style={{
+                        display: (options.flowHistogramOptions.showLegend ? (options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block') : 'none'),
+                        marginTop: options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0,
+                        width: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.2),
+                        float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
+                    }} />
             </div>
         </>
     )

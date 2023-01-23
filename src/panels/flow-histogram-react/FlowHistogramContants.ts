@@ -23,8 +23,8 @@ export const ModeOptions = [
 ]
 
 export const PositionOptions = [
-    { label: 'Top Left', value: 'nw' },
-    { label: 'Bottom Left', value: 'sw' },
+    { label: 'Right Side', value: '' },    
+    { label: 'Under Graph', value: '' },
 ]
 
 export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsProps }, dataSeries): FlowPanelUnitInfo => {
