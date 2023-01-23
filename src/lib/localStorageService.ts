@@ -1,4 +1,4 @@
-import { FilterEditorData } from '../panels/filter-panel-react/FilterPanelTypes'
+import { FilterEditorData } from '../datasources/entity-ds-react/types'
 
 const getCircularReplacer = () => {
     const seen = new WeakSet();

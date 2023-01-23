@@ -1,6 +1,8 @@
+import { SelectableValue } from '@grafana/data'
 import { API } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import {
+    ActiveFilter,
     AlarmProperties,
     IpInterfaceProperties,
     MonitoredServiceProperties,
@@ -166,6 +168,17 @@ export const getFuncNameFromEntityType = (entityType: string) => {
     }
 
     return ''
+}
+
+export const getFilterIdFromParts = (entity: SelectableValue<string | number>, attribute: SelectableValue) => {
+    const entityName = (entity.label || entity.value || '').toString()
+    const attrName = attribute.id || attribute.label || ''
+
+    return `${entityName}_${attrName}`
+}
+
+export const getFilterId = (filter: ActiveFilter) => {
+    return getFilterIdFromParts(filter.entity, filter.attribute)
 }
 
 /**

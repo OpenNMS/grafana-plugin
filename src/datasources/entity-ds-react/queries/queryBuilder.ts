@@ -1,10 +1,9 @@
 import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
-import { EntityQuery, EntityQueryRequest } from './../types'
+import { EntityQuery, EntityQueryRequest, FilterEditorData } from './../types'
 import { getAttributeMapping } from './attributeMappings'
 import { EntityTypes } from '../../../constants/constants'
-import { getFilterId } from './../../../panels/filter-panel-react/FilterPanelHelper'
-import { FilterEditorData } from '../../../panels/filter-panel-react/FilterPanelTypes'
+import { getFilterId } from '../EntityHelper'
 
 const isAllVariable = (templateVar, templateSrv) => {
     return templateVar.current.value &&

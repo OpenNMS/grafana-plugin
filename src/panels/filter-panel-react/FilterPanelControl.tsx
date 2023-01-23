@@ -4,12 +4,13 @@ import { getDataSourceSrv } from "@grafana/runtime"
 import { HorizontalGroup, Input, Select, VerticalGroup } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay'
 import { loadFilterEditorData, saveFilterEditorData } from 'lib/localStorageService'
+import { FilterControlProps } from './FilterPanelTypes'
 import { useEntities } from '../../hooks/useEntities'
-import { getFilterId } from './FilterPanelHelper'
-import { ActiveFilter, FilterControlProps, FilterEditorData, FilterSelectableValues } from './FilterPanelTypes'
+import { ActiveFilter, FilterEditorData, FilterSelectableValues, useFilterData } from '../../hooks/useFilterData'
 
 export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
     const { getFuncNameFromEntityType } = useEntities()
+    const { getFilterId } = useFilterData()
 
     // array of metric values for each filter id
     const [metricValues, setMetricValues] = useState<Array<[string, MetricFindValue[]]>>([])

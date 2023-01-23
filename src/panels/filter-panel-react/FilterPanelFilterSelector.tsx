@@ -12,9 +12,8 @@ import {
 import { GrafanaDatasource } from 'hooks/useDataSources'
 import { useEntities } from 'hooks/useEntities'
 import { useEntityProperties } from 'hooks/useEntityProperties'
+import { ActiveFilter, useFilterData } from '../../hooks/useFilterData'
 import { ClientDelegate } from 'lib/client_delegate'
-import { getFilterId, getFilterIdFromParts } from './FilterPanelHelper'
-import { ActiveFilter } from './FilterPanelTypes'
 
 interface FilterPanelFilterSelectorProps {
     datasource?: GrafanaDatasource,
@@ -31,6 +30,7 @@ export const FilterPanelFilterSelector: React.FC<FilterPanelFilterSelectorProps>
     const [attribute, setAttribute] = useState<SelectableValue<{ id: string }>>()
     const [featuredAttributes, setFeaturedAttributes] = useState<boolean>(true)
     const { propertiesAsArray } = useEntityProperties(entity?.label || '', featuredAttributes, client as any)
+    const { getFilterId, getFilterIdFromParts } = useFilterData()
 
     const isDisabled = () => {
         if (!entity || !attribute || !datasource || attribute.label === 'Select Attribute') {
