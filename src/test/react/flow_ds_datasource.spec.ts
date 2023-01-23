@@ -656,36 +656,31 @@ describe("OpenNMS_Flow_Datasource", function () {
       ] as FlowParsedQueryData;
 
       let expectedResponse = [{
-        refId: '',
-        "columns": [
-          {
-            "text": "Application"
+        name: '',
+        "fields": [
+          {            
+            "name": "Application",
+            "values" : ["app0", "app1"]
           },
           {
-            "text": "Bits In"
+            "name": "Bits In",
+            "values": [16,0]
           },
           {
-            "text": "Bits Out"
+            "name": "Bits Out",
+            "values": [8,40]
           },
           {
-            "text": "ECN"
+            "name": "ECN",
+            "values": ["non-ect / ce", "non-ect / ce"]
           }
         ],
-        "rows": [
-          [
-            "app0",
-            16,
-            8,
-            "non-ect / ce"
-          ],
-          [
-            "app1",
-            0,
-            40,
-            "non-ect / ce"
-          ]
-        ],
-        "type": "table",
+        "meta": {
+          "custom": {
+            "metric": "",
+            "toBits": { 'toBits': '' },
+          },
+        },       
       }];
       let actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS);
       expect(expectedResponse).toEqual(actualResponse);
