@@ -1,3 +1,6 @@
+import { FlowHistogramOptionsProps, FlowPanelUnitInfo } from "./FlowHistogramTypes";
+
+
 export const DirectionOptions = [
     { label: 'Horizontal', value: '0' },
     { label: 'Vertical', value: '1' }
@@ -20,18 +23,62 @@ export const ModeOptions = [
 ]
 
 export const PositionOptions = [
-    { label: 'Top Left', value: 'nw' },
-    { label: 'Bottom Left', value: 'sw' },
+    { label: 'Right Side', value: '' },    
+    { label: 'Under Graph', value: '' },
 ]
 
-export const NiceByteName = (option) => {
-    let name = 'Bytes'
-    if (option.label === 'KB') {
-        name = 'KiloBytes'
-    } else if (option.label === 'MB') {
-        name = 'MegaBytes'
-    } else if (option.label === 'GB') {
-        name = 'GigaBytes'
+export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsProps }, dataSeries): FlowPanelUnitInfo => {
+    if (!dataSeries || dataSeries.length === 0 || !dataSeries[0].meta || !dataSeries[0].meta.custom) {
+        throw new Error('Incorrect or incomplete data, check the datasource is flow-datasource and function asSummaryTable are selected')
     }
-    return name;
+    const toBits = dataSeries[0].meta.custom['toBits'] ? true : false
+    const rate = options.flowHistogramOptions.display.label === 'Rate'
+    const option = options.flowHistogramOptions.units.label
+
+    let divisor = 1
+    let units = 'Bytes'
+    switch (option) {
+        case 'B':
+            units = toBits ? 'Bits' : 'Bytes'
+            break
+        case 'KB':
+            divisor = 1024
+            units = toBits ? 'Kb' : 'KB'
+            break
+        case 'MB':
+            divisor = 1024 ** 2
+            units = toBits ? 'Mb' : 'MB'
+            break
+        case 'GB':
+            divisor = 1024 ** 3
+            units = toBits ? 'Gb' : 'GB'
+            break
+    }
+    if (rate) {
+        units = units + '/s'
+    }
+    return { units, divisor }
+
+}
+
+export const DataPosition = {
+    horizontal: {
+        value: 0,
+        index: 0,
+        metric: 1
+    },
+    vertical: {
+        value: 1,
+        index: 1,
+        metric: 0
+    },
+    indexLabel: {
+        index: 0,
+        label: 1
+    }
+}
+
+export const FLowDataDirection = {
+    dataIn: { label: 'In', value: 0 },
+    dataOut: { label: 'Out', value: 1 }
 }

@@ -203,7 +203,7 @@ export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: 
             }
         }
     }
-    toggleTableViewIfRelevant(type);
+    //toggleTableViewIfRelevant(type);
 
     return { data: responseData };
 }
@@ -693,13 +693,28 @@ const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequ
 
     const columns = convertDataHeaderstoTableColumns(rawData.headers, query);
     const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, query);
+    const toBits = isFunctionSet(query, FlowFunctionStrings.toBits)
+    // new grafana versions converts TableData into DataFrame when passing data to a panel, 
+    // so modifying here to understand what data should be received
+    const metric = query.segment ? query.segment.label : undefined;
+    const fields: any[] = []
 
-    return [{
-        refId: query.refId,
-        columns,
-        rows: rows,
-        type: 'table'
-    }]
+    const dataFrame = {
+        name: query.refId,
+        fields: fields,
+        meta: toBits ? { custom: { "metric": metric, "toBits": toBits } } : { custom: { "metric": metric } }
+    }
+
+    columns.forEach((col, idx) => {
+        const values = rows.map((row) => { return row[idx] })
+        const field = {
+            name: col.text,
+            values: values
+        }
+        dataFrame.fields.push( field )
+    })
+
+    return [dataFrame]
 }
 
 /**

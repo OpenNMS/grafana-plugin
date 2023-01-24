@@ -63,16 +63,24 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     }, [segmentValue, functionNameList, activeParameterList, parameterOptionList])
 
     const shiftFunctionPosition = (direction, index) => {
-        setFunctionNameList((oldList) => {
-            let newList = oldList;
-            if (oldList) {
-                newList = [...oldList]
-                var temp = newList[index + direction]
-                newList[index + direction] = newList[index]
-                newList[index] = temp;
-                return newList;
+        setFunctionNameList((oldFunctionList) => {
+            let newFunctionList = oldFunctionList;
+            let newFunctionParameterList = activeParameterList
+            let newFunctionOptionParameterList = parameterOptionList
+            if (oldFunctionList) {
+                newFunctionList = [...oldFunctionList]
+                let temp = newFunctionList[index + direction]
+                let tempParam = newFunctionParameterList[index + direction]
+                let tempParamOpt = newFunctionOptionParameterList[index + direction]
+                newFunctionList[index + direction] = newFunctionList[index]
+                newFunctionList[index] = temp;
+                newFunctionParameterList[index + direction] = newFunctionParameterList[index]
+                newFunctionParameterList[index] = tempParam
+                newFunctionOptionParameterList[index + direction] = newFunctionOptionParameterList[index]
+                newFunctionOptionParameterList[index] = tempParamOpt
+                return newFunctionList
             }
-            return newList;
+            return newFunctionList
         })
     }
 
