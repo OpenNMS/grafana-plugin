@@ -511,6 +511,8 @@ workflows:
             branches:
               ignore: /^merge\/.*/
       - make-docker-image:
+          context:
+            - "docker-publish-account"
           requires:
             - make-tarball
           filters:
@@ -543,6 +545,9 @@ workflows:
             branches:
               ignore: /^merge\/.*/
       - publish-docker-image-latest:
+          context:
+            - "docker-publish-account"
+            - "Service Principal"
           requires:
             - make-docker-image
           filters:
@@ -551,6 +556,9 @@ workflows:
             tags:
               only: /^v.*/
       - publish-docker-image-bleeding:
+          context:
+            - "docker-publish-account"
+            - "Service Principal"
           requires:
             - make-docker-image
           filters:
@@ -559,7 +567,6 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-deb:
-          context: Service Principal
           requires:
             - make-deb
           filters:
@@ -569,7 +576,6 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-rpm:
-          context: Service Principal
           requires:
             - make-rpm
           filters:
