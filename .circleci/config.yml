@@ -488,6 +488,7 @@ workflows:
               only: /^v.*/
       - publish-docker-image-latest:
           context:
+            - "cloudsmith-publish-account"
             - "docker-publish-account"
             - "Service Principal"
           requires:
@@ -499,6 +500,7 @@ workflows:
               only: /^v.*/
       - publish-docker-image-bleeding:
           context:
+            - "cloudsmith-publish-account"
             - "docker-publish-account"
             - "Service Principal"
           requires:
@@ -509,6 +511,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-deb:
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-deb
           filters:
@@ -518,6 +522,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-rpm:
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-rpm
           filters:
