@@ -59,11 +59,11 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "build": "grafana-toolkit plugin:build",
-    "test": "grafana-toolkit plugin:test",
-    "dev": "grafana-toolkit plugin:dev",
-    "watch": "grafana-toolkit plugin:dev --watch",
-    "sign": "grafana-toolkit plugin:sign",
+    "build": "grafana-toolkit --openssl-legacy-provider plugin:build",
+    "test": "grafana-toolkit --openssl-legacy-provider plugin:test",
+    "dev": "grafana-toolkit --openssl-legacy-provider plugin:dev",
+    "watch": "grafana-toolkit --openssl-legacy-provider plugin:dev --watch",
+    "sign": "grafana-toolkit --openssl-legacy-provider plugin:sign",
     "start": "npm run watch",
     "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
     "docs": "antora --stacktrace generate local-site.yml"
