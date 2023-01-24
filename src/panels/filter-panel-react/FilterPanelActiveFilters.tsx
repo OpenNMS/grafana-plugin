@@ -1,69 +1,49 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Button, Label, SegmentInput, Select } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay';
-import { ActiveFilter } from './FilterPanelTypes';
+import { ActiveFilter } from '../../hooks/useFilterData'
 import { SelectableValue } from '@grafana/data';
 
 interface FilterPanelActiveFiltersProps {
     activeFilters: ActiveFilter[],
-    setActiveFilters: Function,
     onChange: Function
 }
-export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> = ({ activeFilters, setActiveFilters, onChange }) => {
-    const [filterSelectionTypes, setFilterSelectionTypes] = useState<Array<SelectableValue<string>>>([]);
-    const [altColumnLabels, setAltColumnLabels] = useState<string[]>([]);
-    useEffect(() => {
-        onChange({ altColumnLabels, filterSelectionTypes })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [altColumnLabels, filterSelectionTypes])
 
+export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> = ({ activeFilters, onChange }) => {
     const updateFilterSelectionType = (value: SelectableValue<string>, index: number) => {
-        setFilterSelectionTypes((oldTypes) => {
-            const newTypes = [...oldTypes]
-            if (value) {
-                newTypes[index] = value;
-            }
-            return newTypes;
-        })
+        const newFilters = [...activeFilters]
+        newFilters[index].selectionType = value
+        onChange(newFilters)
     }
 
     const updateAltColumnLabels = (value: string | number, index: number) => {
-        setAltColumnLabels((oldLabels) => {
-            const newLabels = [...oldLabels]
-            if (typeof value === 'string') {
-                newLabels[index] = value;
-            }
-            return newLabels;
-        })
-        
+        if (typeof value === 'string') {
+            const newFilters = [...activeFilters]
+            newFilters[index].altColumnLabel = value
+            onChange(newFilters)
+        }
     }
 
     const removeFieldRow = (index: number) => {
-        setActiveFilters((oldFilters) => {
-            const newFilters = [...oldFilters]
-            newFilters.splice(index, 1)
-            return newFilters;
-        })
+        const newFilters = [...activeFilters]
+        newFilters.splice(index, 1)
+        onChange(newFilters)
     }
 
     const moveFieldDown = (index: number) => {
-        setActiveFilters((oldFilters) => {
-            const newFilters = [...oldFilters]
-            var stored = newFilters[index];
-            newFilters.splice(index, 1);
-            newFilters.splice(index + 1, 0, stored);
-            return newFilters;
-        })
+        const newFilters = [...activeFilters]
+        var stored = newFilters[index];
+        newFilters.splice(index, 1);
+        newFilters.splice(index + 1, 0, stored);
+        onChange(newFilters)
     }
 
     const moveFieldUp = (index: number) => {
-        setActiveFilters((oldFilters) => {
-            const newFilters = [...oldFilters]
-            var stored = newFilters[index];
-            newFilters.splice(index, 1);
-            newFilters.splice(index - 1, 0, stored);
-            return newFilters;
-        })
+        const newFilters = [...activeFilters]
+        var stored = newFilters[index];
+        newFilters.splice(index, 1);
+        newFilters.splice(index - 1, 0, stored);
+        onChange(newFilters)
     }
 
     return (
@@ -90,7 +70,7 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
                                     <FieldDisplay>{filter?.entity?.label}</FieldDisplay>
                                     <SegmentInput
                                         placeholder={filter?.attribute?.label}
-                                        value={altColumnLabels[index]}
+                                        value={filter.altColumnLabel}
                                         onChange={(e) => updateAltColumnLabels(e, index)}
                                     />
                                     <div
@@ -106,7 +86,7 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
                                                 { label: 'Text', value: 'text' }
                                             ]}
                                             onChange={(e) => updateFilterSelectionType(e, index)}
-                                            value={filterSelectionTypes[index] || { label: 'Single', value: 'single' }}
+                                            value={filter.selectionType || { label: 'Single', value: 'single' }}
                                         />
                                         <Button
                                             disabled={index === 0}

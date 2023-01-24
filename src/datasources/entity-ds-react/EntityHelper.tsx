@@ -1,6 +1,8 @@
+import { SelectableValue } from '@grafana/data'
 import { API } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import {
+    ActiveFilter,
     AlarmProperties,
     IpInterfaceProperties,
     MonitoredServiceProperties,
@@ -130,18 +132,18 @@ export const filterProperties = (entityName: string, fullProperties: API.SearchO
     return properties
 }
 
+const entityQueries = [
+    ['alarms', EntityTypes.Alarms],
+    ['ipInterface', EntityTypes.IPInterfaces],
+    ['monitoredService', EntityTypes.MonitoredServices],
+    ['nodes', EntityTypes.Nodes],
+    ['nodeFilter', EntityTypes.Nodes],
+    ['outage', EntityTypes.Outages],
+    ['snmpInterface', EntityTypes.SNMPInterfaces]
+]
+
 export const getEntityTypeFromFuncName = (funcName: string) => {
     // key is start of function name, this will also match e.g. 'outage()' and 'outages()'
-    const entityQueries = [
-        ['alarms', EntityTypes.Alarms],
-        ['ipInterface', EntityTypes.IPInterfaces],
-        ['monitoredService', EntityTypes.MonitoredServices],
-        ['nodes', EntityTypes.Nodes],
-        ['nodeFilter', EntityTypes.Nodes],
-        ['outage', EntityTypes.Outages],
-        ['snmpInterface', EntityTypes.SNMPInterfaces]
-    ]
-
     if (funcName) {
         const item = entityQueries.find(d => funcName.startsWith(d[0]))
         if (item) {
@@ -150,6 +152,33 @@ export const getEntityTypeFromFuncName = (funcName: string) => {
     }
 
     return null
+}
+
+/**
+ * Given an EntityType, return the entity datasource function name for it. 
+ */
+export const getFuncNameFromEntityType = (entityType: string) => {
+
+    if (entityType) {
+        const item = entityQueries.find(d => entityType === d[1])
+
+        if (item) {
+            return item[0]
+        }
+    }
+
+    return ''
+}
+
+export const getFilterIdFromParts = (entity: SelectableValue<string | number>, attribute: SelectableValue) => {
+    const entityName = (entity.label || entity.value || '').toString()
+    const attrName = attribute.id || attribute.label || ''
+
+    return `${entityName}_${attrName}`
+}
+
+export const getFilterId = (filter: ActiveFilter) => {
+    return getFilterIdFromParts(filter.entity, filter.attribute)
 }
 
 /**

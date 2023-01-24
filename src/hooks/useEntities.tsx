@@ -1,3 +1,5 @@
+import { getFuncNameFromEntityType } from '../datasources/entity-ds-react/EntityHelper'
+
 export const useEntities = () => {
     const entities = [
         { label: 'Alarms', value: '0' },
@@ -7,5 +9,9 @@ export const useEntities = () => {
         { label: 'Monitored Services', value: '4'},
         { label: 'Outages', value: '5' },
     ]
-    return entities
+
+    return {
+        entities,
+        getFuncNameFromEntityType
+    }
 }

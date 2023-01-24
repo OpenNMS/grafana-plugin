@@ -7,8 +7,9 @@ import {
   SelectableValue,
   QueryEditorProps,
   TableData
-} from "@grafana/data";
-import { EntityDataSource } from "./EntityDataSource";
+} from '@grafana/data';
+import { EntityDataSource } from './EntityDataSource';
+import { GrafanaDatasource } from '../../hooks/useDataSources'
 
 /**
  * These are options configured for each DataSource instance
@@ -156,3 +157,32 @@ export interface OnmsTableData extends TableData {
 }
 
 export type EntityQueryEditorProps = QueryEditorProps<EntityDataSource, EntityQuery, EntityDataSourceOptions>;
+
+/**
+ * Used by FilterPanel and EntityDataSource
+ * entity: Entity name for filter (e.g. "nodes", "alarms")
+ * attribute: Entity attribute to filter on (e.g. "id", "label", "Alarm Type")
+ * selectionType: whether this filter is single/multi/text
+ * altColumnLabel: User customized label for this filter, to display on FilterPanelControl component
+ */
+export interface ActiveFilter {
+    entity: SelectableValue<string | number>
+    attribute: SelectableValue<{ id: string | number }>
+    selectionType: SelectableValue<string>
+    altColumnLabel: string
+}
+
+// Used by FilterPanel and EntityDataSource
+export interface FilterSelectableValues {
+    filterId: string,
+    values: Array<SelectableValue<string | number>>
+}
+
+/**
+ * FilterPanel data saved to localStorage for use by Entity Datasource.
+ */
+export interface FilterEditorData {
+    datasource: SelectableValue<GrafanaDatasource> | undefined,
+    activeFilters: ActiveFilter[]
+    selectableValues: FilterSelectableValues[]
+}
