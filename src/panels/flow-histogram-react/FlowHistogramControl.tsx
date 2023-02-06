@@ -1,7 +1,13 @@
 import { PanelProps } from '@grafana/data'
 import React, { useEffect, useRef } from 'react'
 import { UnitInfo } from './FlowHistogramContants';
-import { getFlowHistogramPlotConfig, getFlowHistogramPlotData, getLabeledValues } from './FlowHistogramHelpers';
+import {
+    getFlowHistogramPlotConfig,
+    getFlowHistogramPlotData,
+    getLabeledValues,
+    setLegend,
+    validateFlowHistogramPanelData
+} from './FlowHistogramHelpers';
 import { FlowHistogramOptionsProps } from './FlowHistogramTypes';
 import _ from 'lodash';
 
@@ -12,14 +18,14 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
     const ref: any = useRef();
 
     useEffect(() => {
-        if (!data?.series || data.series.length === 0 || !data?.series[0].meta || !data?.series[0].meta.custom) {
-            throw new Error('Incorrect or incomplete data, check the datasource is flow-datasource and function asSummaryTable are selected')
-        }
+        validateFlowHistogramPanelData(data?.series)
+
         const processedData = getLabeledValues(data, options)
         const plotData = getFlowHistogramPlotData(processedData, options)
         const plotConfig = getFlowHistogramPlotConfig(processedData, options)
 
         $.plot(ref.current, plotData, plotConfig)
+        setLegend(options)
 
     }, [data, width, height, ref, options]);
 
@@ -60,9 +66,10 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                         display: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block'),
                         float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
                     }}>
-                    <div ref={ref} style={{ 
+                    <div ref={ref} style={{
                         width: (!options.flowHistogramOptions.showLegend || options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.8),
-                        height: height - 25 - (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0 )}} />
+                        height: height - 25 - (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0)
+                    }} />
                     <div className='side-spot-label'
                         style={{
                             height: 25,
@@ -76,10 +83,9 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
                 <div className={(options.flowHistogramOptions.position.label === 'Under Graph' ? 'flow-histogram-legend-bottom' : 'flow-histogram-legend-right')}
                     style={{
                         display: (options.flowHistogramOptions.showLegend ? (options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block') : 'none'),
-                        marginTop: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0),
-                        width: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.2 - (options.flowHistogramOptions.direction.label === 'Horizontal' ? 0 : 25)) ,
-                        height: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : height ), 
-                        float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left'),                        
+                        width: (options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.2 - (options.flowHistogramOptions.direction.label === 'Horizontal' ? 0 : 25)),
+                        height: (options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : height),
+                        float: (options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left'),
                     }} />
             </div>
         </>

@@ -3,6 +3,7 @@ import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } 
 import _ from 'lodash';
 import moment from 'moment';
 import { DataPosition, FLowDataDirection, UnitInfo } from "./FlowHistogramContants";
+import { DataFrame } from "@grafana/data";
 
 export const getFlowHistogramPlotData = (processedData: FlowPanelDataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }): any[] => {
 
@@ -41,11 +42,11 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
 
     const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
     const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
-    const container = options.flowHistogramOptions.position.label === 'Under Graph' ? $('.flow-histogram-legend-bottom') : $('.flow-histogram-legend-right') 
+    const container = null //options.flowHistogramOptions.position.label === 'Under Graph' ? $('.flow-histogram-legend-bottom') : $('.flow-histogram-legend-right') 
     const noColumns = options.flowHistogramOptions.position.label === 'Under Graph' ? 5 : 1
     const showLegend = options.flowHistogramOptions.showLegend
-    const legendPosition = options.flowHistogramOptions.position.value 
-    
+    const legendPosition = options.flowHistogramOptions.position.value
+
     const yaxis = {
         mode: 'categories',
         tickLength: 0,
@@ -60,9 +61,8 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
             position: legendPosition,
             backgroundOpacity: 0,
             noColumns: noColumns,
-            placement: container ? 'outsideGrid' : null,
-            labelFormatter: (label, series) => {return '<a style="margin:3px" >' + label + '</a>'; }
-        },        
+            labelFormatter: (label, series) => { return '<a style="margin:3px" >' + label + '</a>'; }
+        },
         series: {
             bars: {
                 align: "center",
@@ -213,5 +213,29 @@ export const getSeriesMetricValues = (fields: any[], name: string) => {
     }
     else { return [] }
 
+}
+
+export const setLegend = (options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
+    if (options.flowHistogramOptions.showLegend) {
+        const className = options.flowHistogramOptions.position.label === 'Under Graph' ? '.flow-histogram-legend-bottom' : '.flow-histogram-legend-right'
+        const legend = $('.legend')
+        if (legend) {
+            $(className).html('')
+            $(className).append(legend.html())
+            legend.html('')
+        }
+    }
+}
+
+export const validateFlowHistogramPanelData = (dataSeries: DataFrame[]) => {
+    if (!dataSeries || !dataSeries[0].meta || !dataSeries[0].meta.custom) {
+        if (dataSeries.length === 0) {
+            throw new Error('No data, check the datasource is flow-datasource and function asSummaryTable are selected')
+
+        } else {
+            throw new Error('Incorrect or incomplete data, check the datasource is flow-datasource and function asSummaryTable are selected')
+        }
+    }
+    return true
 }
 
