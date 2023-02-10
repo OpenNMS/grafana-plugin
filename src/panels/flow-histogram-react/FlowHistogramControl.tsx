@@ -2,9 +2,11 @@ import { PanelProps } from '@grafana/data'
 import React, { useEffect, useRef } from 'react'
 import { UnitInfo } from './FlowHistogramContants';
 import {
+    FlowHistogramElement,
     getFlowHistogramPlotConfig,
     getFlowHistogramPlotData,
     getLabeledValues,
+    getStyleFor,
     setLegend,
     validateFlowHistogramPanelData
 } from './FlowHistogramHelpers';
@@ -62,31 +64,14 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
             </style>
             <div>
                 <div className={options.flowHistogramOptions.direction.label === 'Horizontal' ? '' : 'side-spot'}
-                    style={{
-                        display: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block'),
-                        float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
-                    }}>
-                    <div ref={ref} style={{
-                        width: (!options.flowHistogramOptions.showLegend || options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.8),
-                        height: height - 25 - (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0)
-                    }} />
-                    <div className='side-spot-label'
-                        style={{
-                            height: 25,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                        <p style={{ marginTop: 24 }}>{UnitInfo(options, data?.series).units}</p>
+                    style={getStyleFor(FlowHistogramElement.Container, height, width, options)}>
+                    <div ref={ref} style={getStyleFor(FlowHistogramElement.ContainerGraph, height, width, options)} />
+                    <div className='side-spot-label' style={getStyleFor(FlowHistogramElement.GraphAxisLabel, height, width, options)}>
+                        <p style={getStyleFor(FlowHistogramElement.GraphAxisLabelUnit, height, width, options)}>{UnitInfo(options, data?.series).units}</p>
                     </div>
                 </div>
                 <div className={(options.flowHistogramOptions.position.label === 'Under Graph' ? 'flow-histogram-legend-bottom' : 'flow-histogram-legend-right')}
-                    style={{
-                        display: (options.flowHistogramOptions.showLegend ? (options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block') : 'none'),
-                        width: (options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.2 - (options.flowHistogramOptions.direction.label === 'Horizontal' ? 0 : 25)),
-                        height: (options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : height),
-                        float: (options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left'),
-                    }} />
+                    style={getStyleFor(FlowHistogramElement.Legend, height, width, options)} />
             </div>
         </>
     )

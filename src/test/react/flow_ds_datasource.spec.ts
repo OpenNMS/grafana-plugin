@@ -2,6 +2,7 @@ import *  as helpers from '../../datasources/flow-ds-react/helpers';
 import {
   FlowQueryData,
   FlowParsedQueryData,
+  FlowParsedQueryRow,
 } from '../../datasources/flow-ds-react/types';
 import { FlowStrings } from '../../datasources/flow-ds-react/constants';
 import { OnmsFlowSeries } from 'opennms/src/model';
@@ -658,17 +659,17 @@ describe("OpenNMS_Flow_Datasource", function () {
       let expectedResponse = [{
         name: '',
         "fields": [
-          {            
+          {
             "name": "Application",
-            "values" : ["app0", "app1"]
+            "values": ["app0", "app1"]
           },
           {
             "name": "Bits In",
-            "values": [16,0]
+            "values": [16, 0]
           },
           {
             "name": "Bits Out",
-            "values": [8,40]
+            "values": [8, 40]
           },
           {
             "name": "ECN",
@@ -680,7 +681,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             "metric": "",
             "toBits": { 'toBits': '' },
           },
-        },       
+        },
       }];
       let actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS);
       expect(expectedResponse).toEqual(actualResponse);
@@ -774,6 +775,61 @@ describe("OpenNMS_Flow_Datasource", function () {
         expect(response).toEqual(expectedResponse);
       });
 
+      done();
+    });
+
+    it("test getFunctionValue for all functions", function (done) {
+      let queryRow = {
+        "segment": {
+          "id": 0,
+          "label": "Applications"
+        },
+        "queryFunctions": [
+          {
+            "nanToZero": ""
+          },
+          {
+            "withExporterNode": "2"
+          },
+          {
+            "negativeEgress": ""
+          },
+          {
+            "toBits": ""
+          },
+          {
+            "withApplication": "app0"
+          }
+        ],
+        "refId": "A"
+      } as FlowParsedQueryRow;
+
+      let actualResponse = helpers.getFunctionValue(queryRow, "withApplication");
+      let expectedResponse = "app0";
+      expect(actualResponse).toEqual(expectedResponse);
+
+
+      done();
+    });
+
+    it("test template function parameters getTemplateVariableFunction", function (done) {
+      let query = "dscpOnExporterNodeAndInterface(,,123, 1234)"
+      let actualResponse = helpers.getTemplateVariableFunction(query)
+      let expectedResponse = {};
+      expect(actualResponse).toEqual(expectedResponse);
+      query = "dscpOnExporterNodeAndInterface(1,2,123, 1234)"
+      actualResponse = helpers.getTemplateVariableFunction(query)
+      expectedResponse = {
+        name: "dscpOnExporterNodeAndInterface",
+        result: [
+          "dscpOnExporterNodeAndInterface(1,2,123, 1234)",
+          "1",
+          "2",
+          "123",
+          "1234"
+        ]
+      }
+      expect(JSON.stringify(actualResponse)).toEqual(JSON.stringify(expectedResponse));
       done();
     });
 
