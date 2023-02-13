@@ -4,11 +4,11 @@ executors:
 
   build-executor-centos:
     docker:
-      - image: opennms/build-env:11.0.14_9-3.8.4-b8184
+      - image: opennms/build-env:11.0.14_9-3.8.7-b9528
 
   build-executor-debian:
     docker:
-      - image: opennms/build-env:debian-jdk11-b8177
+      - image: opennms/build-env:debian-jdk11-b9483
 
   node-executor:
     docker:
