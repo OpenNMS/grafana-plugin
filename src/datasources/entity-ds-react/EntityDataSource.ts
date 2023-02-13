@@ -1,4 +1,5 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
+import { capitalize } from 'lodash'
 import { API, Model } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import {
@@ -130,12 +131,18 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         // Severity is handled separately as otherwise the severity ordinal vs the severity label would be
         // used, but that may not be ideal for the user
         if (searchProperty.id === 'severity') {
-            return Model.Severities.map(severity => {
-                return {
-                    id: severity.id,
-                    label: severity.label
-                }
-            })
+            const items =
+                Object.entries(Model.Severities).map(([k, v]) => {
+                    const severity = v as any as Model.OnmsSeverity
+                    return {
+                        id: severity.i,
+                        label: capitalize(severity.l),
+                        text: capitalize(severity.l),
+                        value: severity.l
+                    }
+                })
+
+            return items;
         }
 
         const propertyValues = await searchProperty.findValues({limit: 0})

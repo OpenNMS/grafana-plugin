@@ -2,7 +2,7 @@ import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
 import { EntityQuery, EntityQueryRequest, FilterEditorData } from './../types'
 import { getAttributeMapping } from './attributeMappings'
-import { EntityTypes } from '../../../constants/constants'
+import { ALL_SELECTION_VALUE, EntityTypes } from '../../../constants/constants'
 import { getFilterId } from '../EntityHelper'
 
 const isAllVariable = (templateVar, templateSrv) => {
@@ -187,8 +187,8 @@ export const mergeFilterPanelFilters = (entityType: string, originalFilter: API.
         const selectableValues = filterEditorData?.selectableValues.find(sv => sv.filterId === filterId)
 
         if (selectableValues?.values) {
-            // get all selected values that are non-empty, converted to strings
-            const values = selectableValues?.values.map(sv => (sv.value || '').toString()).filter(v => v.length > 0)
+            // get all selected values that are non-empty and also not 'All', converted to strings
+            const values = selectableValues?.values.map(sv => (sv.value || '').toString()).filter(v => v.length > 0 && v !== ALL_SELECTION_VALUE)
 
             if (values) {
                 const queryAttribute = filter.attribute.id || filter.attribute.label || ''
