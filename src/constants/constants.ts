@@ -1,4 +1,3 @@
-
 export const EntityTypes = {
     Alarms: 'Alarms',
     Nodes: 'Nodes',
@@ -7,3 +6,5 @@ export const EntityTypes = {
     MonitoredServices: 'Monitored Services',
     Outages: 'Outages',
 }
+
+export const ALL_SELECTION_VALUE = '$__all'

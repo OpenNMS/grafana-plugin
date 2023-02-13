@@ -3,17 +3,24 @@ import { MetricFindValue, PanelProps, SelectableValue } from '@grafana/data'
 import { getDataSourceSrv } from "@grafana/runtime"
 import { HorizontalGroup, Input, Select, VerticalGroup } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay'
+import { ALL_SELECTION_VALUE } from 'constants/constants'
 import { loadFilterEditorData, saveFilterEditorData } from 'lib/localStorageService'
 import { FilterControlProps } from './FilterPanelTypes'
 import { useEntities } from '../../hooks/useEntities'
 import { ActiveFilter, FilterEditorData, FilterSelectableValues, useFilterData } from '../../hooks/useFilterData'
+
+// Values actually returned by OpenNMS metricFindQuery
+interface OnmsMetricFindValue extends MetricFindValue {
+    id?: string;
+    label?: string;
+}
 
 export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
     const { getFuncNameFromEntityType } = useEntities()
     const { getFilterId } = useFilterData()
 
     // array of metric values for each filter id
-    const [metricValues, setMetricValues] = useState<Array<[string, MetricFindValue[]]>>([])
+    const [metricValues, setMetricValues] = useState<Array<[string, OnmsMetricFindValue[]]>>([])
 
     // array of selectable values for each filter id
     const [selectableValues, setSelectableValues] = useState<FilterSelectableValues[]>([])
@@ -29,7 +36,7 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
 
     useEffect(() => {
         const fetchMetricValues = async () => {
-            const newMetricValues: Array<[string, MetricFindValue[]]> = []
+            const newMetricValues: Array<[string, OnmsMetricFindValue[]]> = []
             let shouldUpdate = false
 
             // loop through filters, create metricValues entry for each
@@ -78,7 +85,16 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
 
                     // got values from the datasource, store them and set update flag
                     if (metricFindValues.length > 0) {
-                        return metricFindValues
+                        const onmsMetricFindValues = metricFindValues.map(v => {
+                            return {
+                                id: v['id'] ? v['id'] : '',
+                                label: v['label'] ? v['label'] : '',
+                                text: v.text,
+                                value: v.value,
+                            } as OnmsMetricFindValue
+                        })
+
+                        return onmsMetricFindValues
                     }
                 }
             }
@@ -89,6 +105,7 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
 
     const generateFilterSelectOptions = (filter: ActiveFilter) => {
         const filterId = getFilterId(filter)
+        const isMulti = filter.selectionType?.label === 'Multi'
         const [key, currentValues] = metricValues.find(([k,v]) => k === filterId) || []
 
         if (key && currentValues) {
@@ -96,6 +113,13 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
                 label: v.text,
                 value: v.value || ''
             } as SelectableValue<string | number>))
+
+            // Single select dropdown add 'All'
+            // For multi-select, user would just not select anything
+            if (!isMulti) {
+                const allValue = { label: 'All', value: ALL_SELECTION_VALUE}
+                return [allValue, ...values]
+            }
 
             return values
         }

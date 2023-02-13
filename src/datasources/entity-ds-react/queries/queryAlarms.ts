@@ -1,7 +1,8 @@
+import { isNil } from 'lodash'
+import { API } from 'opennms'
+import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
 import { OnmsColumn, OnmsTableData } from '../types'
 import { ClientDelegate } from "lib/client_delegate";
-import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
-import { API } from 'opennms'
 
 const columns = Object.freeze([
     { text: 'ID', resource: 'id' },
@@ -86,7 +87,7 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
             alarm.suppressedUntil,
             alarm.suppressedBy,
             alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
-            false,
+            !isNil(alarm.ackUser) && !isNil(alarm.ackTime),  // isAcknowledged
 
             // Event
             alarm.firstEventTime,
