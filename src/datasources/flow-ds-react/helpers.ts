@@ -42,6 +42,7 @@ import {
     SegmentOption
 } from "./types";
 import _ from 'lodash';
+import { OnmsApi} from '../../lib/api'
 
 /**
  * Pieces together UI data into data appropriate to query the BE with.
@@ -54,7 +55,7 @@ export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any
     // convert the template variables into their selected values for each query.
     // withDscp, withApplication, withConversation and withHost should allow an array of strings 
     // that are passed as parameter from template functions
-    queryItems.forEach(item => item = convertTemplateVariables(item, templateSrv))
+    queryItems = queryItems.map(item =>  convertTemplateVariables(item, templateSrv))
 
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
@@ -951,6 +952,12 @@ export const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?
     }
 }
 
+/**
+ * Converts functionParameters and parameterOptions to template variables if they are present.
+ * @param item a FlowQueryData instance
+ * @param templateSrv grafana service to replace template variables
+ * @returns FlowQueryData
+ */
 export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
     item.functions?.forEach((f, idx) => {
 
@@ -966,23 +973,47 @@ export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
     return item
 }
 
-export const lookupIfIndex = async (nodeQuery: any, iface: any, simpleRequest) => {
-    if (!nodeQuery || !iface || !isNaN(iface)) { return iface; }
+/**
+ * Search for an IfIndex (number) when using template variables from different datasources 
+ * that provides resource name or label instead 
+ * @param nodeQuery node
+ * @param iface interface name or label
+ * @param simpleRequest rest service
+ * @returns ifIndex if any or iface param if not match is found.
+ */
+export const lookupIfIndex = async (nodeQuery: string | undefined, iface: string | number | null | undefined, simpleRequest: SimpleOpenNMSRequest) => {
+    if (!nodeQuery || !iface || !Number.isNaN(Number(iface))) { return iface; }
     const resources = await simpleRequest.getResourcesForNode(nodeQuery);
-    const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
+    
     if (resources) {
         for (const resource of resources) {
-            let idMatch = resource.id.match(regexSnmpIfaceId);
-            if (idMatch && (idMatch[0] === iface || (idMatch[1] && idMatch[1] === iface)) && resource.link) {
-                const regexSnmpIface = /element\/snmpinterface\.jsp\?node=.*&ifindex=(\d+)/;
-                let ifIndexMatch = resource.link.match(regexSnmpIface);
-                if (ifIndexMatch && ifIndexMatch[1]) {
-                    return ifIndexMatch[1];
-                }
+            let result = findResourceIfIndex(resource, iface)
+            if (result) {
+                iface = result
+                break
             }
         }
     }
+    return iface
+}
 
-    return iface;
+/**
+ * Search for IfIndex in resource from measurement rest end point 
+ * @param resource 
+ * @returns ifIndex if exists or null
+ */
+const findResourceIfIndex = (resource: OnmsApi.Measurements.Resource, iface?: string | number | null | undefined): string | null | undefined => {
+    const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
+    const regexSnmpIface = /element\/snmpinterface\.jsp\?node=.*&ifindex=(\d+)/;
+    const idMatch = resource.id.match(regexSnmpIfaceId);
+
+    if (idMatch && (idMatch[0] === iface || (idMatch[1] && idMatch[1] === iface)) && resource.link) {
+        const ifIndexMatch = resource.link.match(regexSnmpIface);
+        if (ifIndexMatch && ifIndexMatch[1]) {
+            return ifIndexMatch[1];
+        }
+    }
+    return null
+
 }
 

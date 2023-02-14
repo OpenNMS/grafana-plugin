@@ -72,9 +72,9 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     }
 
     const setListItemPosition = (oldList: any[], direction, index) => {
-        let newList = [...oldList]
+        const newList = [...oldList]
         if (newList) {
-            let temp = newList[index + direction]
+            const temp = newList[index + direction]
             newList[index + direction] = newList[index]
             newList[index] = temp
         }
@@ -100,9 +100,8 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     }
 
     const removeListItem = (oldList: any[], index: number) => {
-        let newList = oldList;
-        if (oldList) {
-            newList = [...oldList];
+       const newList = [...oldList];
+        if (newList) {            
             newList.splice(index, 1);
         }
         return newList;

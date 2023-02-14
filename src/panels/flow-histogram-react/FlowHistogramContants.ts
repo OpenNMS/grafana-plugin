@@ -36,7 +36,7 @@ export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsPr
         return { units, divisor }
     }
     
-    const toBits = dataSeries && dataSeries[0].meta && dataSeries[0].meta.custom && dataSeries[0].meta.custom['toBits'] ? true : false
+    const toBits = dataSeries?.[0]?.meta?.custom?.['toBits'] ? true : false
     const rate = options.flowHistogramOptions.display.label === 'Rate'
     const option = options.flowHistogramOptions.units.label
 

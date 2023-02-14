@@ -7,6 +7,7 @@ import {
 import { FlowStrings } from '../../datasources/flow-ds-react/constants';
 import { OnmsFlowSeries } from 'opennms/src/model';
 import { dateTimeAsMoment } from "@grafana/data";
+import { SimpleOpenNMSRequest } from 'lib/utils';
 
 describe("OpenNMS_Flow_Datasource", function () {
 
@@ -16,6 +17,21 @@ describe("OpenNMS_Flow_Datasource", function () {
     dataFromOpenNMS,
     dataFromOpenNMSWithNaN,
     exporterNodes;
+  
+    const simpleRequest =  new SimpleOpenNMSRequest({}, 'http://localhost/dummy')
+    simpleRequest.getResourcesForNode = async (node) => [
+      {
+        "id": "node[selfmonitor:1].interfaceSnmp[opennms-jvm]",
+        "label": "opennms-jvm (*)",
+        "name": "opennms-jvm",
+        "link": "element/snmpinterface.jsp?node=1&ifindex=2",
+        "typeLabel": "SNMP Interface Data",
+        "parentId": "node[selfmonitor:1]",
+        "stringPropertyAttributes": {},
+        "externalValueAttributes": {},
+        "rrdGraphAttributes": {}
+      }
+    ]
 
   beforeEach(() => {
 
@@ -831,6 +847,43 @@ describe("OpenNMS_Flow_Datasource", function () {
       }
       expect(JSON.stringify(actualResponse)).toEqual(JSON.stringify(expectedResponse));
       done();
+    });
+
+    it("should return ifIndex when interface name or label are passed instead", async () => {
+      let expectedResponse = "2";
+      let nodeQuery = "node[20]";
+      let iface = "interfaceSnmp[opennms-jvm]";
+
+      let actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      iface = "2";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      iface = "opennms-jvm";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, null, simpleRequest);
+      expect(actualResponse).toBeNull();
+
+      let numExpectedResponse = 2;
+      let numIface = 2;
+
+      let numActualResponse = await helpers.lookupIfIndex(nodeQuery, numIface, simpleRequest);
+      expect(numExpectedResponse).toEqual(numActualResponse);
+
+      expectedResponse = "opennms-jvm-notfound";
+      iface = "opennms-jvm-notfound";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
     });
 
   });
