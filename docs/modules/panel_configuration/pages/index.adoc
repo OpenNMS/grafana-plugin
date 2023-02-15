@@ -6,7 +6,7 @@
 {page-component-title} allows for robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
 
-image::gf-panel-config.png["Panel displaying configuration options", 750]
+image::gf-panel-config.png["Panel displaying configuration options", 850]
 
 Configuration options depend on the type of datasource associated with a panel.
 
@@ -23,27 +23,107 @@ This section describes the following types of panel configuration:
 
 * *Alarm Histogram:* A bar chart that shows the distribution of alarms by severity level.
 +
-image::alarm-histogram.png["Horizontal bar graph showing the distribution of critical and major alarms", 750]
+image::alarm-histogram.png["An Alarm Histogram panel displaying a horizontal bar graph. The bar graph shows the distribution of critical and major alarms.", 850]
 
-* *Alarm Table:* A table that displays alarms.
-The query for this panel must include an `asTableSummary()` transform, otherwise it will not display any data.
+* *Alarms Table:* A table that displays alarms.
+The query for this panel must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 +
-image::alarm-panel.png["Two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 750]
+image::alarm-panel.png["An Alarms Table panel showing two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 850]
 
-* *Filter Panel:* A panel that lets you specify data to include in other panels.
+* *Filter panel:* A panel that lets you specify data to include in other panels.
 +
-image::filter-panel.png["Blank fields in a filter panel", 750]
+image::filter-panel.png["Blank fields in a Filter panel", 850]
 
 * *Flow Histogram:* A bar chart that shows the distribution of flows data.
-The query for this panel must include an `asTableSummary()` transform, otherwise it will not display any data.
+The query for this panel must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 +
-image::flow-histogram.png["Horizontal bar graph displaying network flow data", 750]
+image::flow-histogram.png["A Flow Histogram panel displaying a horizontal bar graph. The bar graph shows network flow data.", 850]
 
 For a panel to display data visualizations, you must define the following settings:
 
-* Flow Type
 * Datasource
+* Flow Type
 * Time Interval
+
+== Customize panels
+
+You can customize the data visualized on {page-component-title} panels by tweaking their settings and changing their datasources.
+The following procedures demonstrate how to set up each panel type to show data from the flows datasource.
+
+=== Alarm Histogram
+
+Follow these steps to customize an Alarm Histogram panel:
+
+. Enter editing mode and select an Alarm Histogram panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
+. Edit the query using the fields at the bottom of the panel:
+** Choose a data type to display from the *Select* list (in this example, *Alarms*).
+** Set the visualization conditions using the *Where* options.
+** Choose the order in which the data is visualized from the *Order By* list.
+** (Optional) Set a limit on the amount of data displayed.
+** (Optional) Turn on the *Featured Attributes* option.
+. Update the panel options under the Grouping section:
+** Select the *Grouping* type (in this example, *Severity*).
+This sets the method by which data is grouped in the panel.
+** Select the display orientation using the *Settings* list (in this example, *Vertical*).
+. Set other display options as desired.
+
+Using these settings, the Alarm Histogram panel displays the following visualization:
+
+image::alarm-histogram-example.png["Example of an Alarm Histogram panel in edit mode. Areas of note are outlined in red.", 850]
+
+=== Alarms Table
+
+Follow these steps to customize an Alarms Table panel:
+
+. Enter editing mode and select an Alarms Table panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities React*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
++
+NOTE: The query must include an `asTableSummary()` transform, otherwise the panel will not display any data.
+
+. Edit the query using the fields at the bottom of the panel:
+** Choose a data type to display from the *Select* list (in this case, *Alarms*).
+** Set the visualization conditions using the *Where* options.
+** Choose the order in which the data is visualized from the *Order By* list.
+** (Optional) Set a limit on the amount of data displayed.
+** (Optional) Turn on the *Featured Attributes* option.
+. Add, remove, and reorder columns in the Alarm Table React section.
+. Set other display options as desired.
+
+After the panel is configured, you can right-click on an entry to access the context menu.
+From there, you can access an alarm's *Details* and *Acknowledge*, *Escalate*, or *Clear* it:
+
+image::alarms-table-example.png["Example of an Alarms Table panel in edit mode. Areas of note are outlined in red.", 850]
+
+=== Flow Histogram
+
+Follow these steps to customize a Flow Histogram panel:
+
+. Enter editing mode and select a Flow Histogram panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Flow React*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
++
+NOTE: The query must include an `asTableSummary()` transform, otherwise the panel will not display any data.
+
+. Edit the query using the *Flow* options at the bottom of the panel.
+. Update the panel options under the Flow Histogram React section:
+** Select the display orientation using the *Direction* list (in this example, *Horizontal*).
+** Select the measurement units using the *Units* list (in this example, *MB*).
+** Choose the visualization method using the *Display* list (in this example, *Total*).
+** Select the grouping type using the *Mode* list (in this example, *Stacked*).
+This sets the method by which data is grouped in the panel.
+*Stacked* displays cumulative data from all sources, grouped by incoming and outgoing data.
+** (Optional) Update the legend settings as desired.
+. Set other display options as desired.
+
+Using these settings, the Flow Histogram panel displays the following visualization:
+
+image::flow-histogram-example.png["Example of a Flow Histogram panel in edit more. Areas of note are outlined in red.", 850]
 
 == Functions and transformations
 
