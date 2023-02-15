@@ -13,6 +13,7 @@ ui:
     url: https://github.com/opennms-forge/antora-ui-opennms/releases/download/v3.0.1/ui-bundle.zip
 asciidoc:
   attributes:
+    experimental: true
     stem: latexmath
 output:
   clean: true

@@ -16,8 +16,7 @@
 * xref:getting_started:importing.adoc[Import a Dashboard]
 * xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
 
-.Panel configuration
-* xref:panel_configuration:index.adoc[Overview]
+.xref:panel_configuration:index.adoc[Panel Configuration]
 * xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
 * xref:panel_configuration:dynamic-dashboard.adoc[Create Dynamic Dashboards]
 * xref:panel_configuration:expressions.adoc[Expressions]
