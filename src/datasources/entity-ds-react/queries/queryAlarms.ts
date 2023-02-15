@@ -1,8 +1,12 @@
-import { isNil } from 'lodash'
+import { isNil, uniq, sortBy, flatten } from 'lodash'
 import { API } from 'opennms'
 import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
 import { OnmsColumn, OnmsTableData } from '../types'
-import { ClientDelegate } from "lib/client_delegate";
+import { ClientDelegate } from "lib/client_delegate"
+import { OnmsRow } from '../types'
+import { ServerMetadata } from 'opennms/src/api/ServerMetadata'
+import { Client } from 'opennms/src/Client'
+
 
 const columns = Object.freeze([
     { text: 'ID', resource: 'id' },
@@ -56,14 +60,26 @@ const columns = Object.freeze([
 
 export const getAlarmColumns = () => columns
 
+const TYPE = 'alarms'
+
 export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
-    let alarms: OnmsAlarm[] = [];
+    let alarms: OnmsAlarm[] = []
+    let cols = Array.from(columns)
+    let metadata: ServerMetadata | null | undefined
 
     try {
         alarms = await client.findAlarms(filter)
+        const c: Client = await client.getClientWithMetadata()
+        metadata = c.http.server?.metadata
+
     } catch (e) {
         console.error(e);
     }
+
+    const parameterNames = getParameterNames(alarms)
+
+    cols = appendParameterNames(cols, parameterNames)
+
     const rows = alarms?.map((alarm) => {
         let row = [
             alarm.id,
@@ -122,15 +138,95 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
 
             // Data Source
             self.name
-        ];
+        ] as OnmsRow
+
+        row = appendEventParameters(row, alarm, parameterNames)
 
         return row;
-    });
+    })
+
+    const metas = alarms.map(alarm => {
+        return {
+            // Store the alarm for easy access by the panels
+            'alarm': alarm,
+            // Store the name of the data-source as part of the data so that
+            // the panel can grab an instance of the DS to perform actions
+            // on the alarms
+            'source': client.name,
+            // Store the entity type
+            'type': TYPE,
+            // Store the ticketerConfig here
+            'ticketerConfig': metadata?.ticketerConfig
+        };
+    })
 
     return {
         name: 'alarms',
-        columns: columns.filter(column => column.visible !== false),
+        meta: {
+            entity_metadata: metas,
+        },
+        columns: cols.filter(column => column.visible !== false),
         rows: rows,
         type: 'table',
     } as OnmsTableData
+}
+
+/**
+ * Build a sorted list of (unique) event parameter names
+ * @param alarms 
+ * @returns 
+ */
+const getParameterNames = (alarms?: OnmsAlarm[]) => {
+    const mapped = alarms?.map(alarm => {
+        if (!alarm.lastEvent || !alarm.lastEvent.parameters) {
+            return [];
+        }
+        return alarm.lastEvent.parameters.map(parameter => {
+            return parameter.name;
+        });
+    });
+
+    return uniq(sortBy(flatten(mapped), name => name))
+}
+
+/**
+ * Include the event parameters as columns
+ * @param columns 
+ * @returns 
+ */
+const appendParameterNames = (columns: OnmsColumn[], parameterNames?: string[]) => {
+    parameterNames?.forEach(parameterName => {
+        columns.push({
+            text: 'Param_' + parameterName,
+            resource: 'lastEvent.' + parameterName,
+        });
+    });
+    return columns;
+}
+
+/**
+ * Index the event parameters by name and
+ * Append the event parameters to the row
+ * @param row 
+ * @param alarm 
+ * @param parameterNames 
+ */
+const appendEventParameters = (row: OnmsRow, alarm: OnmsAlarm, parameterNames?: string[]) => {
+
+    const eventParametersByName = {};
+    if (alarm.lastEvent && alarm.lastEvent.parameters) {
+        alarm.lastEvent.parameters.forEach(parameter => {
+            eventParametersByName[parameter.name] = parameter.value;
+        });
+    }
+
+    parameterNames?.forEach(parameterName => {
+        if (eventParametersByName.hasOwnProperty(parameterName)) {
+            row.push(eventParametersByName[parameterName]);
+        } else {
+            row.push(undefined);
+        }
+    })
+
+    return row
 }

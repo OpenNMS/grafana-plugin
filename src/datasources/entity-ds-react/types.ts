@@ -186,3 +186,5 @@ export interface FilterEditorData {
     activeFilters: ActiveFilter[]
     selectableValues: FilterSelectableValues[]
 }
+
+export type OnmsRow = (number | string | moment.Moment | boolean | undefined)[]

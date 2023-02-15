@@ -61,6 +61,8 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
         for (let target of request.targets) {
             const entityType = target?.selectType?.label || EntityTypes.Alarms
+            // TODO looks like this should be an option in the panel editor.
+            request.enforceTimeRange = true
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 
             if (hasFilterEditorData) {
