@@ -27,6 +27,8 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
         const plotConfig = getFlowHistogramPlotConfig(processedData, options)
 
         $.plot(ref.current, plotData, plotConfig)
+
+        //TODO: remove this fix once flot library is updated in grafana. Use container option in plotConfig instead
         setLegend(options)
 
     }, [data, width, height, ref, options]);
