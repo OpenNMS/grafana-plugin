@@ -42,7 +42,7 @@ import {
     SegmentOption
 } from "./types";
 import _ from 'lodash';
-import { OnmsApi} from '../../lib/api'
+import { OnmsMeasurementResource } from '../../lib/api_types'
 
 /**
  * Pieces together UI data into data appropriate to query the BE with.
@@ -55,7 +55,7 @@ export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any
     // convert the template variables into their selected values for each query.
     // withDscp, withApplication, withConversation and withHost should allow an array of strings 
     // that are passed as parameter from template functions
-    queryItems = queryItems.map(item =>  convertTemplateVariables(item, templateSrv))
+    queryItems = queryItems.map(item => convertTemplateVariables(item, templateSrv))
 
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
@@ -984,7 +984,7 @@ export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
 export const lookupIfIndex = async (nodeQuery: string | undefined, iface: string | number | null | undefined, simpleRequest: SimpleOpenNMSRequest) => {
     if (!nodeQuery || !iface || !Number.isNaN(Number(iface))) { return iface; }
     const resources = await simpleRequest.getResourcesForNode(nodeQuery);
-    
+
     if (resources) {
         for (const resource of resources) {
             let result = findResourceIfIndex(resource, iface)
@@ -1002,7 +1002,7 @@ export const lookupIfIndex = async (nodeQuery: string | undefined, iface: string
  * @param resource 
  * @returns ifIndex if exists or null
  */
-const findResourceIfIndex = (resource: OnmsApi.Measurements.Resource, iface?: string | number | null | undefined): string | null | undefined => {
+const findResourceIfIndex = (resource: OnmsMeasurementResource, iface?: string | number | null | undefined): string | null | undefined => {
     const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
     const regexSnmpIface = /element\/snmpinterface\.jsp\?node=.*&ifindex=(\d+)/;
     const idMatch = resource.id.match(regexSnmpIfaceId);
