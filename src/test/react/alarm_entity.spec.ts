@@ -58,7 +58,6 @@ describe('queryAlarms', function () {
       // Expect # rows = # alarms
       expect(table['rows']).toHaveLength(NUM_ALARMS);
  
-      console.log(table['columns'])
       // Fetch all the column names that start with Param_
       let columnNamesFromParms = table['columns']
         .map(column => { return column.text })
