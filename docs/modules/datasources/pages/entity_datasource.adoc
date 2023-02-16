@@ -1,28 +1,25 @@
+
 = Entities Datasource
 
-== General
-
-Use the entities datasource to retrieve entity model objects from OpenNMS.
-It currently supports alarms and nodes.
-
-(For an example of the entities datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-filter-panel[Creating a Filter Panel]).
+You can use the Entities datasource to retrieve entity model objects (alarms and nodes) from OpenNMS.
+For an example of the Entities datasource in use, see <<panel_configuration:dynamic-dashboard.adoc#pc-filter-panel, Create a Filter panel>>.
 
 == Datasource queries
 
-The behavior of this datasource changes depending on which entity is chosen.
-Attributes and values will change depending on the entity type.
+This datasource's behavior changes depending on the specified entity.
+Attributes and values also change based on the entity type.
 
-NOTE: Currently the entities datasource only allows a single target.
-Subsequent targets in the query editor will be ignored.
+NOTE: The datasource allows only a single target.
+Subsequent targets in the query editor are ignored.
 
 [[ds-entity-template]]
 == Template queries
 
-To change the behavior of a template query, you can pass a field name to the `attribute` field to use as the display value of the variable.
+You can pass a field name to the `attribute` variable to change the behavior of a template query.
+This changes the field's display name.
+If no `attribute` argument is specified, the query returns the entity's `id` attribute.
 
-If no attribute argument is given, the query will return the `id` attribute of the entity.
-
-The default if the `query` field is empty is `alarms()` (return a list of alarm IDs).
+The `query` attribute's default value is `alarms()`, meaning it returns a list of alarm IDs.
 
 === alarms([attribute])
 
@@ -30,40 +27,46 @@ The `alarms()` function queries the OpenNMS alarms REST API.
 
 === locations()
 
-The `locations()` query returns a list of all available node locations.
-Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
+The `locations()` query returns a list of available node locations.
+You can use this inside a `nodeFilter()` query to filter the number of nodes displayed by location.
 
-.Example variable expression
-* nodeFilter(location='Default')
-* nodeFilter(location='$location')
+.Example expressions using `location()`
+[source,]
+----
+nodeFilter(location='Default')
+nodeFilter(location='$location')
+----
 
 === nodeFilter(<filterQuery>)
 
-The `nodeFilter()` query returns a list of nodes which match the given filter expression.
+The `nodeFilter()` query returns a list of nodes that match the given filter expression.
 
-The filter expression must be an existing node attribute and its corresponding value.
+The filter expression must be made up of an existing node attribute and its corresponding value.
+Separate multiple filter expressions with an ampersand (`&`) (for example, `<attribute1>=<value1> & <attribute2>=<value2> & ...`).
+The node's value can be a constant or a variable.
 
-The value can be a constant or a variable.
+.Example expressions using `nodeFilter()`
+[source,]
+----
+nodeFilter(<node_attribute>='<value>')
+nodeFilter(location='$location' & label='localhost')
+----
 
-.Example
-* nodeFilter(<node_attribute>='<value>')
-* nodeFilter(location='Default')
-* nodeFilter(location='$location')
-* nodeFilter(location='$location' & label='localhost')
-
-Separate multiple filter expressions with an '&' (<attribute1>=<value1> & <attribute2>=<value2> & ...).
+For more information about filters, see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation].
 
 === nodes([attribute])
 
-The `nodes()` function will query the OpenNMS node REST API to retrieve a list of unique values for a given attribute.
-You can use the result from this query in a `nodeFilter()` query to filter nodes in either an entity or performance datasource variable.
-To find a list of valid attributes, look at the `\http://HOSTNAME:8980/opennms/api/v2/nodes/properties` endpoint of your OpenNMS server.
+The `nodes()` query retrieves a list of unique values for a specified attribute from the OpenNMS node REST API.
+You can use its result in a `nodeFilter()` query to filter nodes either by entity or performance datasource.
+To find a list of valid attributes, see your OpenNMS server's `\http://HOSTNAME:8980/opennms/api/v2/nodes/properties` endpoint.
 
-.Example filtering nodes by the "region" asset record
-. On your dashboard, create a variable called `region` and set the datasource to an entity datasource pointing to your server.
-. Set the query to be `nodes(assetRecord.region)`.
-. Save the variable and return to the list of variables.
-. Create a second variable called `node` and set the datasource to a performance datasource.
-. Set the query to be `nodeFilter(region='$region')`.
-. Save the variable and return to your dashboard.
-. As you change the "region" variable, the options in the "node" variable should update to show only the matching nodes.
+Follow these steps to filter nodes by a custom asset record:
+
+. On your {page-component-title} dashboard, create a variable named `region`, and set its datasource to an entity datasource that points to your server.
+. Set the variable's query to `nodes(assetRecord.region)`.
+. Click *Save* and return to the list of variables.
+. Create a variable named `node`, and set its datasource to a performance datasource.
+. Set the variable's query to `nodeFilter(region='$region')`.
+. Click *Save* and return to your dashboard.
+
+As you change the `region` variable, the options in the `node` variable should update to show only the matching nodes.

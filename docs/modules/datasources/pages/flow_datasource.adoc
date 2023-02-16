@@ -1,209 +1,276 @@
+
 = Flow Datasource
 
-== General
-
-Use the flow datasource to retrieve application- and conversation-related metrics derived from flow data stored by OpenNMS.
-
+You can use the Flow datasource to retrieve application- and conversation-related metrics derived from OpenNMS flows data.
 The query editor supports the following functions:
 
-[options="header, %autowidth"]
+[cols="1,3"]
 |===
-| Category  | Name                    | Description
-| Combine   | `topN`                  | Limit the results to the Top N conversations/applications when sorted by total bytes.
-| Combine   | `includeOther`          | Combine and include other conversations/applications that fall outside of the Top N.
-| Filter    | `withExporterNode`      | Filter for flows related to the given exporter node.
-| Filter    | `withIfIndex`           | Filter for flows related to the given interface index.
-| Filter    | `withDscp`              | Filter for flows with the given DSCP value(s).
-| Filter    | `withApplication`       | Filter for flows with the given application value(s). Use without `topN`.
-| Filter    | `withConversation`      | Filter for flows with the given conversation value(s). Use without `topN`.
-| Filter    | `withHost`              | Filter for flows with the given host value(s). Use without `topN`.
-| Transform | `toBits`                | Convert the values from bytes to bits.
-| Transform | `perSecond`             | Convert the values to a per/second rate.
-| Transform | `negativeEgress`        | Make the egress values negative.
-| Transform | `negativeIngress`       | Make the ingress values negative.
-| Transform | `asTableSummary`        | Generate a tabular summary instead of time series data.
-| Transform | `combineIngressEgress`  | Sum ingress and egress values together.
-| Transform | `onlyIngress`           | Only display ingress traffic.
-| Transform | `onlyEgress`            | Only display egress traffic.
-| Transform | `withGroupByInterval`   | Changes the resolution of the returned datapoints grouping by the given time interval (in the format of: 10s, 5m, 1h, etc.).
-| Transform | `withPrefix`            | Specifies a prefix for graph and summary labels.
-| Transform | `withSuffix`            | Specifies a suffix for graph and summary labels.
-| Transform | `nanToZero`             | Convert all NaN values to zero (0) so they can be taken into consideration by reduce expressions like `sum` or `max`.
-|===
+| Function  | Description
 
+2+|*Combine functions*
+
+| topN
+| Limit the results to the top N conversations or applications when sorted by total bytes.
+
+| includeOther
+| Combine and include other conversations or applications that fall outside of the top N.
+
+2+|*Filter functions*
+
+| withExporterNode
+| Filter for flows related to the given exporter node.
+
+| withIfIndex
+| Filter for flows related to the given interface index.
+
+| withDscp
+| Filter for flows with the given DSCP values.
+
+| withApplication
+| Filter for flows with the given application values.
+Do not use alongside `topN`.
+
+| withConversation
+| Filter for flows with the given conversation values.
+Do not use alongside `topN`.
+
+| withHost
+| Filter for flows with the given host values.
+Do not use alongside `topN`.
+
+2+|*Transform functions*
+
+| toBits
+| Convert the values from bytes to bits.
+
+| perSecond
+| Convert the values to a per-second rate.
+
+| negativeEgress
+| Make egress values negative.
+
+| negativeIngress
+| Make ingress values negative.
+
+| asTableSummary
+| Generate a tabular summary instead of time series data.
+
+| combineIngressEgress
+| Combine ingress and egress values.
+
+| onlyIngress
+| Display only ingress traffic.
+
+| onlyEgress
+| Display only egress traffic.
+
+| withGroupByInterval
+| Changes the resolution of the returned datapoints grouping by the given time interval (`10s`, `5m`, `1h`, and so on).
+
+| withPrefix
+| Specifies a prefix for graph and summary labels.
+
+| withSuffix
+| Specifies a suffix for graph and summary labels.
+
+| nanToZero
+| Convert all `NaN` values to zero (`0`) so they can be taken into consideration by reduce expressions (`sum`, `max`).
+|===
 
 [[ds-flow-template]]
 == Template queries
 
 === locations()
 
-The `locations()` query returns a list of all available node locations.
-Use this inside `exporterNodesWithFlows()` to filter the number of nodes displayed by location.
+The `locations()` query returns a list of available node locations.
+You can use this inside a `exporterNodesWithFlows()` query to filter the number of nodes displayed by location.
 
-.Example variable expression
-* exporterNodesWithFlows(location='Default')
-* exporterNodesWithFlows(location='$location')
+.Example expressions using `locations()`
+[source,]
+----
+exporterNodesWithFlows(location='Default')
+exporterNodesWithFlows(location='$location')
+----
 
 === exporterNodesWithFlows(<filterQuery>)
 
-The `exporterNodesWithFlows()` query returns a list of nodes which have exported flow data to OpenNMS.
-The value of the template variable is the `Node ID` and the display text is the `Node Label`.
+The `exporterNodesWithFlows()` query returns a list of nodes that have exported flows data to OpenNMS.
+The value of the template value is the node's ID, and the display text is the node's label.
 
-NOTE: The exporters must be part of the node inventory in OpenNMS in order to be returned by this query.
+NOTE: The specified exporters must be part of your OpenNMS instance's inventory to be returned by this query.
 
-For example, to query the exporters that have sent flows you can use the following expression:
-```
-exporterNodesWithFlows()
-```
+The filter expression must be made up of an existing node attribute and its corresponding value.
+Separate multiple expressions with an ampersand (`&`) (for example, `<attribute1>=<value1> & <attribute2>=<value2> & ...`).
+The node's value can be a constant, a variable, or a regular expression.
 
-The filter expression must be an existing node attribute and its corresponding value.
-Separate multiple filter expressions with an '&' (<attribute1>=<value1> & <attribute2>=<value2> & ...).
-The value can be a constant, a variable, or a regular expression.
+.Example expressions using `exporterNodesWithFlows()`
+[source,]
+----
+exporterNodesWithFlows(<node_attribute>='<value>')
+exporterNodesWithFlows(location='Default')
+exporterNodesWithFlows(location='$location')
+exporterNodesWithFlows(location='$location' & label='localhost')
+exporterNodesWithFlows(location='$location' & label='.*com.*')
+----
 
-.Example variable expression
-* exporterNodesWithFlows(<node_attribute>='<value>')
-* exporterNodesWithFlows(location='Default')
-* exporterNodesWithFlows(location='$location')
-* exporterNodesWithFlows(location='$location' & label='localhost')
-* exporterNodesWithFlows(location='$location' & label='.\*com.*')
+For more information about filters, see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation].
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
-The `interfacesOnExporterNodeWithFlows()` query returns a list of interface indexes which are associated with one or more flows on the given node.
-The value of the template variable is the `Interface Index` and the display text is the `Interface Name`.
+The `interfacesOnExporterNodeWithFlows()` query returns a list of interface indexes that are associated with one or more flows on a specified node.
+The value of the template variable is the interface's index, and the display text is the interface's name.
 
-The available arguments are as follows:
-[options="header, %autowidth"]
+Only one argument is available for the `interfacesOnExporterNodeWithFlows()` query:
+
+[options="autowidth"]
 |===
-| Name                 | Default     | Description
-| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Source and Node Foreign ID) of the node on which to enumerate the interfaces.
+| Argument  | Description
+
+| nodeCriteria
+| Criteria (node ID, or node foreign source and node foreign ID) of the node on which to enumerate interfaces.
 |===
 
-Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query, you can use the following expression:
-```
-interfacesOnExporterNodeWithFlows($node)
-```
-
-To query a specific node by id, you can use an expression similar to:
-```
-interfacesOnExporterNodeWithFlows(123)
-```
-
-To query a specific node by foreign source and foreign id, you can use an expression similar to:
-```
-interfacesOnExporterNodeWithFlows(FS:FID)
-```
+.Example expressions using `interfacesOnExporterNodeWithFlows()`
+[source,]
+----
+interfacesOnExporterNodeWithFlows($node) <1>
+interfacesOnExporterNodeWithFlows(123) <2>
+interfacesOnExporterNodeWithFlows(FS:FID) <2>
+----
+<1> Assumes that the `$node` variable is populated with a value from an `exporterNodesWithFlows()` query.
+<2> Queries specific nodes using their IDs or `foreignSource:foreignId` tuples.
 
 === dscpOnExporterNodeAndInterface(<nodeCriteria>,<interface>,<from>,<to>)
 
-The `dscpOnExporterNodeAndInterface()` query will return a list of DSCP values which are used by one or more flows on the given node and interface
-and given time range. The query returns selection options for the found DSCP values and ip precedence groups that cover these values.
-Labels of selection options for DSCP codes are symbolic names for these DSCP codes followed by the corresponding number (if applicable).
+The `dscpOnExporterNodeAndInterface()` query returns a list of DSCP values that are used by one or more flows on the specified node and interface during the given time range.
+It returns selection options for the DSCP values, and IP precedence groups that cover them.
+Their labels are symbolic names for the DSCP codes, followed by the corresponding number (if applicable).
 
-The available arguments are as follows:
-[options="header, autowidth"]
+The following arguments are available for the `dscpOnExporterNodeAndInterface()` query:
+
+[options="autowidth"]
 |===
-| Name                 | Default     | Description
-| nodeCriteria         | `(none)`    | Node criteria (Node ID, or Node Foreign Source and Node Foreign ID) of the node on which to enumerate.
-| interface            | `(none)`    | Interface Index of the SNMP interface to enumerate.
-| from                 | `(none)`    | Start time in epoch milliseconds
-| to                   | `(none)`    | End time in epoch milliseconds
+| Argument  | Description
+
+| nodeCriteria
+| Criteria (node ID, or node foreign source and node foreign ID) of the node on which to enumerate values.
+
+| interface
+| Interface index of the SNMP interface to enumerate.
+
+| from
+| Beginning of the time range for which to return values, in epoch milliseconds.
+
+| to
+| End of the time range for which to return values, in epoch milliseconds.
 |===
 
-Assuming that the `$node` variable is populated with a value from the `exporterNodesWithFlows` query and that the `$interface` variable is populated with a value from the `interfacesOnExporterNodeWithFlows($node)` query, you can use the following expression:
-```
-dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to)
-```
+.Example expression using `dscpOnExporterNodeAndInterface()`
+[source,]
+----
+dscpOnExporterNodeAndInterface($node, $interface, $__from, $__to) <1>
+----
+<1> Assumes that the `$node` variable is populated with a value from an `exporterNodesWithFlows()` query, and the `$interface` variable is populated with a value from the `interfacesOnExporterNodeWithFlows($node)` query.
 
 === applications(<limit>)
 
-The `aplications()` query returns a list of all available applications.
-This function is intended for use inside the Filter function `withApplications()` as a template variable if needed.
+The `applications()` query returns a list of all available applications.
+This query is intended for use inside the `withApplications()` filter function as a template variable, if necessary.
 
-Currently this function accepts an optional number of records which ensures that only a limited number or records will be retreieved.
+The query accepts an optional number of records, which ensures that only a limited number of records is retrieved.
 
 NOTE: The application values retrieved come "as is" from the `flows/applications/enumerate` API.
 
-.Examples: variable expression
-* applications()
-* applications(1000)
-
-.Use with filter function withApplications()
-* withApplications($applications)
+.Example expressions using `applications()`
+----
+applications(1000)
+withApplications($applications) <1>
+----
+<1> Assumes that the `$applications` variable is populated with a value from an `applications()` query.
 
 === conversations(<application>,<location>,<protocol>,<limit>)
 
 The `conversations()` query returns a list of all available conversations.
-This function is intended for use inside the filter function `withConversation()` as a template variable if needed.
-Currently this function accepts the following arguments:
+This query is intended for use inside the `withConversation()` filter function as a template variable, if necessary.
 
-[options="header, %autowidth"]
+NOTE: The conversations values retrieved come "as is" from the `flows/conversations/enumerate` API.
+
+The query accepts the following optional arguments:
+
+[options="autowidth"]
 |===
-| Position  | Argument                      | Description                               | Default
-| 1         | application (optional)        | application expression                    | ".*"
-| 2         | location (optional)           | location expression                       | ".*"
-| 3         | protocol (optional)           | protocol expression                       | ".*"
-| last      | limit (optional)              | limit number of records retrieved.        | 25
+| Argument  | Description   | Position  | Default Value
+
+| application
+| Application expression
+| 1
+| `.*`
+
+| location
+| Location expression
+| 2
+| `.*`
+
+| protocol
+| Protocol expression
+| 3
+| `.*`
+
+| limit
+| Limit for the number of records retrieved.
+| Last
+| 25
 |===
 
-.Examples variable expression
-Get all conversations (will return a maximum of 25 records).
-
-* conversations()
-
-Get all conversations and return a maximum of 10 records.
-
-* conversations(10)
-
-Get all conversations with application app0 and return a maximum of 10 records.
-
-* conversations(app0, 10)
-
-Get all conversations with app0 under Default location and return a maximum of 10 records.
-
-* conversations(app0, Default, 10)
-
-Get all conversations with app0 under Default location with http protocol and return a maximum of 10 records.
-
-* conversations(app0, Default, http, 10)
-
-Get all conversations with application that start with app under location that start with Def and protocols http and https.
-
-* conversations(app.\*, Def.\*, http.*, 1000)
-
-.Usage with filter function withConversation()
-* withConversation($conversations)
-
-NOTE: The conversations values retrieved come `as is` from `flows/conversations/enumerate` API.
+.Example expressions using `conversations()`
+[source,]
+----
+conversations(10) <1>
+conversations(app0, 10) <2>
+conversations(app0, Default, 10) <3>
+conversations(app.*, Def.*, http.*, 1000) <4>
+withConversation($conversations) <5>
+----
+<1> Queries all conversations and returns a maximum of 10 records.
+<2> Queries all conversations in the `app0` application and the default location, and returns a maximum of 10 records.
+<3> Queries all conversations using the `http` protocol in the `app0` application and the default location.
+Returns a maximum of 10 records.
+<4> Queries all conversations using the `http` and `https` protocols in applications starting with `app`, in locations starting with `Def`.
+Returns a maximum of 1,000 records.
+<5> Assumes that the `$conversations` variable is populated with a value from a `conversations()` query.
 
 === hosts(<pattern>,<limit>)
 
-The `hosts()` query returns a list of all available hosts.
-This function is intended for use inside the filter function `withHost()` as a template variable if needed.
-Currently this function accepts the following arguments:
-
-[options="header, %autowidth"]
-|===
-| Position  | Argument                      | Description                               | Default
-| 1         | pattern (optional)            | host expression                           | ".*"
-| last      | limit (optional)              | limit number of records retrieved        | 25
-|===
-
-.Examples: variable expression
-
-Get all hosts (will return a maximum of 25 records).
-
-* hosts()
-
-Get all hosts and return a maximum of 10 records.
-
-* hosts(10)
-
-Get all hosts that match the pattern 192.168.0.* and return a maximum of 10 records.
-
-* hosts(192.168.0.*, 10)
-
-.Use with filter function withHost()
-* withHost($hosts)
+The `hosts()` query returns a list of available hosts.
+This query is intended for use inside the `withHost()` filter function as a template variable, if necessary.
 
 NOTE: The host values retrieved come "as is" from the `flows/hosts/enumerate` API.
+
+This query accepts the following optional arguments:
+
+[options="autowidth"]
+|===
+| Argument  | Description   | Position  | Default Value
+
+| pattern
+| Host expression
+| 1
+| `.*`
+
+| limit
+| Limit for the number of records retrieved.
+| Last
+| 25
+|===
+
+.Example expressions using `hosts()`
+[source,]
+----
+hosts(10) <1>
+hosts(192.168.0.*, 10) <2>
+withHost($hosts) <3>
+----
+<1> Queries all hosts and returns a maximum of 10 records.
+<2> Queries all hosts matching the `192.168.0.*` pattern and returns a maximum of 10 records.
+<3> Assumes that the `$hosts` variable is populated with a value from a `hosts()` query.
