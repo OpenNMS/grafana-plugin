@@ -28,6 +28,9 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
             const oldList = [...activeParameterList]
             oldList[index] = FlowFunctions.get(functionName.label)?.parameter
             setActiveParameterList(oldList)
+            const oldOptionList = [...parameterOptionList]            
+            oldOptionList[index] = { }
+            setParameterOptionList(oldOptionList)
         }
     }
 
@@ -63,25 +66,19 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     }, [segmentValue, functionNameList, activeParameterList, parameterOptionList])
 
     const shiftFunctionPosition = (direction, index) => {
-        setFunctionNameList((oldFunctionList) => {
-            let newFunctionList = oldFunctionList;
-            let newFunctionParameterList = activeParameterList
-            let newFunctionOptionParameterList = parameterOptionList
-            if (oldFunctionList) {
-                newFunctionList = [...oldFunctionList]
-                let temp = newFunctionList[index + direction]
-                let tempParam = newFunctionParameterList[index + direction]
-                let tempParamOpt = newFunctionOptionParameterList[index + direction]
-                newFunctionList[index + direction] = newFunctionList[index]
-                newFunctionList[index] = temp;
-                newFunctionParameterList[index + direction] = newFunctionParameterList[index]
-                newFunctionParameterList[index] = tempParam
-                newFunctionOptionParameterList[index + direction] = newFunctionOptionParameterList[index]
-                newFunctionOptionParameterList[index] = tempParamOpt
-                return newFunctionList
-            }
-            return newFunctionList
-        })
+        setFunctionNameList(oldList => { return setListItemPosition(oldList, direction, index) })
+        setActiveParameterList(oldList => { return setListItemPosition(oldList, direction, index) })
+        setParameterOptionList(oldList => { return setListItemPosition(oldList, direction, index) })
+    }
+
+    const setListItemPosition = (oldList: any[], direction, index) => {
+        const newList = [...oldList]
+        if (newList) {
+            const temp = newList[index + direction]
+            newList[index + direction] = newList[index]
+            newList[index] = temp
+        }
+        return newList
     }
 
     const moveItemLeft = (index: number) => {
@@ -97,14 +94,17 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     }
 
     const removeItem = (index: number) => {
-        setFunctionNameList((oldList) => {
-            let newList = oldList;
-            if (oldList) {
-                newList = [...oldList];
-                newList.splice(index, 1);
-            }
-            return newList;
-        })
+        setFunctionNameList(oldList => removeListItem(oldList, index))
+        setActiveParameterList(oldList => removeListItem(oldList, index))
+        setParameterOptionList(oldList => removeListItem(oldList, index))
+    }
+
+    const removeListItem = (oldList: any[], index: number) => {
+       const newList = [...oldList];
+        if (newList) {            
+            newList.splice(index, 1);
+        }
+        return newList;
     }
 
     return (

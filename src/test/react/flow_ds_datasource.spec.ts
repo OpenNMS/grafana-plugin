@@ -2,10 +2,12 @@ import *  as helpers from '../../datasources/flow-ds-react/helpers';
 import {
   FlowQueryData,
   FlowParsedQueryData,
+  FlowParsedQueryRow,
 } from '../../datasources/flow-ds-react/types';
 import { FlowStrings } from '../../datasources/flow-ds-react/constants';
 import { OnmsFlowSeries } from 'opennms/src/model';
 import { dateTimeAsMoment } from "@grafana/data";
+import { SimpleOpenNMSRequest } from 'lib/utils';
 
 describe("OpenNMS_Flow_Datasource", function () {
 
@@ -15,6 +17,21 @@ describe("OpenNMS_Flow_Datasource", function () {
     dataFromOpenNMS,
     dataFromOpenNMSWithNaN,
     exporterNodes;
+  
+    const simpleRequest =  new SimpleOpenNMSRequest({}, 'http://localhost/dummy')
+    simpleRequest.getResourcesForNode = async (node) => [
+      {
+        "id": "node[selfmonitor:1].interfaceSnmp[opennms-jvm]",
+        "label": "opennms-jvm (*)",
+        "name": "opennms-jvm",
+        "link": "element/snmpinterface.jsp?node=1&ifindex=2",
+        "typeLabel": "SNMP Interface Data",
+        "parentId": "node[selfmonitor:1]",
+        "stringPropertyAttributes": {},
+        "externalValueAttributes": {},
+        "rrdGraphAttributes": {}
+      }
+    ]
 
   beforeEach(() => {
 
@@ -658,17 +675,17 @@ describe("OpenNMS_Flow_Datasource", function () {
       let expectedResponse = [{
         name: '',
         "fields": [
-          {            
+          {
             "name": "Application",
-            "values" : ["app0", "app1"]
+            "values": ["app0", "app1"]
           },
           {
             "name": "Bits In",
-            "values": [16,0]
+            "values": [16, 0]
           },
           {
             "name": "Bits Out",
-            "values": [8,40]
+            "values": [8, 40]
           },
           {
             "name": "ECN",
@@ -680,7 +697,7 @@ describe("OpenNMS_Flow_Datasource", function () {
             "metric": "",
             "toBits": { 'toBits': '' },
           },
-        },       
+        },
       }];
       let actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS);
       expect(expectedResponse).toEqual(actualResponse);
@@ -775,6 +792,98 @@ describe("OpenNMS_Flow_Datasource", function () {
       });
 
       done();
+    });
+
+    it("test getFunctionValue for all functions", function (done) {
+      let queryRow = {
+        "segment": {
+          "id": 0,
+          "label": "Applications"
+        },
+        "queryFunctions": [
+          {
+            "nanToZero": ""
+          },
+          {
+            "withExporterNode": "2"
+          },
+          {
+            "negativeEgress": ""
+          },
+          {
+            "toBits": ""
+          },
+          {
+            "withApplication": "app0"
+          }
+        ],
+        "refId": "A"
+      } as FlowParsedQueryRow;
+
+      let actualResponse = helpers.getFunctionValue(queryRow, "withApplication");
+      let expectedResponse = "app0";
+      expect(actualResponse).toEqual(expectedResponse);
+
+
+      done();
+    });
+
+    it("test template function parameters getTemplateVariableFunction", function (done) {
+      let query = "dscpOnExporterNodeAndInterface(,,123, 1234)"
+      let actualResponse = helpers.getTemplateVariableFunction(query)
+      let expectedResponse = {};
+      expect(actualResponse).toEqual(expectedResponse);
+      query = "dscpOnExporterNodeAndInterface(1,2,123, 1234)"
+      actualResponse = helpers.getTemplateVariableFunction(query)
+      expectedResponse = {
+        name: "dscpOnExporterNodeAndInterface",
+        result: [
+          "dscpOnExporterNodeAndInterface(1,2,123, 1234)",
+          "1",
+          "2",
+          "123",
+          "1234"
+        ]
+      }
+      expect(JSON.stringify(actualResponse)).toEqual(JSON.stringify(expectedResponse));
+      done();
+    });
+
+    it("should return ifIndex when interface name or label are passed instead", async () => {
+      let expectedResponse = "2";
+      let nodeQuery = "node[20]";
+      let iface = "interfaceSnmp[opennms-jvm]";
+
+      let actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      iface = "2";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      expectedResponse = "2";
+      iface = "opennms-jvm";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, null, simpleRequest);
+      expect(actualResponse).toBeNull();
+
+      let numExpectedResponse = 2;
+      let numIface = 2;
+
+      let numActualResponse = await helpers.lookupIfIndex(nodeQuery, numIface, simpleRequest);
+      expect(numExpectedResponse).toEqual(numActualResponse);
+
+      expectedResponse = "opennms-jvm-notfound";
+      iface = "opennms-jvm-notfound";
+
+      actualResponse = await helpers.lookupIfIndex(nodeQuery, iface, simpleRequest);
+      expect(expectedResponse).toEqual(actualResponse);
+
     });
 
   });

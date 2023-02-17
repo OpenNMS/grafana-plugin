@@ -8,7 +8,8 @@ import {
     swapColumns,
     getNodeFilterMap,
     SimpleOpenNMSRequest,
-    getNumberOrDefault
+    getNumberOrDefault,
+    getNodeAsResourceQuery
 } from "lib/utils";
 import {
     defaultSegmentOptions,
@@ -41,6 +42,7 @@ import {
     SegmentOption
 } from "./types";
 import _ from 'lodash';
+import { OnmsMeasurementResource } from '../../lib/api_types'
 
 /**
  * Pieces together UI data into data appropriate to query the BE with.
@@ -51,7 +53,9 @@ import _ from 'lodash';
 export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
 
     // convert the template variables into their selected values for each query.
-    queryItems.forEach(item => item.functionParameters = item?.functionParameters?.map(p => templateSrv.replace(p)));
+    // withDscp, withApplication, withConversation and withHost should allow an array of strings 
+    // that are passed as parameter from template functions
+    queryItems = queryItems.map(item => convertTemplateVariables(item, templateSrv))
 
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
@@ -186,7 +190,7 @@ export const filterOutExistingSingleUseFunctions = (newOptions: SegmentOption[],
  * @param client The OpenNMS Client delegate, initalized and ready to use.
  * @returns OpenNMS API data formatted as Grafana Data Frames.
  */
-export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: FlowQueryRequest<FlowQuery>, type: string, client: ClientDelegate) => {
+export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: FlowQueryRequest<FlowQuery>, type: string, service: FlowTemplateVariableClientService) => {
     let responseData: any = []
     const step = buildStepFromQuery(fullQueryData, options);
 
@@ -195,8 +199,8 @@ export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: 
         if (segmentName) {
             const functionName = getFunctionNameAssociatedToSegment(segmentName);
             const functionDefinition = getOpenNMSClientFunction(query, functionName, segmentName, type);
-            const functionParameters = getFunctionParameters(query, functionName, type, options, step);
-            const dataFromOpenNMS = await queryOpenNMSClientWithFunctionAndParams(functionDefinition, functionParameters, client);
+            const functionParameters = await getFunctionParameters(query, functionName, type, options, step, service);
+            const dataFromOpenNMS = await queryOpenNMSClientWithFunctionAndParams(functionDefinition, functionParameters, service.client);
             const processedData = processDataBasedOnType(type, query, options, dataFromOpenNMS);
             for (let d of processedData) {
                 responseData.push(d);
@@ -253,11 +257,11 @@ const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQue
  * @param options The options a provided by Grafana
  * @returns The parameters for any default (non topN) function
  */
-const buildDefaultParams = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number) => {
+const buildDefaultParams = async (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     const { start, end } = getTimeRange(options);
     const linkedFunctionName = segmentMapping[query.segment.label || '']
     const functionValue = query.queryFunctions.find((d) => d[linkedFunctionName]) || ''
-    const { includeOther, withExporterNode, withIfIndex, withDscp } = getCommonParams(query)
+    const { includeOther, withExporterNode, withIfIndex, withDscp } = await getCommonParams(query, service)
     const defaultSummaryParams = query.segment.label !== FlowSegmentStrings.Dscps ? [
         [functionValue],
         start,
@@ -308,9 +312,9 @@ const buildStepFromQuery = (query: FlowParsedQueryData, options: FlowQueryReques
  * @param step The step value calculated in buildStepFromQuery
  * @returns 
  */
-const buildTopNParams = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number) => {
+const buildTopNParams = async (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     const { start, end } = getTimeRange(options);
-    const { topN, includeOther, withExporterNode, withIfIndex, withDscp } = getCommonParams(query)
+    const { topN, includeOther, withExporterNode, withIfIndex, withDscp } = await getCommonParams(query, service)
 
     return [
         topN,
@@ -442,13 +446,16 @@ const getAllValuesByFunctionName = (query: FlowParsedQueryData, functionName: st
  * @param query An invidual parsed query row
  * @returns The common parameters used by both default and topN query types.
  */
-const getCommonParams = (query: FlowParsedQueryRow) => {
+const getCommonParams = async (query: FlowParsedQueryRow, service: FlowTemplateVariableClientService) => {
+    const exporterNode = getFunctionValue(query, FlowFunctionStrings.withExporterNode)
+    const ifIndex = await lookupIfIndex(getNodeAsResourceQuery(exporterNode), getFunctionValue(query, FlowFunctionStrings.withIfIndex), service.simpleRequest)
+    const dscp = getFunctionValue(query, FlowFunctionStrings.withDscp)
     return {
         topN: getFunctionValue(query, FlowFunctionStrings.topN) || 10,
-        includeOther: getFunctionValue(query, FlowFunctionStrings.includeOther) || false,
-        withExporterNode: getFunctionValue(query, FlowFunctionStrings.withExporterNode) || undefined,
-        withIfIndex: getFunctionValue(query, FlowFunctionStrings.withIfIndex) || undefined,
-        withDscp: getFunctionValue(query, FlowFunctionStrings.withDscp) || [],
+        includeOther: isFunctionSet(query, FlowFunctionStrings.includeOther) ? true : false,
+        withExporterNode: exporterNode || undefined,
+        withIfIndex: ifIndex || undefined,
+        withDscp: dscp && dscp !== 'all' ? dscp : [],
     }
 }
 
@@ -463,17 +470,17 @@ const getFunctionNameAssociatedToSegment = (segmentName: string) => {
 /**
  * Depending on if the user has set the associated function with the segment type, either return the default or topN parameters.
  */
-const getFunctionParameters = (query: FlowParsedQueryRow, functionName: string, type: string, options: FlowQueryRequest<FlowQuery>, step: number) => {
+const getFunctionParameters = async (query: FlowParsedQueryRow, functionName: string, type: string, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     return query.queryFunctions.find((d) => d[functionName]) || query.segment.label === FlowSegmentStrings.Dscps ?
-        buildDefaultParams(type, query, options, step) :
-        buildTopNParams(type, query, options, step);
+        buildDefaultParams(type, query, options, step, service) :
+        buildTopNParams(type, query, options, step, service);
 }
 
 /**
  * If the value converts to a number cleanly, it will be converted before 
  * @param query An invidual query row
  * @param name the name of the function we want the value for
- * @returns The value for the specified row and function.
+ * @returns The value(s) for the specified row and function.
  */
 export const getFunctionValue = (query: FlowParsedQueryRow, name: string): string | undefined => {
     return query.queryFunctions.find((d) => d[name])?.[name];
@@ -711,7 +718,7 @@ const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequ
             name: col.text,
             values: values
         }
-        dataFrame.fields.push( field )
+        dataFrame.fields.push(field)
     })
 
     return [dataFrame]
@@ -790,10 +797,10 @@ const getTemplateVariableQuery = (query: string, templateSrv: any) => {
     }
 }
 
-const getTemplateVariableFunction = (query: string) => {
+export const getTemplateVariableFunction = (query: string) => {
     return FlowTemplateVariableFunctionExpression
         .map(({ name, expression }) => ({ name: name, result: query.match(expression) }))
-        .find(({ name, result }) => result) ?? {};
+        .find(({ name, result }) => result) ?? {}
 }
 
 const getTemplateVariableResultsFor = async (templateQueryFunction: FlowTemplateVariableQueryService,
@@ -943,5 +950,70 @@ export const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?
     else {
         return await Promise.resolve(exporterNodes);
     }
+}
+
+/**
+ * Converts functionParameters and parameterOptions to template variables if they are present.
+ * @param item a FlowQueryData instance
+ * @param templateSrv grafana service to replace template variables
+ * @returns FlowQueryData
+ */
+export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
+    item.functions?.forEach((f, idx) => {
+
+        if (item.functionParameters[idx]) {
+            item.functionParameters[idx] = templateSrv.replace(item.functionParameters[idx])
+
+        } if (item.parameterOptions[idx] && item.parameterOptions[idx].value) {
+            item.parameterOptions[idx].value = templateSrv.replace(item.parameterOptions[idx].value)
+            item.parameterOptions[idx].label = templateSrv.replace(item.parameterOptions[idx].label)
+        }
+
+    })
+    return item
+}
+
+/**
+ * Search for an IfIndex (number) when using template variables from different datasources 
+ * that provides resource name or label instead 
+ * @param nodeQuery node
+ * @param iface interface name or label
+ * @param simpleRequest rest service
+ * @returns ifIndex if any or iface param if not match is found.
+ */
+export const lookupIfIndex = async (nodeQuery: string | undefined, iface: string | number | null | undefined, simpleRequest: SimpleOpenNMSRequest) => {
+    if (!nodeQuery || !iface || !Number.isNaN(Number(iface))) { return iface; }
+    const resources = await simpleRequest.getResourcesForNode(nodeQuery);
+
+    if (resources) {
+        for (const resource of resources) {
+            let result = findResourceIfIndex(resource, iface)
+            if (result) {
+                iface = result
+                break
+            }
+        }
+    }
+    return iface
+}
+
+/**
+ * Search for IfIndex in resource from measurement rest end point 
+ * @param resource 
+ * @returns ifIndex if exists or null
+ */
+const findResourceIfIndex = (resource: OnmsMeasurementResource, iface?: string | number | null | undefined): string | null | undefined => {
+    const regexSnmpIfaceId = /interfaceSnmp\[(.*)\]/;
+    const regexSnmpIface = /element\/snmpinterface\.jsp\?node=.*&ifindex=(\d+)/;
+    const idMatch = resource.id.match(regexSnmpIfaceId);
+
+    if (idMatch && (idMatch[0] === iface || (idMatch[1] && idMatch[1] === iface)) && resource.link) {
+        const ifIndexMatch = resource.link.match(regexSnmpIface);
+        if (ifIndexMatch && ifIndexMatch[1]) {
+            return ifIndexMatch[1];
+        }
+    }
+    return null
+
 }
 

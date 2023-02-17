@@ -83,11 +83,6 @@ export const includeOtherFunction: FlowFunction = {
 }
 
 export const withExporterNodeFunction: FlowFunction = {
-    parentSegments: [
-        FlowSegments.Applications,
-        FlowSegments.Conversations,
-        FlowSegments.Hosts,
-    ],
     parameter: ""
 }
 
