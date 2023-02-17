@@ -135,10 +135,26 @@ The options provided depend on the filter that you select.
 |===
 | Filter Name | Description
 
+| Chomp
+| Strips leading and trailing rows that contain nothing but `NaN` or `null` values.
+
+| HoltWinters
+| Performs Holt-Winters forecasting.
+
 | Outlier
-| Removes datapoints that fall outside of the set quantile.
-Defaults to 95%. +
-The removed datapoints are replaced with interpolated values.
+| Removes outliers and replaces them with interpolated values.
+
+| Trend
+| Fits a trend line or polynomial to a given column.
+
+| JEXL
+| Generic JEXL expression filter.
+
+| Percentile
+| Calculates percentiles.
+
+| Derivative
+| Calculates the derivative (rate of change) between rows.
 |===
 
 [[ds-perf-template]]
