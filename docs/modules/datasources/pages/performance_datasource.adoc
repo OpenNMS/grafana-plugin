@@ -11,7 +11,7 @@ This section lists the types of queries that you can build using the query edito
 === Attribute queries
 
 Attribute queries are used to extract data points from the time series data that OpenNMS collects and stores.
-You can specify which attributes or series are being queried.
+You can specify which attributes or series to query.
 
 [caption=]
 .Attribute query options
@@ -108,8 +108,8 @@ Can also be a variable with a `nodeResources()` query.
 === Expression queries
 
 Expression queries are used to combine or otherwise transform one or more series into a new series.
-They support the mathematical and conditional operators provided by JEXL.
-See the https://docs.opennms.com/horizon/latest/development/rest/measurements.html[OpenNMS Measurements API documentation] for more information.
+They support the mathematical and conditional operators that JEXL provides.
+Expression queries are sent over the https://docs.opennms.com/horizon/latest/development/rest/measurements.html#more-advanced-expressions[OpenNMS Measurements API] to be processed server-side.
 
 [caption=]
 .Expression query options
@@ -142,11 +142,11 @@ The removed datapoints are replaced with interpolated values.
 |===
 
 [[ds-perf-template]]
-== Template queries
+== Variable queries
 
-You can use template queries in metric queries and panel titles.
+You can use variable queries in metric queries and panel titles.
 The results will appear as a drop-down list at the top of the dashboard; you can select from the list to change the data that the associated panel displays.
-For an example of a template query, see <<panel_configuration:dynamic-dashboard.adoc#pc-template-filters, Use variables to create dynamic dashboards>>.
+For an example of a variable query, see <<panel_configuration:dynamic-dashboard.adoc#pc-template-filters, Use variables to create dynamic dashboards>>.
 
 === locations()
 
@@ -157,8 +157,9 @@ You can use this inside a `nodeFilter()` query to filter the number of nodes dis
 [source,]
 ----
 nodeFilter(location='Default')
-nodeFilter(location='$location')
+nodeFilter(location='$location') <1>
 ----
+<1> This example assumes you have a `location` variable with a `locations()` query.
 
 === nodeFilter(<filterQuery>)
 
@@ -169,9 +170,11 @@ The `nodeFilter()` query returns a list of nodes which match the given filter ex
 ----
 nodeFilter(catincProduction & catincLinux) <1>
 nodeFilter(location='Default' & catincProduction & catincSNMP) <2>
+nodeFilter() <3>
 ----
 <1> Returns the set of nodes that are in the `Production` and `Linux` categories.
 <2> Returns the set of nodes that are in the `SNMP` and `Production` categories and the `Default` location.
+<3> Returns all nodes in inventory.
 
 Only one argument is available for the `nodeFilter()` query:
 
@@ -181,9 +184,10 @@ Only one argument is available for the `nodeFilter()` query:
 
 | filterQuery
 | Any valid node query syntax as used by core OpenNMS services (see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation]).
+If omitted, all nodes are returned.
 |===
 
-=== nodeResources(<resourceId>[,textProperty[,resourceType[,regexFilter]]])
+=== nodeResources(<nodeId>[,textProperty[,resourceType[,regexFilter]]])
 
 The `nodeResources()` query returns a list of resource IDs that are available on the specified node.
 An optional second argument specifies whether to display the resource's ID, its label, or its name in the template value selector and elsewhere.
@@ -191,7 +195,7 @@ By default, the query displays the resource's ID.
 An optional third argument specifies an exact `resource-type` name (for example, `interfaceSnmp`).
 Passing a wildcard (`*`) allows for resources of all types to be returned.
 
-Regular expressions in the template query can be used to filter which resource IDs are used.
+You can use regular expressions in the variable query to filter which resource IDs are used.
 
 .Examples of `nodeResources()` queries
 [source,]
@@ -200,12 +204,15 @@ nodeResources(123) <1>
 nodeResources(FS:FID) <2>
 nodeResources(42, label, interfaceSnmp) <3>
 nodeResources(42, label, *, .*DPN.*) <4>
+nodeResources($node) <5>
 ----
 <1> Queries a specific node by its ID (`123`).
 <2> Queries a specific node by its foreign source and foreign ID, formatted as a tuple.
 <3> Queries node ID `42` for only SNMP interface resources.
 The result displays the interface's resource labels rather than their IDs.
 <4> Queries node ID `42` for all resources and returns items whose labels match the regular expression `\*.DPN.*`.
+<5> Queries for all resources on the node returned from a `nodeFilter()` query.
+When requesting resources from a node based on another variable, the node variable should return only a single node.
 
 The following arguments are available for the `nodeResources()` query:
 
@@ -215,7 +222,7 @@ The following arguments are available for the `nodeResources()` query:
 
 3+|*Required*
 
-| resourceId
+| nodeId
 | The node (identified either by its `databaseId` or `foreignSource:foreignId` tuple) to display resources from.
 | _Blank_
 
@@ -271,7 +278,9 @@ For example, both of these calls translate into the same text:
 ----
 resourceToLabel(node[FS:FID].nodeSnmp[])
 resourceToLabel(FS:FID, nodeSnmp[])
+resourceToLabel($node, $interface) <1>
 ----
+<1> This assumes there is are variables called `node` and `interface` that are the result of `nodeFilter()` and `nodeResources()` queries, respectively.
 
 === resourceToName(<resourceId or nodeCriteria>[, <partialResourceId>])
 
@@ -283,7 +292,9 @@ The resource name is usually the resource's internal, machine-readable name (for
 ----
 resourceToName(node[FS:FID].nodeSnmp[])
 resourceToName(FS:FID, nodeSnmp[])
+resourceToName($node, $interface) <1>
 ----
+<1> This assumes there is are variables called `node` and `interface` that are the result of `nodeFilter()` and `nodeResources()` queries, respectively.
 
 === resourceToInterface(<resourceId or nodeCriteria>[, <partialResourceId>])
 
