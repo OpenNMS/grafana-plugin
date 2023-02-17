@@ -1,6 +1,6 @@
+import React from 'react';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { DataSourceHttpSettings } from '@grafana/ui';
-import React from 'react';
 import { PerformanceDataSourceOptions } from './types';
 
 interface Props extends DataSourcePluginOptionsEditorProps<PerformanceDataSourceOptions> { }
@@ -12,5 +12,5 @@ export const PerformanceConfigEditor: React.FC<Props> = ({ onOptionsChange, opti
             dataSourceConfig={options}
             onChange={onOptionsChange}
         />
-    );
-};
+    )
+}

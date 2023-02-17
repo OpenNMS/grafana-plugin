@@ -1,31 +1,41 @@
 import { SelectableValue } from '@grafana/data';
-import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui'
+import {
+    Segment,
+    SegmentAsync,
+    SegmentInput
+} from '@grafana/ui'
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import React, { useState, useEffect } from 'react'
 
 export interface PerformanceAttributesProps {
     updateQuery: Function;
-    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{id: string}>>>;
-    loadResourcesByNodeId: Function;
+    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<PerformanceAttributeStateNode>>>;
+    loadResourcesByNode: Function;
     loadAttributesByResourceAndNode: Function;
 }
 
+export interface PerformanceAttributeStateNode {
+    id: string;
+    label?: string;
+}
+
 export interface PerformanceAttributeState {
-    node: {id: string};
-    resource: {id: string};
-    attribute: {name: string};
+     // this may be an OnmsNode object, or else just an id and/or label
+    node: PerformanceAttributeStateNode;
+    resource: { id: string };
+    attribute: { name: string };
     subAttribute: string | number;
-    fallbackAttribute: {name: string};
-    aggregation: unknown;
+    fallbackAttribute: { name: string };
+    aggregation: { label?: string };
     label: string;
 }
 
-export const defaultPerformanceState = {
-    node: {id:''},
-    resource: {id: ''},
-    attribute: {name: ''},
+export const defaultPerformanceState: PerformanceAttributeState = {
+    node: { id: '' },
+    resource: { id: '' },
+    attribute: { name: '' },
     subAttribute: '',
-    fallbackAttribute: { name: ''},
+    fallbackAttribute: { name: '' },
     aggregation: {},
     label: ''
 }
@@ -33,24 +43,23 @@ export const defaultPerformanceState = {
 export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
     updateQuery,
     loadNodes,
-    loadResourcesByNodeId,
+    loadResourcesByNode,
     loadAttributesByResourceAndNode
 }) => {
 
     const [performanceState, setPerformanceState] = useState<PerformanceAttributeState>(defaultPerformanceState)
 
- 
     useEffect(() => {
-        if (performanceState.resource.id && performanceState.node.id && performanceState.attribute){
+        if (performanceState.attribute && (performanceState.node.id || performanceState.node.label) && performanceState.resource.id) {
             updateQuery(performanceState);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[performanceState])
 
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
-        setPerformanceState({...performanceState,[propertyName]:propertyValue})
+        setPerformanceState({...performanceState, [propertyName]: propertyValue})
     }
-   
+
     return (
         <>
             <div className='spacer' />
@@ -60,20 +69,20 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                     placeholder='Select Node'
                     loadOptions={loadNodes}
                     onChange={(value) => {
-                        setPerformanceStateProperty('node',value);
+                        setPerformanceStateProperty('node', value);
                     }}
                 />
             </SegmentSectionWithIcon>
-            <div className='spacer' />
 
+            <div className='spacer' />
             {
-                performanceState?.node?.id &&
+                (performanceState?.node?.id || performanceState?.node?.label) &&
 
                 <SegmentSectionWithIcon label='Resource' icon='leaf'>
                     <SegmentAsync
                         value={performanceState?.resource}
                         placeholder='Select Resource'
-                        loadOptions={() => loadResourcesByNodeId(performanceState?.node?.id)}
+                        loadOptions={() => loadResourcesByNode(performanceState?.node?.id || performanceState?.node?.label)}
                         onChange={(value) => {
                             setPerformanceStateProperty('resource',value);
                         }}
@@ -82,7 +91,7 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
             }
             <div className='spacer' />
             {
-                performanceState?.node?.id && performanceState?.resource?.id &&
+                (performanceState?.node?.id || performanceState?.node?.label) && performanceState?.resource?.id &&
                 <>
                     <SegmentSectionWithIcon label='Attribute' icon='tag'>
                         <SegmentAsync

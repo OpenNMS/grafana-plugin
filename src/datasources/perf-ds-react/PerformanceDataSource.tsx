@@ -1,9 +1,26 @@
-import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
+import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
 import { SimpleOpenNMSRequest } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
-import { measurementResponseToGrafanaSeries } from "./PerformanceHelpers";
-import { PerformanceDataSourceOptions, PerformanceQuery, PerformanceQueryRequest } from "./types";
+import { measurementResponseToDataFrame } from "./PerformanceHelpers";
+import {
+    OnmsMeasurementsQuerySource,
+    PerformanceDataSourceOptions,
+    PerformanceQuery,
+    PerformanceQueryRequest
+} from "./types";
+import { collectInterpolationVariables, interpolate } from "./queries/interpolate";
+import {
+    buildAttributeQuerySource,
+    buildExpressionQuery,
+    buildFilterQuery,
+    buildPerformanceMeasurementQuery,
+    isValidAttributeTarget,
+    isValidExpressionTarget,
+    isValidFilterTarget,
+    isValidMeasurementQuery
+} from "./queries/queryBuilder";
+import { queryStringProperties } from "./queries/queryStringProperties"
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -22,8 +39,10 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     isQueryValidStringPropertySearch = (targets: PerformanceQuery[]) => {
-        const totalStrings = targets.filter((d) => d.performanceState?.stringProperty?.value)
+        const totalStrings = targets.filter((d) =>
+            d.performanceType.value === PerformanceTypeOptions.StringProperty.value && d.performanceState?.stringProperty?.value)
         let typeOfQuery = 'normal'
+
         if (totalStrings.length > 0 && totalStrings.length === targets.length) {
             typeOfQuery = 'string'
         } else if (totalStrings.length > 0 && totalStrings.length < targets.length) {
@@ -31,27 +50,20 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         }
         return typeOfQuery;
     }
-   
-    async stringPropertySearch(targets: PerformanceQuery[]){
-        for (let i = 0; i < targets.length; i++){
-            const nodeId = targets[i].performanceState.node?.id
-            await this.simpleRequest.doOpenNMSRequest( {
-                url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
-                method: 'GET'
-              });
-        }
-        return {data:[]}
+
+    async stringPropertySearch(request: PerformanceQueryRequest<PerformanceQuery>) {
+        return queryStringProperties(this.client, this.simpleRequest, this.templateSrv, request)
     }
+
     async query(options: PerformanceQueryRequest<PerformanceQuery>): Promise<DataQueryResponse> {
         const searchType = this.isQueryValidStringPropertySearch(options?.targets);
  
         if (searchType === 'string') {
-            return this.stringPropertySearch(options?.targets);
+            return this.stringPropertySearch(options);
         } else if (searchType === 'invalid') {
-            throw new Error('string property queries can not be mixed with other kinds of queries')
+            throw new Error('string property queries cannot be mixed with other kinds of queries')
         }
 
-        const data: Array<{ target: string; label: string; datapoints: [[string, string]]; }> = []
         const maxDataPoints = options.maxDataPoints || 300;
         const intervalMs = options.intervalMs || 60 * 1000;
 
@@ -60,65 +72,90 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         let step = Math.floor((end - start) / maxDataPoints);
         step = (step < intervalMs) ? intervalMs : step;
 
-        var query = {
-            start: start,
-            end: end,
-            step: step,
-            relaxed: true, // enable relaxed mode, which allows for missing attributes
-            maxrows: maxDataPoints,
-            source: [] as any[],
-            expression: [] as any[],
-            filter: [] as any[]
-        };
+        var query = buildPerformanceMeasurementQuery(start, end, step, maxDataPoints)
+
+        // TODO: Not sure if 'labels' is being used, keeping here for now
+        // @ts-ignore
+        // eslint-disable-next-line no-unused-vars
+        let labels = [] as string[]
+        let dataFrames: DataFrame[] = []
 
         for (let i = 0; i < options.targets.length; i++) {
             const target = options.targets[i];
-            if (target.performanceType?.value === PerformanceTypeOptions.Attribute.value) {
-                const source = {
-                    attribute: target.attribute.attribute.name,
-                    ['fallback-attribute']: target.attribute.fallbackAttribute.name,
-                    label: target.attribute.label || target.attribute.attribute.name,
-                    resourceId: target.attribute.resource.id.replace('node[', 'nodeSource['),
-                    transient: false
-                }
-                query.source.push(source)
-            } else if (target.performanceType?.value === PerformanceTypeOptions.Expression.value) {
-                query.expression.push({
-                    label: target.label || 'expression' + i,
-                    value: target.expression,
-                    transient: target.hide
-                })
-            } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
-                const filter: Array<{ key: string, value: string | { value: string } }> = []
-                for (let [_, item] of Object.entries(target.filterState)) {
-                    const filterItem = item as { value: { value: string }, filter: { key: string } }
-                    let value: any = filterItem.value
-                    if (value.value) {
-                        value = value.value
-                    }
-                    if (value) {
-                        filter.push({ key: filterItem.filter.key, value })
-                    }
-                }
-                query.filter.push({ parameter: filter, name: target.filter.name })
-            }
-            if (query.source.length > 0 || query.expression.length > 0 || query.filter.length > 0) {
 
+            if (target.performanceType?.value === PerformanceTypeOptions.Attribute.value) {
+                if (isValidAttributeTarget(target)) {
+                    const source = buildAttributeQuerySource(target);
+
+                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+                    const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
+
+                    const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
+                        if (interpolatedSource.nodeId) {
+                            // Calculate the effective resource id after the interpolation
+                            interpolatedSource.resourceId = this.getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
+                            delete interpolatedSource.nodeId;
+                        }
+                    }
+
+                    const sources = interpolate(source, attributes, interpolationVars, callback)
+                    query.source = sources
+                    labels = query.source.map(s => s.label)
+                }
+            } else if (target.performanceType?.value === PerformanceTypeOptions.Expression.value) {
+                if (isValidExpressionTarget(target)) {
+                    const expression = buildExpressionQuery(target, i);
+
+                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+                    const attributes = ['value', 'label']
+
+                    const expressions = interpolate(expression, attributes, interpolationVars)
+                    query.expression = expressions
+
+                    labels = query.expression.map(e => e.label)
+                }
+            } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
+                if (isValidFilterTarget(target)) {
+                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+
+                    const attributes = Object.keys(target.filterState)
+                    const interpolatedFilterParams = interpolate(target.filterState, attributes, interpolationVars)
+
+                    const filters = buildFilterQuery(target, interpolatedFilterParams)
+
+                    // Only add the filter attribute to the query when one or more filters are specified since
+                    // OpenNMS versions before 17.0.0 do not support it
+                    if (filters.length > 0) {
+                        if (!query.filter) {
+                            query.filter = filters;
+                        } else {
+                            query.filter = query.filter.concat(filters);
+                        }
+                    }
+                }
+            }
+
+            if (isValidMeasurementQuery(query)) {
                 const response = await this.simpleRequest.doOpenNMSRequest({
                     url: '/rest/measurements',
                     data: query,
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
+
                 try {
-                    data.push(measurementResponseToGrafanaSeries(response))
+                    // convert to DataFrame format
+                    const dataFrame = measurementResponseToDataFrame(response.data, target.refId)
+                    dataFrames.push(dataFrame)
                 } catch (e) {
                     console.error(e);
                 }
             }
         }
-        return { data }
+
+        return { data: dataFrames } as DataQueryResponse
     }
+
     async metricFindQuery(query, options) {
         let queryResults: Array<{ text: string, value: string }> = []
 
@@ -135,5 +172,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
             console.log('CAUGHT!', e);
         }
         return { status: 'success', message: 'Success' }
+    }
+
+    getRemoteResourceId(nodeId: string, resourceId: string) {
+        const prefix = nodeId.indexOf(':') >= 0 ? 'nodeSource' : 'node'
+
+        return `${prefix}[${nodeId}].${resourceId}`
     }
 }

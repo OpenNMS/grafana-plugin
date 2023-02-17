@@ -12,7 +12,6 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
         const totalRows = filteredProps.fields[0].values.length
         const rowsPerPage = Number(alarmTable.alarmTablePaging.rowsPerPage)
         if (filteredProps) {
-
             // Allow background color for severity column.
             if (alarmTable?.alarmTableAlarms?.styleWithSeverity?.value === 1) {
                 filteredProps.fields = filteredProps.fields.map((field) => {
