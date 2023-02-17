@@ -10,7 +10,7 @@ content:
     start_path: docs
 ui:
   bundle:
-    url: https://github.com/opennms-forge/antora-ui-opennms/releases/download/v3.0.1/ui-bundle.zip
+    url: https://github.com/opennms-forge/antora-ui-opennms/releases/download/v3.1.0/ui-bundle.zip
 asciidoc:
   attributes:
     experimental: true

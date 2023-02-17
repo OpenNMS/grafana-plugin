@@ -17,16 +17,15 @@ This section describes the following types of panel configuration:
 * xref:expressions.adoc[Working with expressions].
 
 [[custom-panel]]
-== Default custom panels
+== Included custom panels
 
-{page-component-title} comes with several pre-configured custom panels:
+{page-component-title} comes with several preconfigured custom panels:
 
 * *Alarm Histogram:* A bar chart that shows the distribution of alarms by severity level.
 +
 image::alarm-histogram.png["An Alarm Histogram panel displaying a horizontal bar graph. The bar graph shows the distribution of critical and major alarms.", 850]
 
 * *Alarms Table:* A table that displays alarms.
-The query for this panel must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 +
 image::alarm-panel.png["An Alarms Table panel showing two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 850]
 
@@ -44,6 +43,8 @@ For a panel to display data visualizations, you must define the following settin
 * Datasource
 * Flow Type
 * Time Interval
+
+You can also add any other function or transformation to customize the visualized data.
 
 == Customize panels
 
@@ -79,19 +80,16 @@ image::alarm-histogram-example.png["Example of an Alarm Histogram panel in edit 
 Follow these steps to customize an Alarms Table panel:
 
 . Enter editing mode and select an Alarms Table panel on your dashboard.
-. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities React*).
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
 . Choose a display interval from the *Time Interval* list at the top of the panel.
 . Expand the *Query Options* section and update the settings as desired.
-+
-NOTE: The query must include an `asTableSummary()` transform, otherwise the panel will not display any data.
-
 . Edit the query using the fields at the bottom of the panel:
 ** Choose a data type to display from the *Select* list (in this case, *Alarms*).
 ** Set the visualization conditions using the *Where* options.
 ** Choose the order in which the data is visualized from the *Order By* list.
 ** (Optional) Set a limit on the amount of data displayed.
 ** (Optional) Turn on the *Featured Attributes* option.
-. Add, remove, and reorder columns in the Alarm Table React section.
+. Add, remove, and reorder columns in the Alarm Table section.
 . Set other display options as desired.
 
 After the panel is configured, you can right-click on an entry to access the context menu.
@@ -104,14 +102,14 @@ image::alarms-table-example.png["Example of an Alarms Table panel in edit mode. 
 Follow these steps to customize a Flow Histogram panel:
 
 . Enter editing mode and select a Flow Histogram panel on your dashboard.
-. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Flow React*).
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Flow*).
 . Choose a display interval from the *Time Interval* list at the top of the panel.
 . Expand the *Query Options* section and update the settings as desired.
 +
 NOTE: The query must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 
 . Edit the query using the *Flow* options at the bottom of the panel.
-. Update the panel options under the Flow Histogram React section:
+. Update the panel options under the Flow Histogram section:
 ** Select the display orientation using the *Direction* list (in this example, *Horizontal*).
 ** Select the measurement units using the *Units* list (in this example, *MB*).
 ** Choose the visualization method using the *Display* list (in this example, *Total*).
