@@ -86,17 +86,18 @@ Do not use with `topN`.
 The `locations()` query returns a list of available node locations.
 You can use this inside an `exporterNodesWithFlows()` query to filter the number of nodes displayed by location.
 
-.Example expressions using `locations()`
+.Example expressions
 [source,]
 ----
 exporterNodesWithFlows(location='Default')
-exporterNodesWithFlows(location='$location')
+nodeFilter(location='$location') <1>
 ----
+<1> Assumes that the `$location` variable is populated with a value from a `locations()` query.
 
 === exporterNodesWithFlows(<filterQuery>)
 
 The `exporterNodesWithFlows()` query returns a list of nodes that have exported flows data to OpenNMS.
-The value of the template value is the node's ID, and the display text is the node's label.
+The template value is the node's ID, and the display text is the node's label.
 
 NOTE: The specified exporters must be part of your OpenNMS instance's inventory to be returned by this query.
 
@@ -182,7 +183,7 @@ The query accepts an optional number of records, which ensures that only a limit
 
 NOTE: The application values retrieved come "as is" from the `flows/applications/enumerate` API.
 
-.Example expressions using `applications()`
+.Example expressions
 ----
 applications(1000)
 withApplications($applications) <1>
@@ -223,7 +224,7 @@ The query accepts the following optional arguments:
 | 25
 |===
 
-.Example expressions using `conversations()`
+.Example expressions
 [source,]
 ----
 conversations(10) <1>
@@ -264,7 +265,7 @@ This query accepts the following optional arguments:
 | 25
 |===
 
-.Example expressions using `hosts()`
+.Example expressions
 [source,]
 ----
 hosts(10) <1>

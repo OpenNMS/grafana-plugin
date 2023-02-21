@@ -169,7 +169,7 @@ For an example of a variable query, see <<panel_configuration:dynamic-dashboard.
 The `locations()` query returns a list of all available node locations.
 You can use this inside a `nodeFilter()` query to filter the number of nodes displayed by location.
 
-.Example expressions using `locations()`
+.Example expressions using `nodeFilter()`
 [source,]
 ----
 nodeFilter(location='Default')
@@ -288,7 +288,7 @@ That resource ID must be the full resource identifier as queried to the OpenNMS 
 The two-argument form of this function lets you use template variables to specify a node and separately provide the remainder of the resource ID that you want to translate.
 
 A partial resource ID is the portion of the resource identifier that does not identify the node itself (for example, `nodeSnmp[]`, `responseTime[127.0.0.1]`).
-For example, both of these calls translate into the same text:
+For example, all of these calls translate into the same text:
 
 [source,]
 ----
@@ -296,7 +296,7 @@ resourceToLabel(node[FS:FID].nodeSnmp[])
 resourceToLabel(FS:FID, nodeSnmp[])
 resourceToLabel($node, $interface) <1>
 ----
-<1> This assumes there is are variables called `node` and `interface` that are the result of `nodeFilter()` and `nodeResources()` queries, respectively.
+<1> Assumes that the `$node` variable is populated with a value from a `nodeFilter()` query, and the `$interface` variable is populated with a value from a `nodeResources()` query.
 
 === resourceToName(<resourceId or nodeCriteria>[, <partialResourceId>])
 
@@ -310,7 +310,7 @@ resourceToName(node[FS:FID].nodeSnmp[])
 resourceToName(FS:FID, nodeSnmp[])
 resourceToName($node, $interface) <1>
 ----
-<1> This assumes there is are variables called `node` and `interface` that are the result of `nodeFilter()` and `nodeResources()` queries, respectively.
+<1> Assumes that the `$node` variable is populated with a value from a `nodeFilter()` query, and the `$interface` variable is populated with a value from a `nodeResources()` query.
 
 === resourceToInterface(<resourceId or nodeCriteria>[, <partialResourceId>])
 
