@@ -1,15 +1,14 @@
+import React, { useState, useEffect } from 'react'
 import { Segment, SegmentAsync } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import React, { useState, useEffect } from 'react'
 import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types';
-
-
 
 export const defaultPerformanceStringState = {
     node: { id: '' },
     resource: { id: '', stringPropertyAttributes: {} },
     stringProperty: { label: '', value: '' },
 }
+
 export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps> = ({
     updateQuery,
     loadNodes,
@@ -27,7 +26,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
             updateQuery(performanceState)
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[performanceState])
+    }, [performanceState])
 
     const stringPropertyAttributes = Object.entries(performanceState?.resource?.stringPropertyAttributes).map(([key, item]) => {
         return { label: key, value: key }
@@ -79,5 +78,4 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
             }
         </>
     )
-
 }

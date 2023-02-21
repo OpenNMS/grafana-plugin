@@ -1,7 +1,8 @@
-import { Segment } from '@grafana/ui';
-import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import { API } from 'opennms';
 import React, { useState } from 'react'
+import { Segment } from '@grafana/ui';
+import { getTemplateSrv } from '@grafana/runtime';
+import { API } from 'opennms';
+import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import { PerformanceTypeOptions } from './constants';
 import { PerformanceAttribute } from './PerformanceAttribute';
 import { PerformanceExpression } from './PerformanceExpression';
@@ -55,12 +56,37 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         return nodes;
     }
 
+    /**
+     * Load resources for the PerformanceAttribute Resources dropdown by either a node id (selected from
+     * Node dropdown) or from a template variable that evaluates to a node id.
+     */
+    const loadResourcesByNode = async (value) => {
+        const ts = getTemplateSrv()
+        let nodeId = value
+
+        if (ts.containsTemplate(value)) {
+            nodeId = ts.replace(value)
+        }
+
+        return loadResourcesByNodeId(nodeId)
+    }
+
     const loadResourcesByNodeId = async (nodeId) => {
         const resources = await datasource.simpleRequest.doOpenNMSRequest({
             url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
             method: 'GET'
         })
-        return resources.data.children.resource;
+
+        return resources.data.children.resource.map(r => {
+            const label = (r.label && r.name && r.label !== r.name) ?
+                `${r.label} | ${r.name}` :
+                (r.label || r.name || '')
+
+            return {
+                ...r,
+                label
+            }
+        })
     }
 
     const loadAttributesByResourceAndNode = async (node, resource) => {
@@ -82,6 +108,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             url: '/rest/measurements/filters',
             method: 'GET'
         });
+
         return filters.data.map((filter) => {
             return { ...filter, label: filter.name }
         });
@@ -134,7 +161,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 <PerformanceAttribute
                     updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}
-                    loadResourcesByNodeId={loadResourcesByNodeId}
+                    loadResourcesByNode={loadResourcesByNode}
                     loadAttributesByResourceAndNode={loadAttributesByResourceAndNode}
                 />
             }
