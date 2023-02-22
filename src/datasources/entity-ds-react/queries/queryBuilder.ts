@@ -157,6 +157,8 @@ export const getTemplateVariable = (templateSrv: any, name: string) => {
 // (otherwise substitution would happen in original query,
 // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
 export const buildQueryFilter = (filter: API.Filter, request: EntityQueryRequest<EntityQuery>, templateSrv: TemplateSrv): API.Filter => {
+
+    filter.clauses = filter.clauses.filter((clause, idx) => clause.restriction?.attribute && clause.restriction?.comparator && clause.restriction?.value)
     const clonedFilter = API.Filter.fromJson(filter)
 
     // Before replacing any variables, add a global time range restriction (which is hidden to the user)
