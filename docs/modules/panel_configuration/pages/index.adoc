@@ -3,7 +3,7 @@
 [[pc-index]]
 = Panel Configuration
 
-{page-component-title} allows for robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
+{page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
 
 image::gf-panel-config.png["Panel displaying configuration options", 850]
@@ -21,22 +21,23 @@ This section describes the following types of panel configuration:
 
 {page-component-title} comes with several preconfigured custom panels:
 
-* *Alarm Histogram:* A bar chart that shows the distribution of alarms by severity level.
+* *Alarm histogram:* A bar chart that shows the distribution of alarms by severity level.
 +
-image::alarm-histogram.png["An Alarm Histogram panel displaying a horizontal bar graph. The bar graph shows the distribution of critical and major alarms.", 850]
+image::alarm-histogram.png["An alarm histogram panel displaying a horizontal bar graph. The bar graph shows the distribution of critical and major alarms.", 850]
 
-* *Alarms Table:* A table that displays alarms.
+* *Alarms table:* A table that displays alarms.
 +
-image::alarm-panel.png["An Alarms Table panel showing two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 850]
+image::alarm-panel.png["An alarms table panel showing two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 850]
 
-* *Filter panel:* A panel that lets you specify data to include in other panels.
+* *Filter panel:* A panel that lets you filter entity data displayed in other panels.
+The filters created using this panel apply to all panels that use the same Entity datasource.
 +
-image::filter-panel.png["Blank fields in a Filter panel", 850]
+image::filter-panel.png["Blank fields in a filter panel", 850]
 
-* *Flow Histogram:* A bar chart that shows the distribution of flows data.
+* *Flow histogram:* A bar chart that shows the distribution of flows data.
 The query for this panel must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 +
-image::flow-histogram.png["A Flow Histogram panel displaying a horizontal bar graph. The bar graph shows network flow data.", 850]
+image::flow-histogram.png["A flow histogram panel displaying a horizontal bar graph. The bar graph shows network flow data.", 850]
 
 For a panel to display data visualizations, you must define the following settings:
 
@@ -51,7 +52,7 @@ You can also add any other function or transformation to customize the visualize
 You can customize the data visualized on {page-component-title} panels by editing their settings and changing their datasources.
 The following procedures demonstrate how to set up each panel type to show data from the flows datasource.
 
-=== Alarm Histogram
+=== Alarm histogram
 
 Follow these steps to customize an alarm histogram panel:
 
@@ -71,11 +72,11 @@ This sets the method by which data is grouped in the panel.
 ** Select the display orientation using the *Settings* list (in this example, *Vertical*).
 . Set other display options as desired.
 
-Using these settings, the Alarm Histogram panel displays the following visualization:
+Using these settings, the alarm histogram panel displays the following visualization:
 
-image::alarm-histogram-example.png["Example of an Alarm Histogram panel in edit mode. Areas of note are outlined in red.", 850]
+image::alarm-histogram-example.png["Example of an alarm histogram panel in edit mode. Areas of note are outlined in red.", 850]
 
-=== Alarms Table
+=== Alarms table
 
 Follow these steps to customize an alarms table panel:
 
@@ -95,9 +96,9 @@ Follow these steps to customize an alarms table panel:
 After the panel is configured, you can right-click on an entry to access the context menu.
 From there, you can access an alarm's *Details* and *Acknowledge*, *Escalate*, or *Clear* it:
 
-image::alarms-table-example.png["Example of an Alarms Table panel in edit mode. Areas of note are outlined in red.", 850]
+image::alarms-table-example.png["Example of an alarms table panel in edit mode. Areas of note are outlined in red.", 850]
 
-=== Flow Histogram
+=== Flow histogram
 
 Follow these steps to customize a flow histogram panel:
 
@@ -119,9 +120,9 @@ This sets the method by which data is grouped in the panel.
 ** (Optional) Update the legend settings as desired.
 . Set other display options as desired.
 
-Using these settings, the Flow Histogram panel displays the following visualization:
+Using these settings, the flow histogram panel displays the following visualization:
 
-image::flow-histogram-example.png["Example of a Flow Histogram panel in edit more. Areas of note are outlined in red.", 850]
+image::flow-histogram-example.png["Example of a flow histogram panel in edit more. Areas of note are outlined in red.", 850]
 
 == Functions and transformations
 
