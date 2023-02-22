@@ -48,14 +48,14 @@ You can also add any other function or transformation to customize the visualize
 
 == Customize panels
 
-You can customize the data visualized on {page-component-title} panels by tweaking their settings and changing their datasources.
+You can customize the data visualized on {page-component-title} panels by editing their settings and changing their datasources.
 The following procedures demonstrate how to set up each panel type to show data from the flows datasource.
 
 === Alarm Histogram
 
-Follow these steps to customize an Alarm Histogram panel:
+Follow these steps to customize an alarm histogram panel:
 
-. Enter editing mode and select an Alarm Histogram panel on your dashboard.
+. Enter editing mode and select an alarm histogram panel on your dashboard.
 . Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
 . Choose a display interval from the *Time Interval* list at the top of the panel.
 . Expand the *Query Options* section and update the settings as desired.
@@ -77,9 +77,9 @@ image::alarm-histogram-example.png["Example of an Alarm Histogram panel in edit 
 
 === Alarms Table
 
-Follow these steps to customize an Alarms Table panel:
+Follow these steps to customize an alarms table panel:
 
-. Enter editing mode and select an Alarms Table panel on your dashboard.
+. Enter editing mode and select an alarms table panel on your dashboard.
 . Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
 . Choose a display interval from the *Time Interval* list at the top of the panel.
 . Expand the *Query Options* section and update the settings as desired.
@@ -99,9 +99,9 @@ image::alarms-table-example.png["Example of an Alarms Table panel in edit mode. 
 
 === Flow Histogram
 
-Follow these steps to customize a Flow Histogram panel:
+Follow these steps to customize a flow histogram panel:
 
-. Enter editing mode and select a Flow Histogram panel on your dashboard.
+. Enter editing mode and select a flow histogram panel on your dashboard.
 . Choose a datasource from the *Data Source* list (in this example, *OpenNMS Flow*).
 . Choose a display interval from the *Time Interval* list at the top of the panel.
 . Expand the *Query Options* section and update the settings as desired.
