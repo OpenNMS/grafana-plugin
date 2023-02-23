@@ -28,7 +28,7 @@ The `alarms()` function queries the OpenNMS alarms REST API.
 === locations()
 
 The `locations()` query returns a list of available node locations.
-You can use this inside a `nodeFilter()` query to filter the number of nodes displayed by location.
+You can create a variable with a `locations()` query and use that variable inside a `nodeFilter()` query to filter the number of nodes displayed by location.
 
 .Example expressions using `nodeFilter()`
 [source,]
