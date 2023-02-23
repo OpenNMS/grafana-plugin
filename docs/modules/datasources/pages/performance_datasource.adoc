@@ -1,79 +1,73 @@
+
 = Performance Datasource
 
-== General
+You can use the Performance datasource to retrieve performance metrics (for example, data collection and response time metrics) from the OpenNMS Measurements API.
+For an example of the Performance datasource in use, see <<panel_configuration:dynamic-dashboard.adoc#pc-template-filters, Use variables to create dynamic dashboards>>.
 
-Use the performance datasource to retrieve performance metrics (for example, data collection and/or response time metrics) from the Measurements API in OpenNMS.
+== Query editor
 
-(For an example of the performance datasource in action, see xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards]).
-
-The query editor provides the ability to build queries of the following types:
+This section lists the types of queries that you can build using the query editor.
 
 === Attribute queries
 
-Used to extract data points from time series data that OpenNMS collects and stores.
-The query is used to identify which attribute(s) (or series) are being queried.
+Attribute queries are used to extract data points from the time series data that OpenNMS collects and stores.
+You can specify which attributes or series to query.
 
-[options="header, autowidth"]
-[cols="1,2,1"]
+[caption=]
+.Attribute query options
+[cols="1,3,1"]
 |===
-| Name
-| Description
-| Allowed Filter Expressions
+| Field Name  | Description | Allowed Filter Expressions
 
 | Node
-| Node ID, or FS:FID (foreign source and foreign id) of the node to query.
-  Can also be a variable with a `nodeFilter()` query.
-|
+| The node ID or `FS:FID` (foreign source and foreign ID tuple) of the node to query.
+Can also be a variable with a `nodeFilter()` query.
+| _None_
 
-| Resource
-| Resource ID containing the requested attribute.
-  Can also be a variable with a `nodeResources()` query.
+| Resource ^1^
+| The resource ID that contains the requested attribute.
+Can also be a variable with a `nodeResources()` query.
 | `*` , `\|`
 
-| Attribute
+| Attribute ^1^
 | Name of the attribute to query.
 | `*` , `\|`
 
 | Sub-Attribute
 | Name of the sub-attribute to query.
-  This can be used to query metrics which are modeled using many datasources in a single RRD file (i.e., StrafePing).
-|
+Can be used to query metrics which are modeled using many datasources in a single RRD file (for example, `StrafePing`).
+| _None_
 
 | Fallback Attribute
-| Name of the attribute to query if the requested attribute was not available.
-|
+| Name of the attribute to query if the requested attribute is not available.
+| _None_
 
 | Aggregation
-| RRD aggregation to use when exporting the metrics.
-  Possible values are `Average`, `Min`, `Max`, or `Last`.
-  Defaults to `Average`.
-|
+| RRD aggregation to use when exporting metrics (`Average`, `Min`, `Max`, `Last`).
+Defaults to `Average`.
+| _None_
 
 | Label
 | Name for the series.
-  Must be unique for all attributes and expression results in the query.
-|
+Must be unique for all attributes and expression results in the query.
+| _None_
 |===
 
-Resource and Attribute fields allow `*` and `|` filter characters to create search patterns that allow you to retrieve multiple resources and attributes in a single query.
+. The Resource and Attribute fields allow the `*` (match any text) and `|` (match the expression to the left or right of the character) filter characters.
+With them, you can create search patterns that let you retrieve multiple resources and attributes using a single query.
 
-* *** : match any text
-* *|* : match the expression on the left OR right side of the pipe (`|`)
+Given the following resources, the table below shows an example of possible filter expressions:
 
-Examples:
+* `interfaceSnmp[eth0-00e08177b841]`
+* `interfaceSnmp[Default-0001d7709c83]`
+* `interfaceSnmp[HR_VLAN-0001d7709c87]`
+* `interfaceSnmp[Facilities_VLAN-0001d7709c85]`
 
-Given the following list of resources, the table below shows an example of filter expressions.
-
-* interfaceSnmp[eth0-00e08177b841]
-* interfaceSnmp[Default-0001d7709c83]
-* interfaceSnmp[HR_VLAN-0001d7709c87]
-* interfaceSnmp[Facilities_VLAN-0001d7709c85]
-
-[options="header, autowidth"]
-[cols="1,2"]
+[caption=]
+.Example filter expressions
+[cols="1,3"]
 |===
-| Expression
-| Result
+| Filter Expression  | Result
 
 | interfaceSnmp[*]
 | interfaceSnmp[eth0-00e08177b841], interfaceSnmp[Default-0001d7709c83], interfaceSnmp[HR_VLAN-0001d7709c87], interfaceSnmp[Facilities_VLAN-0001d7709c85]
@@ -87,24 +81,24 @@ Given the following list of resources, the table below shows an example of filte
 
 === String property queries
 
-Used to read the last value of string-valued properties that OpenNMS collects and stores.
-The query identifies which string property to query.
-A panel can contain multiple string property queries.
-The result can be visualized in a table.
-Use Grafana's transforms like "Filter by name", "Organize Fields", or "Merge" to adjust the visualized table as needed.
+String property queries are used to read the last value of string-valued properties that OpenNMS collects and stores.
+You can specify which string property to query.
 
-[options="header, autowidth"]
-[cols="1,2"]
+A panel can contain multiple string property queries, and their results can be visualized in a table.
+You can use Grafana's transforms ("Filter by Name," "Organize Fields," or "Merge") to adjust the tables as desired.
+
+[caption=]
+.String property query options
+[options="autowidth"]
 |===
-| Name
-| Description
+| Field Name  | Description
 
 | Node
-| Node ID of the node to query.
+| ID of the node to query.
 Can also be a variable with a `nodeFilter()` query.
 
 | Resource
-| Resource ID containing the requested attribute.
+| The resource ID that contains the requested attribute.
 Can also be a variable with a `nodeResources()` query.
 
 | String Property
@@ -113,15 +107,15 @@ Can also be a variable with a `nodeResources()` query.
 
 === Expression queries
 
-Used to combine or otherwise transform one or more series into a new series.
-Supports mathematical and conditional operators provided by JEXL.
-Consult the Measurements API documentation of your OpenNMS version for more details.
+Expression queries are used to combine or otherwise transform one or more series into a new series.
+They support the mathematical and conditional operators that JEXL provides.
+Expression queries are sent over the https://docs.opennms.com/horizon/latest/development/rest/measurements.html#more-advanced-expressions[OpenNMS Measurements API] to be processed server-side.
 
-[options="header, autowidth"]
-[cols="1,3"]
+[caption=]
+.Expression query options
+[options="autowidth"]
 |===
-| Name
-| Description
+| Field Name  | Description
 
 | Expression
 | JEXL expression
@@ -132,152 +126,193 @@ Consult the Measurements API documentation of your OpenNMS version for more deta
 
 === Filter queries
 
-Used to create new and/or alter existing series.
+Filter queries are used to create new series, or alter existing ones.
+The options provided depend on the filter that you select.
 
-The option provided depend on the selected filter.
+[caption=]
+.Filter query options
+[options="autowidth"]
+|===
+| Filter Name | Description
 
-==== Outlier filter
+| Chomp
+| Strips leading and trailing rows that contain nothing but `NaN` or `null` values.
 
-Used to remove datapoints from the series that fall outside of the configured quantile, defaults to 95%.
-The datapoints are replaced with interpolated values.
+| HoltWinters
+| Performs Holt-Winters forecasting.
+
+| Outlier
+| Removes outliers and replaces them with interpolated values.
+
+| Trend
+| Fits a trend line or polynomial to a given column.
+
+| JEXL
+| Generic JEXL expression filter.
+
+| Percentile
+| Calculates percentiles.
+
+| Derivative
+| Calculates the derivative (rate of change) between rows.
+|===
 
 [[ds-perf-template]]
-== Template queries
+== Variable queries
 
-Use template queries in metric queries and panel titles.
-The results will appear as a drop-down list at the top of the dashboard.
-You can then select from the list to change the data the panel displays.
-See xref:panel_configuration:dynamic-dashboard.adoc#pc-template-filters[Using Template Variables to Create Dynamic Dashboards] for an example.
+You can use variable queries in metric queries and panel titles.
+The results will appear as a drop-down list at the top of the dashboard; you can select from the list to change the data that the associated panel displays.
+For an example of a variable query, see <<panel_configuration:dynamic-dashboard.adoc#pc-template-filters, Use variables to create dynamic dashboards>>.
 
 === locations()
 
 The `locations()` query returns a list of all available node locations.
-Use this inside `nodeFilter()` to filter the number of nodes displayed by location.
+You can create a variable with a `locations()` query and use that variable inside a `nodeFilter()` query to filter the number of nodes displayed by location.
 
-.Example variable expression
-* nodeFilter(location='Default')
-* nodeFilter(location='$location')
+.Example expressions using `nodeFilter()`
+[source,]
+----
+nodeFilter(location='Default')
+nodeFilter(location='$location') <1>
+----
+<1> This example assumes you have a `location` variable with a `locations()` query.
 
 === nodeFilter(<filterQuery>)
 
 The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
-.For example, to return the set of nodes that are in the `Production` and `Linux` categories, or to return the set of nodes that are in the `SNMP` and `Production` categories and `Default` location you can use:
+.Example expressions using `nodeFilter()`
+[source,]
+----
+nodeFilter(catincProduction & catincLinux) <1>
+nodeFilter(location='Default' & catincProduction & catincSNMP) <2>
+nodeFilter() <3>
+----
+<1> Returns the set of nodes that are in the `Production` and `Linux` categories.
+<2> Returns the set of nodes that are in the `SNMP` and `Production` categories and the `Default` location.
+<3> Returns all nodes in inventory.
 
-* nodeFilter(catincProduction & catincLinux)
-* nodeFilter(location='Default' & catincProduction & catincSNMP)
+Only one argument is available for the `nodeFilter()` query:
 
-The available arguments are as follows:
-[options="header, %autowidth"]
-[cols="1,3"]
+[options="autowidth"]
 |===
-| Name
-| Description
+| Argument  | Description
 
 | filterQuery
-| Any valid node query syntax as used by core OpenNMS services.
+| Any valid node query syntax as used by core OpenNMS services (see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation]).
+If omitted, all nodes are returned.
 |===
 
-=== nodeResources(<resourceId>[,textProperty[,resourceType[,regexFilter]]])
+=== nodeResources(<nodeId>[,textProperty[,resourceType[,regexFilter]]])
 
-The `nodeResources()` query will return the list of resource IDs which are available on the given node.
-An optional second argument specifies whether to show the resource's ID (the default), label, or name in the template value chooser and elsewhere.
-An optional third argument specifies an exact resource-type name (e.g. `interfaceSnmp`); a value of `*` makes explicit the default behavior of returning resources of all types.
-Regular expressions in the template query can then be used to filter which resource IDs are used.
+The `nodeResources()` query returns a list of resource IDs that are available on the specified node.
+An optional second argument specifies whether to display the resource's ID, its label, or its name in the template value selector and elsewhere.
+By default, the query displays the resource's ID.
+An optional third argument specifies an exact `resource-type` name (for example, `interfaceSnmp`).
+Passing a wildcard (`*`) allows for resources of all types to be returned.
 
-To query a specific node by ID, you can use an expression similar to:
+You can use regular expressions in the variable query to filter which resource IDs are used.
 
- nodeResources(123)
+.Examples of `nodeResources()` queries
+[source,]
+----
+nodeResources(123) <1>
+nodeResources(FS:FID) <2>
+nodeResources(42, label, interfaceSnmp) <3>
+nodeResources(42, label, *, .*DPN.*) <4>
+nodeResources($node) <5>
+----
+<1> Queries a specific node by its ID (`123`).
+<2> Queries a specific node by its foreign source and foreign ID, formatted as a tuple.
+<3> Queries node ID `42` for only SNMP interface resources.
+The result displays the interface's resource labels rather than their IDs.
+<4> Queries node ID `42` for all resources and returns items whose labels match the regular expression `\*.DPN.*`.
+<5> Queries for all resources on the node returned from a `nodeFilter()` query.
+When requesting resources from a node based on another variable, the node variable should return only a single node.
 
-To query a specific node by foreign source and foreign id, you can use an expression similar to:
+The following arguments are available for the `nodeResources()` query:
 
- nodeResources(FS:FID)
-
-To query only SNMP interface resources on the node with ID 42, and to display the interfaces resources' labels rather than their often-cryptic IDs, you might use:
-
- nodeResources(42, label, interfaceSnmp)
-
-To query all resources on the node with ID 42, and labels that match the regular expression \*.DPN.*, you might use:
-
- nodeResources(42, label, *, .*DPN.*)
-
-The available arguments are as follows:
-[options="header, %autowidth"]
-[cols="1,1,1,3"]
+[options="autowidth"]
 |===
-| Name
-| Required
-| Default
-| Description
+| Argument  | Description | Default Value
 
-| resourceId
-| Required
-| `(none)`
-| The ID of the node (either databaseId or foreignSource:foreignId) for which to display resources.
+3+|*Required*
+
+| nodeId
+| The node (identified either by its `databaseId` or `foreignSource:foreignId` tuple) to display resources from.
+| _Blank_
+
+3+|*Optional*
 
 | textProperty
-| Optional
-| `id`
-| One of `id`, `label`, or `name` to display alternate string values in the variable drop-down menu.
+| Sets alternate string values (`id`, `label`, or `name`) in the variable drop-down list.
+| id
 
 | resourceType
-| Optional
+| Filter to limit the types of resources returned by the query.
 | `*`
-| Resource type filter to limit the types of resources returned.
 
 | regexFilter
-| Optional
+| Regular expression filter applied to the value of the field specified by `textProperty`.
 | `.*`
-| Regular expression filter applied to the resource field specified by the `textProperty` argument.
-This filter is applied to the value of the selected `textProperty` field.
 |===
 
 == Label formatters
 
-Helm provides a number of formatting functions you can use to transform the labels shown in graph legends.
-
-You can use one or more of these to transform the displayed labels based on node or resource metadata returned from OpenNMS Horizon 24 or above.
+{page-component-title} provides a number of formatting functions that you can use to transform the labels displayed in graph legends.
+You can use one or more of them to transform the labels based on node or resource metadata returned from OpenNMS (requires Horizon 24 or newer).
 
 === nodeToLabel(<nodeCriteria>)
 
-The `nodeToLabel()` function will be replaced with the label of the node specified.
+The `nodeToLabel()` function replaces the specified node's ID with its label.
+You can specify either a node ID or a `foreignSource:foreignId` tuple.
+You can also use a template variable based on a custom list of node identifiers, or the results of a `nodeFilter()` query.
 
-You can pass either a node ID or `foreign-source:foreign-id` tuple.
-It is also possible to use a template variable based on a custom list of node identifiers or the results of a `nodeFilter()` query.
-
-To use a template variable representing nodes, just pass it, like so:
-
- nodeToLabel($node)
-
-To manually specify by ID or node criteria, just pass them in raw:
-
- nodeToLabel(123)
- nodeToLabel(FS:FID)
+.Examples of `nodeToLabel()` functions
+[source,]
+----
+nodeToLabel($node) <1>
+nodeToLabel(123) <2>
+nodeToLabel(FS:FID) <2>
+----
+<1> Queries a template variable that represents a list of node identifiers.
+<2> Queries specific nodes using their IDs or `foreignSource:foreignId` tuples.
 
 === resourceToLabel(<resourceId or nodeCriteria>[, <partialResourceId>])
 
-The `resourceToLabel()` function converts an OpenNMS resource identifier or node criteria and partial identifier into the resource's label.  The format of the resource label depends on the resource, and can be anything from a node label, to a descriptive string for an IP interface.
+The `resourceToLabel()` function converts an OpenNMS resource identifier, or a node criteria and partial identifier, into that resource's label.
+The format of the resource's label depends on the resource type and can be anything from a node label to a descriptive string for an IP interface.
 
-The 1-argument form of this call expects a complete resource ID. That resource ID must be the full resource identifier as queried to the measurements API.
+The single-argument form of this function expects a complete resource ID.
+That resource ID must be the full resource identifier as queried to the OpenNMS Measurements API.
+The two-argument form of this function lets you use template variables to specify a node and separately provide the remainder of the resource ID that you want to translate.
 
-The 2-argument form of this call lets you use template variables to choose a node and then separately provide the remainder of the resource ID you want to translate.
+A partial resource ID is the portion of the resource identifier that does not identify the node itself (for example, `nodeSnmp[]`, `responseTime[127.0.0.1]`).
+For example, all of these calls translate into the same text:
 
-A partial resource ID is just the portion of the resource identifier that doesn't identify the node itself, like `nodeSnmp[]` or `responseTime[127.0.0.1]`.
-
-For example, both of these `resourceToLabel` calls would be translated into the same text:
-
- resourceToLabel(node[FS:FID].nodeSnmp[])
- resourceToLabel(FS:FID, nodeSnmp[])
+[source,]
+----
+resourceToLabel(node[FS:FID].nodeSnmp[])
+resourceToLabel(FS:FID, nodeSnmp[])
+resourceToLabel($node, $interface) <1>
+----
+<1> Assumes that the `$node` variable is populated with a value from a `nodeFilter()` query, and the `$interface` variable is populated with a value from a `nodeResources()` query.
 
 === resourceToName(<resourceId or nodeCriteria>[, <partialResourceId>])
 
-The `resourceToName()` function behaves exactly like the `resourceToLabel()` function, only it returns the resource's name, rather than its label.  The resource name is usually the internal, machine-readable name of the resource, like a node criteria, or an interface name + MAC address.
+The `resourceToName()` function behaves similarly to `resourceToLabel()`, but it returns the resource's name rather than its label.
+The resource name is usually the resource's internal, machine-readable name (for example, a node criteria or an interface name and MAC address).
 
- resourceToName(node[FS:FID].nodeSnmp[])
- resourceToName(FS:FID, nodeSnmp[])
+.Examples of `resourceToName()` functions
+[source,]
+----
+resourceToName(node[FS:FID].nodeSnmp[])
+resourceToName(FS:FID, nodeSnmp[])
+resourceToName($node, $interface) <1>
+----
+<1> Assumes that the `$node` variable is populated with a value from a `nodeFilter()` query, and the `$interface` variable is populated with a value from a `nodeResources()` query.
 
 === resourceToInterface(<resourceId or nodeCriteria>[, <partialResourceId>])
 
-Finally, just like `resourceToLabel()` and `resourceToName()`, `resourceToInterface()` transforms a resource ID or combination node criteria and partial resource ID into another value.
-
-It is a special case of the other more general methods that will take the label of the resource (assumed to be an `interface-MAC` formatted string) and just return the interface portion.
+The `resourceToInterface()` function transforms a resource ID, or a combination of node criteria and a partial resource ID, into another value.
+It is a special case of the other, more general methods; it takes the label of the resource (assumed to be an `interface-MAC` formatted string) and returns the interface portion of the label.
