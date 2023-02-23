@@ -22,9 +22,9 @@
 * xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
-* xref:datasources:performance_datasource.adoc[Performance Datasource]
-* xref:datasources:entity_datasource.adoc[Entities Datasource]
-* xref:datasources:flow_datasource.adoc[Flow Datasource]
+* xref:datasources:performance_datasource.adoc[]
+* xref:datasources:entity_datasource.adoc[]
+* xref:datasources:flow_datasource.adoc[]
 
 .Contribute
 * xref:contributing:index.adoc[Contribute]
