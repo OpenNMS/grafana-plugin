@@ -1,14 +1,14 @@
+
 :imagesdir: ../assets/images
 [[pc-index]]
-= Overview
+= Panel Configuration
 
-[.lead]
-{page-component-title} enables robust customization of dashboard panels, from updating appearance and general information to configuring complex filters.
-Panel configuration is available in the bottom half of a panel in editing mode:
+{page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
+You can configure a panel by interacting with its options in editing mode:
 
-image::gf-panel-config.png[Panel config, 500]
+image::gf-panel-config.png["Panel displaying configuration options", 850]
 
-The available configuration options depend on the type of datasource associated with the panel.
+Configuration options depend on the type of datasource associated with a panel.
 
 This section describes the following types of panel configuration:
 
@@ -17,24 +17,117 @@ This section describes the following types of panel configuration:
 * xref:expressions.adoc[Working with expressions].
 
 [[custom-panel]]
-== Default custom panels
+== Included custom panels
 
-{page-component-title} comes with several pre-configured, custom panels.
-They are described in this section.
+{page-component-title} comes with several preconfigured custom panels:
 
-Alarm Histogram:: Bar chart that shows the distribution of alarms by severity level.
+* *Alarm histogram:* A bar chart that shows the distribution of alarms by severity level.
 +
-image::alarm-histogram.png[Horizontal bar graph showing distribution of critical and major alarms, 500]
+image::alarm-histogram.png["An alarm histogram panel displaying a horizontal bar graph. The bar graph shows the distribution of critical and major alarms.", 850]
 
-Alarm Table:: Displays alarms in table format.
+* *Alarms table:* A table that displays alarms.
 +
-image::alarm-panel.png[Two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms, 500]
+image::alarm-panel.png["An alarms table panel showing two tables: one displays unacknowledged alarms, and the other displays acknowledged alarms", 850]
 
-Filter Panel:: Panel that lets you specify data to include in other panels.
+* *Filter panel:* A panel that lets you filter entity data displayed in other panels.
+The filters created using this panel apply to all panels that use the same Entity datasource.
 +
-image::filter-panel.png[Blank fields in a filter panel, 500]
+image::filter-panel.png["Blank fields in a filter panel", 850]
 
-Flow Histogram:: Bar chart that shows the distribution of flow data.
-This panel expects the Flow Datasource query to have a `asTableSummary()` transform included.
+* *Flow histogram:* A bar chart that shows the distribution of flows data.
+The query for this panel must include an `asTableSummary()` transform, otherwise the panel will not display any data.
 +
-image::flow-histogram.png[Horizontal bar graph that displays network flow data, 500]
+image::flow-histogram.png["A flow histogram panel displaying a horizontal bar graph. The bar graph shows network flow data.", 850]
+
+For a panel to display data visualizations, you must define the following settings:
+
+* Datasource
+* Flow Type
+* Time Interval
+
+You can also add any other function or transformation to customize the visualized data.
+
+== Customize panels
+
+You can customize the data visualized on {page-component-title} panels by editing their settings and changing their datasources.
+The following procedures demonstrate how to set up each panel type to show data from the flows datasource.
+
+=== Alarm histogram
+
+Follow these steps to customize an alarm histogram panel:
+
+. Enter editing mode and select an alarm histogram panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
+. Edit the query using the fields at the bottom of the panel:
+** Choose a data type to display from the *Select* list (in this example, *Alarms*).
+** Set the visualization conditions using the *Where* options.
+** Choose the order in which the data is visualized from the *Order By* list.
+** (Optional) Set a limit on the amount of data displayed.
+** (Optional) Turn on the *Featured Attributes* option.
+. Update the panel options under the Grouping section:
+** Select the *Grouping* type (in this example, *Severity*).
+This sets the method by which data is grouped in the panel.
+** Select the display orientation using the *Settings* list (in this example, *Vertical*).
+. Set other display options as desired.
+
+Using these settings, the alarm histogram panel displays the following visualization:
+
+image::alarm-histogram-example.png["Example of an alarm histogram panel in edit mode. Areas of note are outlined in red.", 850]
+
+=== Alarms table
+
+Follow these steps to customize an alarms table panel:
+
+. Enter editing mode and select an alarms table panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Entities*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
+. Edit the query using the fields at the bottom of the panel:
+** Choose a data type to display from the *Select* list (in this case, *Alarms*).
+** Set the visualization conditions using the *Where* options.
+** Choose the order in which the data is visualized from the *Order By* list.
+** (Optional) Set a limit on the amount of data displayed.
+** (Optional) Turn on the *Featured Attributes* option.
+. Add, remove, and reorder columns in the Alarm Table section.
+. Set other display options as desired.
+
+After the panel is configured, you can right-click on an entry to access the context menu.
+From there, you can access an alarm's *Details* and *Acknowledge*, *Escalate*, or *Clear* it:
+
+image::alarms-table-example.png["Example of an alarms table panel in edit mode. Areas of note are outlined in red.", 850]
+
+=== Flow histogram
+
+Follow these steps to customize a flow histogram panel:
+
+. Enter editing mode and select a flow histogram panel on your dashboard.
+. Choose a datasource from the *Data Source* list (in this example, *OpenNMS Flow*).
+. Choose a display interval from the *Time Interval* list at the top of the panel.
+. Expand the *Query Options* section and update the settings as desired.
++
+NOTE: The query must include an `asTableSummary()` transform, otherwise the panel will not display any data.
+
+. Edit the query using the *Flow* options at the bottom of the panel.
+. Update the panel options under the Flow Histogram section:
+** Select the display orientation using the *Direction* list (in this example, *Horizontal*).
+** Select the measurement units using the *Units* list (in this example, *MB*).
+** Choose the visualization method using the *Display* list (in this example, *Total*).
+** Select the grouping type using the *Mode* list (in this example, *Stacked*).
+This sets the method by which data is grouped in the panel.
+*Stacked* displays cumulative data from all sources, grouped by incoming and outgoing data.
+** (Optional) Update the legend settings as desired.
+. Set other display options as desired.
+
+Using these settings, the flow histogram panel displays the following visualization:
+
+image::flow-histogram-example.png["Example of a flow histogram panel in edit more. Areas of note are outlined in red.", 850]
+
+== Functions and transformations
+
+Each {page-component-title} datasource has functions and transformations associated with it.
+Functions let you perform actions based on the data transmitted by the datasource.
+Transformations are functions that let you convert data or choose to display only certain types of information (for example, only ingress or egress traffic).
+
+For more information and lists of specific functions, see the xref:datasources:performance_datasource.adoc[Datasources] section.
