@@ -135,7 +135,8 @@ export interface EntityClauseProps {
   setComparedValue: (col: number, value: SelectableValue<string>) => void
   setComparedString: (col: number, value: string | number | Date) => void
   setClauseType: (col: number, value: number) => void
-  loading: boolean
+  loading: boolean,
+  hasMultipleClauses: boolean
 }
 
 export interface EntityClauseLabelProps {
