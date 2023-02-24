@@ -2,7 +2,7 @@ import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui';
 import React, { useEffect, useState } from 'react'
 import { EntityClauseLabel } from './EntityClauseLabel';
-import { Comparator, EntityClauseProps, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types';
+import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption } from './types';
 
 export const EntityClause = ({
     clause,
@@ -17,13 +17,13 @@ export const EntityClause = ({
     setComparedString,
     setClauseType,
     loading,
-    index
+    index,
+    hasMultipleClauses    
 }: EntityClauseProps) => {
     const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>([]);
     const [comparedOptions, setComparedOptions] = useState<Array<SelectableValue<string>>>([]);
 
     useEffect(() => {
-        resetComparators();
         const { values, comparators } = getValuesAndComparatorsFromClause();
 
         if (values) {
@@ -58,11 +58,6 @@ export const EntityClause = ({
         return { values, comparators }
     }
 
-    const resetComparators = () => {
-        setComparedValue(index, {})
-        setComparedString(index, '')
-    }
-
     const getInputTypeFromAttributeType = (attribute: SearchOption | undefined) => {
         let type = 'text';
         if (attribute?.value?.type?.i === 'TIMESTAMP') {
@@ -71,6 +66,18 @@ export const EntityClause = ({
             type = 'number'
         }
         return type;
+    }
+
+    const resetOrRemoveClause = (col: number) => {
+        if (clause.type !== OnmsEntityType.FIRST || hasMultipleClauses) {
+            removeClause(col)
+        }
+        else {
+            setAttribute(col, {})
+            setComparator(col, {})
+            setComparedString(col, '')
+            setComparedValue(col, {})
+        }
     }
 
     return (
@@ -137,7 +144,7 @@ export const EntityClause = ({
             {clause.nestingType === OnmsEntityNestType.TOP ? <>
                 <Button onClick={() => addClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
                 <Button onClick={() => addNestedClause(index)} size='xs'><i className='fa fa-file'></i></Button>
-                {clause.type !== OnmsEntityType.FIRST && <Button onClick={() => removeClause(index)} size='xs' style={{ marginLeft: '5px' }}>-</Button>}
+                <Button onClick={() => resetOrRemoveClause(index)} size='xs' style={{ marginLeft: '5px' }}>-</Button>
             </> : <>
                 <Button onClick={() => addSubClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
                 <Button onClick={() => removeClause(index)} size='xs'>-</Button>

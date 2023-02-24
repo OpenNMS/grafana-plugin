@@ -51,7 +51,14 @@ export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArr
     const removeClause = (col: number) => {
         const newClauses = [...clauses];
         newClauses.splice(col, 1);
+        if (newClauses[col] && newClauses[col].type !== clauses[col].type) {
+            if (newClauses[col].nestingType !== clauses[col].nestingType) {
+                newClauses[col].nestingType = clauses[col].nestingType
+            }
+            newClauses[col].type = clauses[col].type
+        }
         setClauses(newClauses);
+
     }
 
     useEffect(() => {
@@ -101,6 +108,7 @@ export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArr
                             addNestedClause={addNestedClause}
                             addSubClause={addSubClause}
                             propertiesAsArray={propertiesAsArray}
+                            hasMultipleClauses={clauses.length > 1}
                         />
 
                         <div className='spacer' />
