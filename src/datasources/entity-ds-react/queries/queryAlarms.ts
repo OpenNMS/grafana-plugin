@@ -1,9 +1,8 @@
 import { isNil, uniq, sortBy, flatten } from 'lodash'
 import { API } from 'opennms'
 import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
-import { OnmsColumn, OnmsTableData } from '../types'
+import { OnmsColumn, OnmsTableData, OnmsRow } from '../types'
 import { ClientDelegate } from "lib/client_delegate"
-import { OnmsRow } from '../types'
 import { ServerMetadata } from 'opennms/src/api/ServerMetadata'
 import { Client } from 'opennms/src/Client'
 
