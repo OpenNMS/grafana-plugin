@@ -5,7 +5,6 @@ import { API } from 'opennms'
 import { defaultClause } from './constants'
 
 interface EntityClauseEditorProps {
-    filter: API.Filter,
     setFilter: (filter: API.Filter) => void,
     loading: boolean
     propertiesAsArray: SearchOption[],
@@ -13,7 +12,7 @@ interface EntityClauseEditorProps {
     setClauses: any
 }
 
-export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArray, clauses, setClauses }: EntityClauseEditorProps) => {
+export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clauses, setClauses }: EntityClauseEditorProps) => {
 
     const addNestedClause = (col: number) => {
         const newClause = { ...defaultClause };
