@@ -9,7 +9,6 @@ import {
     Switch,
 } from '@grafana/ui'
 import { SelectableValue } from '@grafana/data';
-
 import { useEntityProperties } from '../../hooks/useEntityProperties';
 import { EntityClauseEditor } from './EntityClauseEditor';
 import { EntityOrderByEditor } from './EntityOrderByEditor';
@@ -39,7 +38,12 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     useEffect(() => {
         updateQuery()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, clauses, value])
+    }, [filter])
+
+    useEffect(() => {
+        setClauses([{ ...defaultClause }])
+        
+    }, [value])
 
     const updateQuery = () => {
         onChange({
@@ -60,12 +64,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         })
     }
 
-    const clearRestrictionsAndOrderBy = () => {
-        setClauses([{ ...defaultClause }])
-        // TODO: need hook for this!
-        //setOrderedValue(defaultOrder)
-    }
-
     return (<div className='bigger-labels'>
         <style>
             {`
@@ -84,7 +82,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
             <Segment
                 value={value}
                 onChange={(item) => {
-                    clearRestrictionsAndOrderBy();
                     setValue(item);
                 }}
                 allowEmptyValue={false}
@@ -106,7 +103,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         <EntityClauseEditor
             clauses={clauses}
             setClauses={setClauses}
-            filter={filter}
             setFilter={setFilter}
             loading={loading}
             propertiesAsArray={propertiesAsArray}
