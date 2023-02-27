@@ -3,6 +3,7 @@ import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana
 import React, { useEffect, useState } from 'react'
 import { EntityClauseLabel } from './EntityClauseLabel';
 import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption } from './types';
+import { API } from 'opennms'
 
 export const EntityClause = ({
     clause,
@@ -18,7 +19,7 @@ export const EntityClause = ({
     setClauseType,
     loading,
     index,
-    hasMultipleClauses    
+    hasMultipleClauses
 }: EntityClauseProps) => {
     const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>([]);
     const [comparedOptions, setComparedOptions] = useState<Array<SelectableValue<string>>>([]);
@@ -49,12 +50,16 @@ export const EntityClause = ({
 
     const getValuesAndComparatorsFromClause = () => {
         let values = clause.attribute?.value?.values;
-        const comparators = clause.attribute?.value?.type?.comparators?.map((c) => (
+        let comparators = clause.attribute?.value?.type?.comparators?.map((c) => (
             {
                 label: c.l,
                 value: c
             }
         ))
+        if (values && !comparators) {
+            const comp = API.Comparators.EQ
+            comparators = [{ label: comp.label, value: comp }]
+        }
         return { values, comparators }
     }
 

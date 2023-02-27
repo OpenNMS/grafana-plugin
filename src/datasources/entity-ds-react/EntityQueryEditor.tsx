@@ -22,7 +22,7 @@ import { getSmallerAPIFilter } from './EntityHelper';
  * @param action action being executed
  * @returns updated clauses
  */
-const clausesReducer = (clauses: OnmsEntityClause[], action: Action): any[] => {
+const clausesReducer = (clauses: OnmsEntityClause[], action: Action): OnmsEntityClause[] => {
     let newClauses: OnmsEntityClause[] = []
     let newClause: OnmsEntityClause = { ...defaultClause }
     switch (action.type) {
@@ -96,7 +96,6 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
 
     useEffect(() => {
         dispatchClauses({ type: ClauseActionType.reset })
-
     }, [value])
 
     const updateQuery = () => {
