@@ -126,10 +126,7 @@ export interface EntityClauseProps {
   propertiesAsArray: SearchOption[]
   index: number
   clause: OnmsEntityClause,
-  addClause: (col: number) => void,
-  addNestedClause: (col: number) => void,
-  addSubClause: (col: number) => void,
-  removeClause: (col: number) => void,
+  dispatchClauses: (action: Action)=> OnmsEntityClause[],
   setAttribute: (col: number, attribute: SelectableValue<{ values: string[] | undefined, type: SearchType | undefined }>) => void
   setComparator: (col: number, comparator: SelectableValue<Comparator>) => void
   setComparedValue: (col: number, value: SelectableValue<string>) => void

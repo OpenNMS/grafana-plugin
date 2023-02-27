@@ -2,15 +2,12 @@ import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui';
 import React, { useEffect, useState } from 'react'
 import { EntityClauseLabel } from './EntityClauseLabel';
-import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption } from './types';
+import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption, ClauseActionType } from './types';
 import { API } from 'opennms'
 
 export const EntityClause = ({
     clause,
-    addClause,
-    addNestedClause,
-    addSubClause,
-    removeClause,
+    dispatchClauses,
     propertiesAsArray,
     setAttribute,
     setComparator,
@@ -75,7 +72,7 @@ export const EntityClause = ({
 
     const resetOrRemoveClause = (col: number) => {
         if (clause.type !== OnmsEntityType.FIRST || hasMultipleClauses) {
-            removeClause(col)
+            dispatchClauses({ type: ClauseActionType.delete, index: col })
         }
         else {
             setAttribute(col, {})
@@ -147,12 +144,12 @@ export const EntityClause = ({
             </div>
             }
             {clause.nestingType === OnmsEntityNestType.TOP ? <>
-                <Button onClick={() => addClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
-                <Button onClick={() => addNestedClause(index)} size='xs'><i className='fa fa-file'></i></Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addClause, 'index': index })} size='xs' style={{ marginRight: '5px' }}>+</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addNestedClause, 'index': index })} size='xs'><i className='fa fa-file'></i></Button>
                 <Button onClick={() => resetOrRemoveClause(index)} size='xs' style={{ marginLeft: '5px' }}>-</Button>
             </> : <>
-                <Button onClick={() => addSubClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
-                <Button onClick={() => removeClause(index)} size='xs'>-</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addSubClause, 'index': index })} size='xs' style={{ marginRight: '5px' }}>+</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.delete, 'index': index })} size='xs'>-</Button>
             </>
             }
         </InlineFieldRow>
