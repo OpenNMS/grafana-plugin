@@ -1,5 +1,5 @@
 
-import { OnmsEntityNestType, OnmsEntityType, SearchOption } from "./types"
+import { OnmsEntityClause, OnmsEntityNestType, OnmsEntityType, SearchOption } from "./types"
 
 export const defaultClause = {
     attribute: {} as unknown as SearchOption,
@@ -8,6 +8,6 @@ export const defaultClause = {
     comparedString: '',
     type: OnmsEntityType.FIRST,
     nestingType: OnmsEntityNestType.TOP
-}
+} as OnmsEntityClause
 
 export const defaultOrder = { label: 'DESC' }
