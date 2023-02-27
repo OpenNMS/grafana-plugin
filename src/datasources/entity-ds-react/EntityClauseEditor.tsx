@@ -13,26 +13,6 @@ interface EntityClauseEditorProps {
 
 export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clauses, dispatchClauses }: EntityClauseEditorProps) => {
 
-    const addNestedClause = (col: number) => {
-        dispatchClauses({ type: ClauseActionType.addNestedClause, index: col });
-    }
-
-    const addClause = (col: number) => {
-        dispatchClauses({ type: ClauseActionType.addClause, index: col });
-    }
-
-    const addSubClause = (col: number) => {
-        dispatchClauses({ type: ClauseActionType.addSubClause, index: col });
-    }
-
-    const setClause = (col: number, value: any, property: string) => {
-        dispatchClauses({ type: ClauseActionType.update, index: col, property, value });
-    }
-
-    const removeClause = (col: number) => {
-        dispatchClauses({ type: ClauseActionType.delete, index: col });
-    }
-
     useEffect(() => {
         const updatedFilter = new API.Filter();
         updatedFilter.limit = 10;
@@ -68,17 +48,14 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
                         <EntityClause
                             key={index}
                             clause={clauses[index]}
-                            setAttribute={(col, val) => setClause(col, val, 'attribute')}
-                            setComparator={(col, val) => setClause(col, val, 'comparator')}
-                            setComparedValue={(col, val) => setClause(col, val, 'comparedValue')}
-                            setComparedString={(col, val) => setClause(col, val, 'comparedString')}
-                            setClauseType={(col, val) => setClause(col, val, 'type')}
-                            removeClause={removeClause}
+                            setAttribute={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'attribute', value: val })}
+                            setComparator={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparator', value: val })}
+                            setComparedValue={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedValue', value: val })}
+                            setComparedString={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedString', value: val })}
+                            setClauseType={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'type', value: val })}
+                            dispatchClauses={dispatchClauses}
                             loading={loading}
                             index={index}
-                            addClause={addClause}
-                            addNestedClause={addNestedClause}
-                            addSubClause={addSubClause}
                             propertiesAsArray={propertiesAsArray}
                             hasMultipleClauses={clauses.length > 1}
                         />
