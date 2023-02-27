@@ -191,7 +191,8 @@ export interface FilterEditorData {
 export type OnmsRow = (number | string | moment.Moment | boolean | undefined)[]
 
 /**
- * Clause action to define the clause management structure in the query editor
+ * Clause action type used to define the clause definition functionality in the query editor
+ * This is used with the useReduce hook
  */
 export type Action =
   { type: ClauseActionType.update, index: number, property: string, value: any } |
