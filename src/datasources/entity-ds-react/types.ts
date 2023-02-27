@@ -125,14 +125,14 @@ export interface OnmsEntityClause {
 export interface EntityClauseProps {
   propertiesAsArray: SearchOption[]
   index: number
-  clause: OnmsEntityClause,
-  dispatchClauses: (action: Action)=> OnmsEntityClause[],
+  clause: OnmsEntityClause
+  dispatchClauses: (action: Action) => OnmsEntityClause[]
   setAttribute: (col: number, attribute: SelectableValue<{ values: string[] | undefined, type: SearchType | undefined }>) => void
   setComparator: (col: number, comparator: SelectableValue<Comparator>) => void
   setComparedValue: (col: number, value: SelectableValue<string>) => void
   setComparedString: (col: number, value: string | number | Date) => void
   setClauseType: (col: number, value: number) => void
-  loading: boolean,
+  loading: boolean
   hasMultipleClauses: boolean
 }
 
@@ -197,7 +197,7 @@ export type Action =
   { type: ClauseActionType.addClause, index: number } |
   { type: ClauseActionType.addSubClause, index: number } |
   { type: ClauseActionType.addNestedClause, index: number } |
-  { type: ClauseActionType.delete, index: number } 
+  { type: ClauseActionType.delete, index: number }
 
 
 /**

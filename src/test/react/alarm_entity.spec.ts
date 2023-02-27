@@ -4,12 +4,16 @@ import _ from "lodash";
 import { OnmsEvent } from 'opennms/src/model/OnmsEvent'
 import { OnmsAlarm } from 'opennms/src/model/OnmsAlarm'
 import { OnmsParm } from 'opennms/src/model/OnmsParm'
+import { Client } from 'opennms/src/Client'
 import { queryAlarms } from 'datasources/entity-ds-react/queries/queryAlarms'
 import { ClientDelegate } from 'lib/client_delegate'
 
 describe('queryAlarms', function () {
   const settings = { url: 'http://localhost', type: null, name: null }
   const client = new ClientDelegate(settings, undefined)
+  client.getClientWithMetadata = async () => {
+    return Promise.resolve(new Client())
+  }
 
   describe('should convert an empty list of alarms to an empty table', () => {
     client.findAlarms = (filter) => { return Promise.resolve([]) }
@@ -54,10 +58,10 @@ describe('queryAlarms', function () {
     client.findAlarms = (filter) => { return Promise.resolve(alarms) }
 
     queryAlarms(client, undefined).then(table => {
-     
+
       // Expect # rows = # alarms
       expect(table['rows']).toHaveLength(NUM_ALARMS);
- 
+
       // Fetch all the column names that start with Param_
       let columnNamesFromParms = table['columns']
         .map(column => { return column.text })
