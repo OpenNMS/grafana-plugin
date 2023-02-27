@@ -86,7 +86,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             return metricFindLocations(this.simpleRequest)
         }
 
-        //let entityType = getEntityTypeFromFuncName(options.entityType) || getQueryEntityType(query) || ''
+        let entityType = getEntityTypeFromFuncName(options.entityType) || getQueryEntityType(query) || ''
         // this may be an attribute, a mapped attribute, or just the original query
         let attribute = getAttributeMapping(entityType, query)
 

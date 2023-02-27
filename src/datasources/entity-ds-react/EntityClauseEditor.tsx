@@ -1,63 +1,36 @@
 import React, { useEffect } from 'react'
 import { EntityClause } from './EntityClause'
-import { OnmsEntityClause, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types'
+import { ClauseActionType, OnmsEntityType, SearchOption } from './types'
 import { API } from 'opennms'
-import { defaultClause } from './constants'
 
 interface EntityClauseEditorProps {
     setFilter: (filter: API.Filter) => void,
     loading: boolean
     propertiesAsArray: SearchOption[],
     clauses: any[],
-    setClauses: any
+    dispatchClauses: any
 }
 
-export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clauses, setClauses }: EntityClauseEditorProps) => {
+export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clauses, dispatchClauses }: EntityClauseEditorProps) => {
 
     const addNestedClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.NESTED
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
+        dispatchClauses({ type: ClauseActionType.addNestedClause, index: col });
     }
 
     const addClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.TOP;
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
+        dispatchClauses({ type: ClauseActionType.addClause, index: col });
     }
 
     const addSubClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.SUB;
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
-    }
-
-    const actuallyAddClause = (col: number, newClause: OnmsEntityClause) => {
-        const newClauses = [...clauses];
-        newClauses.splice(col + 1, 0, newClause);
-        setClauses(newClauses);
+        dispatchClauses({ type: ClauseActionType.addSubClause, index: col });
     }
 
     const setClause = (col: number, value: any, property: string) => {
-        const newAttributes = [...clauses]
-        newAttributes[col][property] = value;
-        setClauses(newAttributes);
+        dispatchClauses({ type: ClauseActionType.update, index: col, property, value });
     }
 
     const removeClause = (col: number) => {
-        const newClauses = [...clauses];
-        newClauses.splice(col, 1);
-        if (newClauses[col] && newClauses[col].type !== clauses[col].type) {
-            if (newClauses[col].nestingType !== clauses[col].nestingType) {
-                newClauses[col].nestingType = clauses[col].nestingType
-            }
-            newClauses[col].type = clauses[col].type
-        }
-        setClauses(newClauses);
-
+        dispatchClauses({ type: ClauseActionType.delete, index: col });
     }
 
     useEffect(() => {

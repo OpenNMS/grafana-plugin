@@ -167,25 +167,51 @@ export type EntityQueryEditorProps = QueryEditorProps<EntityDataSource, EntityQu
  * altColumnLabel: User customized label for this filter, to display on FilterPanelControl component
  */
 export interface ActiveFilter {
-    entity: SelectableValue<string | number>
-    attribute: SelectableValue<{ id: string | number }>
-    selectionType: SelectableValue<string>
-    altColumnLabel: string
+  entity: SelectableValue<string | number>
+  attribute: SelectableValue<{ id: string | number }>
+  selectionType: SelectableValue<string>
+  altColumnLabel: string
 }
 
 // Used by FilterPanel and EntityDataSource
 export interface FilterSelectableValues {
-    filterId: string,
-    values: Array<SelectableValue<string | number>>
+  filterId: string,
+  values: Array<SelectableValue<string | number>>
 }
 
 /**
  * FilterPanel data saved to localStorage for use by Entity Datasource.
  */
 export interface FilterEditorData {
-    datasource: SelectableValue<GrafanaDatasource> | undefined,
-    activeFilters: ActiveFilter[]
-    selectableValues: FilterSelectableValues[]
+  datasource: SelectableValue<GrafanaDatasource> | undefined,
+  activeFilters: ActiveFilter[]
+  selectableValues: FilterSelectableValues[]
 }
 
 export type OnmsRow = (number | string | moment.Moment | boolean | undefined)[]
+
+/**
+ * Clause action to define the clause management structure in the query editor
+ */
+export type Action =
+  { type: ClauseActionType.update, index: number, property: string, value: any } |
+  { type: ClauseActionType.reset } |
+  { type: ClauseActionType.addClause, index: number } |
+  { type: ClauseActionType.addSubClause, index: number } |
+  { type: ClauseActionType.addNestedClause, index: number } |
+  { type: ClauseActionType.delete, index: number } 
+
+
+/**
+ * Type of action allowed
+ */
+export enum ClauseActionType {
+  reset,
+  addClause,
+  addSubClause,
+  addNestedClause,
+  delete,
+  update
+}
+
+

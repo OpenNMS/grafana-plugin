@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import {
     InlineField,
     InlineFieldRow,
@@ -13,14 +13,68 @@ import { useEntityProperties } from '../../hooks/useEntityProperties';
 import { EntityClauseEditor } from './EntityClauseEditor';
 import { EntityOrderByEditor } from './EntityOrderByEditor';
 import { defaultClause } from './constants';
-import { EntityQueryEditorProps } from './types';
+import { OnmsEntityNestType, OnmsEntityType, OnmsEntityClause, Action, ClauseActionType, EntityQueryEditorProps } from './types';
 import { getSmallerAPIFilter } from './EntityHelper';
+
+/**
+ * Clause Reducer used with reducer to handle different type of actions that may affect the clauses in the query editor
+ * @param clauses array of OnmsEntityClause
+ * @param action action being executed
+ * @returns updated clauses
+ */
+const clausesReducer = (clauses: OnmsEntityClause[], action: Action): any[] => {
+    let newClauses: OnmsEntityClause[] = []
+    let newClause: OnmsEntityClause = { ...defaultClause }
+    switch (action.type) {
+        case ClauseActionType.reset:
+            newClauses = [newClause]
+            break
+        case ClauseActionType.addSubClause:
+            newClause.nestingType = OnmsEntityNestType.SUB
+            newClause.type = OnmsEntityType.AND
+            newClauses = addClause(clauses, newClause, action.index)
+            break
+        case ClauseActionType.addNestedClause:
+            newClause.nestingType = OnmsEntityNestType.NESTED
+            newClause.type = OnmsEntityType.AND
+            newClauses = addClause(clauses, newClause, action.index)
+            break
+        case ClauseActionType.addClause:
+            newClause.nestingType = OnmsEntityNestType.TOP
+            newClause.type = OnmsEntityType.AND
+            newClauses = addClause(clauses, newClause, action.index)
+            break
+        case ClauseActionType.update:
+            newClauses = [...clauses]
+            newClauses[action.index][action.property] = action.value
+            break
+        case ClauseActionType.delete:
+            newClauses = [...clauses]
+            newClauses.splice(action.index, 1)
+            if (newClauses[action.index] && newClauses[action.index].type !== clauses[action.index].type) {
+                if (newClauses[action.index].nestingType !== clauses[action.index].nestingType) {
+                    newClauses[action.index].nestingType = clauses[action.index].nestingType
+                }
+                newClauses[action.index].type = clauses[action.index].type
+            }
+            break
+        default:
+            throw new Error("shouldn't get here")
+    }
+    return newClauses
+}
+
+const addClause = (clauses: OnmsEntityClause[], clause: OnmsEntityClause, index: number): OnmsEntityClause[] => {
+    const newClauses = [...clauses]
+    newClauses.splice(index + 1, 0, clause)
+    return newClauses
+}
 
 export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
 
     const client = datasource.client;
     const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' })
-    const [clauses, setClauses] = useState<any>(query.clauses || [{ ...defaultClause }])
+    const [clauses, dispatchClauses] = useReducer(clausesReducer, query.clauses || [{ ...defaultClause }])
     const [loading, setLoading] = useState(false)
     const [filter, setFilter] = useState(query?.filter || getSmallerAPIFilter())
     const [limit, setLimit] = useState(query?.filter?.limit || 99)
@@ -41,8 +95,8 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     }, [filter])
 
     useEffect(() => {
-        setClauses([{ ...defaultClause }])
-        
+        dispatchClauses({ type: ClauseActionType.reset })
+
     }, [value])
 
     const updateQuery = () => {
@@ -102,7 +156,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
 
         <EntityClauseEditor
             clauses={clauses}
-            setClauses={setClauses}
+            dispatchClauses={dispatchClauses}
             setFilter={setFilter}
             loading={loading}
             propertiesAsArray={propertiesAsArray}
