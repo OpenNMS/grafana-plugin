@@ -188,7 +188,7 @@ export interface FilterEditorData {
   selectableValues: FilterSelectableValues[]
 }
 
-export type OnmsRow = (number | string | moment.Moment | boolean | undefined)[]
+export type OnmsRow = Array<number | string | moment.Moment | boolean | undefined>
 
 /**
  * Clause action type used to define the clause definition functionality in the query editor
