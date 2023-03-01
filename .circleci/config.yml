@@ -469,12 +469,16 @@ workflows:
             tags:
               only: /^v.*/
       - make-rpm:
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
       - make-deb:
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
