@@ -249,6 +249,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - sign-packages/install-rpm-dependencies:
+          skip_if_forked_pr: true
+      - sign-packages/setup-env:
+          skip_if_forked_pr: true
       - run:
           name: Create RPM package
           command: |
@@ -257,10 +261,6 @@ jobs:
               RELEASE=1
             fi
             ./makerpm.js --release "$RELEASE"
-      - sign-packages/install-rpm-dependencies:
-          skip_if_forked_pr: true
-      - sign-packages/setup-env:
-          skip_if_forked_pr: true
       - sign-packages/sign-rpms:
           skip_if_forked_pr: true
           gnupg_key: opennms@opennms.org
@@ -278,6 +278,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - sign-packages/install-deb-dependencies:
+          skip_if_forked_pr: true
+      - sign-packages/setup-env:
+          skip_if_forked_pr: true
       - run:
           name: Create DEB package
           command: |
@@ -286,10 +290,6 @@ jobs:
               RELEASE=1
             fi
             ./makedeb.js --release "$RELEASE"
-      - sign-packages/install-deb-dependencies:
-          skip_if_forked_pr: true
-      - sign-packages/setup-env:
-          skip_if_forked_pr: true
       - sign-packages/sign-debs:
           skip_if_forked_pr: true
           gnupg_key: opennms@opennms.org
