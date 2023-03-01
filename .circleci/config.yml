@@ -20,7 +20,7 @@ executors:
 
 orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.4
-  sign-packages: opennms/sign-packages@2.3.0
+  sign-packages: opennms/sign-packages@3.0.1
 
 defaults: &defaults
   parameters:
