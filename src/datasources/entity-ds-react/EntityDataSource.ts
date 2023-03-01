@@ -60,15 +60,17 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             filterEditorData?.activeFilters.length > 0 && filterEditorData?.selectableValues.length > 0)
 
         for (let target of request.targets) {
-            const entityType = target?.selectType?.label || EntityTypes.Alarms
+            request.entityType = target?.selectType?.label || EntityTypes.Alarms
+            // TODO looks like this should be an option in the panel editor.
+            request.enforceTimeRange = true
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 
             if (hasFilterEditorData) {
-                mergeFilterPanelFilters(entityType, filter, filterEditorData)
+                mergeFilterPanelFilters(request.entityType , filter, filterEditorData)
             }
 
             try {
-                const rowData = await queryEntity(entityType, filter, this.client)
+                const rowData = await queryEntity(request.entityType , filter, this.client)
                 fullData.push(rowData)
             } catch (e) {
                 console.error(e)
@@ -79,16 +81,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async metricFindQuery(query, options) {
-        // TODO: Might be good to be able to pass in options.entityType + options.attribute
-        // Otherwise callers may have to construct a fake query like 'nodes(label)' which we
-        // have to parse here, instead of passing in say:
-        /*
-            const options = {
-                entityType: 'node',
-                attribute: 'label'
-            }
-        */
-
+        
         if (isLocationQuery(query)) {
             return metricFindLocations(this.simpleRequest)
         }

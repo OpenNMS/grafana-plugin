@@ -1,58 +1,17 @@
 import React, { useEffect } from 'react'
 import { EntityClause } from './EntityClause'
-import { OnmsEntityClause, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types'
+import { ClauseActionType, OnmsEntityType, SearchOption } from './types'
 import { API } from 'opennms'
-import { defaultClause } from './constants'
 
 interface EntityClauseEditorProps {
-    filter: API.Filter,
     setFilter: (filter: API.Filter) => void,
     loading: boolean
     propertiesAsArray: SearchOption[],
     clauses: any[],
-    setClauses: any
+    dispatchClauses: any
 }
 
-export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArray, clauses, setClauses }: EntityClauseEditorProps) => {
-
-    const addNestedClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.NESTED
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
-    }
-
-    const addClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.TOP;
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
-    }
-
-    const addSubClause = (col: number) => {
-        const newClause = { ...defaultClause };
-        newClause.nestingType = OnmsEntityNestType.SUB;
-        newClause.type = OnmsEntityType.AND;
-        actuallyAddClause(col, newClause);
-    }
-
-    const actuallyAddClause = (col: number, newClause: OnmsEntityClause) => {
-        const newClauses = [...clauses];
-        newClauses.splice(col + 1, 0, newClause);
-        setClauses(newClauses);
-    }
-
-    const setClause = (col: number, value: any, property: string) => {
-        const newAttributes = [...clauses]
-        newAttributes[col][property] = value;
-        setClauses(newAttributes);
-    }
-
-    const removeClause = (col: number) => {
-        const newClauses = [...clauses];
-        newClauses.splice(col, 1);
-        setClauses(newClauses);
-    }
+export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clauses, dispatchClauses }: EntityClauseEditorProps) => {
 
     useEffect(() => {
         const updatedFilter = new API.Filter();
@@ -89,18 +48,16 @@ export const EntityClauseEditor = ({ filter, setFilter, loading, propertiesAsArr
                         <EntityClause
                             key={index}
                             clause={clauses[index]}
-                            setAttribute={(col, val) => setClause(col, val, 'attribute')}
-                            setComparator={(col, val) => setClause(col, val, 'comparator')}
-                            setComparedValue={(col, val) => setClause(col, val, 'comparedValue')}
-                            setComparedString={(col, val) => setClause(col, val, 'comparedString')}
-                            setClauseType={(col, val) => setClause(col, val, 'type')}
-                            removeClause={removeClause}
+                            setAttribute={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'attribute', value: val })}
+                            setComparator={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparator', value: val })}
+                            setComparedValue={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedValue', value: val })}
+                            setComparedString={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedString', value: val })}
+                            setClauseType={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'type', value: val })}
+                            dispatchClauses={dispatchClauses}
                             loading={loading}
                             index={index}
-                            addClause={addClause}
-                            addNestedClause={addNestedClause}
-                            addSubClause={addSubClause}
                             propertiesAsArray={propertiesAsArray}
+                            hasMultipleClauses={clauses.length > 1}
                         />
 
                         <div className='spacer' />

@@ -2,14 +2,12 @@ import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui';
 import React, { useEffect, useState } from 'react'
 import { EntityClauseLabel } from './EntityClauseLabel';
-import { Comparator, EntityClauseProps, OnmsEntityNestType, OnmsEntityType, SearchOption } from './types';
+import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption, ClauseActionType } from './types';
+import { API } from 'opennms'
 
 export const EntityClause = ({
     clause,
-    addClause,
-    addNestedClause,
-    addSubClause,
-    removeClause,
+    dispatchClauses,
     propertiesAsArray,
     setAttribute,
     setComparator,
@@ -17,13 +15,13 @@ export const EntityClause = ({
     setComparedString,
     setClauseType,
     loading,
-    index
+    index,
+    hasMultipleClauses
 }: EntityClauseProps) => {
     const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>([]);
     const [comparedOptions, setComparedOptions] = useState<Array<SelectableValue<string>>>([]);
 
     useEffect(() => {
-        resetComparators();
         const { values, comparators } = getValuesAndComparatorsFromClause();
 
         if (values) {
@@ -49,18 +47,17 @@ export const EntityClause = ({
 
     const getValuesAndComparatorsFromClause = () => {
         let values = clause.attribute?.value?.values;
-        const comparators = clause.attribute?.value?.type?.comparators?.map((c) => (
+        let comparators = clause.attribute?.value?.type?.comparators?.map((c) => (
             {
                 label: c.l,
                 value: c
             }
         ))
+        if (values && !comparators) {
+            const comp = API.Comparators.EQ
+            comparators = [{ label: comp.label, value: comp }]
+        }
         return { values, comparators }
-    }
-
-    const resetComparators = () => {
-        setComparedValue(index, {})
-        setComparedString(index, '')
     }
 
     const getInputTypeFromAttributeType = (attribute: SearchOption | undefined) => {
@@ -71,6 +68,18 @@ export const EntityClause = ({
             type = 'number'
         }
         return type;
+    }
+
+    const resetOrRemoveClause = (col: number) => {
+        if (clause.type !== OnmsEntityType.FIRST || hasMultipleClauses) {
+            dispatchClauses({ type: ClauseActionType.delete, index: col })
+        }
+        else {
+            setAttribute(col, {})
+            setComparator(col, {})
+            setComparedString(col, '')
+            setComparedValue(col, {})
+        }
     }
 
     return (
@@ -135,12 +144,12 @@ export const EntityClause = ({
             </div>
             }
             {clause.nestingType === OnmsEntityNestType.TOP ? <>
-                <Button onClick={() => addClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
-                <Button onClick={() => addNestedClause(index)} size='xs'><i className='fa fa-file'></i></Button>
-                {clause.type !== OnmsEntityType.FIRST && <Button onClick={() => removeClause(index)} size='xs' style={{ marginLeft: '5px' }}>-</Button>}
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addClause, 'index': index })} size='xs' style={{ marginRight: '5px' }}>+</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addNestedClause, 'index': index })} size='xs'><i className='fa fa-file'></i></Button>
+                <Button onClick={() => resetOrRemoveClause(index)} size='xs' style={{ marginLeft: '5px' }}>-</Button>
             </> : <>
-                <Button onClick={() => addSubClause(index)} size='xs' style={{ marginRight: '5px' }}>+</Button>
-                <Button onClick={() => removeClause(index)} size='xs'>-</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.addSubClause, 'index': index })} size='xs' style={{ marginRight: '5px' }}>+</Button>
+                <Button onClick={() => dispatchClauses({ type: ClauseActionType.delete, 'index': index })} size='xs'>-</Button>
             </>
             }
         </InlineFieldRow>
