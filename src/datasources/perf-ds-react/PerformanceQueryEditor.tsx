@@ -8,10 +8,12 @@ import { PerformanceAttribute } from './PerformanceAttribute';
 import { PerformanceExpression } from './PerformanceExpression';
 import { PerformanceFilter } from './PerformanceFilter';
 import { PerformanceStringProperty } from './PerformanceStringProperty';
-import { PerformanceQueryEditorProps, QuickSelect } from './types';
+import { OnmsRrdGraphAttribute, PerformanceQueryEditorProps, QuickSelect } from './types';
+import { collectInterpolationVariables, interpolate } from './queries/interpolate'
+import { getRemoteResourceId } from './queries/queryBuilder'
 
 export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
-    const [performanceType, setPerformanceType] = useState<QuickSelect>({});
+    const [performanceType, setPerformanceType] = useState<QuickSelect>(query.performanceType);
 
     const updateAttributeQuery = (attribute) => {
         onChange({
@@ -51,6 +53,14 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
+    const isPerformanceType = (value: number) => {
+        if (performanceType && performanceType.value) {
+            return performanceType.value === value
+        }
+
+        return false
+    }
+
     const loadNodes = async () => {
         const nodes = await datasource.client.findNodes(new API.Filter(), true)
         return nodes;
@@ -72,35 +82,41 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
     }
 
     const loadResourcesByNodeId = async (nodeId) => {
-        const resources = await datasource.simpleRequest.doOpenNMSRequest({
-            url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
-            method: 'GET'
-        })
+        const resourceData = await datasource.doResourcesForNodeRequest(nodeId)
 
-        return resources.data.children.resource.map(r => {
-            const label = (r.label && r.name && r.label !== r.name) ?
-                `${r.label} | ${r.name}` :
-                (r.label || r.name || '')
+        if (resourceData) {
+            return resourceData.children.resource.map(r => {
+                const label = (r.label && r.name && r.label !== r.name) ?
+                    `${r.label} | ${r.name}` :
+                    (r.label || r.name || '')
 
-            return {
-                ...r,
-                label
-            }
-        })
+                return {
+                    ...r,
+                    label
+                }
+            })
+        } else {
+            return []
+        }
     }
 
     const loadAttributesByResourceAndNode = async (node, resource) => {
-        const subbed = resource.id.replace('node[', 'nodeSource[')
-        const resources = await datasource.simpleRequest.doOpenNMSRequest({
-            url: '/rest/resources/' + encodeURIComponent(subbed),
-            method: 'GET',
-            params: {
-                depth: -1
-            }
-        })
-        return Object.entries(resources.data.rrdGraphAttributes).map(([key, item]: [string, unknown]) => {
-            return { ...(item as {}), label: key }
-        })
+        // Note: similar to legacy 'suggestAttributes'
+        const interpolationVars = collectInterpolationVariables(getTemplateSrv())
+
+        const interpolatedNodeId = interpolate({ value: node.id || node.label }, ['value'], interpolationVars)?.[0].value || ''
+        const interpolatedResourceId = interpolate({ value: resource.id || resource.label }, ['value'], interpolationVars)?.[0].value || ''
+        const remoteResourceId = getRemoteResourceId(interpolatedNodeId, interpolatedResourceId)
+
+        const resourceData = await datasource.doResourcesRequest(remoteResourceId)
+
+        if (resourceData) {
+            return Object.entries(resourceData.rrdGraphAttributes).map(([key, item]: [string, OnmsRrdGraphAttribute]) => {
+                return { ...(item as {}), label: key }
+            })
+        } else {
+            return []
+        }
     }
 
     const loadFilters = async () => {
@@ -156,9 +172,10 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             </SegmentSectionWithIcon>
 
             {
-                performanceType.value === PerformanceTypeOptions.Attribute.value &&
+                isPerformanceType(PerformanceTypeOptions.Attribute.value) &&
 
                 <PerformanceAttribute
+                    performanceAttributeState={query.attribute}
                     updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}
                     loadResourcesByNode={loadResourcesByNode}
@@ -167,19 +184,19 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             }
 
             {
-                performanceType.value === PerformanceTypeOptions.Expression.value &&
+                isPerformanceType(PerformanceTypeOptions.Expression.value) &&
 
-                <PerformanceExpression updateQuery={updateExpressionQuery} />
+                <PerformanceExpression query={query} updateQuery={updateExpressionQuery} />
             }
 
             {
-                performanceType.value === PerformanceTypeOptions.Filter.value &&
+                isPerformanceType(PerformanceTypeOptions.Filter.value) &&
 
-                <PerformanceFilter updateQuery={updateFilterQuery} loadFilters={loadFilters} />
+                <PerformanceFilter query={query} updateQuery={updateFilterQuery} loadFilters={loadFilters} />
             }
 
             {
-                performanceType.value === PerformanceTypeOptions.StringProperty.value &&
+                isPerformanceType(PerformanceTypeOptions.StringProperty.value) &&
 
                 <PerformanceStringProperty
                     updateQuery={updateStringQuery}

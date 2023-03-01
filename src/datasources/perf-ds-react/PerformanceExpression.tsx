@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { SegmentInput } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
+import { PerformanceQuery } from './types'
 
-export const PerformanceExpression: React.FC<{ updateQuery: Function }> = ({ updateQuery }) => {
-    const [expression, setExpression] = useState<string | number>('')
-    const [label, setLabel] = useState<string | number>('')
+export interface PerformanceExpressionProps {
+    query: PerformanceQuery;
+    updateQuery: Function;
+}
+
+export const PerformanceExpression: React.FC<PerformanceExpressionProps> = ({ query, updateQuery }) => {
+    const [expression, setExpression] = useState<string | number>(query.expression || '')
+    const [label, setLabel] = useState<string | number>(query.label || '')
 
     useEffect(() => {
         updateQuery(expression, label)
@@ -19,6 +25,9 @@ export const PerformanceExpression: React.FC<{ updateQuery: Function }> = ({ upd
                     value={expression}
                     placeholder='series expression'
                     onChange={(value) => {
+                        if (!label) {
+                            setLabel('expression' + query.refId)
+                        }
                         setExpression(value);
                     }}
                 />

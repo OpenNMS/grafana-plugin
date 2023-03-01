@@ -33,7 +33,7 @@ interface TemplateSrvVariable {
  * so we use the above interface definitions to provide some typing information.
  * See: https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/types/templateVars.ts
  */
-export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVars: ScopedVars): InterpolationVariable[] => {
+export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVars?: ScopedVars): InterpolationVariable[] => {
     // Reformat the variables to work with our interpolate function
     const variables = [] as InterpolationVariable[];
 
