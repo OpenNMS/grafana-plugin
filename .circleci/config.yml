@@ -521,6 +521,8 @@ workflows:
             branches:
               ignore: /^merge\/.*/
       - make-rpm:
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
@@ -529,6 +531,8 @@ workflows:
             branches:
               ignore: /^merge\/.*/
       - make-deb:
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
@@ -567,6 +571,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-deb:
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-deb
           filters:
@@ -576,6 +582,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-rpm:
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-rpm
           filters:
