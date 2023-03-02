@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { SelectableValue } from '@grafana/data';
 import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
+import { PerformanceQuery } from './types'
 
 export interface FilterItem {
     key: string,
@@ -16,11 +17,14 @@ export interface FilterResponse extends FilterItem {
     parameter: FilterItem[]
 }
 
-export const PerformanceFilter: React.FC<{
-    updateQuery: Function,
-    loadFilters: (query?: string | undefined) => Promise<Array<SelectableValue<FilterResponse>>>
-}> = ({ updateQuery, loadFilters }) => {
+export interface PerformanceFilterProps {
+    query: PerformanceQuery;
+    updateQuery: Function;
+    loadFilters: (query?: string | undefined) => Promise<Array<SelectableValue<FilterResponse>>>;
+}
 
+export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, updateQuery, loadFilters }) => {
+    // TODO: Initialize these from 'query' prop
     const [filter, setFilter] = useState<SelectableValue<FilterResponse>>({});
     const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>({});
 
@@ -29,7 +33,7 @@ export const PerformanceFilter: React.FC<{
     }
 
     useEffect(() => {
-        updateQuery(filter,filterState);
+        updateQuery(filter, filterState);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filterState, filter])
 

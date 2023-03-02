@@ -1,6 +1,5 @@
 
 import { DataQuery, DataQueryRequest, DataSourceJsonData, QueryEditorProps, QueryResultMeta, SelectableValue } from "@grafana/data";
-import { PerformanceAttributeState } from "./PerformanceAttribute";
 import { PerformanceDataSource } from "./PerformanceDataSource";
 
 /**
@@ -10,6 +9,48 @@ export interface PerformanceDataSourceOptions extends DataSourceJsonData {
   path?: string;
 }
 
+// TODO: check which of these are required
+export interface PerformanceQueryFilterParameter {
+  default: any | null;
+  description?: string;
+  displayName?: string;
+  key?: string;
+  required?: boolean;
+  type?: string;
+}
+
+// TODO: check which of these are required
+export interface PerformanceQueryFilter {
+  backend?: string;
+  canonicalName?: string;
+  description?: string;
+  label?: string;
+  name: string;
+  parameter?: PerformanceQueryFilterParameter[];
+}
+
+export interface PerformanceQueryFilterStateItem {
+  filter: PerformanceQueryFilterParameter;
+  // TODO: confirm what is valid here
+  value: string | number | { value: string | number };
+}
+
+export interface PerformanceAttributeItemState {
+    id: string;
+    label?: string;
+}
+
+export interface PerformanceAttributeState {
+     // this may be an OnmsNode object, or else just an id and/or label
+    node: PerformanceAttributeItemState;
+    resource: PerformanceAttributeItemState;
+    attribute: { name: string };
+    subAttribute?: string | number;
+    fallbackAttribute?: { name: string };
+    aggregation: { label?: string };
+    label: string;
+}
+
 export interface PerformanceQuery extends DataQuery {
   queryText?: string;
   constant?: number;
@@ -17,8 +58,8 @@ export interface PerformanceQuery extends DataQuery {
   label?: string;
   performanceType: QuickSelect;
   attribute: PerformanceAttributeState;
-  filter: {name: string};
-  filterState: {};
+  filter: PerformanceQueryFilter;
+  filterState: { [key: string]: PerformanceQueryFilterStateItem};
   performanceState: PerformanceStringPropertyState;
 }
 
@@ -36,18 +77,23 @@ export interface StringPropertyQuery extends DataQuery {
 export type DefinedStringPropertyQuery = Required<StringPropertyQuery>
 
 export interface OnmsMeasurementsQuerySource {
+  // label both for display and for use by subsequent Expression or Filter queries
+  // if empty, the 'attribute' will be used
   label: string;
   resourceId: string;
   attribute: string;
   ['fallback-attribute']: string;
   aggregation: string;  // should be 'AVERAGE', 'MIN', 'MAX' or 'LAST'
   transient: boolean;
-  nodeId?: string; // this may be added dynamically
+  nodeId?: string; // this may be added or removed dynamically
 }
 
 export interface OnmsMeasurementsQueryExpression {
+  // label both for display and for use by subsequent Expression or Filter queries
   label: string;
-  value: string;  // this is the jexl or similar expression
+  // this is the jexl or similar expression. It can reference result of a former Attribute query
+  // by referencing the Attribute query's 'label' property
+  value: string;
   transient: boolean;
 }
 
@@ -68,7 +114,7 @@ export interface OnmsMeasurementsQueryRequest {
   step: number;
   relaxed: boolean; // enable relaxed mode, which allows for missing attributes
   maxrows: number;
-  source: OnmsMeasurementsQuerySource[];
+  source: OnmsMeasurementsQuerySource[];  // for Attribute queries
   expression: OnmsMeasurementsQueryExpression[];
   filter: OnmsMeasurementsQueryFilter[];
 }
@@ -115,6 +161,28 @@ export type PerformanceQueryEditorProps = QueryEditorProps<PerformanceDataSource
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
     entity_metadata: any[];
+}
+
+// See org.opennms.netmgt.model.resource.ResourceDTO
+// Response from /rest/resources/fornode and other queries
+export interface OnmsRrdGraphAttribute {
+  name: string;
+  relativePath: string;
+  rrdFile: string;
+}
+
+export interface OnmsResourceCollection {
+  resource: OnmsResourceDto[];
+}
+
+export interface OnmsResourceDto {
+  id: string;
+  label: string;
+  name: string;
+  children: OnmsResourceCollection;
+  stringPropertyAttributes: { [key: string]: string };
+  externalValueAttributes: { [key: string]: string };
+  rrdGraphAttributes: { [key: string]: OnmsRrdGraphAttribute };
 }
 
 export interface PerformanceStringPropertyProps {

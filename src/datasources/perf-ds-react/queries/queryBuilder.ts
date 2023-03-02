@@ -1,11 +1,12 @@
-import { isEmpty, isNil } from "lodash"
+import { isEmpty, isNil, isNumber, isObject, isString } from "lodash"
 import {
     OnmsMeasurementsQueryRequest,
     OnmsMeasurementsQueryExpression,
     OnmsMeasurementsQueryFilter,
     OnmsMeasurementsQueryFilterParam,
     OnmsMeasurementsQuerySource,
-    PerformanceQuery
+    PerformanceQuery,
+    PerformanceQueryFilterStateItem
 } from '../types';
 
 export const buildPerformanceMeasurementQuery = (start: number, end: number, step: number, maxRows: number) => {
@@ -21,20 +22,31 @@ export const buildPerformanceMeasurementQuery = (start: number, end: number, ste
     } as OnmsMeasurementsQueryRequest
 }
 
+export const getRemoteResourceId = (nodeId: string | number, resourceId: string) => {
+    if (resourceId.startsWith('node[') || resourceId.startsWith('nodeSource[')) {
+        return resourceId
+    }
+
+    const prefix = ('' + nodeId).indexOf(':') >= 0 ? 'nodeSource' : 'node'
+
+    return `${prefix}[${nodeId}].${resourceId}`
+}
+
 export const isValidMeasurementQuery = (query: OnmsMeasurementsQueryRequest) => {
     const ok =
         (query.source.length > 0 && query.source[0].attribute && query.source[0].resourceId) ||
         (query.expression.length > 0 && query.expression[0].value) ||
         (query.filter.length > 0 && query.filter[0].name && query.filter[0].parameter)
 
-    return ok
+    return !!ok
 }
 
 export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
+        target.hide ||
         !(target.attribute &&
-          target.attribute.attribute &&
-          target.attribute.resource.id &&
+          target.attribute.attribute.name &&
+          (target.attribute.resource.id || target.attribute.resource.label) &&
           (target.attribute.node.id || target.attribute.node.label))) {
         return false
     }
@@ -43,19 +55,56 @@ export const isValidAttributeTarget = (target: PerformanceQuery) => {
 }
 
 export const isValidExpressionTarget = (target: PerformanceQuery) => {
-    return (!target || !(target.label && target.expression)) ? false : true
+    return (!target || target.hide || !(target.label && target.expression)) ? false : true
 }
 
+// must specify basic filter info plus any required parameter values in filterState
 export const isValidFilterTarget = (target: PerformanceQuery) => {
-    return (!target || !target.filter || !target.filter.name) ? false : true
+    if (!target || !target?.filter?.name || target.hide) {
+        return false
+    }
+
+    const requiredKeys = target.filter.parameter?.filter(p => p.required && p.key).map(p => p.key || '') || []
+
+    if (requiredKeys) {
+        // keys in filterState that match required parameters
+        const existingKeys = Object.keys(target.filterState).filter(k => requiredKeys.includes(target.filterState[k].filter.key || ''))
+
+        if (!existingKeys || existingKeys.length !== requiredKeys.length) {
+            return false
+        }
+
+        return existingKeys.every(k => isValidFilterStateItemValue(target.filterState[k]))
+    }
+
+    return true
+}
+
+// return whether item has some kind of non-empty value
+const isValidFilterStateItemValue = (item: PerformanceQueryFilterStateItem) => {
+    if (item.value) {
+        return (
+            (isString(item.value) && item.value.length > 0) ||
+            isNumber(item.value) ||
+            (isObject(item.value) && !isNil(item.value.value) && ('' + item.value.value).length > 0)
+        )
+    }
+
+    return false
 }
 
 export const buildAttributeQuerySource = (target: PerformanceQuery) => {
+    // Note: Have to add 'nodeId' here in case it gets added to 'resourceId' during interpolation,
+    // even if the field is removed later after interpolation but before calling the Rest API
+    const nodeId = target.attribute.node.id || target.attribute.node.label || ''
+    const resourceId = target.attribute.resource.id || target.attribute.resource.label || ''
+
     const source = {
         label: target.attribute.label || target.attribute.attribute.name,
-        resourceId: target.attribute.resource.id.replace('node[', 'nodeSource['),
+        nodeId: nodeId,
+        resourceId: resourceId.replace('node[', 'nodeSource['),
         attribute: target.attribute.attribute.name,
-        ['fallback-attribute']: target.attribute.fallbackAttribute.name,
+        ['fallback-attribute']: target.attribute.fallbackAttribute?.name || undefined,
         aggregation: target.attribute.aggregation?.label?.toUpperCase() || 'AVERAGE',
         transient: false
     } as OnmsMeasurementsQuerySource
