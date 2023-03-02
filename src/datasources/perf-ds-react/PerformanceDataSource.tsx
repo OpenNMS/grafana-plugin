@@ -1,5 +1,4 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
-import { isNil } from 'lodash'
 import { ClientDelegate } from "lib/client_delegate";
 import { SimpleOpenNMSRequest } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
@@ -47,8 +46,9 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         const activeTargets = targets.filter(t => !t.hide)
 
         const totalStrings = activeTargets.filter((t) =>
-            !isNil(t.performanceType.value) &&
-            t.performanceType.value === PerformanceTypeOptions.StringProperty.value && t.performanceState?.stringProperty?.value)
+            t.performanceType.value &&
+            t.performanceType.value === PerformanceTypeOptions.StringProperty.value &&
+            t.performanceState?.stringProperty?.value)
         let typeOfQuery = 'normal'
 
         if (totalStrings.length > 0 && totalStrings.length === activeTargets.length) {
