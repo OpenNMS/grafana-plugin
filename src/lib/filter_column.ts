@@ -1,6 +1,3 @@
-import { TextBoxVariable } from './text_box_variable';
-import { QueryVariable } from './query_variable';
-
 const randomString = () => {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
   const length = 20;
@@ -29,22 +26,6 @@ export class FilterColumn {
 
   set text(text) {
     this._text = text;
-  }
-
-  toModel($injector: any, filterState?: any) {
-    const model = Object.assign({}, this);
-    model.type = this.inputType === 'text' ? 'textbox' : 'query';
-    model.multi = this.inputType === 'multi' || this.inputType === undefined;
-
-    // console.debug('model=', model);
-    let ret = undefined;
-    if (model.type === 'textbox') {
-      ret = $injector.instantiate(TextBoxVariable, { model: model, filterColumn: this, filterState: filterState });
-    } else if (model.type === 'query') {
-      ret = $injector.instantiate(QueryVariable, { model: model, filterColumn: this, filterState: filterState });
-    }
-
-    return ret;
   }
 
   toJSON() {
