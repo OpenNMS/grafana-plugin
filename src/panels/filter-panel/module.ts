@@ -1,8 +1,7 @@
-import { FilterCtrl } from './ctrl';
-import { initializeCss } from 'lib/utils';
+import { PanelPlugin } from '@grafana/data';
+import { FilterPanelControl } from './FilterPanelControl'
+import { FilterPanelOptions } from './FilterPanelOptions'
 
-import './value_select_dropdown';
-
-initializeCss();
-
-export { FilterCtrl as PanelCtrl };
+export const plugin = new PanelPlugin(FilterPanelControl).setPanelOptions((builder) => {
+    builder.addCustomEditor({ id: 'filter-editor', path: 'filterEditor', name: 'Filter', editor: FilterPanelOptions })
+});

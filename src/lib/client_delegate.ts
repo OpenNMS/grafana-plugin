@@ -11,7 +11,6 @@ export class ClientDelegate {
     client: Client;
     clientWithMetadata?: Promise<Client>;
 
-    /** @ngInject */
     constructor(settings: any, public backendSrv: any) {
         this.type = settings.type;
         this.url = settings.url;

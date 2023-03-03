@@ -1,13 +1,12 @@
 {
-  "type": "panel",
-  "name": "Flow Histogram",
-  "id": "opennms-helm-flow-histogram-panel",
-
-  "info": {
-    "description": "OpenNMS Flow Histogram Panel",
-    "logos": {
-      "small": "img/flow-histogram.svg",
-      "large": "img/flow-histogram.svg"
+    "type": "panel",
+    "name": "Flow Histogram React",
+    "id": "opennms-helm-flow-histogram-panel-react",
+    "info": {
+        "description": "OpenNMS Flow Histogram Panel React",
+        "logos": {
+            "small": "img/flow-histogram.svg",
+            "large": "img/flow-histogram.svg"
+        }
     }
-  }
 }

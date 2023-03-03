@@ -1,12 +1,12 @@
 {
   "type": "panel",
-  "name": "Alarm Table",
-  "id": "opennms-helm-alarm-table-panel",
+  "name": "Alarm Table React",
+  "id": "opennms-helm-alarm-table-panel-react",
 
   "dateFormats": ["table", "time_series"],
 
   "info": {
-    "description": "OpenNMS Alarm Table Panel",
+    "description": "OpenNMS Alarm Table Panel React",
     "logos": {
       "small": "img/alarm-table.svg",
       "large": "img/alarm-table.svg"

@@ -1,13 +1,13 @@
 import {
     getFilterId,
     getFilterIdFromParts
-} from '../datasources/entity-ds-react/EntityHelper'
+} from '../datasources/entity-ds/EntityHelper'
 
 import {
     ActiveFilter,
     FilterEditorData,
     FilterSelectableValues
-} from '../datasources/entity-ds-react/types'
+} from '../datasources/entity-ds/types'
 
 export const useFilterData = () => {
     return {

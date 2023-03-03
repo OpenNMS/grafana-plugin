@@ -5,6 +5,7 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "noImplicitAny": false,
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "resolveJsonModule": true
   }
 }

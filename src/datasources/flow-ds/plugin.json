@@ -3,10 +3,6 @@
   "id": "opennms-helm-flow-datasource",
   "type": "datasource",
 
-  "partials": {
-    "config": "datasources/flow-ds/partials/config.html"
-  },
-
   "metrics": true,
   "annotations": false,
 
@@ -17,5 +13,4 @@
       "large": "img/flow-ds.svg"
     }
   }
-
 }

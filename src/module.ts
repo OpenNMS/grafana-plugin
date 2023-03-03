@@ -1,7 +1,10 @@
-import { OpenNMSHelmAppConfigCtrl } from './components/config';
+import { AppPlugin } from '@grafana/data';
+import { Helm } from './components/Helm';
+import { HelmConfig } from './components/HelmConfig';
 
-import { initializeCss } from 'lib/utils';
-
-initializeCss();
-
-export { OpenNMSHelmAppConfigCtrl as ConfigCtrl };
+export const plugin = new AppPlugin<{}>().setRootPage(Helm).addConfigPage({
+  title: 'Configuration',
+  icon: 'cog',
+  body: HelmConfig,
+  id: 'configuration',
+});
