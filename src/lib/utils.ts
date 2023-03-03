@@ -1,18 +1,5 @@
 import _ from 'lodash';
 
-import { loadPluginCss } from '@grafana/runtime';
-
-let cssInitialized = false;
-export function initializeCss() {
-  if (!cssInitialized) {
-    cssInitialized = true;
-    loadPluginCss({
-      dark: 'plugins/opennms-helm-app/styles/dark.css',
-      light: 'plugins/opennms-helm-app/styles/light.css',
-    });
-  }
-}
-
 export function assignModelProperties(target, source, defaults = {}) {
   for (const key in defaults) {
     if (!defaults.hasOwnProperty(key)) {
