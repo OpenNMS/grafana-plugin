@@ -15,7 +15,7 @@ import { SimpleOpenNMSRequest } from "../../../lib/utils"
 import {
     DefinedStringPropertyQuery,
     PerformanceQuery
-} from "./../types";
+} from "../types";
 
 interface RestResourceSelectQuery {
     nodes: Set<string>;
