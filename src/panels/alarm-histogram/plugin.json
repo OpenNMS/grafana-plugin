@@ -1,10 +1,10 @@
 {
     "type": "panel",
-    "name": "Alarm Histogram React",
-    "id": "opennms-helm-alarm-histogram-panel-react",
+    "name": "Alarm Histogram",
+    "id": "opennms-helm-alarm-histogram-panel",
   
     "info": {
-"description": "OpenNMS Alarm Histogram Panel React",
+"description": "OpenNMS Alarm Histogram Panel",
       "logos": {
         "small": "img/alarm-histogram.svg",
         "large": "img/alarm-histogram.svg"
