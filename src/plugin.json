@@ -37,8 +37,8 @@
     {"type": "datasource", "name": "OpenNMS Flows"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=8.0.0",
-    "grafanaVersion": "8.0.0",
+    "grafanaDependency": ">=9.0.0",
+    "grafanaVersion": "9.0.0",
     "plugins": []
   }
 }
