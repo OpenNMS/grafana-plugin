@@ -1,6 +1,6 @@
 {
-  "name": "OpenNMS Entities",
-  "id": "opennms-helm-entity-datasource",
+  "name": "OpenNMS Entities React",
+  "id": "opennms-helm-entity-datasource-react",
   "type": "datasource",
 
   "metrics": true,

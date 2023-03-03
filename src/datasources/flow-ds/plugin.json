@@ -1,6 +1,6 @@
 {
-  "name": "OpenNMS Flow",
-  "id": "opennms-helm-flow-datasource",
+  "name": "OpenNMS Flow React",
+  "id": "opennms-helm-flow-datasource-react",
   "type": "datasource",
 
   "metrics": true,

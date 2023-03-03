@@ -3,7 +3,6 @@ import { Button, Field, Input, useStyles2, FieldSet } from '@grafana/ui';
 import { PluginConfigPageProps, AppPluginMeta, PluginMeta, GrafanaTheme2 } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { css } from '@emotion/css';
-import { SecretInput } from '../SecretInput';
 import { testIds } from '../testIds';
 
 export type JsonData = {
@@ -33,19 +32,6 @@ export const HelmConfig = ({ plugin }: Props) => {
     isApiKeySet: Boolean(jsonData?.isApiKeySet),
   });
 
-  const onResetApiKey = () =>
-    setState({
-      ...state,
-      apiKey: '',
-      isApiKeySet: false,
-    });
-
-  const onChangeApiKey = (event: ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      apiKey: event.target.value.trim(),
-    });
-  };
 
   const onChangeApiUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -100,19 +86,7 @@ export const HelmConfig = ({ plugin }: Props) => {
 
       {/* CUSTOM SETTINGS */}
       <FieldSet label="API Settings" className={s.marginTopXl}>
-        {/* API Key */}
-        <Field label="API Key" description="A secret key for authenticating to our custom API">
-          <SecretInput
-            width={60}
-            data-testid={testIds.appConfig.apiKey}
-            id="api-key"
-            value={state?.apiKey}
-            isConfigured={state.isApiKeySet}
-            placeholder={'Your secret API key'}
-            onChange={onChangeApiKey}
-            onReset={onResetApiKey}
-          />
-        </Field>
+       
 
         {/* API Url */}
         <Field label="API Url" description="" className={s.marginTop}>

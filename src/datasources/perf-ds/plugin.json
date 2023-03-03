@@ -1,6 +1,6 @@
 {
-  "name": "OpenNMS Performance",
-  "id": "opennms-helm-performance-datasource",
+  "name": "OpenNMS Performance React",
+  "id": "opennms-helm-performance-datasource-react",
   "type": "datasource",
 
   "metrics": true,
