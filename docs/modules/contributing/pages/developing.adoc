@@ -1,45 +1,62 @@
 
-= Development
+= Contribute Code
+
+You can contribute code to the {page-component-title} project via https://github.com/OpenNMS/opennms-helm[GitHub].
+This section describes the codebase and how to prepare your development environment.
 
 == Codebase
 
-Development is done in the https://github.com/opennms/opennms-helm/tree/develop[default GitHub] branch (`develop`).
-Commits are automatically compiled, tested, and merged to the https://github.com/opennms/opennms-helm/tree/develop[`master`] branch.
+{page-component-title} development is done in the project's default GitHub branch (`develop`).
+Commits are automatically compiled, tested, and merged to the `master` branch.
+Releases are tagged from the `master` branch and submitted to the https://github.com/grafana/grafana-plugin-repository[Grafana plugin repository].
 
-Releases will be tagged from the `master` branch and submitted to the https://github.com/grafana/grafana-plugin-repository[Grafana plugin repository].
+== Prepare development environment
 
-== Set up Helm and Grafana for development
+Follow these steps to prepare your development environment:
 
-. Download and install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana] for your platform.
-. Configure Grafana to allow unsigned plugin development by editing `grafana.ini`:
+. Download and install https://nodejs.org/en/download/[Node.js] and https://grafana.com/docs/grafana/latest/installation/[Grafana].
+. Edit `grafana.ini` and configure it to allow unsigned plugin development:
 +
 [source, ini]
 ----
 app_mode = development
-# further down in the file:
+
+...
+
 [plugins]
 allow_loading_unsigned_plugins = opennms-helm-app
 ----
 
-. Check out the https://github.com/OpenNMS/opennms-helm[Helm Git repository]:
+. Use Git to check out the repository:
 +
 [source, console]
-----
 git clone https://github.com/OpenNMS/opennms-helm.git
-cd opennms-helm
-----
 
-. Build Helm and symlink the `dist` directory in your Helm source tree into the Grafana plugin path:
+. Navigate to your {page-component-title} directory:
++
+[source, console]
+cd opennnms-helm
+
+. Install the build and runtime dependencies:
++
+[source, console]
+npm ci
+
+. Build {page-component-title} to prime your `dist` directory:
++
+[source, console]
+npm run dev
+
+. Symlink your `dist` directory to Grafana's plugin path:
++
+[source, console]
+ln -s /path/to/opennms-helm/dist /var/lib/grafana/plugins/opennms-helm-app
+
+. Run a continuous build that watches for changes:
 +
 [source, console]
 ----
-# install Helm's build and runtime dependencies
-npm ci
-# do a one-time build to prime the dist/ directory
-npm run dev
-# symlink the dist/ directory into Grafana's plugin dir
-ln -s /path/to/opennms-helm/dist /var/lib/grafana/plugins/opennms-helm-app
-# run a continuous build that watches for changes
-# after you save a change to Helm, just refresh Grafana to get the updates
 npm run watch
 ----
++
+After you save a change to {page-component-title}, refresh Grafana to load the updates.

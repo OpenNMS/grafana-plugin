@@ -1,6 +1,5 @@
 
-.About
-* xref:about:introduction.adoc[What is Helm?]
+* xref:about:introduction.adoc[]
 
 .Installation
 * xref:installation:requirements.adoc[Requirements]
@@ -9,10 +8,9 @@
 * xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
 * xref:installation:source.adoc[Install from Source]
 
-.Get started with Helm
-* xref:getting_started:index.adoc[Overview]
+.xref:getting_started:index.adoc[Get Started]
 * xref:getting_started:dashboard_planning.adoc[Plan Your Dashboard]
-* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
+* xref:getting_started:basic_walkthrough.adoc[]
 * xref:getting_started:importing.adoc[Import a Dashboard]
 * xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
 
@@ -26,10 +24,9 @@
 * xref:datasources:entity_datasource.adoc[]
 * xref:datasources:flow_datasource.adoc[]
 
-.Contribute
-* xref:contributing:index.adoc[Contribute]
-* xref:contributing:developing.adoc[Develop]
-* xref:contributing:how-to-build-docs.adoc[Write and Build Docs]
+.xref:contributing:index.adoc[]
+* xref:contributing:developing.adoc[]
+* xref:contributing:how-to-build-docs.adoc[]
 
 .Reference
 * xref:reference:severities.adoc[Severities]

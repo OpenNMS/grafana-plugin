@@ -1,5 +1,8 @@
-# Contribute
 
-* Fork me on https://github.com/OpenNMS/opennms-helm[GitHub]
+= Contribute to {page-component-title}
 
-* Open an https://issues.opennms.org/projects/HELM/summary[issue in JIRA]
+You can contribute to the {page-component-title} project in a couple of different ways:
+
+* Fork the project on https://github.com/OpenNMS/opennms-helm[GitHub].
+* Open an issue, bug report, or feature request in https://opennms.atlassian.net/jira/software/c/projects/HELM/issues[Jira].
+* xref:how-to-build-docs.adoc[Update the documentation].

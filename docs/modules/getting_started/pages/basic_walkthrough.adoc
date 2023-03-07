@@ -1,8 +1,8 @@
+
 :imagesdir: ../assets/images
 :!figure-caption:
 
-[[getting-started-basic-walkthrough]]
-= Basic Walk-Through
+= Create a Dashboard
 
 This section demonstrates how to create a simple dashboard in {page-component-title}.
 The process includes the following steps:

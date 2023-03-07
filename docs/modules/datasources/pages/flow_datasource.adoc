@@ -115,7 +115,7 @@ exporterNodesWithFlows(location='$location' & label='localhost')
 exporterNodesWithFlows(location='$location' & label='.*com.*')
 ----
 
-For more information about filters, see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation].
+For more information about filters, see https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[Filters] in the main OpenNMS documentation.
 
 === interfacesOnExporterNodeWithFlows(<nodeCriteria>)
 
