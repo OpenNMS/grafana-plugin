@@ -1,72 +1,60 @@
-:imagesdir: ../assets/images
-[[getting-started-migrating-from-opennms-datasource]]
-= Migrate from the OpenNMS data source plugin
 
-This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to using {page-component-title} to interface with OpenNMS.
-This section applies only to those still using he OpenNMS Data Source plugin, which was deprecated in 2016. 
+= Migrate From OpenNMS Data Source Plugin
 
-The tutorial assumes that you have:
+This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to {page-component-title}.
 
-* an instance of Grafana with the OpenNMS Data Source installed.
-* a data source configured with type OpenNMS, and one or more dashboards using the data source.
+IMPORTANT: This section applies only to those still using the OpenNMS Data Source plugin, which was deprecated in 2016.
 
-[[mig-install]]
-== Installation
+To complete this migration, you must have the following:
 
-Both the OpenNMS Data Source plugin and {page-component-title} can be installed at the same time while you complete the migration.
+* An instance of Grafana with the OpenNMS Data Source plugin installed.
+* A configured OpenNMS datasource.
+* One or more dashboards using the OpenNMS datasource.
 
-If you have not already done so, you may xref:installation:requirements.adoc[install] {page-component-title} using your preferred method.
+== Install {page-component-title}
 
-[[mig-app-setup]]
-== Application Setup
+Before completing the migration, ensure that you have xref:installation:requirements.adoc[installed {page-component-title}] on your Grafana instance.
 
-Once {page-component-title} is installed, enable the application in Grafana to make the provided panels and data sources available:
+NOTE: Both the OpenNMS Data Source plugin and {page-component-title} can be installed on your Grafana instance while you complete the migration.
 
-. Navigate to the http://127.0.0.1:3000/[home page] of your Grafana instance.
-. Click *Configuration>Plugins*:
+== Grafana setup
+
+After you have installed {page-component-title}, you must enable the plugin in Grafana to make the provided panels and datasources available:
+
+. Navigate to the home page of your Grafana instance.
+. In the left navigation menu, click menu:Configuration[Plugins]:
 +
-image::gf-plugins.png[Plugins, 100]
+image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins option is highlighted.", 250]
 
-. Search for and click on the OpenNMS Helm plugin.
+. Select the *OpenNMS Helm* plugin.
+** If the plugin is not listed, try restarting your Grafana instance.
+** If the issue persists, make sure the plugin is in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
+. Click menu:Config[Enable].
 +
-If the OpenNMS Helm plugin is not listed, try restarting the Grafana server.
-If the issue persists, make sure the plugin is in the grafana plugins directory (default is var/lib/grafana/plugins).
+NOTE: The Disable option indicates that the OpenNMS Helm plugin is already enabled.
+You can also choose *Update* to download the latest version of the plugin.
 
-. In the Config tab, click *Enable*.
-+
-A *Disable* button indicates the plugin is already enabled. 
+== Migrate datasources
 
-[[mig-convert-ds]]
-== Migrate Data Sources
+After you enable the {page-component-title} plugin, you can convert your existing datasources to use the OpenNMS Performance type.
+Note that when switching the type, you may need to re-enter the datasource's URL and authentication details.
 
-Once the {page-component-title} application is enabled, you can convert your existing OpenNMS data sources to use the OpenNMS Performance type.
-When switching the type, you may need to re-enter the URL and authentication details.
+{page-component-title} provides two datasource types; the OpenNMS Performance type is equivalent to the previous "OpenNMS" datasource.
 
-{page-component-title} provides two data source types.
-The "OpenNMS Performance" type is equivalent to the previous "OpenNMS" data source.
+== Verify dashboards
 
-[[mig-verify]]
-== Verify Dashboards
+After you have converted your datasources, we recommend that you ensure your existing dashboards render properly.
+If you encounter any errors during the migration, you can revert to the previous datasource type.
 
-After you convert the existing data sources to use the new OpenNMS Performance type, check that your existing dashboards render properly.
+== Remove OpenNMS Data Source plugin
 
-If you encounter any errors when switching, you can revert to the previous data source type.
+Finally, if your dashboards continue to work with the new datasource type, you can remove the OpenNMS Data Source plugin.
+Use the `grafana-cli` tool to remove it:
 
-[[mig-plugin-removal]]
-== Plugin Removal
-
-After you verify that your dashboards continue to work with the new data source, you can remove the previous plugin.
-
-Use the `grafana-cli` tool to remove the OpenNMS Data Source plugin from the command line:
-
-[source, shell]
-----
+[source, console]
 sudo grafana-cli plugins remove opennms-datasource
-----
 
 Restart Grafana to completely unregister the plugin:
 
-[source, shell]
-----
+[source, console]
 sudo service grafana-server restart
-----

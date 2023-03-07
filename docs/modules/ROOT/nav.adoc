@@ -4,15 +4,16 @@
 .Installation
 * xref:installation:requirements.adoc[Requirements]
 * xref:installation:rpm.adoc[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
-* xref:installation:debian.adoc[Install on Debian/Ubuntu]
+* xref:installation:debian.adoc[Debian/Ubuntu]
 * xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
 * xref:installation:source.adoc[Install from Source]
 
-.xref:getting_started:index.adoc[Get Started]
-* xref:getting_started:dashboard_planning.adoc[Plan Your Dashboard]
+.xref:getting_started:index.adoc[]
+* xref:getting_started:migrating_from_opennms_datasource.adoc[]
+* xref:getting_started:dashboard_planning.adoc[]
 * xref:getting_started:basic_walkthrough.adoc[]
-* xref:getting_started:importing.adoc[Import a Dashboard]
-* xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
+* xref:getting_started:importing.adoc[]
+** xref:getting_started:flow-deep-dive.adoc[]
 
 .xref:panel_configuration:index.adoc[Panel Configuration]
 * xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
