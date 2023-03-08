@@ -4,14 +4,12 @@
 
 This section describes how to install {page-component-title} on Debian and Ubuntu.
 
-IMPORTANT: These instructions assume that you do not have https://grafana.com[Grafana] installed on your target system.
+IMPORTANT: These instructions assume that you do not have Grafana installed on your target system.
 If you have an existing Grafana instance that you would like to use, see xref:plugin.adoc[].
 
 == Install stable
 
 Follow these steps to install the stable version of {page-component-title}:
-
-Create a new apt source file (e.g,: /etc/apt/sources.list.d/opennms.list), and add the following two lines:
 
 . Create a new apt source file (for example, `/etc/apt/sources.list.d/opennms.list`) and add the following code:
 +

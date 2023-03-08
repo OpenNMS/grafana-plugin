@@ -1,25 +1,21 @@
-= Install by Plugin
 
-[IMPORTANT]
-====
-These instructions assume that you already have https://grafana.com[Grafana] installed on the target system.
-If you do not have an existing instance of https://grafana.com[Grafana], refer to xref:rpm.adoc#helm-rpm-install[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)] or xref:debian.adoc#helm-install-debian[Install on Debian / Ubuntu].
-====
+= Install {page-component-title} Plugin
 
-== Install the application
+This section describes how to install the {page-component-title} plugin for Grafana.
 
-Use the grafana-cli tool to install {page-component-title} from the command line:
+IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
+If you do not have an existing Grafana instance, see xref:rpm.adoc[] or xref:debian.adoc[].
 
-[source, shell]
-----
+== Installation
+
+Use the `grafana-cli` tool to install {page-component-title}:
+
+[source, console]
 grafana-cli plugins install opennms-helm-app
-----
 
-This installs the plugin into your grafana plugins directory.
-The default is /var/lib/grafana/plugins.
-http://docs.grafana.org/plugins/installation/[More information on the cli tool].
+This installs the plugin in your Grafana plugins directory (default: `/var/lib/grafana/plugins`).
+For more information on `grafana-cli`, see the http://docs.grafana.org/plugins/installation/[official Grafana documentation].
 
 == Next steps
 
-xref:getting_started:index.adoc#[Set up your first dashboard].
-
+After you install the {page-component-title} plugin, you can xref:getting_started:index.adoc[create your first dashboard].

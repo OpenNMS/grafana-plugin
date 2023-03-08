@@ -1,6 +1,6 @@
+
 :imagesdir: ../assets/images
-[.lead]
-[[pc-expressions]]
+
 = Expressions
 
 {page-component-title} supports https://commons.apache.org/proper/commons-jexl/index.html[JEXL] mathematical and conditional operators in performance data queries.

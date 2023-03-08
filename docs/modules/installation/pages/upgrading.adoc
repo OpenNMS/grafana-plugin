@@ -1,24 +1,24 @@
 
-= Upgrade from Older Versions
+= Upgrade {page-component-title}
 
+This section describes how to upgrade your {page-component-title} installation.
 Usually, upgrading simply involves installing the new package.
-However, major version releases can sometimes introduce breaking changes, in which case you may need additional steps to upgrade.
+Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-== Helm 3 to 4+ migration
+== Upgrade {page-component-title} 3 to 4+
 
-[IMPORTANT]
-====
-Helm 4 introduced a breaking change, renaming the FM (Fault Management) datasource to the Entities datasource.
-You will need to follow a few steps to upgrade your dashboards.
-====
+IMPORTANT: {page-component-title} 4 introduced a breaking change: renaming the Fault Management datasource to "Entries."
+Because of this, you must follow some extra steps to upgrade your dashboards.
 
-Before you do anything else, make sure you have installed the latest Helm plugin.
-Make sure you also have https://nodejs.org/[Node.js] installed.
+Before proceeding, make sure that you have installed the latest {page-component-title} plugin.
+You should also have https://nodejs.org/[Node.js] installed.
 
-=== Export datasources with Wizzy
+=== Upgrade datasources
 
-First, install Wizzy with `npm`, and create a place to put your datasources:
+Follow these steps to upgrade your datasources:
 
+. Install Wizzy and create a directory for your datasources:
++
 [source, console]
 ----
 npm i -g wizzy
@@ -26,8 +26,8 @@ mkdir /tmp/wizzy
 cd /tmp/wizzy
 ----
 
-Next, configure Wizzy to speak to your Grafana instance and dump your datasources:
-
+. Configure Wizzy to communicate with your Grafana instance:
++
 [source, console]
 ----
 # create a local wizzy project directory
@@ -36,21 +36,19 @@ wizzy init
 wizzy set grafana url http://localhost:3000
 wizzy set grafana username admin
 wizzy set grafana password admin
-# dump datasources to the project directory
+----
+
+. Export your datasources to the Wizzy project directory:
++
+[source, console]
 wizzy import datasources
-----
 
-Then, convert any `fault` datasources to be `entity` datasources:
-
+. Convert any `fault` datasources to `entity`:
++
 [source, console]
-----
 perl -pi -e 's/opennms-helm-fault-datasource/opennms-helm-entity-datasource/g' datasources/*.json
-----
 
-Finally, publish your changes back to Grafana:
-
+. Publish your changes to your Grafana instance:
++
 [source, console]
-----
 wizzy export datasources
-----
-

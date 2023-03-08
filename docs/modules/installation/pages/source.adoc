@@ -1,10 +1,17 @@
 
-= Install from Source
+= Install From Source
 
-== Build
+This section describes how to install {page-component-title} from source.
 
-Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory:
+IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
+If you do not have an existing Grafana instance, see xref:rpm.adoc[] or xref:debian.adoc[].
 
+== Build {page-component-title}
+
+Follow these steps to build {page-component-title}:
+
+. Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory:
++
 [source, console]
 ----
 mkdir -p /var/lib/grafana/plugins
@@ -12,8 +19,8 @@ cd /var/lib/grafana/plugins
 git clone https://github.com/OpenNMS/opennms-helm.git opennms-helm-app
 ----
 
-Compile the application:
-
+. Compile {page-component-title}:
++
 [source, console]
 ----
 cd /var/lib/grafana/plugins/opennms-helm-app
@@ -21,18 +28,22 @@ npm install
 npm run build
 ----
 
-Restart Grafana:
-
+. Restart Grafana:
++
 [source, console]
-----
 systemctl restart grafana-server
-----
 
-== Build Docker Image from source
+== Build Docker image
 
-You need to compile the source code as described in the "Build" section.
-Create a tarball artifact from compiled source code:
+We use the following conventions for build arguments in this procedure:
 
+* *GRAFANA_VERSION:* The version number for Grafana (default: `latest`).
+* *OPENNMS_HELM_VERSION:* Used as a label in `org.opennms.helm.version` to identify the running {page-component-title} version.
+
+Follow these steps to build a Docker image from source:
+
+. Create a tarball artifact from the compiled source code:
++
 [source, console]
 ----
 mkdir -p ./artifacts
@@ -42,8 +53,8 @@ tar --exclude='.git' \
     -czf "./artifacts/opennms-helm.tar.gz" .
 ----
 
-Build Docker image and install the plugin from the tarball artifact:
-
+. Build the Docker image and install the plugin from the tarball artifact:
++
 [source, console]
 ----
 docker build \
@@ -52,18 +63,11 @@ docker build \
     -t myhelm:snapshot .
 ----
 
-Run the build Docker image:
-
+. Run Docker:
++
 [source, console]
-----
 docker run -p 3000:3000 myhelm:snapshot
-----
 
-To build the Docker image the following conventions for build arguments are set:
+== Next steps
 
-* GRAFANA_VERSION: The version number of Grafana, default is `latest`
-* OPENNMS_HELM_VERSION: Used as in label `org.opennms.helm.version` in the Docker image to identify the running version
-
-== Next Steps
-
-See xref:getting_started:index.adoc#[Getting Started with Helm] for help in setting up your first dashboard.
+After you install Grafana and {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].

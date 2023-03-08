@@ -1,18 +1,17 @@
 
 = Requirements
 
+This section describes the requirements for installing {page-component-title}.
+
 == Runtime requirements
 
-* OpenNMS {page-component-title} works with http://docs.grafana.org/installation[Grafana Server] version {grafana-version-required} and up.
-It has been tested with Grafana versions up to {grafana-version-tested} at the time of release.
+For runtime operations, you need to install and set up either https://www.opennms.org[OpenNMS Horizon] or https://www.opennms.com[Meridian].
+You also need a http://docs.grafana.org/installation[Grafana instance] (version {grafana-version-required} or newer).
 
-The Grafana Dashboard Report feature in Meridian/Horizon requires the
-https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
+NOTE: {page-component-title} has been tested with Grafana versions up to {grafana-version-tested}.
+
+The OpenNMS Grafana Dashboard Report feature requires the https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
 
 == Build requirements
 
-* https://nodejs.org/en/download[Node.js >= {node-js-build-version}]
-
-== And of course ...
-
-* https://www.opennms.org[OpenNMS Horizon] or https://www.opennms.com[OpenNMS Meridian]
+To build {page-component-title}, you must have https://nodejs.org/en/download[Node.js] installed (version {node-js-build-version} or newer).

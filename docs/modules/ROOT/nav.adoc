@@ -2,11 +2,12 @@
 * xref:about:introduction.adoc[]
 
 .Installation
-* xref:installation:requirements.adoc[Requirements]
-* xref:installation:rpm.adoc[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
+* xref:installation:requirements.adoc[]
 * xref:installation:debian.adoc[Debian/Ubuntu]
-* xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
-* xref:installation:source.adoc[Install from Source]
+* xref:installation:rpm.adoc[RPM-Based Linux]
+* xref:installation:plugin.adoc[{page-component-title} Plugin]
+* xref:installation:source.adoc[From Source]
+* xref:installation:upgrading.adoc[]
 
 .xref:getting_started:index.adoc[]
 * xref:getting_started:migrating_from_opennms_datasource.adoc[]
@@ -17,7 +18,7 @@
 
 .xref:panel_configuration:index.adoc[Panel Configuration]
 * xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
-* xref:panel_configuration:dynamic-dashboard.adoc[Create Dynamic Dashboards]
+* xref:panel_configuration:dynamic-dashboard.adoc[]
 * xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
