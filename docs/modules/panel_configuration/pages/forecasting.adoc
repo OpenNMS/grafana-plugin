@@ -1,104 +1,107 @@
+
 :imagesdir: ../assets/images
-[.lead]
-[[pc-forecasting]]
+
 = Use Filters to Forecast Metrics
 
-OpenNMS includes several predefined filters that {page-component-title} can use to display forecast metrics in a panel.
+Horizon and Meridian include several predefined filters that {page-component-title} can use to display forecast metrics in a panel.
+
 Adding a forecast filter can help you anticipate when you might need to make changes to your network depending on, for example, anticipated bandwidth usage, disk space capacity, network traffic, and so on.
+This section describes how to create forecast metrics based on network usage, using `ifHCOutOctets` (the number of octets sent by an interface).
 
-This procedure describes how to create forecast metrics on network usage, using the `ifHCOutOctets` attribute (the number of octets sent by the interface).
-
-[[pc-create-panel]]
 == Create a network usage panel
 
-. In your dashboard, click the *Add Panel* icon.
+Follow these steps to create a panel that visualizes network usage:
+
+. Navigate to your {page-component-title} dashboard.
+. Click the *Add Panel* symbol.
 . Click *Add Query*.
-. Select the datasource from the *Query* list.
-You need to select a xref:datasources:performance_datasource.adoc[performance datasource].
+. Select a datasource from the *Query* list.
++
+NOTE: You must select a xref:datasources:performance_datasource.adoc[Performance datasource].
 
-. Choose *Attribute* from the *Type* list.
-. Specify the node you want to monitor.
-. Specify the resource ID.
-. Under *Attribute*, click the *Tag* icon to display a list of available attributes, and select `ifHCOutOctets`.
+. Choose *Attribute* from the *Type* icon.
+. Specify the node that you want to monitor.
+. Specify the appropriate resource ID.
+. Under Attribute, click the *Tag* symbol to display a list of available attributes.
+. Select `ifHCOutOctets`.
 
-To display this information in bits, create an expression:
+Next, create an expression to display this information in bits instead of bytes:
 
 . Click *Add Query*.
 . Choose *Expression* from the *Type* list.
-. In the *Expression* box, enter `ifHCOutOctets * 8`.
-. Add a label (for example, `Out`).
-. Hide the `ifHCOutOctets` attribute you configured by clicking the disable/enable (eye) icon beside it.
+. In the *Expression* box, type `ifHCOutOctets * 8`.
+. Specify a label (for example, `Out`).
+. Hide the `ifHCOutOctets` attribute by clicking the *eye* symbol beside it.
 
 == Create a forecast filter
 
+Follow these steps to create a forecast filter for your dashboard:
+
 . Click *Add Query*.
 . Choose *Filter* from the *Type* list.
-. Click the *Filter Type* label, select `HoltWinters` from the dialog, and click *Select*.
-.. Note that the far-right column displays requirements on the node being queried (for example, R, Java).
-. For the Input column, specify the name of the attribute or expression you wish to forecast, in this case, `Out`.
-. Specify an output, or accept the default (`HW`).
-.. The output is the prefix for the lower and upper fit (how successfully the forecast method fits to your data).
-. Specify the number of periods to forecast, the size of the period in seconds, and the desired probability in the appropriate fields.
-.. Note that the number of periods to forecast, the size of the period, and the time range are interdependent.
-For example, the following specifies a three-hour forecast:
+. Select *HoltWinters* from the *Filter Type* list, and click *Select*.
+** Note that the far-right column displays requirements for the node that is being queried (for example, R, Java).
+. Specify the name of the attribute or expression that you want to forecast in the *Input* box (in this case, `Out`).
+. Specify an output or continue with the default (`HW`).
+** The output is the prefix for the lower and upper fit (how successfully the forecast method fits to your data).
+. Specify the number of periods to forecast, the length of the period (in seconds), and the desired probability in the appropriate boxes.
+** Note that these fields are interdependent.
+For example, this configuration specifies a three-hour forecast:
 +
-image::pc-periods.png[Periods, 300]
+image::pc-periods.png["Example configuration settings for a forecast.", 400]
 
-.. Your time range must include at least more than twice the period size to get the historical data required for the forecast.
-For example, to forecast a period of one hour (3600 seconds), you need to specify a time range greater than two hours.
-.. Consider the seasonality of the data when specifying a time range (for example, you may not want weekend network usage to be included in a forecast of usage during regular business hours).
-. If you have noisy or spiky data, forecasting does not work as well.
-You should also add the Chomp and Outlier filters, and move them so that they appear before the HoltWinters filter in the list of queries.
-You must specify an input for the outlier filter.
-. Save the dashboard.
+** Your time range must include at least more than twice the period size (in this case, 7200 seconds or more) to retrieve the historical data required for the forecast.
+** Consider the seasonality of your data when specifying a time range (for example, you may not want to include weekend network usage in a forecast of traffic during regular business hours).
+** Note that if your data is noisy or spiky, forecasting does not work as well.
+In these cases, you should add the `Chomp` and `Outlier` filters and rearrange them so they appear before the `HoltWinters` filter in the list of queries.
+You must specify an input for the `Outlier` filter.
+. Click *Save*.
 
 === Display forecast data
-Since the default time range for a panel returns data from the past to the present, you need to create a custom time range to display forecast data beyond the current time.
 
-. In the upper-right of the dashboard, select *Custom time range* from the time range drop-down.
-. Specify the start of your data range in the *From* field (for example, `now-6h`).
-. For the end time, specify a time in the future, as in the following:
+Because the default time range for a panel returns data from the past to the present, you must create a custom time range to display forecast data:
+
+. Select *Custom Time Range* from the *Time Range* list.
+. Specify the start of your time range in the *From* box (for example, `now-6h`).
+. Specify the end of your time range in the *To* box:
 +
-image::pc-time-range.png[Range, 400]
+image::pc-time-range.png["Example dashboard time range configuration.", 400]
+
+The panel displays the forecast data for the time period that you specify:
 +
-The panel displays the forecast you specified:
-+
-image::pc-forecast.png[Periods, 600]
+image::pc-forecast.png["Example panel displaying forecast data.", 700]
 
-. Experiment with changing the time range and forecast results.
-The further into the future you forecast, the less authoritative the forecast will be.
+You can experiment with the time range function to see how it updates your forecast results.
+Note that the further into the future you forecast, the less authoritative the data will be.
 
-[[predefined-filters]]
-=== Predefined filters
+== Filters
 
-The following table describes the pre-defined filters from OpenNMS that Helm provides for forecast metrics:
+The following predefined filters can be used to create forecasting metrics:
 
-[cols="15%,40%,45%"]
+[options="autowidth"]
 |===
-| Filter
-| Description
-| Use
+| Filter    | Description   | Use
 
 | Chomp
-| Strips leading and trailing rows that contain nothing but NaNs/null values.
-| This filter is useful when the values from the data source do not cover the entire time interval the report uses.
+| Strips leading and trailing rows that contain only `NaN`/`null` values.
+| This filter is useful when the values from the data source do not cover the entire time interval used by the report.
 
 | HoltWinters
-| Performs Holt-Winters forecasting, a way to model and predict the behavior of a sequence of values over time.
-| Creates forecasts of your data based on the parameters you specify.
+| Performs Holt-Winters forecasting.
+| Creates forecasts of your data based on the parameters that you specify.
 
 | Outlier
-| Removes data points that differ significantly from other data and replaces them with interpolated values.
-| Helps to smooth the data to improve forecasting results.
+| Removes data points that differ significantly from other data, and replaces them with interpolated values.
+| Helps to smooth data and improve forecasting results.
 
 | Trend
 | Fits a trend line or polynomial to a given column.
-| Displays upwards or downwards changes in the forecast data.
+| Displays upwards or downwards changes in forecast data.
 
 | JEXL
-| Generic JEXL expression filter
-| Filters on mathematical and conditional operators provided by JEXL.
-For example, you could specify a filter to display the SUM of certain data.
+| Generic JEXL expression filter.
+| Filters on mathematical and conditional operators that JEXL provides.
+For example, you could specify a filter to display the sum of certain data.
 
 | Percentile
 | Calculates percentiles.
@@ -108,4 +111,3 @@ For example, you could specify a filter to display the SUM of certain data.
 | Calculates the derivative (rate of change) between rows.
 | Displays the rate of change during the forecast period.
 |===
-

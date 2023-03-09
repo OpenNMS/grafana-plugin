@@ -16,10 +16,10 @@
 * xref:getting_started:importing.adoc[]
 ** xref:getting_started:flow-deep-dive.adoc[]
 
-.xref:panel_configuration:index.adoc[Panel Configuration]
-* xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
+.xref:panel_configuration:index.adoc[]
+* xref:panel_configuration:forecasting.adoc[]
 * xref:panel_configuration:dynamic-dashboard.adoc[]
-* xref:panel_configuration:expressions.adoc[Expressions]
+* xref:panel_configuration:expressions.adoc[]
 
 .Datasources
 * xref:datasources:performance_datasource.adoc[]
@@ -31,4 +31,5 @@
 * xref:contributing:how-to-build-docs.adoc[]
 
 .Reference
-* xref:reference:severities.adoc[Severities]
+* xref:reference:how-to-build-with-docker.adoc[]
+* xref:reference:severities.adoc[]
