@@ -1,6 +1,6 @@
 import { SelectableValue } from '@grafana/data'
 import { GrafanaDatasource } from 'hooks/useDataSources'
-import { ActiveFilter } from '../../hooks/useFilterData'
+import { ActiveFilter } from '../../datasources/entity-ds-react/types'
 
 export interface FilterControlProps {
     filterEditor: {

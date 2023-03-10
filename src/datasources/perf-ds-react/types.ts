@@ -11,7 +11,7 @@ export interface PerformanceDataSourceOptions extends DataSourceJsonData {
 
 // TODO: check which of these are required
 export interface PerformanceQueryFilterParameter {
-  default: any | null;
+  default: any | null; // probably a string | null
   description?: string;
   displayName?: string;
   key?: string;

@@ -12,7 +12,8 @@ import {
 import { GrafanaDatasource } from 'hooks/useDataSources'
 import { useEntities } from 'hooks/useEntities'
 import { useEntityProperties } from 'hooks/useEntityProperties'
-import { ActiveFilter, useFilterData } from '../../hooks/useFilterData'
+import { useFilterData } from '../../hooks/useFilterData'
+import { ActiveFilter } from '../../datasources/entity-ds-react/types'
 import { ClientDelegate } from 'lib/client_delegate'
 
 interface FilterPanelFilterSelectorProps {

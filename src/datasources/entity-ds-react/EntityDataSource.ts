@@ -70,7 +70,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             }
 
             try {
-                const rowData = await queryEntity(request.entityType , filter, this.client)
+                const rowData = await queryEntity(request.entityType, filter, this.client)
                 fullData.push(rowData)
             } catch (e) {
                 console.error(e)

@@ -41,7 +41,6 @@ export const EntityClauseLabel = ({ type, nestingType, index, setClauseType }: E
     const subLabel = boxSubLabel();
     const subsubLabel = boxSubSubLabel();
 
-
     return (
         <>
             {
@@ -84,7 +83,6 @@ export const EntityClauseLabel = ({ type, nestingType, index, setClauseType }: E
                         }}>
                         {subsubLabel}
                     </FormWithStyle>
-
                 </>
             }
         </>

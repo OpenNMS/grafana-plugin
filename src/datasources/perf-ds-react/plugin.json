@@ -17,6 +17,7 @@
     "logos": {
       "small": "img/pm-ds.svg",
       "large": "img/pm-ds.svg"
-    }
+    },
+    "version": "9"
   }
 }

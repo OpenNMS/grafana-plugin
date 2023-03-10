@@ -7,7 +7,8 @@ import { ALL_SELECTION_VALUE } from 'constants/constants'
 import { loadFilterEditorData, saveFilterEditorData } from 'lib/localStorageService'
 import { FilterControlProps } from './FilterPanelTypes'
 import { useEntities } from '../../hooks/useEntities'
-import { ActiveFilter, FilterEditorData, FilterSelectableValues, useFilterData } from '../../hooks/useFilterData'
+import { useFilterData } from '../../hooks/useFilterData'
+import { ActiveFilter, FilterEditorData, FilterSelectableValues } from '../../datasources/entity-ds-react/types'
 
 // Values actually returned by OpenNMS metricFindQuery
 interface OnmsMetricFindValue extends MetricFindValue {

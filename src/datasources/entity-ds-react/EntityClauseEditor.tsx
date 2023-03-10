@@ -16,9 +16,10 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
     useEffect(() => {
         const updatedFilter = new API.Filter();
         updatedFilter.limit = 10;
-        //Build the filter. This could be extracted to a helper function.
+
+        // Build the filter. This could be extracted to a helper function.
         clauses.forEach((d, i) => {
-            if (d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST && clauses[i].comparator?.value) {
+            if ((d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST) && clauses[i].comparator?.value) {
                 updatedFilter.withAndRestriction(
                     new API.Restriction(
                         clauses[i].attribute?.value?.id,

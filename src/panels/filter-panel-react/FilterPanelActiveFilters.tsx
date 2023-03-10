@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Label, SegmentInput, Select } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay';
-import { ActiveFilter } from '../../hooks/useFilterData'
+import { ActiveFilter } from '../../datasources/entity-ds-react/types'
 import { SelectableValue } from '@grafana/data';
 
 interface FilterPanelActiveFiltersProps {
