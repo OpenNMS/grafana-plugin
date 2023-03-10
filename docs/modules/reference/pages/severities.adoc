@@ -1,6 +1,6 @@
 
 = Severities
 
-The severities used in OpenNMS are defined in this matrix:
+This matrix defines the severities that OpenNMS uses:
 
 image::severities.png["Table of OpenNMS severity definitions.", 700]

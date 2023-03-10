@@ -1,7 +1,7 @@
 
 = Install on RPM-Based Linux
 
-This section describes how to install {page-component-title} on RPM-based Linux distributions (CentOS, Fedora, OpenSuse, RedHat).
+This section describes how to install {page-component-title} on RPM-based Linux distributions (CentOS, Fedora, openSUSE, RedHat).
 
 IMPORTANT: These instructions assume that you do not have Grafana installed on your target system.
 If you have an existing Grafana instance that you would like to use, see xref:plugin.adoc[].

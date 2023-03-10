@@ -1,7 +1,7 @@
 
 = Requirements
 
-This section describes the requirements for installing {page-component-title}.
+This section describes the requirements to install {page-component-title}.
 
 == Runtime requirements
 

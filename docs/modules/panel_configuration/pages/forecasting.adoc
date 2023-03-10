@@ -68,7 +68,6 @@ Because the default time range for a panel returns data from the past to the pre
 image::pc-time-range.png["Example dashboard time range configuration.", 400]
 
 The panel displays the forecast data for the time period that you specify:
-+
 image::pc-forecast.png["Example panel displaying forecast data.", 700]
 
 You can experiment with the time range function to see how it updates your forecast results.
@@ -76,15 +75,15 @@ Note that the further into the future you forecast, the less authoritative the d
 
 == Filters
 
-The following predefined filters can be used to create forecasting metrics:
+You can use the following predefined filters to create forecasting metrics:
 
-[options="autowidth"]
+[cols="1,2,2"]
 |===
 | Filter    | Description   | Use
 
 | Chomp
 | Strips leading and trailing rows that contain only `NaN`/`null` values.
-| This filter is useful when the values from the data source do not cover the entire time interval used by the report.
+| Useful when the values from the data source do not cover the entire time interval that the report uses.
 
 | HoltWinters
 | Performs Holt-Winters forecasting.

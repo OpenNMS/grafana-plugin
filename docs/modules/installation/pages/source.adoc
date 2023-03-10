@@ -1,5 +1,5 @@
 
-= Install From Source
+= Install from Source
 
 This section describes how to install {page-component-title} from source.
 
