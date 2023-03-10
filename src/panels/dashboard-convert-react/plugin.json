@@ -1,0 +1,14 @@
+{
+  "type": "panel",
+  "name": "Dashboard Convert Panel React",
+  "id": "opennms-helm-dashboard-convert-panel-react",
+
+  "info": {
+    "description": "OpenNMS Dashboard Convert Panel React",
+    "logos": {
+      "small": "img/filter.svg",
+      "large": "img/filter.svg"
+    },
+    "version": "9"
+  }
+}

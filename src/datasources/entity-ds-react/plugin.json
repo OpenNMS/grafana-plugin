@@ -11,7 +11,7 @@
     "logos": {
       "small": "img/entity-ds.svg",
       "large": "img/entity-ds.svg"
-    }
+    },
+    "version": "9"
   }
-
 }

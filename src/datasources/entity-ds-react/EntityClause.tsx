@@ -18,22 +18,27 @@ export const EntityClause = ({
     index,
     hasMultipleClauses
 }: EntityClauseProps) => {
-    const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>([]);
+
+    const createComparatorOptions = () => {
+      return Object.keys(API.Comparators).map(key => API.Comparators[key])
+    }
+
+    const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>(createComparatorOptions());
     const [comparedOptions, setComparedOptions] = useState<Array<SelectableValue<string>>>([]);
 
     useEffect(() => {
-        const { values, comparators } = getValuesAndComparatorsFromClause();
+      const { values, comparators } = getValuesAndComparatorsFromClause();
 
-        if (values) {
-            buildOptionsFromAttributeValues(values);
-        }
+      if (values) {
+          buildOptionsFromAttributeValues(values);
+      }
 
-        if (comparators) {
-            setComparatorOptions(comparators)
-            setComparator(index, comparators[0])
-        }
+      if (comparators) {
+          setComparatorOptions(comparators)
+          setComparator(index, comparators[0])
+      }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clause.attribute])
 
     const buildOptionsFromAttributeValues = (values: string[]) => {
@@ -119,7 +124,6 @@ export const EntityClause = ({
                     setComparator(index, text);
                 }}
                 options={comparatorOptions}
-
             />
             {clause.attribute?.value?.values && Object.keys(clause.attribute?.value.values).length > 0 ?
                 <Segment

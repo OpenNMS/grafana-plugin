@@ -25,6 +25,7 @@ import { getSmallerAPIFilter } from './EntityHelper';
 const clausesReducer = (clauses: OnmsEntityClause[], action: Action): OnmsEntityClause[] => {
     let newClauses: OnmsEntityClause[] = []
     let newClause: OnmsEntityClause = { ...defaultClause }
+
     switch (action.type) {
         case ClauseActionType.reset:
             newClauses = [newClause]
@@ -51,6 +52,7 @@ const clausesReducer = (clauses: OnmsEntityClause[], action: Action): OnmsEntity
         case ClauseActionType.delete:
             newClauses = [...clauses]
             newClauses.splice(action.index, 1)
+
             if (newClauses[action.index] && newClauses[action.index].type !== clauses[action.index].type) {
                 if (newClauses[action.index].nestingType !== clauses[action.index].nestingType) {
                     newClauses[action.index].nestingType = clauses[action.index].nestingType
@@ -71,7 +73,6 @@ const addClause = (clauses: OnmsEntityClause[], clause: OnmsEntityClause, index:
 }
 
 export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
-
     const client = datasource.client;
     const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' })
     const [clauses, dispatchClauses] = useReducer(clausesReducer, query.clauses || [{ ...defaultClause }])
@@ -94,19 +95,15 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter])
 
-    useEffect(() => {
-        dispatchClauses({ type: ClauseActionType.reset })
-    }, [value])
-
     const updateQuery = () => {
-        onChange({
-            ...query,
-            selectType: value,
-            filter,
-            clauses
-        })
+      onChange({
+          ...query,
+          selectType: value,
+          filter,
+          clauses
+      })
 
-        onRunQuery()
+      onRunQuery()
     }
 
     const updateLimit = (newLimit) => {
@@ -136,6 +133,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
                 value={value}
                 onChange={(item) => {
                     setValue(item);
+                    dispatchClauses({ type: ClauseActionType.reset })
                 }}
                 allowEmptyValue={false}
                 options={[

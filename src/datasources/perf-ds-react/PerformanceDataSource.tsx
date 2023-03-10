@@ -97,15 +97,16 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                     const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
 
                     const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
-                        if (interpolatedSource.nodeId) {
+                        if (interpolatedSource.nodeId !== undefined) {
                             // Calculate the effective resource id after the interpolation
                             interpolatedSource.resourceId = getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
-                            // remove nodeId since it should not be part of the Rest API request payload
+                            // remove nodeId since it should not be part of the Rest API measurement request payload
                             delete interpolatedSource.nodeId;
                         }
                     }
 
                     const sources = interpolate(source, attributes, interpolationVars, callback)
+
                     if (query.source && query.source.length > 0) {
                         query.source = query.source.concat(sources)
                     } else {

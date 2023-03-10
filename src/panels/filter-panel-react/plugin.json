@@ -8,6 +8,7 @@
     "logos": {
       "small": "img/filter.svg",
       "large": "img/filter.svg"
-    }
+    },
+    "version": "9"
   }
 }
