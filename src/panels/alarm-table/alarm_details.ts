@@ -105,8 +105,8 @@ export class AlarmDetailsCtrl {
 
   // required to correctly re-assign values of the retrieved feedback to the working feedback
   clone(feedback) {
-    let cloned  = [] as Model.OnmsSituationFeedback[];
-    for (var i = 0; i < feedback.length; i++) {
+    const cloned  = [] as Model.OnmsSituationFeedback[];
+    for (let i = 0; i < feedback.length; i++) {
       let fb = new Model.OnmsSituationFeedback();
       fb.situationKey = feedback[i].situationKey;
       fb.situationFingerprint = feedback[i].situationFingerprint;

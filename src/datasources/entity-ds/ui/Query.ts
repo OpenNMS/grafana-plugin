@@ -76,7 +76,7 @@ export class Query {
 
     removeClause(clause?: Clause) {
         if (clause) {
-            var index = this.clauses.indexOf(clause);
+            const index = this.clauses.indexOf(clause);
             if (index >= 0) {
                 this.clauses.splice(index, 1);
                 return true;
@@ -100,7 +100,7 @@ export class Query {
 
     removeOrderBy(orderBy?: OrderBy) {
         if (this.root && orderBy) {
-            var index = this.orderBy.indexOf(orderBy);
+            const index = this.orderBy.indexOf(orderBy);
             if (index >= 0) {
                 this.orderBy.splice(index, 1);
                 return true;

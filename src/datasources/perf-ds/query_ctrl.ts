@@ -35,7 +35,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   openNodeSelectionModal() {
-    var self = this;
+    const self = this;
     this.showSelectionModal(
       'nodes',
       {
@@ -72,10 +72,10 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   openResourceSelectionModal() {
-    var self = this;
+    const self = this;
 
     function filterResources(resources, query) {
-      var filteredResources = resources;
+      let filteredResources = resources;
       if (query.length >= 1) {
         query = query.toLowerCase();
         filteredResources = _.filter(resources, function (resource) {
@@ -117,8 +117,8 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
       },
       function (resource) {
         // Exclude the node portion of the resource id
-        var re = /node(Source)?\[.*?]\.(.*)$/;
-        var match = re.exec(resource.id);
+        const re = /node(Source)?\[.*?]\.(.*)$/;
+        const match = re.exec(resource.id);
         self.target.resourceId = match ? match[2] : undefined;
         self.targetBlur('resourceId');
       }
@@ -126,7 +126,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   openAttributeSelectionModal(prop) {
-    var self = this;
+    const self = this;
 
     if (!prop) {
       prop = 'attribute';
@@ -141,7 +141,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
         return self.datasource
           .suggestAttributes(self.target.nodeId, self.target.resourceId, query)
           .then(function (attributes) {
-            var namedAttributes = [] as any[];
+            const namedAttributes = [] as any[];
             _.each(attributes, function (attribute) {
               namedAttributes.push({ name: attribute });
             });
@@ -160,7 +160,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   openStringPropertySelectionModal(prop) {
-    var self = this;
+    const self = this;
 
     if (!prop) {
       prop = 'attribute';
@@ -190,7 +190,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   openFilterSelectionModal() {
-    var self = this;
+    const self = this;
     this.showSelectionModal(
       'filters',
       {
@@ -214,7 +214,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   }
 
   showSelectionModal(label: string, columns: any, search: any, callback: Function) {
-    var scope = this.$rootScope.$new();
+    const scope = this.$rootScope.$new();
 
     scope.label = label;
     scope.columns = columns;
@@ -242,7 +242,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
     if (required === undefined) {
       required = true;
     }
-    var errorMessage = this.validateTarget(targetId, required);
+    const errorMessage = this.validateTarget(targetId, required);
     if (errorMessage) {
       this.appEvents.emit('alert-error', ['Error', errorMessage]);
       this.error = errorMessage;
@@ -255,7 +255,7 @@ export class OpenNMSQueryCtrl extends QueryCtrl {
   validateTarget(targetId?: string, required?: boolean) {
     // console.debug('validateTarget(' + targetId + ',' + required + ')', this.target);
     if (this.target.type === QueryType.Attribute || this.target.type === QueryType.Expression) {
-      var messages = {
+      const messages = {
         nodeId: 'You must supply a node id.',
         resourceId: 'You must supply a resource id.',
         attribute: 'You must supply an attribute.',

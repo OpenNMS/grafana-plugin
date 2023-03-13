@@ -10,11 +10,11 @@ interface PerfVariables extends Array<PerfVariable> {};
 function cartesianProductOfArrays(arrays) {
   // Based on the code from http://stackoverflow.com/questions/15298912/
   // javascript-generating-combinations-from-n-arrays-with-m-elements
-  var r = [] as any[], max = arrays.length - 1;
+  let r = [] as any[], max = arrays.length - 1;
 
   function helper(arr, i) {
-    for (var j = 0, l = arrays[i].length; j < l; j++) {
-      var a = arr.slice(0); // clone arr
+    for (let j = 0, l = arrays[i].length; j < l; j++) {
+      let a = arr.slice(0); // clone arr
       a.push(arrays[i][j]);
       if (i === max) {
         r.push(a);
@@ -30,21 +30,21 @@ function cartesianProductOfArrays(arrays) {
 
 function cartesianProductOfVariables(variables: PerfVariables) {
   // Collect the values from all of the variables
-  var allValues = [] as any[];
+  const allValues = [] as any[];
   _.each(variables, function (variable) {
     allValues.push(variable.value);
   });
 
   // Generate the cartesian product
-  var productOfAllValues = cartesianProductOfArrays(allValues);
+  const productOfAllValues = cartesianProductOfArrays(allValues);
 
   // Rebuild the variables
-  var productOfAllVariables = [] as PerfVariables[];
+  const productOfAllVariables = [] as PerfVariables[];
   _.each(productOfAllValues, function (rowOfValues) {
-    var rowOfVariables = [] as PerfVariable[];
-    for (var i = 0, l = variables.length; i < l; i++) {
+    const rowOfVariables = [] as PerfVariable[];
+    for (let i = 0, l = variables.length; i < l; i++) {
       // Deep clone
-      var variable = JSON.parse(JSON.stringify(variables[i]));
+      const variable = JSON.parse(JSON.stringify(variables[i]));
       variable.value = rowOfValues[i];
       rowOfVariables.push(variable);
     }
@@ -65,7 +65,7 @@ function defaultReplace(value: any, variables: PerfVariables) {
   if (_.isNull(value) || _.isEmpty(value)) {
     return value;
   }
-  var interpolatedValue = value;
+  let interpolatedValue = value;
   _.each(variables, function (variable) {
     const regexVarName = "\\$" + variable.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     interpolatedValue = interpolatedValue.replace(new RegExp(regexVarName, 'g'), variable.value);
@@ -97,13 +97,13 @@ function defaultReplace(value: any, variables: PerfVariables) {
  */
 export function interpolate(object: any, attributes: any[], variables: PerfVariables, callback: (value: any) => void = () => {}, containsVariable: (value: any|undefined, variableName: string) => boolean = defaultContainsVariable, replace: (value: any, variables: PerfVariables) => any = defaultReplace): any {
   // Add the index variable with a single value
-  var variablesWithIndex = _.clone(variables);
+  const variablesWithIndex = _.clone(variables);
   variablesWithIndex.push({name: 'index', value: [0]});
 
   // Collect the list of variables that are referenced by one or more of the keys
-  var referencedVariables = [] as PerfVariables;
+  const referencedVariables = [] as PerfVariables;
   _.each(variablesWithIndex, function (variable) {
-    var isVariableReferenced = _.find(attributes, function (attribute) {
+    const isVariableReferenced = _.find(attributes, function (attribute) {
       return containsVariable(object[attribute], variable.name);
     });
 
@@ -119,11 +119,11 @@ export function interpolate(object: any, attributes: any[], variables: PerfVaria
   }
 
   // Generate all possible permutations of the referenced variable's values
-  var productOfAllVariables = cartesianProductOfVariables(referencedVariables);
+  const productOfAllVariables = cartesianProductOfVariables(referencedVariables);
 
   // Perform the required variable substitution
-  var objects = [] as any[];
-  var index = 0;
+  const objects = [] as any[];
+  let index = 0;
   _.each(productOfAllVariables, function (rowOfReferencedVariables) {
     // Update the value of the index variable to reflect the index of the row
     _.each(rowOfReferencedVariables, function (variable) {
@@ -133,7 +133,7 @@ export function interpolate(object: any, attributes: any[], variables: PerfVaria
       }
     });
 
-    var o = _.clone(object);
+    let o = _.clone(object);
     _.each(attributes, function (attribute) {
       o[attribute] = replace(o[attribute], rowOfReferencedVariables);
     });

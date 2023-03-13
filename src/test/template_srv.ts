@@ -27,8 +27,8 @@ export class TemplateSrv {
   updateTemplateData() {
     this.index = {};
 
-    for (var i = 0; i < this.variables.length; i++) {
-      var variable = this.variables[i];
+    for (let i = 0; i < this.variables.length; i++) {
+      const variable = this.variables[i];
 
       if (!variable.current || (!variable.current.isNone && !variable.current.value)) {
         continue;
@@ -73,7 +73,7 @@ export class TemplateSrv {
 
   getVariableName(expression) {
     this.regex.lastIndex = 0;
-    var match = this.regex.exec(expression);
+    const match = this.regex.exec(expression);
     if (!match) {
       return null;
     }
@@ -84,8 +84,8 @@ export class TemplateSrv {
     if (variable.allValue) {
       return variable.allValue;
     }
-    var values = [] as any[];
-    for (var i = 1; i < variable.options.length; i++) {
+    const values = [] as any[];
+    for (let i = 1; i < variable.options.length; i++) {
       values.push(variable.options[i].value);
     }
     return values;
@@ -96,7 +96,7 @@ export class TemplateSrv {
       return target;
     }
 
-    var variable, systemValue, value;
+    let variable, systemValue, value;
     this.regex.lastIndex = 0;
 
     return target.replace(this.regex, (match, var1, var2, fmt2, var3, fmt3) => {
@@ -127,7 +127,7 @@ export class TemplateSrv {
         }
       }
     
-      var res = this.formatValue(value, format, variable);
+      const res = this.formatValue(value, format, variable);
       return res;
     });
   }

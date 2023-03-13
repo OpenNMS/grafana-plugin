@@ -750,7 +750,7 @@ class AlarmTableCtrl extends MetricsPanelCtrl {
               };
             }
 
-            var actionPerfomed = ds[action](alarmId);
+            const actionPerfomed = ds[action](alarmId);
             actionPerfomed.then(
               (successObj) => {
                 resolve(successObj);

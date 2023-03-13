@@ -25,7 +25,7 @@ export class NRTGHandler {
   }
 
   start() {
-    var _this = this;
+    const _this = this;
     this.datasource.backendSrv.datasourceRequest({
       url: this.datasource.url + '/nrt/starter',
       method: 'GET',
@@ -39,17 +39,17 @@ export class NRTGHandler {
   }
 
   handleCollectionDetails(nrtgCollectionDetails) {
-    var _this = this;
+    const _this = this;
 
     // Start polling
     this.collectionTaskId = nrtgCollectionDetails.collectionTaskId;
-    var poll = function () {_this.poll();}.bind(_this);
+    const poll = function () {_this.poll();}.bind(_this);
     poll();
     setInterval(poll, _this.pollingInterval);
   }
 
   poll() {
-    var self = this;
+    const self = this;
     if (self.pollInProgress === true) {
       // If another poll is already in progress, then skip this one
       return;
@@ -70,10 +70,10 @@ export class NRTGHandler {
   }
 
   handleMeasurementSets(measurementSets) {
-    var i, nsets, nsubscribers;
+    let i, nsets, nsubscribers;
     for (i = 0, nsets = measurementSets.length; i < nsets; i++) {
-      var measurements = measurementSets[i];
-      for (var k = 0, nmeasurements = measurements.length; k < nmeasurements; k++) {
+      let measurements = measurementSets[i];
+      for (let k = 0, nmeasurements = measurements.length; k < nmeasurements; k++) {
         if (!this.startTime) {
           this.startTime = measurements[k].timeStamp;
         }
@@ -86,7 +86,7 @@ export class NRTGHandler {
       return;
     }
 
-    var seriesList = [{
+    const seriesList = [{
       target: "x",
       datapoints: this.datapoints
     }];
