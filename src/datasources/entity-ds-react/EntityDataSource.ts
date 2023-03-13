@@ -151,14 +151,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
     async testDatasource(): Promise<any> {
         console.log('Testing the data source!');
-
+        let response = { status: '', message: '' }
         try {
             const metadata = await this.client.getClientWithMetadata();
             console.log('Testing the data source!', metadata);
+            response = { status: "Success", message: "Success" }
         } catch (e) {
+            response = { status: "Failure", message: e as string }
             console.log('CAUGHT!', e);
         }
-        return { status: 'success', message: 'Success' }
+        return response
     }
 
     async metricFindNodeFilterQuery(entityType, attribute) {
