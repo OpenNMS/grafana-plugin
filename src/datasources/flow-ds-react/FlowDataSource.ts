@@ -1,4 +1,5 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from '@grafana/data';
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime';
 import { ClientDelegate } from 'lib/client_delegate';
 import { SimpleOpenNMSRequest } from 'lib/utils';
 import { FlowStrings } from './constants';
@@ -22,14 +23,16 @@ export class FlowDataSource extends DataSourceApi<FlowQuery> {
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
+    templateSrv: TemplateSrv
 
-    constructor(instanceSettings: DataSourceInstanceSettings<FlowDataSourceOptions>, public backendSrv: any, public templateSrv: any) {
+    constructor(instanceSettings: DataSourceInstanceSettings<FlowDataSourceOptions>) {
         super(instanceSettings);
         this.type = instanceSettings.type;
         this.url = instanceSettings.url;
         this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, backendSrv);
-        this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
+        this.templateSrv = getTemplateSrv();
     }
 
     async query(options: FlowQueryRequest<FlowQuery>): Promise<DataQueryResponse> {

@@ -22,6 +22,7 @@ import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
 import { loadFilterEditorData } from '../../lib/localStorageService'
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
     entity_metadata: any[]
@@ -33,14 +34,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
+    templateSrv: TemplateSrv
 
-    constructor(instanceSettings: DataSourceInstanceSettings<EntityDataSourceOptions>, public backendSrv: any, public templateSrv: any) {
+    constructor(instanceSettings: DataSourceInstanceSettings<EntityDataSourceOptions>) {
         super(instanceSettings);
         this.type = instanceSettings.type;
         this.url = instanceSettings.url;
         this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, backendSrv);
-        this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
+        this.templateSrv = getTemplateSrv()
     }
 
     async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
@@ -167,8 +170,8 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             const propertyValue = pair[1]
 
             if (propertyValue.startsWith('$')) {
-                const variableName = this.templateSrv.getVariableName(propertyValue)
-                const templateVariable = getTemplateVariable(this.templateSrv, variableName)
+                
+                const templateVariable = getTemplateVariable(this.templateSrv, propertyValue)
 
                 if (templateVariable && templateVariable.current.value) {
                     filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value))
