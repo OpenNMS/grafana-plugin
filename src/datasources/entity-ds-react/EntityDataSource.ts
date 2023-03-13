@@ -22,6 +22,7 @@ import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
 import { loadFilterEditorData } from '../../lib/localStorageService'
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
     entity_metadata: any[]
@@ -33,14 +34,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
+    templateSrv: TemplateSrv
 
-    constructor(instanceSettings: DataSourceInstanceSettings<EntityDataSourceOptions>, public backendSrv: any, public templateSrv: any) {
+    constructor(instanceSettings: DataSourceInstanceSettings<EntityDataSourceOptions>) {
         super(instanceSettings);
         this.type = instanceSettings.type;
         this.url = instanceSettings.url;
         this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, backendSrv);
-        this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
+        this.templateSrv = getTemplateSrv()
     }
 
     async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
@@ -148,14 +151,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
     async testDatasource(): Promise<any> {
         console.log('Testing the data source!');
-
+        let response = { status: '', message: '' }
         try {
             const metadata = await this.client.getClientWithMetadata();
             console.log('Testing the data source!', metadata);
+            response = { status: "Success", message: "Success" }
         } catch (e) {
+            response = { status: "Failure", message: e as string }
             console.log('CAUGHT!', e);
         }
-        return { status: 'success', message: 'Success' }
+        return response
     }
 
     async metricFindNodeFilterQuery(entityType, attribute) {
@@ -167,8 +172,8 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             const propertyValue = pair[1]
 
             if (propertyValue.startsWith('$')) {
-                const variableName = this.templateSrv.getVariableName(propertyValue)
-                const templateVariable = getTemplateVariable(this.templateSrv, variableName)
+                
+                const templateVariable = getTemplateVariable(this.templateSrv, propertyValue)
 
                 if (templateVariable && templateVariable.current.value) {
                     filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value))

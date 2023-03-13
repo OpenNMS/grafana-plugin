@@ -25,6 +25,7 @@ import {
     isValidMeasurementQuery
 } from "./queries/queryBuilder";
 import { queryStringProperties } from "./queries/queryStringProperties"
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -32,14 +33,16 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
+    templateSrv: TemplateSrv;
 
-    constructor(instanceSettings: DataSourceInstanceSettings<PerformanceDataSourceOptions>, public backendSrv: any, public templateSrv: any) {
+    constructor(instanceSettings: DataSourceInstanceSettings<PerformanceDataSourceOptions>) {
         super(instanceSettings);
         this.type = instanceSettings.type;
         this.url = instanceSettings.url;
         this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, backendSrv);
-        this.simpleRequest = new SimpleOpenNMSRequest(backendSrv, this.url);
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
+        this.templateSrv = getTemplateSrv();
     }
 
     isQueryValidStringPropertySearch = (targets: PerformanceQuery[]) => {

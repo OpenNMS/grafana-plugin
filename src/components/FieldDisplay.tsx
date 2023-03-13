@@ -3,6 +3,7 @@ import React from 'react'
 interface FieldDisplayProps {
     icon?: boolean;
     color?: string;
+    children?: any;
 }
 export const FieldDisplay: React.FC<FieldDisplayProps> = ({children, icon, color}) => {
     return (
