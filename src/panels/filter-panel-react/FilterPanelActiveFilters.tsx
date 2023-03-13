@@ -32,7 +32,7 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
 
     const moveFieldDown = (index: number) => {
         const newFilters = [...activeFilters]
-        var stored = newFilters[index];
+        const stored = newFilters[index];
         newFilters.splice(index, 1);
         newFilters.splice(index + 1, 0, stored);
         onChange(newFilters)
@@ -40,7 +40,7 @@ export const FilterPanelActiveFilters: React.FC<FilterPanelActiveFiltersProps> =
 
     const moveFieldUp = (index: number) => {
         const newFilters = [...activeFilters]
-        var stored = newFilters[index];
+        const stored = newFilters[index];
         newFilters.splice(index, 1);
         newFilters.splice(index - 1, 0, stored);
         onChange(newFilters)
