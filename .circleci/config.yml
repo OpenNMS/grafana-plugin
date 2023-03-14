@@ -427,6 +427,7 @@ workflows:
             tags:
               only: /^v.*/
       - build:
+          context: grafana
           requires:
             - pre-build
           filters:
