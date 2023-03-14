@@ -26,6 +26,8 @@ import {
 } from "./queries/queryBuilder";
 import { queryStringProperties } from "./queries/queryStringProperties"
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
+import { GrafanaError } from 'opennms'
+import { isString } from 'lodash'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -68,7 +70,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
     async query(options: PerformanceQueryRequest<PerformanceQuery>): Promise<DataQueryResponse> {
         const searchType = this.isQueryValidStringPropertySearch(options?.targets);
- 
+
         if (searchType === 'string') {
             return this.stringPropertySearch(options);
         } else if (searchType === 'invalid') {
@@ -176,15 +178,30 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async testDatasource(): Promise<any> {
+        const defaultErrorMessage = 'Cannot connect to API';
         console.log('Testing the data source!');
-
+        let response = { status: '', message: '' }
         try {
             const metadata = await this.client.getClientWithMetadata();
             console.log('Testing the data source1!', metadata);
-        } catch (e) {
-            console.log('CAUGHT!', e);
+            response = { status: "Success", message: "Success" }
+        } catch (err) {
+            let message = '';
+            if (isString(err)) {
+                message = err;
+            } else {
+                let grafanaError = err as GrafanaError
+                if (grafanaError) {
+                    message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
+                    if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
+                        message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
+                    }
+                }
+            }
+            response = { status: "error", message: message }
+            console.log('CAUGHT!', err);
         }
-        return { status: 'success', message: 'Success' }
+        return response
     }
 
     async doMeasuremmentQuery(query: OnmsMeasurementsQueryRequest) {
