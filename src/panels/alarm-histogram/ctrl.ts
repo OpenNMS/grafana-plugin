@@ -1,10 +1,10 @@
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import _ from 'lodash';
-import $ from 'jquery';
-import 'jquery.flot';
-import 'jquery.flot.selection';
-import 'jquery.flot.crosshair';
-import 'flot/jquery.flot.categories';
+//import $ from 'jquery';
+//import 'jquery.flot';
+//import 'jquery.flot.selection';
+//import 'jquery.flot.crosshair';
+//import 'flot/jquery.flot.categories';
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
   static templateUrl = 'public/plugins/opennms-helm-app/panels/alarm-histogram/module.html';
@@ -148,6 +148,7 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
     // Draw graph
     switch (this.panel.direction) {
       case 'horizontal':
+        /*
         $.plot(
           this.elem,
           _.map(this.series, function (serie) {
@@ -177,9 +178,11 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
             },
           }
         );
+        */
         break;
 
       case 'vertical':
+        /*
         $.plot(
           this.elem,
           _.map(this.series, function (serie) {
@@ -209,6 +212,7 @@ class AlarmHistogramCtrl extends MetricsPanelCtrl {
             },
           }
         );
+        */
         break;
     }
     this.ctrl.renderingCompleted();

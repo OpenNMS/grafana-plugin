@@ -1,6 +1,16 @@
 import _ from 'lodash';
 
-import { escapeStringForRegex, formattedValueToString, getColorFromHexRgbOrName, getValueFormat, stringStartsAsRegEx, stringToJsRegex, textUtil, unEscapeStringFromRegex } from '@grafana/data';
+import {
+  colorManipulator,
+  escapeStringForRegex,
+  formattedValueToString,
+  //getColorFromHexRgbOrName,
+  getValueFormat,
+  stringStartsAsRegEx,
+  stringToJsRegex,
+  textUtil,
+  unEscapeStringFromRegex
+} from '@grafana/data';
 
 const sanitizeUrl = textUtil.sanitizeUrl;
 
@@ -82,11 +92,13 @@ export class TableRenderer {
     }
     for (let i = style.thresholds.length; i > 0; i--) {
       if (value >= style.thresholds[i - 1]) {
-        return getColorFromHexRgbOrName(style.colors[i], this.theme);
+        //return getColorFromHexRgbOrName(style.colors[i], this.theme);
+        return colorManipulator.hexToRgb(style.colors[i]) //, this.theme);
       }
     }
     const firstColor = _.first(style.colors) as string | undefined;
-    return firstColor ? getColorFromHexRgbOrName(firstColor, this.theme) : undefined;
+    //return firstColor ? getColorFromHexRgbOrName(firstColor, this.theme) : undefined;
+    return firstColor ? colorManipulator.hexToRgb(firstColor) /*, this.theme)*/ : undefined;
   }
 
   defaultCellFormatter(v, style) {
@@ -233,7 +245,7 @@ export class TableRenderer {
         } else if (column.style.displayAs === 'labelCaps') {
           return v;
         } else {
-          var icon = TableRenderer.getIconForSeverity(v.toLowerCase());
+          const icon = TableRenderer.getIconForSeverity(v.toLowerCase());
           return `<i class="icon severity-icon fa ${icon}" title="${v}"></i>`;
         }
       };

@@ -2,8 +2,7 @@ import {QueryType, STRING_PROPERTY_TYPE} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
 import {FunctionFormatter} from '../../lib/function_formatter';
-import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
-import {DataQueryResponseData} from "@grafana/data/types/datasource";
+import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType, DataQueryResponseData} from "@grafana/data";
 import {ClientDelegate} from '../../lib/client_delegate'
 import {Client, ServerMetadata} from 'opennms'
 import {SimpleOpenNMSRequest,OpenNMSGlob} from '../../lib/utils'

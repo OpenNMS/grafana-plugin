@@ -24,24 +24,24 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "9.0.0-SNAPSHOT",
+    "version": "9.0.1-SNAPSHOT",
     "updated": "2022-09-14"
   },
   "includes": [
-    {"type": "panel", "name": "Alarm Table"},
-    {"type": "panel", "name": "Alarm Histogram"},
-    {"type": "panel", "name": "Filter Panel"},
-    {"type": "panel", "name": "Flow Histogram"},
-    {"type": "datasource", "name": "OpenNMS Entities"},
-    {"type": "datasource", "name": "OpenNMS Performance"},
-    {"type": "datasource", "name": "OpenNMS Flows"},
+    {"type": "panel", "name": "Alarm Table React"},
+    {"type": "panel", "name": "Alarm Histogram React"},
+    {"type": "panel", "name": "Filter Panel React"},
+    {"type": "panel", "name": "Flow Histogram React"},
+    {"type": "datasource", "name": "OpenNMS Entities React"},
+    {"type": "datasource", "name": "OpenNMS Performance React"},
+    {"type": "datasource", "name": "OpenNMS Flows React"},
     {"type": "dashboard", "name": "About | OpenNMS Helm", "path": "dashboards/about.json"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"},
     {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Helm", "path": "dashboards/cortex_flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=8.0.0",
-    "grafanaVersion": "8.0.0",
+    "grafanaDependency": ">=9.0.0",
+    "grafanaVersion": "9.0.0",
     "plugins": []
   }
 }

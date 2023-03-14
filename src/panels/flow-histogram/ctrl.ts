@@ -2,15 +2,15 @@
 /* eslint-disable no-restricted-imports */
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import _ from 'lodash';
-import $ from 'jquery';
+//import $ from 'jquery';
 import moment from 'moment';
-import 'jquery.flot';
-import 'jquery.flot.time';
-import 'jquery.flot.selection';
-import 'jquery.flot.crosshair';
-import 'jquery.flot.stack';
-import 'flot-axislabels/jquery.flot.axislabels';
-import 'flot/jquery.flot.categories';
+//import 'jquery.flot';
+//import 'jquery.flot.time';
+//import 'jquery.flot.selection';
+//import 'jquery.flot.crosshair';
+//import 'jquery.flot.stack';
+//import 'flot-axislabels/jquery.flot.axislabels';
+//import 'flot/jquery.flot.categories';
 import './legend';
 import dataSeries = jquery.flot.dataSeries;
 
@@ -45,17 +45,21 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
     // For these to work well together, we need the 'categories' plugin
     // to be called *before* the stack plugin.
     // Re-order them if necessary
-    const categoriesPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    //const categoriesPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    const categoriesPluginIdx = _.findIndex([], (plugin: any) => {
       return plugin.name === 'categories';
     });
-    const stackPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    //const stackPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    const stackPluginIdx = _.findIndex([], (plugin: any) => {
       return plugin.name === 'stack';
     });
     if (categoriesPluginIdx >= 0 && stackPluginIdx >= 0 && categoriesPluginIdx > stackPluginIdx) {
       // We found both plugins, and the categories plugin comes *after* the stack plugin, swap them
+      /*
       const stackPlugin = $.plot.plugins[stackPluginIdx];
       $.plot.plugins[stackPluginIdx] = $.plot.plugins[categoriesPluginIdx];
       $.plot.plugins[categoriesPluginIdx] = stackPlugin;
+      */
     }
 
     _.defaults(this.panel, {
@@ -164,9 +168,11 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
       this.noDataPoints();
     } else {
       if (plotCanvas.height() > 0 && plotCanvas.width() > 0) {
+        /*
         const options = this.getOptions();
         this.setData();
         $.plot(plotCanvas, this.seriesData as dataSeries[], options);
+        */
       }
     }
   }
