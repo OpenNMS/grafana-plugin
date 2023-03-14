@@ -17,9 +17,9 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-    '<rootDir>/src/**/*.{spec,test,jest}.{js,jsx,ts,tsx}',
-    '<rootDir>/src/**/*.{spec,test,jest}.{js,jsx,ts,tsx}',
+    '<rootDir>/src/test/react/__tests__/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/src/test/react/*.{spec,test,jest}.{js,jsx,ts,tsx}',
+    '<rootDir>/src/test/react/*.{spec,test,jest}.{js,jsx,ts,tsx}',
   ],
   transform: {
     '^.+\\.(t|j)sx?$': [
