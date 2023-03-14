@@ -6,8 +6,8 @@
   "info": {
     "description": "OpenNMS Dashboard Convert Panel React",
     "logos": {
-      "small": "img/filter.svg",
-      "large": "img/filter.svg"
+      "small": "img/dashboard-convert.svg",
+      "large": "img/dashboard-convert.svg"
     },
     "version": "9"
   }

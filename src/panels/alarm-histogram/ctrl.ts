@@ -1,10 +1,5 @@
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import _ from 'lodash';
-//import $ from 'jquery';
-//import 'jquery.flot';
-//import 'jquery.flot.selection';
-//import 'jquery.flot.crosshair';
-//import 'flot/jquery.flot.categories';
 
 class AlarmHistogramCtrl extends MetricsPanelCtrl {
   static templateUrl = 'public/plugins/opennms-helm-app/panels/alarm-histogram/module.html';

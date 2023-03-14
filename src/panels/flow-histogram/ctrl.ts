@@ -2,15 +2,7 @@
 /* eslint-disable no-restricted-imports */
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import _ from 'lodash';
-//import $ from 'jquery';
 import moment from 'moment';
-//import 'jquery.flot';
-//import 'jquery.flot.time';
-//import 'jquery.flot.selection';
-//import 'jquery.flot.crosshair';
-//import 'jquery.flot.stack';
-//import 'flot-axislabels/jquery.flot.axislabels';
-//import 'flot/jquery.flot.categories';
 import './legend';
 import dataSeries = jquery.flot.dataSeries;
 
@@ -45,11 +37,11 @@ class HelmHistogramCtrl extends MetricsPanelCtrl {
     // For these to work well together, we need the 'categories' plugin
     // to be called *before* the stack plugin.
     // Re-order them if necessary
-    //const categoriesPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    // First argument used to be: $.plot.plugins
     const categoriesPluginIdx = _.findIndex([], (plugin: any) => {
       return plugin.name === 'categories';
     });
-    //const stackPluginIdx = _.findIndex($.plot.plugins, (plugin) => {
+    // First argument used to be: $.plot.plugins
     const stackPluginIdx = _.findIndex([], (plugin: any) => {
       return plugin.name === 'stack';
     });

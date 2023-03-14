@@ -95,7 +95,7 @@
   },
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
-    "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
+    "dev": "webpack -c ./.config/webpack/webpack.config.ts --env development",
     "docs": "antora --stacktrace generate local-site.yml",
     "e2e": "yarn cypress install && yarn grafana-e2e run",
     "e2e:update": "yarn cypress install && yarn grafana-e2e run --update-screenshots",
@@ -107,6 +107,7 @@
     "test": "jest --watch --onlyChanged",
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "typecheck": "tsc --noEmit",
-    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml"
+    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
+    "watch": "webpack -w -c ./.config/webpack/webpack.config.ts --env development"
   }
 }
