@@ -43,7 +43,7 @@ angular.module('grafana.directives')
         };
 
         $scope.getSuggestions = function(clause, segment, index) {
-            var segments = clause.restriction.segments;
+            let segments = clause.restriction.segments;
 
             // attribute input
             if (segment.type === 'key' || segment.type === 'plus-button') {
@@ -53,7 +53,7 @@ angular.module('grafana.directives')
                     strategy: QueryCtrl.featuredAttributes === true ? 'featured' : 'all'
                 }).then(function(properties) {
                     let segments = _.map(properties, function(property) {
-                        var segment = uiSegmentSrv.newKey(property.id);
+                        const segment = uiSegmentSrv.newKey(property.id);
                         return segment;
                     });
                     return segments;
@@ -63,19 +63,19 @@ angular.module('grafana.directives')
 
             // comparator input
             if (segment.type === 'operator') {
-                let attributeSegment = segments[index-1];
+                const attributeSegment = segments[index-1];
                 return $scope.findOperators(attributeSegment.value);
             }
 
             // value input
             if (segment.type === 'value') {
-                let attributeSegment = segments[index-2];
+                const attributeSegment = segments[index-2];
                 return datasource.metricFindQuery(attributeSegment.value, {
                     queryType: 'values',
                     entityType: getEntityType()
                 }).then(function(values) {
                     return _.map(values, function(searchResult) {
-                        var segment = uiSegmentSrv.newKeyValue(searchResult.label);
+                        let segment = uiSegmentSrv.newKeyValue(searchResult.label);
                         return segment;
                     })
                 })

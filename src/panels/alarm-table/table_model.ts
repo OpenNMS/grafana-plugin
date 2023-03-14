@@ -63,7 +63,7 @@ export default class TableModel implements TableData {
       return;
     }
 
-    var self = this;
+    const self = this;
 
     // We need to sort both the rows and entity meta-data arrays the same way
     // 1) combine the arrays:
@@ -75,8 +75,8 @@ export default class TableModel implements TableData {
     // 2) sort
     rowsAndMeta.sort(function(combinedA, combinedB) {
       // Only look at the row values when sorting
-      var a = combinedA.row;
-      var b = combinedB.row;
+      let a = combinedA.row;
+      let b = combinedB.row;
       const colInfo = self.columns[options.col];
 
       // by default just use the column as-is (a string)

@@ -130,7 +130,7 @@ export class OpenNMSEntityDatasourceQueryCtrl extends QueryCtrl {
   }
 
   getCollapsedText() {
-    var collapsedText = this._getUiFilter().getQueryString();
+    const collapsedText = this._getUiFilter().getQueryString();
     return collapsedText;
   }
 

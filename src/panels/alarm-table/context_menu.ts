@@ -32,23 +32,23 @@ export function contextMenuAsDirective() {
   'use strict';
   return ["$parse", function ($parse) {
 
-    var _contextMenus = [] as Array<JQuery<HTMLElement>>;
+    const _contextMenus = [] as Array<JQuery<HTMLElement>>;
     // Contains the element that was clicked to show the context menu
-    var _clickedElement: any = null;
-    var DEFAULT_ITEM_TEXT = "New Item";
+    let _clickedElement: any = null;
+    const DEFAULT_ITEM_TEXT = "New Item";
 
     function createAndAddOptionText(params) {
       // Destructuring:
-      var $scope = params.$scope;
-      var item = params.item;
-      var event = params.event;
-      var modelValue = params.modelValue;
-      var $promises = params.$promises;
-      var nestedMenu = params.nestedMenu;
-      var $li = params.$li;
-      var leftOriented = String(params.orientation).toLowerCase() === 'left';
+      let $scope = params.$scope;
+      let item = params.item;
+      let event = params.event;
+      let modelValue = params.modelValue;
+      let $promises = params.$promises;
+      let nestedMenu = params.nestedMenu;
+      let $li = params.$li;
+      let leftOriented = String(params.orientation).toLowerCase() === 'left';
 
-      var optionText: JQuery<HTMLElement> | null = null;
+      let optionText: JQuery<HTMLElement> | null = null;
 
       if (item.html) {
         if (angular.isFunction(item.html)) {
@@ -60,8 +60,8 @@ export function contextMenuAsDirective() {
         }
       } else {
 
-        var $a = $('<a>');
-        var $anchorStyle = {} as any;
+        let $a = $('<a>');
+        let $anchorStyle = {} as any;
 
         if (leftOriented) {
           $anchorStyle.textAlign = 'right';
@@ -74,8 +74,8 @@ export function contextMenuAsDirective() {
         $a.css($anchorStyle);
         $a.attr({ tabindex: '-1', href: '#' });
 
-        var textParam = item[0];
-        var text = DEFAULT_ITEM_TEXT;
+        const textParam = item[0];
+        let text = DEFAULT_ITEM_TEXT;
 
         if (typeof textParam === 'string') {
           text = textParam;
@@ -85,12 +85,12 @@ export function contextMenuAsDirective() {
           text = item.text;
         }
 
-        var $promise = Promise.resolve(text);
+        const $promise = Promise.resolve(text);
         $promises.push($promise);
         $promise.then(function (pText) {
           if (nestedMenu) {
-            var $arrow;
-            var $boldStyle = {
+            let $arrow;
+            const $boldStyle = {
               fontFamily: 'monospace',
               fontWeight: 'bold',
             } as any;
@@ -103,7 +103,7 @@ export function contextMenuAsDirective() {
               $boldStyle.float = 'right';
             }
 
-            var $bold = $('<strong style="font-family:monospace;font-weight:bold;float:right;">' + $arrow + '</strong>');
+            const $bold = $('<strong style="font-family:monospace;font-weight:bold;float:right;">' + $arrow + '</strong>');
             $bold.css($boldStyle);
             $a.css("cursor", "default");
             $a.append($bold);
@@ -131,13 +131,13 @@ export function contextMenuAsDirective() {
      * - $promises
      */
     function processItem(params) {
-      var nestedMenu = extractNestedMenu(params);
+      const nestedMenu = extractNestedMenu(params);
 
       // if html property is not defined, fallback to text, otherwise use default text
       // if first item in the item array is a function then invoke .call()
       // if first item is a string, then text should be the string.
 
-      var currItemParam = angular.extend({}, params);
+      const currItemParam = angular.extend({}, params);
       currItemParam.nestedMenu = nestedMenu;
       currItemParam.enabled = isOptionEnabled(currItemParam);
       currItemParam.text = createAndAddOptionText(currItemParam);
@@ -152,20 +152,20 @@ export function contextMenuAsDirective() {
      */
     function registerCurrentItemEvents (params) {
       // Destructuring:
-      var item = params.item;
-      var $ul = params.$ul;
-      var $li = params.$li;
-      var $scope = params.$scope;
-      var modelValue = params.modelValue;
-      var level = params.level;
-      var event = params.event;
-      var text = params.text;
-      var nestedMenu = params.nestedMenu;
-      var enabled = params.enabled;
-      var orientation = String(params.orientation).toLowerCase();
+      const item = params.item;
+      let $ul = params.$ul;
+      let $li = params.$li;
+      let $scope = params.$scope;
+      let modelValue = params.modelValue;
+      let level = params.level;
+      let event = params.event;
+      let text = params.text;
+      let nestedMenu = params.nestedMenu;
+      let enabled = params.enabled;
+      let orientation = String(params.orientation).toLowerCase();
 
       if (enabled) {
-        var openNestedMenu = function ($event) {
+        const openNestedMenu = function ($event) {
           removeContextMenus(level + 1);
           /*
            * The object here needs to be constructed and filled with data
@@ -173,7 +173,7 @@ export function contextMenuAsDirective() {
            * or cloning the event results in unpredictable behavior.
            */
           /// adding the original event in the object to use the attributes of the mouse over event in the promises
-          var ev = {
+          const ev = {
             pageX: orientation === 'left' ? event.pageX - $ul[0].offsetWidth + 1 : event.pageX + $ul[0].offsetWidth - 1,
             pageY: $ul[0].offsetTop + $li[0].offsetTop - 3,
             view: event.view || window,
@@ -186,7 +186,7 @@ export function contextMenuAsDirective() {
            * Regardless, passing them to `when` makes the implementation singular.
            */
           Promise.resolve(nestedMenu).then(function(promisedNestedMenu) {
-            var nestedParam = {
+            const nestedParam = {
               "$scope" : $scope,
               "event" : ev,
               "options" : promisedNestedMenu,
@@ -205,7 +205,7 @@ export function contextMenuAsDirective() {
               $(event.currentTarget).removeClass('context');
               removeAllContextMenus();
 
-              var clickFunction = angular.isFunction(item.click)
+              const clickFunction = angular.isFunction(item.click)
                 ? item.click
                 : (angular.isFunction(item[1])
                   ? item[1]
@@ -242,7 +242,7 @@ export function contextMenuAsDirective() {
      */
     function extractNestedMenu(params) {
       // Destructuring:
-      var item = params.item;
+      const item = params.item;
 
       // New implementation:
       if (item.children) {
@@ -283,10 +283,10 @@ export function contextMenuAsDirective() {
       /// <summary>Render context menu recursively.</summary>
 
       // Destructuring:
-      var options = params.options;
+      const options = params.options;
 
       // Initialize the container. This will be passed around
-      var $ul = initContextMenuContainer(params);
+      const $ul = initContextMenuContainer(params);
       params.$ul = $ul;
 
       // Register this level of the context menu
@@ -296,17 +296,17 @@ export function contextMenuAsDirective() {
        * This object will contain any promises that we have
        * to wait for before trying to adjust the context menu.
        */
-      var $promises = [];
+      const $promises = [];
       params.$promises = $promises;
 
       angular.forEach(options, function (item) {
-        var $li = $('<li>');
+        const $li = $('<li>');
         if (item === null) {
           $li.addClass('divider');
         } else if (typeof item[0] === "object") {
           //custom.initialize($li, item);
         } else {
-          var itemParams = angular.extend({}, params);
+          const itemParams = angular.extend({}, params);
           itemParams.item = item;
           itemParams.$li = $li;
           processItem(itemParams);
@@ -327,16 +327,16 @@ export function contextMenuAsDirective() {
     function doAfterAllPromises (params) {
 
       // Desctructuring:
-      var $ul = params.$ul;
-      var $promises = params.$promises;
-      var level = params.level;
-      var event = params.event;
-      var leftOriented = String(params.orientation).toLowerCase() === 'left';
+      const $ul = params.$ul;
+      const $promises = params.$promises;
+      const level = params.level;
+      const event = params.event;
+      const leftOriented = String(params.orientation).toLowerCase() === 'left';
 
       Promise.all($promises).then(function () {
-        var topCoordinate  = event.pageY;
-        var menuHeight = angular.element($ul[0]).prop('offsetHeight');
-        var winHeight = window.scrollY + event.view.innerHeight;
+        let topCoordinate  = event.pageY;
+        const menuHeight = angular.element($ul[0]).prop('offsetHeight');
+        const winHeight = window.scrollY + event.view.innerHeight;
         /// the 20 pixels in second condition are considering the browser status bar that sometimes overrides the element
         if (topCoordinate > menuHeight && winHeight - topCoordinate < menuHeight + 20) {
           topCoordinate = event.pageY - menuHeight;
@@ -350,17 +350,17 @@ export function contextMenuAsDirective() {
           // ...then set the topCoordinate height to 0 so the menu starts from the top
           topCoordinate = 0;
         } else if(winHeight - topCoordinate < menuHeight) {
-          var reduceThresholdY = 5;
+          let reduceThresholdY = 5;
           if(topCoordinate < reduceThresholdY) {
             reduceThresholdY = topCoordinate;
           }
           topCoordinate = winHeight - menuHeight - reduceThresholdY;
         }
 
-        var leftCoordinate = event.pageX;
-        var menuWidth = angular.element($ul[0]).prop('offsetWidth');
-        var winWidth = event.view.innerWidth;
-        var padding = 5;
+        let leftCoordinate = event.pageX;
+        const menuWidth = angular.element($ul[0]).prop('offsetWidth');
+        const winWidth = event.view.innerWidth;
+        const padding = 5;
 
         if (leftOriented) {
           if (winWidth - leftCoordinate > menuWidth && leftCoordinate < menuWidth + padding) {
@@ -404,9 +404,9 @@ export function contextMenuAsDirective() {
      */
     function initContextMenuContainer(params) {
       // Destructuring
-      var customClass = params.customClass;
+      const customClass = params.customClass;
 
-      var $ul = $('<ul>');
+      const $ul = $('<ul>');
       $ul.addClass('dropdown-menu');
       $ul.attr({ 'role': 'menu' });
       $ul.css({
@@ -425,11 +425,11 @@ export function contextMenuAsDirective() {
     // if item is object, and has enabled prop invoke the prop
     // else if fallback to item[2]
     function isOptionEnabled (params) {
-      var item = params.item;
-      var $scope = params.$scope;
-      var event = params.event;
-      var modelValue = params.modelValue;
-      var text = params.text;
+      const item = params.item;
+      const $scope = params.$scope;
+      const event = params.event;
+      const modelValue = params.modelValue;
+      const text = params.text;
 
       if (typeof item.enabled !== "undefined") {
         return item.enabled.call($scope, $scope, event, modelValue, text);
@@ -463,8 +463,8 @@ export function contextMenuAsDirective() {
     }
 
     function removeOnOutsideClickEvent(e) {
-      var $curr = $(e.target);
-      var shouldRemove = true;
+      let $curr = $(e.target);
+      let shouldRemove = true;
 
       while($curr.length) {
         if($curr.hasClass("dropdown-menu")) {
@@ -489,7 +489,7 @@ export function contextMenuAsDirective() {
     return function ($scope: any, el: Element, attrs) {
       const element = $(el);
 
-      var openMenuEvent = "contextmenu";
+      let openMenuEvent = "contextmenu";
       if(attrs.contextMenuOn && typeof(attrs.contextMenuOn) === "string"){
         openMenuEvent = attrs.contextMenuOn;
       }
@@ -514,12 +514,12 @@ export function contextMenuAsDirective() {
 
         $scope.$apply(function () {
           $scope.$event = event;
-          var options = $scope.$eval(attrs.contextMenu);
-          var customClass = attrs.contextMenuClass;
-          var modelValue = $scope.$eval(attrs.model);
-          var orientation = attrs.contextMenuOrientation;
+          const options = $scope.$eval(attrs.contextMenu);
+          const customClass = attrs.contextMenuClass;
+          const modelValue = $scope.$eval(attrs.model);
+          const orientation = attrs.contextMenuOrientation;
 
-          var params = {
+          const params = {
             "$scope" : $scope,
             "event" : event,
             "options" : options,

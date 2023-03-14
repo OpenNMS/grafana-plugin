@@ -81,7 +81,7 @@ angular
         }
 
         function switchToLink(inputElem, paramIndex) {
-          var $input = $(inputElem);
+          const $input = $(inputElem);
 
           if (cancelBlur) {
             // @ts-ignore
@@ -89,9 +89,9 @@ angular
           }
           cancelBlur = null;
 
-          var $link = $input.prev();
-          var $comma = $link.prev('.comma');
-          var newValue = $input.val();
+          const $link = $input.prev();
+          const $comma = $link.prev('.comma');
+          const newValue = $input.val();
 
           // remove optional empty params
           if (newValue !== '' || paramDef(paramIndex).optional) {
@@ -118,7 +118,7 @@ angular
         // this = input element
         function inputBlur(paramIndex) {
           // @ts-ignore
-          var inputElem = this;
+          const inputElem = this;
           // happens long before the click event on the typeahead options
           // need to have long delay because the blur
           // @ts-ignore
@@ -207,8 +207,8 @@ angular
           $funcControls.appendTo(elem);
           $funcLink.appendTo(elem);
 
-          var defParams = _.clone(func.def.params) as any[];
-          var lastParam = _.last(func.def.params) as any;
+          const defParams = _.clone(func.def.params) as any[];
+          const lastParam = _.last(func.def.params) as any;
 
           while (func.params.length >= defParams.length && lastParam && lastParam.multiple) {
             defParams.push(_.assign({}, lastParam, {optional: true}));
@@ -219,9 +219,9 @@ angular
               return;
             }
 
-            var paramValue = templateSrv.highlightVariablesAsHtml(func.params[index]);
+            let paramValue = templateSrv.highlightVariablesAsHtml(func.params[index]);
 
-            var last = (index >= func.params.length - 1) && param.optional && !paramValue;
+            const last = (index >= func.params.length - 1) && param.optional && !paramValue;
             if (last && param.multiple) {
               paramValue = '+';
             }
@@ -230,10 +230,10 @@ angular
               $('<span class="comma' + (last ? ' query-part__last' : '') + '">, </span>').appendTo(elem);
             }
 
-            var $paramLink = $(
+            const $paramLink = $(
               '<a ng-click="" class="flows-func-param-link' + (last ? ' query-part__last' : '') + '">'
               + (paramValue || '&nbsp;') + '</a>');
-            var $input = $(paramTemplate);
+            const $input = $(paramTemplate);
             $input.attr('placeholder', param.name);
 
             paramCountAtLink++;
