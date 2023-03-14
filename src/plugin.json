@@ -32,9 +32,9 @@
     {"type": "panel", "name": "Alarm Histogram React"},
     {"type": "panel", "name": "Filter Panel React"},
     {"type": "panel", "name": "Flow Histogram React"},
-    {"type": "datasource", "name": "OpenNMS Entities React"},
-    {"type": "datasource", "name": "OpenNMS Performance React"},
-    {"type": "datasource", "name": "OpenNMS Flows React"},
+    {"type": "datasource", "name": "OpenNMS Entities"},
+    {"type": "datasource", "name": "OpenNMS Performance"},
+    {"type": "datasource", "name": "OpenNMS Flows"},
     {"type": "dashboard", "name": "About | OpenNMS Helm", "path": "dashboards/about.json"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Helm", "path": "dashboards/flow_deep_dive.json"},
     {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Helm", "path": "dashboards/cortex_flow_deep_dive.json"}

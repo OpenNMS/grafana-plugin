@@ -1,11 +1,11 @@
 import { DataSourceInstanceSettings, DataSourceJsonData } from '@grafana/data'
 import { getDataSourceSrv } from '@grafana/runtime'
 import { isString } from 'lodash'
-import { OnmsEntityNestType, OnmsEntityType } from '../../datasources/entity-ds-react/types'
-import { getColumns } from '../../datasources/entity-ds-react/EntityHelper'
-import { getAttributeMapping } from '../../datasources/entity-ds-react/queries/attributeMappings'
-import { PerformanceQuery, StringPropertyQuery } from '../../datasources/perf-ds-react/types'
-import { PerformanceTypeOptions } from '../../datasources/perf-ds-react/constants'
+import { OnmsEntityNestType, OnmsEntityType } from '../../datasources/entity-ds/types'
+import { getColumns } from '../../datasources/entity-ds/EntityHelper'
+import { getAttributeMapping } from '../../datasources/entity-ds/queries/attributeMappings'
+import { PerformanceQuery, StringPropertyQuery } from '../../datasources/perf-ds/types'
+import { PerformanceTypeOptions } from '../../datasources/perf-ds/constants'
 
 interface ConvertResponse {
   json: string

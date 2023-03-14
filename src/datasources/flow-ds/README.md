@@ -1,4 +1,4 @@
-# OpenNMS Helm Flow Datasource - React
+# OpenNMS Helm Flow Datasource
 
 This plugin is used with the OpenNMS Helm Application, and this README is an effort to break down the construction of the plugin, 
 how it works, and how to modify it.
@@ -12,14 +12,14 @@ Within module.ts, you will see references to three different files in this direc
 
 ## FlowConfigEditor
 
-This is the most basic of the three files, it only includes the Grafana-UI provided DataSourceHttpSettings which gives us the ability to configure the Datasource to connect to our OpenNMS instance via basic auth params. To see this file in action, within Grafana, hover on the Gear icon -> Datasources. Then either click on an existing instance of `OpenNMS Flow React` or create a new Datasource with `Add data source` and select `OpenNMS Flow React`.
+This is the most basic of the three files, it only includes the Grafana-UI provided DataSourceHttpSettings which gives us the ability to configure the Datasource to connect to our OpenNMS instance via basic auth params. To see this file in action, within Grafana, hover on the Gear icon -> Datasources. Then either click on an existing instance of `OpenNMS Flow` or create a new Datasource with `Add data source` and select `OpenNMS Flow`.
 
-## Configuring OpenNMS Flow React
-While on the configuration options for OpenNMS Flow React (see step above), you will see fields for a URL, and the option for Basic Auth. Enable Basic Auth, enter the url of your OpenNMS instance (usually ends with opennms/) and provide a username/password with access to the REST role. An ADMIN role by default has access to the API.
+## Configuring OpenNMS Flow
+While on the configuration options for OpenNMS Flow (see step above), you will see fields for a URL, and the option for Basic Auth. Enable Basic Auth, enter the url of your OpenNMS instance (usually ends with opennms/) and provide a username/password with access to the REST role. An ADMIN role by default has access to the API.
 
 ## FlowQueryEditor
 
-The FlowQueryEditor is our top-level file to build out our Flow Query. To visually see the contents of this file, create a new Dashboard + Panel in Grafana, and then select 'OpenNMS Flow React' as your datasource. In the bottom portion of the screen under the visual area/graph, you will see a Select dropdown where you can select applications/conversations/hosts/dscps. Everything in the bottom panel is driven by FlowQueryEditor.
+The FlowQueryEditor is our top-level file to build out our Flow Query. To visually see the contents of this file, create a new Dashboard + Panel in Grafana, and then select 'OpenNMS Flow' as your datasource. In the bottom portion of the screen under the visual area/graph, you will see a Select dropdown where you can select applications/conversations/hosts/dscps. Everything in the bottom panel is driven by FlowQueryEditor.
 
 Once you've selected a flow type, you have the option to include a variety of query parameters, and optionally values to go with those parameters if they're supported. Each query parameter has a set of rules associated to it, so by selecting certain parameters will have different effects. Some generate a parameter field, others restrict other parameters, and some can be included twice. Those parameter rules are defined in the constants.ts file.
 

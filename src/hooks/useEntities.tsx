@@ -1,4 +1,4 @@
-import { getFuncNameFromEntityType } from '../datasources/entity-ds-react/EntityHelper'
+import { getFuncNameFromEntityType } from '../datasources/entity-ds/EntityHelper'
 
 export const useEntities = () => {
     const entities = [

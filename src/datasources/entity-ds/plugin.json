@@ -1,13 +1,13 @@
 {
-  "name": "OpenNMS Entities React",
-  "id": "opennms-helm-entity-datasource-react",
+  "name": "OpenNMS Entities",
+  "id": "opennms-helm-entity-datasource",
   "type": "datasource",
 
   "metrics": true,
   "annotations": false,
 
   "info": {
-    "description": "OpenNMS Entities Datasource React",
+    "description": "OpenNMS Entities Datasource",
     "logos": {
       "small": "img/entity-ds.svg",
       "large": "img/entity-ds.svg"

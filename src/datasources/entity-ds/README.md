@@ -1,4 +1,4 @@
-# OpenNMS Helm Entity Datasource - React
+# OpenNMS Helm Entity Datasource
 
 This plugin is used with the overall OpenNMS Helm Application, and this README is an effort to break down the construction of the Entity Datasource plugin, 
 how it works, and how to modify it.
@@ -11,13 +11,13 @@ file that Grafana looks for to kick off the whole plugin is module.ts. Those two
 Within module.ts, you will see references to three different files in this plugin directory, mainly EntityDataSource.ts, EntityConfigEditor.tsx, and EntityQueryEditor.tsx. Let's break those down.
 
 ## EntityConfigEditor
-This is the most basic of the three files, it only includes the Grafana-UI provided DataSourceHttpSettings which gives us the ability to configure the Datasource to connect to our OpenNMS instance via basic auth params. To see this file in action, within Grafana, hover on the Gear icon -> Datasources. Then either click on an existing instance of `OpenNMS Entities React` or create a new Datasource with `Add data source` and select `OpenNMS Entities React`. On the screen to configure the plugin, you'll see an area for a URL and an option to select Basic Auth. That's DataSourceHttpSettings.
+This is the most basic of the three files, it only includes the Grafana-UI provided DataSourceHttpSettings which gives us the ability to configure the Datasource to connect to our OpenNMS instance via basic auth params. To see this file in action, within Grafana, hover on the Gear icon -> Datasources. Then either click on an existing instance of `OpenNMS Entities` or create a new Datasource with `Add data source` and select `OpenNMS Entities`. On the screen to configure the plugin, you'll see an area for a URL and an option to select Basic Auth. That's DataSourceHttpSettings.
 
-## Configuring OpenNMS Entities React
-While on the configuration options for OpenNMS Entities React (see step above), you will see fields for a URL, and the option for Basic Auth. Enable Basic Auth, enter the url of your opennms instance (usually ends with opennms/) and provide a username/password with access to the REST role. An ADMIN role by default has access to the API via the REST role.
+## Configuring OpenNMS Entities
+While on the configuration options for OpenNMS Entities (see step above), you will see fields for a URL, and the option for Basic Auth. Enable Basic Auth, enter the url of your opennms instance (usually ends with opennms/) and provide a username/password with access to the REST role. An ADMIN role by default has access to the API via the REST role.
 
 ## EntityQueryEditor
-The EntityQueryEditor is our top-level file to build out our Entity Query. To visually see the contents of this file, create a new Dashboard + Panel in Grafana, and then select 'OpenNMS Entity React' as your datasource. In the bottom portion of the screen under the visual area/graph, you will see a Select dropdown where you can select Alarms/Nodes/IP Interfaces... . Everything in this bottom panel is driven by EntityQueryEditor.
+The EntityQueryEditor is our top-level file to build out our Entity Query. To visually see the contents of this file, create a new Dashboard + Panel in Grafana, and then select 'OpenNMS Entity' as your datasource. In the bottom portion of the screen under the visual area/graph, you will see a Select dropdown where you can select Alarms/Nodes/IP Interfaces... . Everything in this bottom panel is driven by EntityQueryEditor.
 
 The structure of this file is relatively basic with the exception of the EntityClauseEditor, which we'll get into next.
 
