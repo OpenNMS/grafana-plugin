@@ -1,4 +1,4 @@
-# OpenNMS Helm Alarm Histogram Panel - React
+# OpenNMS Helm Alarm Histogram Panel
 
 This plugin is used with the overall OpenNMS Helm Application, and this README is an effort to break down the construction of the plugin, 
 how it works, and how to modify it.
@@ -18,7 +18,7 @@ This is a very basic file, as it just acts as a ferry between Grafana provided d
 The majority of our logic to transform the data slightly between the Data Frame and the Jquery Plottr so that we're viewing the data requested by the user (as set in AlarmGroupEditor and AlarmDirectionEditor). This hook extracts data from the data frame, and provides it back to the callee, in our case AlarmHistogramControl. This seperation allows us to focus on the splitting data logic from the plotting logic.
 
 ## Configuration Items
-To view the configuration items below, add a new Alarm Histogram - React panel or edit an existing one. On the right side of the screen under the panel options, you should see a sectionf or 'Alarm Histogram React' which has the two dropdowns as configured below.
+To view the configuration items below, add a new Alarm Histogram panel or edit an existing one. On the right side of the screen under the panel options, you should see a sectionf or 'Alarm Histogram' which has the two dropdowns as configured below.
 
 ## AlarmGroupEditor
 This allows the user to select between Severity and Acknowledged data.

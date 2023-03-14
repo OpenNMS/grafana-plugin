@@ -28,10 +28,10 @@
     "updated": "2022-12-13"
   },
   "includes": [
-    {"type": "panel", "name": "Alarm Table React"},
-    {"type": "panel", "name": "Alarm Histogram React"},
-    {"type": "panel", "name": "Filter Panel React"},
-    {"type": "panel", "name": "Flow Histogram React"},
+    {"type": "panel", "name": "Alarm Table"},
+    {"type": "panel", "name": "Alarm Histogram"},
+    {"type": "panel", "name": "Filter Panel"},
+    {"type": "panel", "name": "Flow Histogram"},
     {"type": "datasource", "name": "OpenNMS Entities"},
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},

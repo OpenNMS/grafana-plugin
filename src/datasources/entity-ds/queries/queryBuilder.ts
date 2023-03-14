@@ -177,7 +177,7 @@ export const buildQueryFilter = (filter: API.Filter, request: EntityQueryRequest
 }
 
 /**
- * Merge any filters having selected values from the FilterPanelReact into the given filter.
+ * Merge any filters having selected values from the FilterPanel into the given filter.
  * @param entityType An EntityTypes value
  */
 export const mergeFilterPanelFilters = (entityType: string, originalFilter: API.Filter, filterEditorData: FilterEditorData) => {

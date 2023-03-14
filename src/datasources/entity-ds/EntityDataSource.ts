@@ -51,13 +51,13 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
         // TODO:
         // - May need to get dashboard info (via backendSrv or direct via Dashboard HTTP API)
-        //   and see if there is actually a FilterPanelReact in the current dashboard.
+        //   and see if there is actually a FilterPanel in the current dashboard.
         //   Right now just checking for localStorage data, which could
-        //   possibly exist even if the FilterPanelReact had been deleted
-        // - FilterPanelReact should perhaps get events to know when it has been deleted and clear
+        //   possibly exist even if the FilterPanel had been deleted
+        // - FilterPanel should perhaps get events to know when it has been deleted and clear
         //   localStorage. May be able to subscribe to EventBus
 
-        // get data from any FilterPanels (React-only) that may be active
+        // get data from any FilterPanels that may be active
         const filterEditorData = loadFilterEditorData()
         const hasFilterEditorData = (filterEditorData &&
             filterEditorData?.activeFilters.length > 0 && filterEditorData?.selectableValues.length > 0)
@@ -84,7 +84,6 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async metricFindQuery(query, options) {
-
         if (isLocationQuery(query)) {
             return metricFindLocations(this.simpleRequest)
         }
@@ -98,7 +97,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         }
 
         if (!attribute) {
-            console.warn('entity-ds-react: metricFindQuery: no attribute specified')
+            console.warn('entity-ds: metricFindQuery: no attribute specified')
             return []
         }
 

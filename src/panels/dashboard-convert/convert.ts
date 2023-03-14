@@ -167,10 +167,10 @@ export const helmDashboardConvert = (sourceJson: string, sourceVersion: string, 
 }
 
 // Parse the Dashboard '__inputs' section, extracting any Datasource mappings and
-// updating those items to use React versions
+// updating those items to use Helm 9 versions
 // The 'name' is the name of the variable which may be used elsewhere in queries
 // The 'pluginId' should be the datasource ID
-// We convert this to use the React / Helm 9 versions, plus save off the variable in the map
+// We convert this to use the Helm 9 versions, plus save off the variable in the map
 // to substitute elsewhere
 //
 // "__inputs": [
@@ -193,7 +193,7 @@ const parseInputs = (source: any[], datasourceMap: Map<string,DsType>, dsMetas: 
       const pluginId = s.pluginId
 
       if (name && pluginId) {
-        // find corresponding Helm9 / React datasource info and substitute
+        // find corresponding Helm9 datasource info and substitute
         const dsType = getDatasourceTypeFromPluginId(pluginId)
         let dsMeta = dsMetas.find(d => d.datasourceType === dsType && d.helmVersion === 9)
 
@@ -222,10 +222,10 @@ const parseInputs = (source: any[], datasourceMap: Map<string,DsType>, dsMetas: 
 }
 
 // Parse the Dashboard 'templating' section, extracting any Datasource mappings and
-// updating those items to use React versions
+// updating those items to use Helm 9 versions
 // The 'name' is the name of the template variable which may be used elsewhere in queries
 // The 'query' should be the datasource ID
-// We convert this to use the React / Helm 9 versions, plus save off the variable in the map
+// We convert this to use the Helm 9 versions, plus save off the variable in the map
 // to substitute elsewhere
 //
 // "templating": {
@@ -264,7 +264,7 @@ const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, dsMetas
       const name = s.name
       const pluginId = s.query
 
-      // find corresponding Helm9 / React datasource info and substitute
+      // find corresponding Helm9 datasource info and substitute
       const dsType = getDatasourceTypeFromPluginId(pluginId)
       let dsMeta = dsMetas.find(d => d.datasourceType === dsType && d.helmVersion === 9)
 
