@@ -26,7 +26,6 @@
     "@swc/jest": "^0.2.23",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
-    "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/glob": "^8.0.0",
     "@types/grafana": "github:CorpGlory/types-grafana",
