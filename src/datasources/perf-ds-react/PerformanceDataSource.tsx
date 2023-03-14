@@ -82,7 +82,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         let step = Math.floor((end - start) / maxDataPoints);
         step = (step < intervalMs) ? intervalMs : step;
 
-        var query = buildPerformanceMeasurementQuery(start, end, step, maxDataPoints)
+        const query = buildPerformanceMeasurementQuery(start, end, step, maxDataPoints)
 
         // TODO: Not sure if 'labels' is being used, keeping here for now
         // @ts-ignore

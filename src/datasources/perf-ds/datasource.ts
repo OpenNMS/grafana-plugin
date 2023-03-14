@@ -2,8 +2,7 @@ import {QueryType, STRING_PROPERTY_TYPE} from './constants';
 import {interpolate} from "./interpolate";
 import _ from 'lodash';
 import {FunctionFormatter} from '../../lib/function_formatter';
-import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType} from "@grafana/data";
-import {DataQueryResponseData} from "@grafana/data/types/datasource";
+import {DataQuery, DataQueryRequest, DataQueryResponse, Field, FieldType, DataQueryResponseData} from "@grafana/data";
 import {ClientDelegate} from '../../lib/client_delegate'
 import {Client, ServerMetadata} from 'opennms'
 import {SimpleOpenNMSRequest,OpenNMSGlob} from '../../lib/utils'
@@ -258,10 +257,10 @@ export class OpenNMSDatasource {
 
     // Generate the query
     // labels are query display labels
-    var [query, labels] = this.buildQuery(options);
+    const [query, labels] = this.buildQuery(options);
 
     // Issue the request
-    var request;
+    let request;
     if (!Array.isArray(query) && query.source.length > 0) {
       request = Promise.all(self.extendedQuery(query))
         .then((sources) => {
@@ -521,7 +520,7 @@ export class OpenNMSDatasource {
       return Promise.resolve([]);
     }
 
-    var interpolatedQuery = _.first(this.interpolateValue(query));
+    const interpolatedQuery = _.first(this.interpolateValue(query));
 
     if (interpolatedQuery !== undefined) {
       const functions = FunctionFormatter.findFunctions(interpolatedQuery);
@@ -547,10 +546,10 @@ export class OpenNMSDatasource {
   }
 
   async metricFindNodeFilterQuery(query) {
-    let nodes = await this.simpleRequest.getNodesByFilter(query);
-    var results = [] as any[];
+    const nodes = await this.simpleRequest.getNodesByFilter(query);
+    const results = [] as any[];
     nodes.forEach( node => {
-        var nodeCriteria = node.id.toString();
+        let nodeCriteria = node.id.toString();
         if (node.foreignId !== null && node.foreignSource !== null) {
           nodeCriteria = node.foreignSource + ":" + node.foreignId;
         }
@@ -560,7 +559,7 @@ export class OpenNMSDatasource {
   }
 
   metricFindNodeResourceQuery(query, ...options) {
-    var textProperty = "id", resourceType = '*', regex = null;
+    let textProperty = "id", resourceType = '*', regex = null;
     if (options.length > 0) {
       textProperty = options[0];
     }
@@ -577,10 +576,10 @@ export class OpenNMSDatasource {
         depth: 1
       }
     }).then(function (response) {
-      var results = [] as any[];
+      const results = [] as any[];
       _.each(response.data.children.resource, function (resource) {
-        var resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
-        var textValue;
+        const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
+        let textValue;
         switch (textProperty) {
           case "id":
             textValue = resourceWithoutNodePrefix[2];
@@ -609,13 +608,13 @@ export class OpenNMSDatasource {
     const maxDataPoints = options.maxDataPoints || 300;
     const intervalMs = options.intervalMs || 60 * 1000;
 
-    var self = this,
+    let self = this,
       start = options.range.from.valueOf(),
       end = options.range.to.valueOf(),
       step = Math.floor((end - start) / maxDataPoints);
       step = (step < intervalMs) ? intervalMs : step;
 
-    var query = {
+    const query = {
       start: start,
       end: end,
       step: step,
@@ -625,10 +624,10 @@ export class OpenNMSDatasource {
       expression: [] as any[],
     } as Query;
 
-    var labels = [] as string[];
+    let labels = [] as string[];
 
     _.each(options.targets, function (target) {
-      var transient = false;
+      let transient = false;
       if (target.hide) {
         transient = true;
       }
@@ -638,7 +637,7 @@ export class OpenNMSDatasource {
           return;
         }
 
-        var label = target.label;
+        let label = target.label;
         if (label === undefined || label === '') {
           label = target.attribute;
         }
@@ -695,11 +694,11 @@ export class OpenNMSDatasource {
         }
 
         // Interpolate the filter parameters
-        var interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _.keys(target.filterParameters), options.scopedVars);
+        let interpolatedFilterParms = self.interpolateVariables(target.filterParameters, _.keys(target.filterParameters), options.scopedVars);
 
-        var filters = _.map(interpolatedFilterParms, (filterParms) => {
+        let filters = _.map(interpolatedFilterParms, (filterParms) => {
           // Build the filter definition
-          var parameters = [] as any[];
+          let parameters = [] as any[];
           _.each(filterParms, function (value, key) {
             // Skip parameters with undefined or empty values
             if (value === undefined || value === '' || value === null) {
@@ -747,9 +746,9 @@ export class OpenNMSDatasource {
 
   interpolateVariables(object: any, attributes: any, scopedVars: any, callback?: (value: any) => void) {
     // Reformat the variables to work with our interpolate function
-    var variables = [] as any[];
+    let variables = [] as any[];
     _.each(this.templateSrv.variables, function(templateVariable) {
-      var variable = {
+      let variable = {
         name: templateVariable.name,
         value: [] as any[]
       };
@@ -783,13 +782,13 @@ export class OpenNMSDatasource {
   }
 
   static processMeasurementsResponse(response) {
-    var labels = response.data.labels;
-    var columns = response.data.columns;
-    var timestamps = response.data.timestamps;
-    var metadata = response.data.metadata;
-    var series = [] as any[];
-    var i, j, nRows, nCols, datapoints;
-    var value, atLeastOneNonNaNValue;
+    let labels = response.data.labels;
+    let columns = response.data.columns;
+    let timestamps = response.data.timestamps;
+    let metadata = response.data.metadata;
+    let series = [] as any[];
+    let i, j, nRows, nCols, datapoints;
+    let value, atLeastOneNonNaNValue;
 
     if (timestamps !== undefined) {
       nRows = timestamps.length;
@@ -850,7 +849,7 @@ export class OpenNMSDatasource {
   }
 
   static getNodeResource(nodeId) {
-    var prefix = "";
+    let prefix = "";
     if (nodeId.indexOf(":") > 0) {
       prefix = "nodeSource[";
     } else {
@@ -884,7 +883,7 @@ export class OpenNMSDatasource {
   }
 
   getResourcesWithAttributesForNode(nodeId) {
-    var interpolatedNodeId = _.first(this.interpolateValue(nodeId));
+    let interpolatedNodeId = _.first(this.interpolateValue(nodeId));
 
     return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/fornode/' + encodeURIComponent(interpolatedNodeId),
@@ -905,9 +904,9 @@ export class OpenNMSDatasource {
   }
 
   suggestAttributes(nodeId: string, resourceId: string, query: string) {
-    var interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
+    let interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
         interpolatedResourceId = _.first(this.interpolateValue(resourceId));
-    var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
+    let remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
     return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
@@ -917,7 +916,7 @@ export class OpenNMSDatasource {
       }
     }).then(function (results) {
       query = query.toLowerCase();
-      var attributes = [] as any[];
+      let attributes = [] as any[];
       _.each(results.data.rrdGraphAttributes, function (value, key) {
         if (key.toLowerCase().indexOf(query) >= 0) {
           attributes.push(key);
@@ -930,9 +929,9 @@ export class OpenNMSDatasource {
   }
 
   suggestStringProperties(nodeId: string, resourceId: string, query: string) {
-    var interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
+    let interpolatedNodeId = _.first(this.interpolateValue(nodeId)),
         interpolatedResourceId = _.first(this.interpolateValue(resourceId));
-    var remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
+    let remoteResourceId = OpenNMSDatasource.getRemoteResourceId(interpolatedNodeId, interpolatedResourceId);
 
     return this.simpleRequest.doOpenNMSRequest({
       url: '/rest/resources/' + encodeURIComponent(remoteResourceId),
@@ -942,7 +941,7 @@ export class OpenNMSDatasource {
       }
     }).then(function (results) {
       query = query.toLowerCase();
-      var stringProperties = [] as any[];
+      let stringProperties = [] as any[];
       _.each(results.data.stringPropertyAttributes, function (value, key) {
         if (key.toLowerCase().indexOf(query) >= 0) {
           stringProperties.push(key);

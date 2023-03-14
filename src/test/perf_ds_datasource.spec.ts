@@ -442,7 +442,7 @@ describe('OpenNMSPMDatasource', function () {
               });
           };
 
-          var result = await ctx.ds.query(query);
+          const result = await ctx.ds.query(query);
           expect(result.data.length).toEqual(3);
           expect(result.data[0].target).toEqual('a');
           expect(result.data[0].datapoints).toStrictEqual([[1, 0], [2, 5], [3, 10]]);

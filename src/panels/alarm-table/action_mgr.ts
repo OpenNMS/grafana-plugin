@@ -68,12 +68,12 @@ export class ActionMgr {
 
     // We should only clear alarms that have a severity > CLEARED
     let cleareableRows = _.filter(this.rows, row => {
-      let severity = row.alarm.severity;
+      const severity = row.alarm.severity;
       return severity.index > Model.Severities.CLEARED.index;
     });
     this.addOptionToContextMenu('General', 'Clear', cleareableRows,
       (row, callback) => {
-        var clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
+        let clearAlarmPromise = self.ctrl.clearAlarm(row.source, row.alarmId)
         clearAlarmPromise.then(() => {
           callback(null);
         }, () => {

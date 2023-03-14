@@ -141,7 +141,7 @@ const cartesianProductOfVariables = (variables: InterpolationVariable[]) => {
 
         for (let i = 0, l = variables.length; i < l; i++) {
             // Deep clone
-            var variable = JSON.parse(JSON.stringify(variables[i]));
+            const variable = JSON.parse(JSON.stringify(variables[i]));
             variable.value = rowOfValues[i];
             rowOfVariables.push(variable);
         }

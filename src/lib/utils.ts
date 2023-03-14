@@ -338,7 +338,7 @@ export function swap(thisArray: any[], colIndex1: number, colIndex2: number): an
  */
 export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number): any[][] {
   if (rows && rows.length > 0 && colIndex1 >= 0 && colIndex2 >= 0) {
-    for (var i = 0; i < rows.length; i++) {
+    for (let i = 0; i < rows.length; i++) {
       if (colIndex1 >= rows[i].length || colIndex2 >= rows[i].length) {
         throw new Error('Index out of bounds');
       }
@@ -350,7 +350,7 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
 
 export function getNodeAsResourceQuery(nodeId: string | undefined) {
   if (!nodeId) { return nodeId; }
-  var prefix = "";
+  let prefix = "";
   if (nodeId.indexOf(":") > 0) {
     prefix = "nodeSource[";
   } else {
@@ -361,9 +361,9 @@ export function getNodeAsResourceQuery(nodeId: string | undefined) {
 
 export class SimpleOpenNMSRequest {
   backendSrv: any;
-  timeout: number = 10000;
+  timeout = 10000;
   url?: string;
-  withCredentials: boolean = false;
+  withCredentials = false;
   basicAuth?: string;
   searchLimit = 25;
 
@@ -407,7 +407,7 @@ export class SimpleOpenNMSRequest {
         if (response.data.count > response.data.totalCount) {
           console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
         }
-        var results = [] as any[];
+        let results = [] as any[];
         _.each(response.data.location, function (location) {
           let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
           let exist = _.find(results, (o) => o.text === nodeLocation);
