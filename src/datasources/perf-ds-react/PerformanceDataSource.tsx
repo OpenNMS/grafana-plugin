@@ -1,6 +1,6 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest } from "lib/utils";
+import { SimpleOpenNMSRequest, testONMSDatasource } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToDataFrame } from "./PerformanceHelpers";
 import {
@@ -26,8 +26,6 @@ import {
 } from "./queries/queryBuilder";
 import { queryStringProperties } from "./queries/queryStringProperties"
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
-import { GrafanaError } from 'opennms'
-import { isString } from 'lodash'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -178,30 +176,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        const defaultErrorMessage = 'Cannot connect to API';
-        console.log('Testing the data source!');
-        let response = { status: '', message: '' }
-        try {
-            const metadata = await this.client.getClientWithMetadata();
-            console.log('Testing the data source1!', metadata);
-            response = { status: "Success", message: "Success" }
-        } catch (err) {
-            let message = '';
-            if (isString(err)) {
-                message = err;
-            } else {
-                let grafanaError = err as GrafanaError
-                if (grafanaError) {
-                    message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
-                    if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
-                        message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
-                    }
-                }
-            }
-            response = { status: "error", message: message }
-            console.log('CAUGHT!', err);
-        }
-        return response
+        testONMSDatasource(this.client)
     }
 
     async doMeasuremmentQuery(query: OnmsMeasurementsQueryRequest) {

@@ -1,6 +1,6 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
-import { capitalize, isString } from 'lodash'
-import { API, Model, GrafanaError } from 'opennms'
+import { capitalize } from 'lodash'
+import { API, Model } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import {
     getColumns,
@@ -17,7 +17,7 @@ import {
     queryEntity
 } from './EntityHelper'
 import { ClientDelegate } from 'lib/client_delegate'
-import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
+import { SimpleOpenNMSRequest, getNodeFilterMap, testONMSDatasource } from 'lib/utils'
 import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
@@ -150,30 +150,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        const defaultErrorMessage = 'Cannot connect to API';
-        console.log('Testing the data source!');
-        let response = { status: '', message: '' }
-        try {
-            const metadata = await this.client.getClientWithMetadata();
-            console.log('Testing the data source!', metadata);
-            response = { status: "Success", message: "Success" }
-        } catch (err) {
-            let message = '';
-            if (isString(err)) {
-                message = err;
-            } else {
-                let grafanaError = err as GrafanaError
-                if (grafanaError) {
-                    message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
-                    if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
-                        message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
-                    }
-                }
-            }
-            response = { status: "error", message: message }
-            console.log('CAUGHT!', err);
-        }
-        return response
+        testONMSDatasource(this.client)
     }
 
     async metricFindNodeFilterQuery(entityType, attribute) {

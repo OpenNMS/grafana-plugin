@@ -1,10 +1,8 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from '@grafana/data';
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime';
 import { ClientDelegate } from 'lib/client_delegate';
-import { SimpleOpenNMSRequest } from 'lib/utils';
+import { SimpleOpenNMSRequest, testONMSDatasource } from 'lib/utils';
 import { FlowStrings } from './constants';
-import { GrafanaError } from 'opennms'
-import { isString} from  'lodash'
 
 import {
     buildFullQueryData,
@@ -46,28 +44,7 @@ export class FlowDataSource extends DataSourceApi<FlowQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        const defaultErrorMessage = 'Cannot connect to API';
-        let response = { status: '', message: '' }
-        try {
-            await this.client.getClientWithMetadata();
-            response = { status: FlowStrings.SuccessStatus, message: FlowStrings.Success }
-        } catch (err) {
-            let message = '';
-            if (isString(err)) {
-                message = err;
-            } else {
-                let grafanaError = err as GrafanaError
-                if (grafanaError) {
-                    message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
-                    if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
-                        message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
-                    }
-                }
-            }
-            response = { status: "error", message: message }
-            console.log('CAUGHT!', err);
-        }
-        return response
+        testONMSDatasource(this.client)
     }
 
     async metricFindQuery(query) {
