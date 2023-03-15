@@ -11,7 +11,7 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
         const filteredProps = _.cloneDeep(oldProperties);
         const totalRows = filteredProps.fields[0].values.length
         const rowsPerPage = Number(alarmTable.alarmTablePaging.rowsPerPage)
-        if (filteredProps) {
+        if (filteredProps && filteredProps.meta?.entity_metadata && filteredProps.name && filteredProps.name === 'alarms') {
             // Allow background color for severity column.
             if (alarmTable?.alarmTableAlarms?.styleWithSeverity?.value === 1) {
                 filteredProps.fields = filteredProps.fields.map((field) => {
@@ -45,10 +45,10 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
                     const start = (myPage - 1) * rowsPerPage;
                     const end = start + rowsPerPage;
                     const spliced = oldValues.splice(start, end)
-                    field.values = new ArrayVector(spliced)
+                    field.values = new ArrayVector(spliced) 
                     return field;
                 })
-                filteredProps.length = filteredProps.fields[0].values.length;
+                filteredProps.length = filteredProps.fields[0]?.values.length || 0
             } else {
                 filteredProps.length = totalRows;
             }
