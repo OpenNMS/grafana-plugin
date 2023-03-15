@@ -1,7 +1,7 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from '@grafana/data';
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime';
 import { ClientDelegate } from 'lib/client_delegate';
-import { SimpleOpenNMSRequest, testONMSDatasource } from 'lib/utils';
+import { SimpleOpenNMSRequest } from 'lib/utils';
 import { FlowStrings } from './constants';
 
 import {
@@ -40,11 +40,11 @@ export class FlowDataSource extends DataSourceApi<FlowQuery> {
         const fullQueryData = buildFullQueryData(partialQueryData, this.templateSrv);
         const { allAreSummaries } = checkForTableSummary(fullQueryData)
         const type = allAreSummaries ? FlowStrings.summaries : FlowStrings.series;
-        return await queryOpenNMS(fullQueryData, options, type, { client: this.client, simpleRequest: this.simpleRequest} );
+        return await queryOpenNMS(fullQueryData, options, type, { client: this.client, simpleRequest: this.simpleRequest });
     }
 
     async testDatasource(): Promise<any> {
-        testONMSDatasource(this.client)
+        return await this.client.testConnection()
     }
 
     async metricFindQuery(query) {

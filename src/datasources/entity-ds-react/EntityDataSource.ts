@@ -17,7 +17,7 @@ import {
     queryEntity
 } from './EntityHelper'
 import { ClientDelegate } from 'lib/client_delegate'
-import { SimpleOpenNMSRequest, getNodeFilterMap, testONMSDatasource } from 'lib/utils'
+import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
 import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
@@ -150,7 +150,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        testONMSDatasource(this.client)
+        return await this.client.testConnection()
     }
 
     async metricFindNodeFilterQuery(entityType, attribute) {

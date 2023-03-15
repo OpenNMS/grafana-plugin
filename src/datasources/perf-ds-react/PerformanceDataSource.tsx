@@ -1,6 +1,6 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest, testONMSDatasource } from "lib/utils";
+import { SimpleOpenNMSRequest } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToDataFrame } from "./PerformanceHelpers";
 import {
@@ -176,7 +176,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        testONMSDatasource(this.client)
+        return await this.client.testConnection()
     }
 
     async doMeasuremmentQuery(query: OnmsMeasurementsQueryRequest) {

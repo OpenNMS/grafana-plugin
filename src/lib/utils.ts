@@ -1,8 +1,6 @@
-import _, {isString} from 'lodash';
+import _ from 'lodash';
 
 import { loadPluginCss } from '@grafana/runtime';
-import { GrafanaError} from 'opennms'
-import { ClientDelegate } from './client_delegate';
 
 let cssInitialized = false;
 export function initializeCss() {
@@ -576,30 +574,4 @@ export const getNumberOrDefault = (value: any, defaultValue: number) => {
   return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10);
 }
 
-export const testONMSDatasource = async (client: ClientDelegate) => {
-  const defaultErrorMessage = 'Cannot connect to API';
-  console.log('Testing the data source!');
-  let response = { status: '', message: '' }
-  try {
-    const metadata = await client.getClientWithMetadata();
-    console.log('Testing the data source!', metadata);
-    response = { status: "Success", message: "Success" }
-  } catch (err) {
-    let message = '';
-    if (isString(err)) {
-      message = err;
-    } else {
-      let grafanaError = err as GrafanaError
-      if (grafanaError) {
-        message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
-        if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
-          message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
-        }
-      }
-    }
-    response = { status: "error", message: message }
-    console.log('CAUGHT!', err);
-  }
-  return response
-}
 
