@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { API, Client, DAO, Model, Rest } from 'opennms';
+import { API, Client, DAO, Model, Rest, GrafanaError } from 'opennms';
 
 export class ClientDelegate {
     type?: string;
@@ -679,5 +679,32 @@ export class ClientDelegate {
             return flowDao.getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp);
           }).catch(this.decorateError);
     }
+
+    testConnection = async () => {
+        const defaultErrorMessage = 'Cannot connect to API';
+        console.log('Testing the data source!');
+        let response = { status: '', message: '' }
+        try {
+          const metadata = await this.getClientWithMetadata();
+          console.log('Testing the data source!', metadata);
+          response = { status: "Success", message: "Success" }
+        } catch (err) {
+          let message = '';
+          if (_.isString(err)) {
+            message = err;
+          } else {
+            let grafanaError = err as GrafanaError
+            if (grafanaError) {
+              message = `Fetch error: ${(grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage)}`;
+              if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
+                message += `: ${grafanaError.data.error. grafanaError.data.message}`;
+              }
+            }
+          }
+          response = { status: "error", message: message }
+          console.log('CAUGHT!', err);
+        }
+        return response
+      }
 
 }

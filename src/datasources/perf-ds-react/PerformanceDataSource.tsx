@@ -68,7 +68,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
     async query(options: PerformanceQueryRequest<PerformanceQuery>): Promise<DataQueryResponse> {
         const searchType = this.isQueryValidStringPropertySearch(options?.targets);
- 
+
         if (searchType === 'string') {
             return this.stringPropertySearch(options);
         } else if (searchType === 'invalid') {
@@ -176,15 +176,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async testDatasource(): Promise<any> {
-        console.log('Testing the data source!');
-
-        try {
-            const metadata = await this.client.getClientWithMetadata();
-            console.log('Testing the data source1!', metadata);
-        } catch (e) {
-            console.log('CAUGHT!', e);
-        }
-        return { status: 'success', message: 'Success' }
+        return await this.client.testConnection()
     }
 
     async doMeasuremmentQuery(query: OnmsMeasurementsQueryRequest) {

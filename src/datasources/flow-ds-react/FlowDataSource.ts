@@ -40,19 +40,11 @@ export class FlowDataSource extends DataSourceApi<FlowQuery> {
         const fullQueryData = buildFullQueryData(partialQueryData, this.templateSrv);
         const { allAreSummaries } = checkForTableSummary(fullQueryData)
         const type = allAreSummaries ? FlowStrings.summaries : FlowStrings.series;
-        return await queryOpenNMS(fullQueryData, options, type, { client: this.client, simpleRequest: this.simpleRequest} );
+        return await queryOpenNMS(fullQueryData, options, type, { client: this.client, simpleRequest: this.simpleRequest });
     }
 
     async testDatasource(): Promise<any> {
-        let response = { status: '', message: '' }
-        try {
-            await this.client.getClientWithMetadata();
-            response = { status: FlowStrings.SuccessStatus, message: FlowStrings.Success }
-        } catch (e) {
-            response = { status: FlowStrings.FailureStatus, message: e as string }
-            console.error(e);
-        }
-        return response
+        return await this.client.testConnection()
     }
 
     async metricFindQuery(query) {

@@ -69,7 +69,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 
             if (hasFilterEditorData) {
-                mergeFilterPanelFilters(request.entityType , filter, filterEditorData)
+                mergeFilterPanelFilters(request.entityType, filter, filterEditorData)
             }
 
             try {
@@ -84,7 +84,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     }
 
     async metricFindQuery(query, options) {
-        
+
         if (isLocationQuery(query)) {
             return metricFindLocations(this.simpleRequest)
         }
@@ -112,7 +112,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
         if (isSituationAttribute(attribute)) {
             return [
-                { id: 'false', label: 'false', text: 'false'},
+                { id: 'false', label: 'false', text: 'false' },
                 { id: 'true', label: 'true', text: 'true' }
             ]
         }
@@ -141,26 +141,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             return items;
         }
 
-        const propertyValues = await searchProperty.findValues({limit: 0})
+        const propertyValues = await searchProperty.findValues({ limit: 0 })
 
         return propertyValues.filter(value => value !== null)
             .map(value => {
                 return { id: value, label: value, text: value ? String(value) : value, value: value }
-        })
+            })
     }
 
     async testDatasource(): Promise<any> {
-        console.log('Testing the data source!');
-        let response = { status: '', message: '' }
-        try {
-            const metadata = await this.client.getClientWithMetadata();
-            console.log('Testing the data source!', metadata);
-            response = { status: "Success", message: "Success" }
-        } catch (e) {
-            response = { status: "Failure", message: e as string }
-            console.log('CAUGHT!', e);
-        }
-        return response
+        return await this.client.testConnection()
     }
 
     async metricFindNodeFilterQuery(entityType, attribute) {
@@ -172,7 +162,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             const propertyValue = pair[1]
 
             if (propertyValue.startsWith('$')) {
-                
+
                 const templateVariable = getTemplateVariable(this.templateSrv, propertyValue)
 
                 if (templateVariable && templateVariable.current.value) {
