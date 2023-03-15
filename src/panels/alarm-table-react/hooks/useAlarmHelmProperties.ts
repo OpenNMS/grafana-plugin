@@ -48,7 +48,7 @@ export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
                     field.values = new ArrayVector(spliced) 
                     return field;
                 })
-                filteredProps.length = filteredProps.fields[0]?.values.length | 0
+                filteredProps.length = filteredProps.fields[0]?.values.length || 0
             } else {
                 filteredProps.length = totalRows;
             }

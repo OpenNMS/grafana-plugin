@@ -695,9 +695,9 @@ export class ClientDelegate {
           } else {
             let grafanaError = err as GrafanaError
             if (grafanaError) {
-              message = 'Fetch error: ' + (grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage);
+              message = `Fetch error: ${(grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage)}`;
               if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
-                message += ': ' + grafanaError.data.error + '. ' + grafanaError.data.message;
+                message += `: ${grafanaError.data.error. grafanaError.data.message}`;
               }
             }
           }
