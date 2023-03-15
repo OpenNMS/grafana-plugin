@@ -17,7 +17,7 @@ You should also have https://nodejs.org/[Node.js] installed.
 
 Follow these steps to upgrade your datasources:
 
-. Install Wizzy and create a directory for your datasources:
+. Install https://github.com/grafana-wizzy/wizzy[Wizzy] and create a directory for your datasources:
 +
 [source, console]
 ----

@@ -10,7 +10,6 @@
 * xref:installation:upgrading.adoc[]
 
 .xref:getting_started:index.adoc[]
-* xref:getting_started:migrating_from_opennms_datasource.adoc[]
 * xref:getting_started:dashboard_planning.adoc[]
 * xref:getting_started:basic_walkthrough.adoc[]
 * xref:getting_started:importing.adoc[]
