@@ -377,8 +377,7 @@ const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowP
     const outIndex = headers.indexOf('Bytes Out');
     const ecnIndex = headers.lastIndexOf('ECN');
 
-    rows.map((row) => {
-
+    rows.forEach((row) => {
         row[0] = convertLabel(row[0], null, query);
 
         if (ecnIndex > 0) {
@@ -402,8 +401,7 @@ const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowP
             row[inIndex] *= 8;
             row[outIndex] *= 8;
         }
-        return row;
-    });
+    })
 
     if (swapIngressEgress && Array.isArray(rows) && rows.length > 0) {
         rows = swapColumns(rows, inIndex, outIndex);

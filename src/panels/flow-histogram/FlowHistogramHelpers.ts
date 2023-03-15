@@ -154,11 +154,10 @@ export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHist
                 ticks: [[FLowDataDirection.dataIn.value, FLowDataDirection.dataIn.label], [FLowDataDirection.dataOut.value, FLowDataDirection.dataOut.label]]
             }
         }
-        return labeledValues
-
     } else {
-        throw new Error('Only one query is permited in this panel');
+        throw new Error('Only one query is permitted in this panel');
     }
+
     return labeledValues
 }
 

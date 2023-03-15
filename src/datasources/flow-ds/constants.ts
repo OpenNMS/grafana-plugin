@@ -337,8 +337,10 @@ export const FlowTemplateVariableFunctionExpression = [
     { name: FlowTemplateVariablesStrings.hosts, expression: /hosts\((.*)\)/ },
     { name: FlowTemplateVariablesStrings.locations, expression: /locations\((.*)\)/ },
     { name: FlowTemplateVariablesStrings.exporterNodesWithFlows, expression: /exporterNodesWithFlows\((.*)\)/ },
-    { name: FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows, expression: /interfacesOnExporterNodeWithFlows\(\s*([^,]+).*\)/ }, // just pick the first arg and ignore anything else
-    { name: FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface, expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s]+\s*)\)/ }
+    // expecting only a single variable, e.g. '$node', '123' or 'FS:FI'
+    { name: FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows, expression: /interfacesOnExporterNodeWithFlows\(\s*([^\)]+)\)/ },
+    // expecting 4 arguments: $node, $interface, $__from, $__to
+    { name: FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface, expression: /dscpOnExporterNodeAndInterface\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^\s\)]+\s*)\)/ }
 ]
 
 export const ConversationParams = [
