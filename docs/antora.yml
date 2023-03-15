@@ -6,6 +6,6 @@ asciidoc:
     full-display-version: '9.0.0-SNAPSHOT'
     grafana-version-required: "8.0"
     grafana-version-tested: 8.5
-    node-js-version: 10.x
+    node-js-build-version: 16.x
 nav:
   - modules/ROOT/nav.adoc

@@ -16,16 +16,15 @@
 * xref:getting_started:importing.adoc[Import a Dashboard]
 * xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
 
-.Panel configuration
-* xref:panel_configuration:index.adoc[Overview]
+.xref:panel_configuration:index.adoc[Panel Configuration]
 * xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
 * xref:panel_configuration:dynamic-dashboard.adoc[Create Dynamic Dashboards]
 * xref:panel_configuration:expressions.adoc[Expressions]
 
 .Datasources
-* xref:datasources:performance_datasource.adoc[Performance Datasource]
-* xref:datasources:entity_datasource.adoc[Entities Datasource]
-* xref:datasources:flow_datasource.adoc[Flow Datasource]
+* xref:datasources:performance_datasource.adoc[]
+* xref:datasources:entity_datasource.adoc[]
+* xref:datasources:flow_datasource.adoc[]
 
 .Contribute
 * xref:contributing:index.adoc[Contribute]

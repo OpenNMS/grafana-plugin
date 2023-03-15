@@ -1,5 +1,14 @@
 {
 	"eslint.enable": true,
 	"javascript.validate.enable": false,
-	"typescript.validate.enable": false
+	"typescript.validate.enable": false,
+	"spellright.language": [
+		"en"
+	],
+	"spellright.documentTypes": [
+		"markdown",
+		"latex",
+		"plaintext",
+		"asciidoc"
+	]
 }

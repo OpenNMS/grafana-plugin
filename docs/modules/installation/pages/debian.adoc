@@ -23,7 +23,7 @@ Import the packages' authentication key with the following command:
 .GPG key import for Debian-based systems
 [source, console]
 ----
-wget -O - https://debian.opennms.org/OPENNMS-GPG-KEY | sudo apt-key add -
+wget -O- https://debian.opennms.org/OPENNMS-GPG-KEY | tee -a /etc/apt/trusted.gpg.d/opennms.asc
 ----
 
 Install the packages:

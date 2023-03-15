@@ -4,11 +4,11 @@ executors:
 
   build-executor-centos:
     docker:
-      - image: opennms/build-env:11.0.14_9-3.8.4-b8184
+      - image: opennms/build-env:11.0.14_9-3.8.7-b9528
 
   build-executor-debian:
     docker:
-      - image: opennms/build-env:debian-jdk11-b8177
+      - image: opennms/build-env:debian-jdk11-b9483
 
   node-executor:
     docker:
@@ -462,20 +462,24 @@ workflows:
             tags:
               only: /^v.*/
       - make-docker-image:
+          context:
+            - "docker-publish-account"
           requires:
             - make-tarball
           filters:
             tags:
               only: /^v.*/
       - make-rpm:
-          context: gpg-signing
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
       - make-deb:
-          context: gpg-signing     
+          context:
+            - "gpg-signing"
           requires:
             - build
           filters:
@@ -488,6 +492,10 @@ workflows:
             tags:
               only: /^v.*/
       - publish-docker-image-latest:
+          context:
+            - "cloudsmith-publish-account"
+            - "docker-publish-account"
+            - "Service Principal"
           requires:
             - make-docker-image
           filters:
@@ -496,6 +504,10 @@ workflows:
             tags:
               only: /^v.*/
       - publish-docker-image-bleeding:
+          context:
+            - "cloudsmith-publish-account"
+            - "docker-publish-account"
+            - "Service Principal"
           requires:
             - make-docker-image
           filters:
@@ -504,7 +516,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-deb:
-          context: Service Principal
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-deb
           filters:
@@ -514,7 +527,8 @@ workflows:
             tags:
               ignore: /^v.*/
       - publish-rpm:
-          context: Service Principal
+          context:
+            - "cloudsmith-publish-account"
           requires:
             - make-rpm
           filters:

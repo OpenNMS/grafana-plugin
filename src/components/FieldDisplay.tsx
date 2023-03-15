@@ -1,8 +1,9 @@
-import React, { PropsWithChildren } from 'react'
+import React from 'react'
 
-interface FieldDisplayProps extends PropsWithChildren {
+interface FieldDisplayProps {
     icon?: boolean;
     color?: string;
+    children?: any;
 }
 export const FieldDisplay: React.FC<FieldDisplayProps> = ({children, icon, color}) => {
     return (

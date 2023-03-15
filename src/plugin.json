@@ -25,7 +25,7 @@
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
     "version": "9.0.0-SNAPSHOT",
-    "updated": "2022-09-14"
+    "updated": "2022-12-13"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table React"},
