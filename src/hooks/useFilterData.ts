@@ -1,7 +1,7 @@
 import {
     getFilterId,
     getFilterIdFromParts
-} from '../datasources/entity-ds-react/EntityHelper'
+} from '../datasources/entity-ds/EntityHelper'
 
 export const useFilterData = () => {
     return {

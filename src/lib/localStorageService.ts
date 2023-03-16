@@ -1,4 +1,4 @@
-import { FilterEditorData } from '../datasources/entity-ds-react/types'
+import { FilterEditorData } from '../datasources/entity-ds/types'
 
 const getCircularReplacer = () => {
     const seen = new WeakSet();

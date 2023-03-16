@@ -3,10 +3,6 @@
   "id": "opennms-helm-entity-datasource",
   "type": "datasource",
 
-  "partials": {
-    "config": "datasources/entity-ds/partials/config.html"
-  },
-
   "metrics": true,
   "annotations": false,
 
@@ -15,7 +11,7 @@
     "logos": {
       "small": "img/entity-ds.svg",
       "large": "img/entity-ds.svg"
-    }
+    },
+    "version": "9"
   }
-
 }

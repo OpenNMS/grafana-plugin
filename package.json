@@ -26,7 +26,6 @@
     "@swc/jest": "^0.2.23",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
-    "@types/angular": "^1.8.2",
     "@types/flot": "0.0.32",
     "@types/glob": "^8.0.0",
     "@types/grafana": "github:CorpGlory/types-grafana",
@@ -105,8 +104,9 @@
     "server": "docker-compose up --build",
     "sign": "npx --yes @grafana/sign-plugin@latest",
     "start": "npm run watch",
-    "test": "jest --watch --onlyChanged",
+    "test": "jest",
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
+    "test:watch": "jest --watch --onlyChanged",
     "typecheck": "tsc --noEmit",
     "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
     "watch": "webpack -w -c ./.config/webpack/webpack.config.ts --env development"

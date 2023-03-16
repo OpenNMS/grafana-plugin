@@ -1,9 +1,9 @@
 import { API } from 'opennms'
 import { ClientDelegate } from 'lib/client_delegate'
 import { useState, useEffect } from 'react'
-import { EntityHelper } from '../datasources/entity-ds-react';
+import { EntityHelper } from '../datasources/entity-ds';
 import { EntityTypes } from '../constants/constants';
-import { Properties, SearchOption } from '../datasources/entity-ds-react/types';
+import { Properties, SearchOption } from '../datasources/entity-ds/types';
 
 export const useEntityProperties = (entityName: string, featuredAttributes: boolean, client: ClientDelegate) => {
     const [properties, setProperties] = useState<Properties>({});

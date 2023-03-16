@@ -1,12 +1,12 @@
-import *  as helpers from '../../datasources/flow-ds-react/helpers';
+import { dateTimeAsMoment } from "@grafana/data";
+import { OnmsFlowSeries } from 'opennms/src/model';
+import *  as helpers from '../../datasources/flow-ds/helpers';
 import {
   FlowQueryData,
   FlowParsedQueryData,
   FlowParsedQueryRow,
-} from '../../datasources/flow-ds-react/types';
-import { FlowStrings } from '../../datasources/flow-ds-react/constants';
-import { OnmsFlowSeries } from 'opennms/src/model';
-import { dateTimeAsMoment } from "@grafana/data";
+} from '../../datasources/flow-ds/types';
+import { FlowStrings } from '../../datasources/flow-ds/constants';
 import { SimpleOpenNMSRequest } from 'lib/utils';
 
 describe("OpenNMS_Flow_Datasource", function () {

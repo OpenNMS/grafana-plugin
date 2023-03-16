@@ -1,3 +1,7 @@
-import { HelmHistogramCtrl } from './ctrl';
+import { PanelPlugin } from '@grafana/data';
+import { FlowHistogramControl } from './FlowHistogramControl'
+import { FlowHistogramOptions } from './FlowHistogramOptions'
 
-export { HelmHistogramCtrl, HelmHistogramCtrl as PanelCtrl };
+export const plugin = new PanelPlugin(FlowHistogramControl).setPanelOptions((builder) => {
+    builder.addCustomEditor({ id: 'flow-histogram-options', path: 'flowHistogramOptions', name: 'Flow Histogram Panel', editor: FlowHistogramOptions })
+});
