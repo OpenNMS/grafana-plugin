@@ -6,9 +6,19 @@ This section describes how to install the {page-component-title} plugin for Graf
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:rpm.adoc[] or xref:debian.adoc[].
 
+== Install via web UI
+
+Follow these steps to install the {page-component-title} plugin using the Grafana UI:
+
+. Navigate to your Grafana dashboard.
+. Click the *Configuration* symbol and choose *Plugins*.
+. Change the *State* to *All*.
+. Search for "OpenNMS" and select the *OpenNMS Helm* plugin.
+. Click *Install*.
+
 == Install via CLI
 
-Use the `grafana-cli` tool to install {page-component-title}:
+You can the `grafana-cli` tool to install {page-component-title}:
 
 [source, console]
 grafana-cli plugins install opennms-helm-app

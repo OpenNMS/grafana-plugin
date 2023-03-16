@@ -5,15 +5,10 @@ This section describes how to upgrade your {page-component-title} installation.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-== Upgrade {page-component-title} 3 to 4+
-
-IMPORTANT: {page-component-title} 4 introduced a breaking change: renaming the Fault Management datasource to "Entries."
-Because of this, you must follow some extra steps to upgrade your dashboards.
-
 Before proceeding, make sure that you have installed the latest {page-component-title} plugin.
 You should also have https://nodejs.org/[Node.js] installed.
 
-=== Upgrade datasources
+== Upgrade datasources
 
 Follow these steps to upgrade your datasources:
 

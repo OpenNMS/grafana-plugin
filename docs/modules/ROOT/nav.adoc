@@ -25,7 +25,7 @@
 * xref:datasources:entity_datasource.adoc[]
 * xref:datasources:flow_datasource.adoc[]
 
-.xref:contributing:index.adoc[]
+.Contribute to {page-component-title}
 * xref:contributing:developing.adoc[]
 * xref:contributing:how-to-build-docs.adoc[]
 

@@ -1,5 +1,5 @@
 
-= Build with Docker
+= Build from Source with Docker
 
 This section describes how to build {page-component-title} with Docker.
 

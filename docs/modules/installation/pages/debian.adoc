@@ -1,5 +1,4 @@
 
-[[helm-install-debian]]
 = Install on Debian/Ubuntu
 
 This section describes how to install {page-component-title} on Debian and Ubuntu.
@@ -9,7 +8,9 @@ If you have an existing Grafana instance that you would like to use, see xref:pl
 
 == Install stable
 
-Follow these steps to install the stable version of {page-component-title}:
+Follow these steps to install the stable version of {page-component-title}.
+
+NOTE: If {page-component-title} is installed on your Horizon or Meridian server, you can skip steps 1 and 2 in this procedure.
 
 . Create a new apt source file (for example, `/etc/apt/sources.list.d/opennms.list`) and add the following code:
 +
@@ -34,26 +35,7 @@ sudo apt-get install opennms-helm
 
 == Start the Grafana server
 
-You can start your Grafana server in two ways: using `init.d`, or using `systemd`.
-
-=== init.d
-
-Follow these steps to start your Grafana server using the `init.d` service:
-
-. Start Grafana:
-+
-[source, console]
-sudo service grafana-server start
-
-** This starts the `grafana-server` process as the `grafana` user, which is created during package installation.
-** Note that the default HTTP port and username/password combination are set to the following:
-*** HTTP port: `3000`
-*** Username/password: `admin`/`admin`
-
-. Configure your Grafana server to start on boot:
-+
-[source, console]
-sudo /sbin/chkconfig --add grafana-server
+You can start your Grafana server in two ways: using `systemd`, or using `init.d`.
 
 === systemd
 
@@ -72,10 +54,36 @@ sudo systemctl start grafana-server
 sudo systemctl status grafana-server
 ----
 
+** This starts the `grafana-server` process as the `grafana` user, which is created during package installation.
+** Note that the default HTTP port and username/password combination are set to the following:
+*** *HTTP port:* `3000`
+*** *Username/password:* `admin`/`admin`
+** For information on customizing the HTTP port or your username and password, see the https://grafana.com/docs/[official Grafana documentation].
+
 . Configure the `systemd` service to start on boot:
 +
 [source, console]
 sudo systemctl enable grafana-server.service
+
+=== init.d
+
+Follow these steps to start your Grafana server using the `init.d` service:
+
+. Start Grafana:
++
+[source, console]
+sudo service grafana-server start
+
+** This starts the `grafana-server` process as the `grafana` user, which is created during package installation.
+** Note that the default HTTP port and username/password combination are set to the following:
+*** *HTTP port:* `3000`
+*** *Username/password:* `admin`/`admin`
+** For information on customizing the HTTP port or your username and password, see the https://grafana.com/docs/[official Grafana documentation].
+
+. Configure your Grafana server to start on boot:
++
+[source, console]
+sudo /sbin/chkconfig --add grafana-server
 
 == Next steps
 

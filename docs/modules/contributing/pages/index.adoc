@@ -1,8 +1,0 @@
-
-= Contribute to {page-component-title}
-
-You can contribute to the {page-component-title} project in different ways:
-
-* Fork the project on https://github.com/OpenNMS/opennms-helm[GitHub].
-* Open an issue, bug report, or feature request in https://opennms.atlassian.net/jira/software/c/projects/HELM/issues[Jira].
-* xref:how-to-build-docs.adoc[Update the documentation].

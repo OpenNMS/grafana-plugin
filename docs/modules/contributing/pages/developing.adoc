@@ -20,9 +20,7 @@ Follow these steps to prepare your development environment:
 [source, ini]
 ----
 app_mode = development
-
 ...
-
 [plugins]
 allow_loading_unsigned_plugins = opennms-helm-app
 ----

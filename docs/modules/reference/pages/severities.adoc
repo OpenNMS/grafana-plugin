@@ -4,3 +4,13 @@
 This matrix defines the severities that OpenNMS uses:
 
 image::severities.png["Table of OpenNMS severity definitions.", 700]
+
+* *Critical:* Numerous devices are impacted by an event.
+* *Major:* A device is down, or in danger of going down.
+* *Minor:* A part of a device (service, interface, power supply, and so on) has stopped functioning.
+* *Warning:* An event has occurred that may require action.
+* *Normal:* Informational severity message; no action is required.
+* *Cleared:* Indicates that an alarm with a self-clearing error condition has been corrected, and service is restored.
+* *Indeterminate:* No severity could be associated with the event.
+
+For more information on the severities in OpenNMS, see https://docs.opennms.com/horizon/latest/operation/deep-dive/events/event-configuration.html#severities[A word about severities] in the main OpenNMS documentation.
