@@ -49,7 +49,7 @@ The URL for your Horizon or Meridian datasource is `\http://opennms:8980/opennms
 
 == Configure Docker for PDF reports
 
-Horizon and Meridian include three templates from which you can create PDF reports.
+Horizon and Meridian include templates from which you can create PDF reports.
 They use an existing Grafana dashboard (see https://docs.opennms.com/horizon/31/operation/deep-dive/database-reports/templates/grafana.html[Grafana Dashboard] in the main OpenNMS documentation).
 If you want to use this feature, and you are running {page-component-title} through Docker, you must complete additional configuration.
 Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information.

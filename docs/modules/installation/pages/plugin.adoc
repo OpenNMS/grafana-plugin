@@ -6,7 +6,7 @@ This section describes how to install the {page-component-title} plugin for Graf
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:rpm.adoc[] or xref:debian.adoc[].
 
-== Installation
+== Install via CLI
 
 Use the `grafana-cli` tool to install {page-component-title}:
 

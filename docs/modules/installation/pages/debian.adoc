@@ -55,7 +55,7 @@ sudo service grafana-server start
 [source, console]
 sudo /sbin/chkconfig --add grafana-server
 
-== systemd
+=== systemd
 
 Follow these steps to start your Grafana server using `systemd`:
 
