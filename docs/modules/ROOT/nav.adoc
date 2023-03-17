@@ -1,35 +1,34 @@
 
-.About
-* xref:about:introduction.adoc[What is Helm?]
+* xref:about:introduction.adoc[]
 
 .Installation
-* xref:installation:requirements.adoc[Requirements]
-* xref:installation:rpm.adoc[Install on RPM-based Linux (CentOS, Fedora, OpenSuse, RedHat)]
-* xref:installation:debian.adoc[Install on Debian/Ubuntu]
-* xref:installation:plugin.adoc[Install Via Plugin (for existing Grafana installations)]
-* xref:installation:source.adoc[Install from Source]
+* xref:installation:requirements.adoc[]
+* xref:installation:debian.adoc[Debian/Ubuntu]
+* xref:installation:rpm.adoc[RPM-Based Linux]
+* xref:installation:plugin.adoc[{page-component-title} Plugin]
+* xref:installation:source.adoc[From Source]
+* xref:installation:upgrading.adoc[]
 
-.Get started with Helm
-* xref:getting_started:index.adoc[Overview]
-* xref:getting_started:dashboard_planning.adoc[Plan Your Dashboard]
-* xref:getting_started:basic_walkthrough.adoc[Basic Walk-Through]
-* xref:getting_started:importing.adoc[Import a Dashboard]
-* xref:getting_started:flow-deep-dive.adoc[Flow Deep-Dive Dashboard]
+.xref:getting_started:index.adoc[]
+* xref:getting_started:dashboard_planning.adoc[]
+* xref:getting_started:basic_walkthrough.adoc[]
+* xref:getting_started:importing.adoc[]
+** xref:getting_started:flow-deep-dive.adoc[]
 
-.xref:panel_configuration:index.adoc[Panel Configuration]
-* xref:panel_configuration:forecasting.adoc[Use Filters to Forecast Metrics]
-* xref:panel_configuration:dynamic-dashboard.adoc[Create Dynamic Dashboards]
-* xref:panel_configuration:expressions.adoc[Expressions]
+.xref:panel_configuration:index.adoc[]
+* xref:panel_configuration:forecasting.adoc[]
+* xref:panel_configuration:dynamic-dashboard.adoc[]
+* xref:panel_configuration:expressions.adoc[]
 
 .Datasources
 * xref:datasources:performance_datasource.adoc[]
 * xref:datasources:entity_datasource.adoc[]
 * xref:datasources:flow_datasource.adoc[]
 
-.Contribute
-* xref:contributing:index.adoc[Contribute]
-* xref:contributing:developing.adoc[Develop]
-* xref:contributing:how-to-build-docs.adoc[Write and Build Docs]
+.Contribute to {page-component-title}
+* xref:contributing:developing.adoc[]
+* xref:contributing:how-to-build-docs.adoc[]
 
 .Reference
-* xref:reference:severities.adoc[Severities]
+* xref:reference:how-to-build-with-docker.adoc[]
+* xref:reference:severities.adoc[]

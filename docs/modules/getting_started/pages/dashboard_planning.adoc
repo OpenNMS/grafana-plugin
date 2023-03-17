@@ -1,31 +1,26 @@
+
 :imagesdir: ../assets/images
-= Planning Your Dashboard
 
-[.lead]
-Every network is unique, with different monitoring requirements.
-{page-component-title} has the flexibility to let users customize dashboards to display data in a way that best meets their needs and workflow.
+= Plan Your Dashboard
 
-{page-component-title} dashboards contain multiple panels, each of which displays specific data.
-For example, the following sample dashboard displays performance metrics collected through SNMP.
+Every network is unique, and each has different monitoring requirements.
+{page-component-title} has the flexibility to let you customize dashboards to display data in a way that best meets your needs and workflow.
 
-image::gf-helm-sample-dash.png[Dash, 800]
+{page-component-title} dashboards display multiple panels, each of which visualizes specific data.
+For example, this sample dashboard displays performance metrics collected through SNMP:
+
+image::gf-helm-sample-dash.png["Sample dashboard displaying various panels that visualize performance metrics."]
 
 Another dashboard might display traffic flows:
 
-image::gf-flows.png[Flows, 800]
+image::gf-flows.png["Sample dashboard displaying panels that visualize traffic flows data."]
 
-Taking the time to consider what data you want to display and how to organize it can save time and effort when creating dashboards in {page-component-title}.
+Taking the time to consider what data you want to visualize and how to organize it can save you time and effort when you create dashboards.
+When planning your dashboard, consider the following points:
 
-When planning your dashboard, consider the following:
-
-* type of data (faults, performance, flows, inventory)
-* workflow (What is the best way to organize the data? By type, location, devices, staff responsibility, etc.?)
-* staff (Who is responsible and how are issues addressed? Who should have access to what data?)
-
-[TIP]
-====
-Check out https://grafana.com/grafana/dashboards?search=opennms[existing OpenNMS dashboards] for inspiration.
-====
-
-You're ready to xref:basic_walkthrough.adoc[create your first dashboard].
-
+* What type of data you want to visualize (faults, performance, flows, inventory, and so on).
+* What is your workflow?
+* What is the best way to organize the data?
+* Who is responsible for specific tasks?
+* How are issues addressed in your environment?
+* Who should have access to specific data?

@@ -1,102 +1,98 @@
+
 :imagesdir: ../assets/images
-[.lead]
 
-[[pc-dynamic-dash]]
-= Creating Dynamic Dashboards
+= Dynamic Dashboards
 
-Instead of hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} has several ways to create more dynamic and interactive dashboards:
-
-* xref:pc-template-filters[template variables]
-* xref:pc-filter-panel[filter panels]
+Rather than hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} offers several ways to create more dynamic and interactive dashboards.
 
 [[pc-template-filters]]
-== Use variables to create dynamic dashboards
+== Template variables
 
-Template variables are available in metric queries and panel titles, and appear as a drop-down list at the top of the dashboard.
-Select from the list to filter the data the panel displays:
+Template variables can be used in metric queries and panel titles.
+They are also displayed as a drop-down list at the top of each dashboard.
+You can select variables from the list to filter the data that your dashboard displays:
 
-image::pc-variable-drop.png[Variable Drop, 300]
+image::pc-variable-drop.png["{page-component-title} dashboard displaying the template variable drop-down list.", 500]
 
-Each datasource has different template queries available.
-For example, the xref:datasources:performance_datasource.adoc#ds-perf-template[performance datasource] has two available template queries:
+Each datasource can accept different template variable queries.
+For example, the xref:datasources:performance_datasource.adoc[Performance datasource] has two available template queries:
 
-* specific node(s): `nodeFilter(NODEFILTERSTRING)`
-* specific resource(s) on a node: `nodeResources(NODEID[, id|label|name[, resource-type-name|*]])`
+* Specific nodes: `nodeFilter(NODEFILTERSTRING)`
+* Specific resources on a node: `nodeResources(NODEID[, id|label|name[, resource-type-name|*]])`
 
-See the following for xref:datasources:entity_datasource#ds-entity-template[entities datasource] and xref:datasources:flow_datasource#ds-flow-template[flow datasource] template queries.
+For more information on template queries, see the xref:datasources:entity_datasource#ds-entity-template[Entities] and xref:datasources:flow_datasource#ds-flow-template[Flow datasource] pages.
 
-This procedure explains how to use variables in a query for a category of nodes (switches):
+=== Use template variables in a query
+
+Follow these steps to use template variables in a query for a category of nodes (switches):
 
 . Select or xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel].
-For this procedure, we created a panel that displays active TCP connections:
+For this example, we created a panel that displays active TCP connections:
 +
-image::pc-TCP-panel.png[TCP, 300]
+image::pc-TCP-panel.png["Example configuration settings for a {page-component-title} dashboard panel.", 500]
 
-. In the top-right of the panel, click the *Dashboard Settings* icon and choose menu:Variables[Add Variable].
-. Specify the appropriate information.
-A preview of the values returned appears at the bottom of the screen:
+. Click the *Dashboard Settings* symbol at the top-right of the panel.
+. Select menu:Variables[Add Variable].
+. Configure your desired settings.
+A preview of the returned values is displayed at the bottom of the page:
 +
-image::pc-Variables.png[Variable, 400]
+image::pc-Variables.png["Example configuration settings for a new variable. The Preview of Values section is outlined in red.", 500]
 
-.. Supported queries are in the form `nodeFilter($filter)` or `nodeResource(FS:FID)`, where `$filter` is any filter expression.
+** Supported queries are in the form `nodeFilter($filter)` or `nodeResource(FS:FID)`, where `$filter` is any filter expression.
 In this case, we used the `nodeFilter` variable to specify the nodes in the "switches" category.
 
-. Click *Add*.
-. Click *Save*.
+. Click *Add*, then click *Save*.
 
-For more examples of variables in template queries, see the xref:getting_started:importing.adoc[import] the https://grafana.com/grafana/dashboards/5053[OpenNMS Network Interfaces Report] sample dashboard.
+For more examples of template variables in queries, xref:getting_started:importing.adoc[import] the https://grafana.com/grafana/dashboards/5053[OpenNMS Network Interfaces Report] sample dashboard.
 
 === Specify a node variable in the panel
 
-After creating the template variable, you need to update the panel to make sure data is available from all the nodes rather than only one specific node.
+After you create a template variable, you must update your panel to make sure that data is available from all monitored nodes, rather than one specific node:
 
-. In the panel, type `$node` in the *Node* field.
-. Update the label to make it unique by typing the following: `nodeToLabel($node)`.
-.. A label must be unique to display data in the panel.
+. In the panel, type `$node` in the *Node* box.
+. Type `nodeToLabel($node)` in the *Label* box to make it unique.
+Note that a label must be unique to display data in the panel.
 +
-image::pc-node-Final.png[Node final, 300]
+image::pc-node-Final.png["Example panel configuration settings.", 500]
 
-. Save your dashboard.
-. Click the *Node* drop-down you created to select the nodes whose data you want to display:
+. Click *Save*.
+. Select the nodes whose data you want to display from the *Node* list:
 +
-image::pc-select-nodes.png[Node Select, 500]
+image::pc-select-nodes.png["{page-component-title} panel displaying a node selection list.", 700]
 
 [[pc-filter-panel]]
 == Create a filter panel
 
-A filter panel lets you configure a series of variables to put on a dashboard.
-While xref:pc-template-filters[template variables] work with the performance datasource, the filter panel coordinates with any panels in the dashboard that use an xref:datasources:entity_datasource.adoc[entities datasource] to automatically apply filters that match those variables.
+Filter panels let you configure a series of variables by which to filter data on a dashboard.
+While template variables work with the Performance datasource, the filter panel coordinates with any panels on the dashboard that use an Entities datasource to automatically apply filters that match those variables.
 
-Before creating a filter panel, make sure you have a panel on the dashboard that uses an entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel]).
-
-This procedure creates a panel that lets you filter on alarm type and alarms that are acknowledged or in a situation.
+Before you create a filter panel, make sure that you have a panel on your dashboard that uses an Entities datasource (see xref:getting_started:basic_walkthrough.adoc#bw-panel-create[Create a panel]).
+This example creates a panel that lets you filter on alarm type and alarms that are either acknowledged or in a situation.
 
 To create a filter panel, follow these steps:
 
-. In the dashboard, click the *Add Panel* icon.
-. Click *Choose Visualization* and choose *Filter Panel*.
-. In the Filter Columns area, choose an entities datasource.
+. On your dashboard, click the *Add Panel* symbol.
+. Click *Choose Visualization* and choose a *Filter Panel*.
+. Under Filter Columns, choose an Entities datasource:
 +
-image::pc-filter-ds.png[]
+image::pc-filter-ds.png["{page-component-title} Choose Visualization page. The filter panel type is selected, and the OpenNMS Entities datasource is highlighted."]
 
-. Choose *Alarms* or *Nodes*, depending on how you want to filter the data.
-. Click the plus sign (*+*) and choose an attribute to filter on from the list (for example, Alarm Type, "Is Acknowledged"):
+. Choose *Alarms* or *Nodes*, as appropriate.
+. Click the *plus* symbol (*+*) and choose an attribute to filter on from the list (for example, Alarm Type, "Is Acknowledged"):
 +
-image::pc-alarm-attributes.png[]
+image::pc-alarm-attributes.png["Filter panel configuration page displaying the Data Source Entity list. Alarm Type is highlighted."]
 
-. Specify information about the appearance of your filter field, including whether it is a drop-down list or a text field, and a custom label, if desired:
-
+. Specify information about the appearance of your filter field, including whether it is a drop-down list or a text field, and a custom label, as desired:
 +
-image::pc-filter-panel-cust.png[Filter Panel, 300]
+image::pc-filter-panel-cust.png["Filter panel configuration page. The plus symbol beside the Data Source Entity list is highlighted.", 500]
 
-. Repeat steps 4–7 to add additional filters.
-. In the left menu, click the *General* icon to change the name of the filter panel and specify additional information.
-. In the top-right menu, click the *Save Dashboard* icon.
+. Repeat steps 4-7 to add additional filters, as desired.
+. In the left navigation menu, click the *General* symbol to change the name of the filter panel and specify additional information.
+. Click the *Save Dashboard* symbol at the top-right of the panel.
 
-The filter panel appears on the dashboard:
+The filter panel is displayed on your dashboard:
 
-image::pc-filter-panel2.png[Panel,400]
+image::pc-filter-panel2.png["Example filter panel on a {page-component-title} dashboard.", 500]
 
-Selections that you make here will impact all panels in the dashboard that use an entities datasource.
-You can drag the filter panel to appear anywhere on your dashboard.
-
+All panels on the dashboard that use an Entities datasource will be updated as you modify the values in the filter panel.
+You can drag the panel to appear anywhere on your dashboard.
