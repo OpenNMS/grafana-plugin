@@ -23,7 +23,7 @@ The `query` attribute's default value is `alarms()`, meaning it returns a list o
 
 === alarms([attribute])
 
-The `alarms()` function queries the OpenNMS alarms REST API.
+The `alarms()` function queries the OpenNMS https://docs.opennms.com/horizon/latest/development/rest/alarms.html[alarms REST API].
 
 === locations()
 
@@ -52,7 +52,7 @@ nodeFilter(<node_attribute>='<value>')
 nodeFilter(location='$location' & label='localhost')
 ----
 
-For more information about filters, see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation].
+For more information about filters, see https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[Filters] in the main OpenNMS documentation.
 
 === nodes([attribute])
 

@@ -1,10 +1,10 @@
-:imagesdir: ../assets/images
-[[deep-dive-dash]]
+
 = Flow Deep-Dive Dashboard
 
-The {page-component-title} plugin includes a pre-designed flow deep-dive dashboard that displays flow data.
-Access this dashboard from the home page or from the menu:Dashboards[Manage] menu.
-The dashboard can help with quality of service (QoS) monitoring and includes panels that display data in the following categories:
+{page-component-title} includes a predesigned flow deep-dive dashboard that visualizes flow data.
+You can access this dashboard from your Grafana home page, or from the menu:Dashboards[Manage] page.
+
+The dashboard can help with quality of service monitoring, and includes panels that display the following data categories:
 
 * Flow interface statistics (throughput and data use by application)
 * SNMP interface statistics (interface throughput and errors/discards)
@@ -12,28 +12,25 @@ The dashboard can help with quality of service (QoS) monitoring and includes pan
 * Hosts (throughput and data use by host)
 * DCSPs (throughput and data use by Differentiated Services Code Points)
 
-== QoS options
+== Quality of service monitoring options
 
-The dashboard exposes nodes and interfaces with flows that you can filter on in the *Node* and *Interface* lists.
+The flow deep-dive dashboard exposes nodes and interfaces with flows that you can filter on in the *Node* and *Interface* lists.
+You can also filter flows traffic by the type of service and differentiated services code point (DSCP) for nodes and interfaces with these values.
 
-You can also filter flows traffic by type of service (ToS) and differentiated services code point (DSCP) for nodes and interfaces with these values.
+To customize the displayed data, select a DSCP value (or combination of values) from the list for the quality of service metric that you want to visualize (for example, class selector or IP precedence).
 
-Select a DSCP value (or combination of values) from the list for the QoS you want to visualize (class selector, IP precedence, assured forwarding, expedited forwarding).
+The ECN (explicit congestion notification) column in summary tables shows ECN-related information, separated by a forward slash (`/`).
+The first value indicates if all summarized flows use ECN-capable transports (abbreviated by `ect`), or at least one flow used `non-ect`.
+The second value indicates if a congestion was encountered (`ce`) or no congestion was encountered (`no ce`).
+This works for both aggregated and unaggregated flow data.
 
-The ECN (explicit congestion notification) column of summary tables shows ECN-related information separated by a slash.
-The first value shows if all summarized flows used ECN capable transports, abbreviated by `ect`, or at least one flow used a `non-ect`.
-The second value indicates if a congestion was encountered (`ce`) or not (`no ce`).
-This works for aggregated and unaggregated flow data.
+== Configuration
 
-[[deep-dive-configure]]
-== Configure a flow deep-dive dashboard
-
-By default, the flow deep-dive dashboard uses the OpenNMS flow and performance data sources.
-If you have not already specified these datasources, see xref:basic_walkthrough.adoc#bw-ds-setup[set up datasources].
+By default, the flow deep-dive dashboard uses the OpenNMS xref:datasources:flow_datasource.adoc[flow] and xref:datasources:performance_datasource.adoc[performance] datasources.
+If you have not already specified these datasources, see <<basic_walkthrough.adoc#bw-ds-setup, Create a datasource>>.
 
 You can further configure the dashboard by creating queries or editing existing panels.
-For more information, see xref:panel_configuration:index.adoc#pc-index[Panel Configuration].
+For more information, see xref:panel_configuration:index.adoc[].
 
-IMPORTANT: Use *Save As* to create your custom version of the flow deep-dive dashboard.
-Otherwise, changes you make to the default dashboard are overwritten when you update the plugin or reimport the dashboard.
-
+IMPORTANT: Use *Save As* to save your customized version of the flow deep-dive dashboard.
+Otherwise, changes that you make to the default dashboard will be overwritten when you update the {page-component-title} plugin or reimport the dashboard.
