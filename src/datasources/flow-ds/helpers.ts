@@ -207,7 +207,8 @@ export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: 
             }
         }
     }
-    //toggleTableViewIfRelevant(type);
+
+    // possibly call toggleTableViewIfRelevant(type) here
 
     return { data: responseData };
 }
@@ -220,9 +221,8 @@ export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: 
 export const toggleTableViewIfRelevant = (type: string) => {
     const tableViewCheckbox: HTMLInputElement | null = document.querySelector('#table-view')
     if (tableViewCheckbox) {
-        if (type === FlowStrings.summaries && !tableViewCheckbox.checked) {
-            tableViewCheckbox.click();
-        } else if (tableViewCheckbox.checked) {
+        if (tableViewCheckbox.checked ||
+          (!tableViewCheckbox.checked && type === FlowStrings.summaries)) {
             tableViewCheckbox.click();
         }
     }
@@ -338,7 +338,18 @@ const buildTopNParams = async (type: string, query: FlowParsedQueryRow, options:
 const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, params: any) => {
     return parsedData['timestamps'].map((timestamp, timestampIdx) => {
         const v = Number(parsedData['values'][colIdx][timestampIdx]);
-        return [isNaN(v) ? params['nanToZero'] ? 0 : null : v * params['multiplier'] * params['sign'], timestamp]
+
+        let value: number | null = null
+
+        if (isNaN(v)) {
+          if (params['nanToZero']) {
+            value = 0
+          }
+        } else {
+          value = v * params['multiplier'] * params['sign']
+        }
+
+        return [value, timestamp]
     })
 }
 
@@ -958,16 +969,16 @@ export const getFilteredNodes = async ({ client, simpleRequest }, exporterNodes?
  */
 export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
     item.functions?.forEach((f, idx) => {
-
         if (item.functionParameters[idx]) {
             item.functionParameters[idx] = templateSrv.replace(item.functionParameters[idx])
+        }
 
-        } if (item.parameterOptions[idx] && item.parameterOptions[idx].value) {
+        if (item.parameterOptions[idx] && item.parameterOptions[idx].value) {
             item.parameterOptions[idx].value = templateSrv.replace(item.parameterOptions[idx].value)
             item.parameterOptions[idx].label = templateSrv.replace(item.parameterOptions[idx].label)
         }
-
     })
+
     return item
 }
 
@@ -980,7 +991,10 @@ export const convertTemplateVariables = (item: FlowQueryData, templateSrv) => {
  * @returns ifIndex if any or iface param if not match is found.
  */
 export const lookupIfIndex = async (nodeQuery: string | undefined, iface: string | number | null | undefined, simpleRequest: SimpleOpenNMSRequest) => {
-    if (!nodeQuery || !iface || !Number.isNaN(Number(iface))) { return iface; }
+    if (!nodeQuery || !iface || !Number.isNaN(Number(iface))) {
+      return iface;
+    }
+
     const resources = await simpleRequest.getResourcesForNode(nodeQuery);
 
     if (resources) {

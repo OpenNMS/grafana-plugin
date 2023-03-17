@@ -11,7 +11,6 @@ import {
     validateFlowHistogramPanelData
 } from './FlowHistogramHelpers';
 import { FlowHistogramOptionsProps } from './FlowHistogramTypes';
-import _ from 'lodash';
 
 interface FlowHistogramControlOptions { flowHistogramOptions: FlowHistogramOptionsProps }
 interface Props extends PanelProps<FlowHistogramControlOptions> { }

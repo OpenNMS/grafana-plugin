@@ -439,8 +439,14 @@ const updateEntityQuery = (source: any) => {
   target.clauses = (target.filter?.clauses || []).map((c, i) => {
     const attrLabel = c.restriction.attribute // 'label'
     const attrId = getAttributeMapping(target.selectType, attrLabel)
-    //const attrName = columns.find(col => col.resource === attrId)?.text || attrLabel
     const attrName = columns.find(col => col.resource === attrLabel)?.text || attrLabel // 'Label'
+
+    // Confirm this logic
+    let entityType = i === 0 ? OnmsEntityType.FIRST : OnmsEntityType.AND
+
+    if (i !== 0 && c.operator?.id && c.operator.id >= 0) {
+      entityType = c.operator.id
+    }
 
     return {
       attribute: {
@@ -468,8 +474,7 @@ const updateEntityQuery = (source: any) => {
       comparedValue: "",
       // TODO: figure out nestingType
       nestingType: OnmsEntityNestType.TOP,
-      // TODO: Not sure this is correct
-      type: i === 0 ? OnmsEntityType.FIRST : c.operator?.id && c.operator.id >= 0 ? c.operator.id : OnmsEntityType.AND
+      type: entityType
     }
   })
 

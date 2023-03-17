@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-imports */
 import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } from "./FlowHistogramTypes";
-import _ from 'lodash';
 import moment from 'moment';
 import { CSSProperties } from 'react'
 import { DataPosition, FLowDataDirection, UnitInfo } from "./FlowHistogramContants";
@@ -81,8 +80,8 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
         xaxis: horizontal ? {} : yaxis,
         yaxis: horizontal ? yaxis : {}
     }
-    return configOptions
 
+    return configOptions
 }
 
 export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHistogramOptionsProps }): FlowPanelDataProcessed => {
@@ -201,7 +200,6 @@ export const getStackedResultData = (indexedMetricLabels: any[], inByData: any[]
         return horizontal ?
             { label: label, data: [[inData, FLowDataDirection.dataIn.value], [outData, FLowDataDirection.dataOut.value]] } :
             { label: label, data: [[FLowDataDirection.dataIn.value, inData], [FLowDataDirection.dataOut.value, outData]] }
-
     })
 }
 
@@ -212,7 +210,6 @@ export const getSeriesMetricValues = (fields: any[], name: string) => {
         return match.values.toArray()
     }
     else { return [] }
-
 }
 
 export const setLegend = (options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
@@ -240,23 +237,30 @@ export const validateFlowHistogramPanelData = (dataSeries: DataFrame[]) => {
 }
 
 export const getStyleFor = (element: FlowHistogramElement, height: number, width: number, options: { flowHistogramOptions: FlowHistogramOptionsProps }): CSSProperties => {
+    const isUnderGraph = options.flowHistogramOptions.position.label === 'Under Graph'
+    const showLegend = options.flowHistogramOptions.showLegend
+
     switch (element) {
         case FlowHistogramElement.Container:
             return {
-                display: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block'),
-                float: (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
+                display: showLegend && isUnderGraph ? 'block' : 'inline-block',
+                float: showLegend && isUnderGraph ? 'none' : 'left'
             }
         case FlowHistogramElement.Legend:
+            const widthOffset = options.flowHistogramOptions.direction.label === 'Horizontal' ? 0 : 25
+            const blockValue = isUnderGraph ? 'block' : 'inline-block'
             return {
-                display: (options.flowHistogramOptions.showLegend ? (options.flowHistogramOptions.position.label === 'Under Graph' ? 'block' : 'inline-block') : 'none'),
-                width: (options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.2 - (options.flowHistogramOptions.direction.label === 'Horizontal' ? 0 : 25)),
-                height: (options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : height),
-                float: (options.flowHistogramOptions.position.label === 'Under Graph' ? 'none' : 'left')
+                display: showLegend ? blockValue : 'none',
+                width: isUnderGraph ? width : (width * 0.2) - widthOffset,
+                height: isUnderGraph ? options.flowHistogramOptions.height : height,
+                float: isUnderGraph ? 'none' : 'left'
             }
         case FlowHistogramElement.ContainerGraph:
+            const heightOffset = (showLegend && isUnderGraph) ? options.flowHistogramOptions.height : 0
+
             return {
-                width: (!options.flowHistogramOptions.showLegend || options.flowHistogramOptions.position.label === 'Under Graph' ? width : width * 0.8),
-                height: height - 25 - (options.flowHistogramOptions.showLegend && options.flowHistogramOptions.position.label === 'Under Graph' ? options.flowHistogramOptions.height : 0)
+                width: !showLegend || isUnderGraph ? width : width * 0.8,
+                height: height - 25 - heightOffset
             }
         case FlowHistogramElement.GraphAxisLabel:
             return {
@@ -265,7 +269,7 @@ export const getStyleFor = (element: FlowHistogramElement, height: number, width
                 justifyContent: 'center',
                 alignItems: 'center'
             }
-            case FlowHistogramElement.GraphAxisLabelUnit:
+        case FlowHistogramElement.GraphAxisLabelUnit:
             return {
                 marginTop: 24 
             }
@@ -278,4 +282,4 @@ export enum FlowHistogramElement {
     GraphAxisLabel,
     GraphAxisLabelUnit,
     Legend
-};
+}

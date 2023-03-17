@@ -203,7 +203,11 @@ const queryStringPropertiesForEachNodeSeparately = async (
 
     const groupedByNodeId = definedQueries.reduce<{ [key: string]: DefinedStringPropertyQuery[] }>(
         (accu, query) => {
-            (accu[query.nodeId] = accu[query.nodeId] || []).push(query)
+            if (!accu[query.nodeId]) {
+              accu[query.nodeId] = []
+            }
+
+            accu[query.nodeId].push(query)
             return accu
     }, {})
 

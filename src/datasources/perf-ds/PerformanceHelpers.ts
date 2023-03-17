@@ -3,6 +3,48 @@ import { FunctionFormatter } from "lib/function_formatter";
 import { OnmsMeasurementsQueryResponse } from "./types";
 
 /**
+ * Get 'windowed' timestamps that are between start/end range.
+ * @param timestamps an array of timestamp values
+ * @param start a starting timestamp for the window, or 0 to start at the beginning
+ * @param end an ending timestamp for the window, or 0 to not limit the end of the window range
+ */
+const getWindowedTimestamps = (timestamps: number[], start: number, end: number) => {
+  if (start === 0 && end === 0) {
+    return {
+      windowedTimestamps: [...timestamps],
+      startIndex: 0,
+      endIndex: timestamps.length - 1
+    }
+  }
+
+  const windowedTimestamps = [] as number[]
+  let startIndex = -1
+  let endIndex = timestamps.length - 1
+
+  for (let i = 0; i < timestamps.length; i++) {
+      const tsVal = timestamps[i]
+
+      if (end > 0 && tsVal > end) {
+          endIndex = i - 1
+          break
+      }
+
+      if (start === 0 || tsVal >= start) {
+          if (startIndex < 0) {
+              startIndex = i
+          }
+          windowedTimestamps.push(tsVal)
+      }
+  }
+
+  return {
+    windowedTimestamps,
+    startIndex,
+    endIndex
+  }
+}
+
+/**
  * Convert QueryResponse data returned by OpenNMS Measurements Rest API to Grafana DataFrame format.
  */
 export const measurementResponseToDataFrame =
@@ -21,26 +63,7 @@ export const measurementResponseToDataFrame =
         return dataFrame
     }
 
-    // timestamps
-    let windowedTimestamps = [] as number[]
-    let startIndex = -1
-    let endIndex = timestamps.length - 1
-
-    for (let i = 0; i < timestamps.length; i++) {
-        const tsVal = timestamps[i]
-
-        if (end > 0 && tsVal > end) {
-            endIndex = i - 1
-            break
-        }
-
-        if (start === 0 || tsVal >= start) {
-            if (startIndex < 0) {
-                startIndex = i
-            }
-            windowedTimestamps.push(tsVal)
-        }
-    }
+    const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
 
     // no data or no data within the start/end timespan, return an empty DataFrame
     if (windowedTimestamps.length === 0) {

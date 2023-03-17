@@ -29,7 +29,7 @@ import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
-    url?: string | undefined;
+    url?: string;
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
@@ -62,6 +62,68 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return typeOfQuery;
     }
 
+    createSourcesFromAttributeTarget(query: OnmsMeasurementsQueryRequest,
+      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
+
+      const source = buildAttributeQuerySource(target);
+      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+      const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
+
+      const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
+          if (interpolatedSource.nodeId !== undefined) {
+              // Calculate the effective resource id after the interpolation
+              interpolatedSource.resourceId = getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
+              // remove nodeId since it should not be part of the Rest API measurement request payload
+              delete interpolatedSource.nodeId;
+          }
+      }
+
+      const sources = interpolate(source, attributes, interpolationVars, callback)
+
+      if (query.source && query.source.length > 0) {
+          return query.source.concat(sources)
+      }
+
+      return sources
+    }
+
+    createExpressionsFromExpressionTarget(query: OnmsMeasurementsQueryRequest,
+      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>, i: number) {
+
+      const expression = buildExpressionQuery(target, i)
+      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+      const attributes = ['value', 'label']
+
+      const expressions = interpolate(expression, attributes, interpolationVars)
+
+      if (query.expression && query.expression.length > 0) {
+          return query.expression.concat(expressions)
+      }
+
+      return expressions
+    }
+
+    createFiltersFromFilterTarget(query: OnmsMeasurementsQueryRequest,
+      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
+
+      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+      const attributes = Object.keys(target.filterState)
+      const interpolatedFilterParams = interpolate(target.filterState, attributes, interpolationVars)
+      const filters = buildFilterQuery(target, interpolatedFilterParams)
+
+      // Only add the filter attribute to the query when one or more filters are specified since
+      // OpenNMS versions before 17.0.0 do not support it
+      if (filters.length > 0) {
+          if (query.filter && query.filter.length > 0) {
+              return query.filter.concat(filters)
+          } else {
+              return filters
+          }
+      }
+
+      return query.filter
+    }
+
     async stringPropertySearch(request: PerformanceQueryRequest<PerformanceQuery>) {
         return queryStringProperties(this.client, this.simpleRequest, this.templateSrv, request)
     }
@@ -84,10 +146,6 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
         const query = buildPerformanceMeasurementQuery(start, end, step, maxDataPoints)
 
-        // TODO: Not sure if 'labels' is being used, keeping here for now
-        // @ts-ignore
-        // eslint-disable-next-line no-unused-vars
-        let labels = [] as string[]
         let dataFrames: DataFrame[] = []
 
         for (let i = 0; i < options.targets.length; i++) {
@@ -95,59 +153,15 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
             if (target.performanceType?.value === PerformanceTypeOptions.Attribute.value) {
                 if (isValidAttributeTarget(target)) {
-                    const source = buildAttributeQuerySource(target);
-                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-                    const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
-
-                    const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
-                        if (interpolatedSource.nodeId !== undefined) {
-                            // Calculate the effective resource id after the interpolation
-                            interpolatedSource.resourceId = getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
-                            // remove nodeId since it should not be part of the Rest API measurement request payload
-                            delete interpolatedSource.nodeId;
-                        }
-                    }
-
-                    const sources = interpolate(source, attributes, interpolationVars, callback)
-
-                    if (query.source && query.source.length > 0) {
-                        query.source = query.source.concat(sources)
-                    } else {
-                        query.source = sources
-                    }
-                    labels = query.source.map(s => s.label)
+                  query.source = this.createSourcesFromAttributeTarget(query, target, options)
                 }
             } else if (target.performanceType?.value === PerformanceTypeOptions.Expression.value) {
                 if (isValidExpressionTarget(target)) {
-                    const expression = buildExpressionQuery(target, i);
-                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-                    const attributes = ['value', 'label']
-
-                    const expressions = interpolate(expression, attributes, interpolationVars)
-                    if (query.expression && query.expression.length > 0) {
-                        query.expression = query.expression.concat(expressions)
-                    } else {
-                        query.expression = expressions
-                    }
-
-                    labels = query.expression.map(e => e.label)
+                  query.expression = this.createExpressionsFromExpressionTarget(query, target, options, i)
                 }
             } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
                 if (isValidFilterTarget(target)) {
-                    const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-                    const attributes = Object.keys(target.filterState)
-                    const interpolatedFilterParams = interpolate(target.filterState, attributes, interpolationVars)
-                    const filters = buildFilterQuery(target, interpolatedFilterParams)
-
-                    // Only add the filter attribute to the query when one or more filters are specified since
-                    // OpenNMS versions before 17.0.0 do not support it
-                    if (filters.length > 0) {
-                        if (query.filter && query.filter.length > 0) {
-                            query.filter = query.filter.concat(filters);
-                        } else {
-                            query.filter = filters;
-                        }
-                    }
+                    query.filter = this.createFiltersFromFilterTarget(query, target, options)
                 }
             }
 

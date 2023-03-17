@@ -19,7 +19,7 @@ import {
 
 export class FlowDataSource extends DataSourceApi<FlowQuery> {
     type: string;
-    url?: string | undefined;
+    url?: string;
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;

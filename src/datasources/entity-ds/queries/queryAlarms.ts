@@ -1,11 +1,10 @@
 import { isNil, uniq, sortBy, flatten } from 'lodash'
 import { API } from 'opennms'
-import { OnmsAlarm } from "opennms/src/model/OnmsAlarm";
+import { OnmsAlarm } from 'opennms/src/model/OnmsAlarm'
 import { OnmsColumn, OnmsTableData, OnmsRow } from '../types'
-import { ClientDelegate } from "lib/client_delegate"
+import { ClientDelegate } from 'lib/client_delegate'
 import { ServerMetadata } from 'opennms/src/api/ServerMetadata'
 import { Client } from 'opennms/src/Client'
-
 
 const columns = Object.freeze([
     { text: 'ID', resource: 'id' },
@@ -55,7 +54,7 @@ const columns = Object.freeze([
     { text: 'Managed Object Type', resource: 'managedObjectType' },
     { text: 'Categories', resource: 'category', featured: true, visible: false },
     { text: 'Data Source' }
-] as OnmsColumn[]);
+] as OnmsColumn[])
 
 export const getAlarmColumns = () => columns
 
@@ -86,54 +85,54 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
             alarm.ackUser,
             alarm.ackTime,
             alarm.uei,
-            alarm.severity ? alarm.severity.label : undefined,
-            alarm.type ? alarm.type.label : undefined,
+            alarm.severity?.label ?? '',
+            alarm.type?.label ?? '',
             alarm.description,
             alarm.location,
 
             alarm.logMessage,
             alarm.reductionKey,
             alarm.troubleTicket,
-            alarm.troubleTicketState ? alarm.troubleTicketState.label : undefined,
+            alarm.troubleTicketState?.label ?? '',
             alarm.nodeId,
             alarm.nodeLabel,
-            alarm.service ? alarm.service.name : undefined,
+            alarm.service?.name ?? '',
             alarm.suppressedTime,
             alarm.suppressedUntil,
             alarm.suppressedBy,
-            alarm.lastEvent ? alarm.lastEvent.ipAddress ? alarm.lastEvent.ipAddress.address : undefined : undefined,
+            alarm.lastEvent?.ipAddress?.address ?? '',
             !isNil(alarm.ackUser) && !isNil(alarm.ackTime),  // isAcknowledged
 
             // Event
             alarm.firstEventTime,
-            alarm.lastEvent ? alarm.lastEvent.id : undefined,
-            alarm.lastEvent ? alarm.lastEvent.time : undefined,
-            alarm.lastEvent ? alarm.lastEvent.source : undefined,
-            alarm.lastEvent ? alarm.lastEvent.createTime : undefined,
-            alarm.lastEvent && alarm.lastEvent.severity ? alarm.lastEvent.severity.label : undefined,
-            alarm.lastEvent ? alarm.lastEvent.label : undefined,
-            alarm.lastEvent ? alarm.lastEvent.location : undefined,
+            alarm.lastEvent?.id ?? '',
+            alarm.lastEvent?.time ?? '',
+            alarm.lastEvent?.source ?? '',
+            alarm.lastEvent?.createTime ?? '',
+            alarm.lastEvent?.severity?.label ?? '',
+            alarm.lastEvent?.label ?? '',
+            alarm.lastEvent?.location ?? '',
 
             // Sticky Note
-            alarm.sticky ? alarm.sticky.id : undefined,
-            alarm.sticky ? alarm.sticky.body : undefined,
-            alarm.sticky ? alarm.sticky.author : undefined,
-            alarm.sticky ? alarm.sticky.updated : undefined,
-            alarm.sticky ? alarm.sticky.created : undefined,
+            alarm.sticky?.id ?? '',
+            alarm.sticky?.body ?? '',
+            alarm.sticky?.author ?? '',
+            alarm.sticky?.updated ?? '',
+            alarm.sticky?.created ?? '',
 
             // Journal Note
-            alarm.journal ? alarm.journal.id : undefined,
-            alarm.journal ? alarm.journal.body : undefined,
-            alarm.journal ? alarm.journal.author : undefined,
-            alarm.journal ? alarm.journal.updated : undefined,
-            alarm.journal ? alarm.journal.created : undefined,
+            alarm.journal?.id ?? '',
+            alarm.journal?.body ?? '',
+            alarm.journal?.author ?? '',
+            alarm.journal?.updated ?? '',
+            alarm.journal?.created ?? '',
 
             // Situation Data
             alarm.relatedAlarms && alarm.relatedAlarms.length > 0 ? 'Y' : 'N',
-            alarm.relatedAlarms ? alarm.relatedAlarms.length.toFixed(0) : undefined,
-            alarm.affectedNodeCount ? alarm.affectedNodeCount.toFixed(0) : undefined,
-            alarm.managedObjectInstance ? alarm.managedObjectInstance : undefined,
-            alarm.managedObjectType ? alarm.managedObjectType : undefined,
+            alarm.relatedAlarms?.length.toFixed(0) ?? 0,
+            alarm.affectedNodeCount?.toFixed(0) ?? 0,
+            alarm.managedObjectInstance,
+            alarm.managedObjectType,
 
             // Data Source
             self.name
@@ -141,7 +140,7 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
 
         row = appendEventParameters(row, alarm, parameterNames)
 
-        return row;
+        return row
     })
 
     const metas = alarms.map(alarm => {
@@ -156,7 +155,7 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
             'type': TYPE,
             // Store the ticketerConfig here
             'ticketerConfig': metadata?.ticketerConfig
-        };
+        }
     })
 
     return {
@@ -182,8 +181,8 @@ const getParameterNames = (alarms?: OnmsAlarm[]) => {
         }
         return alarm.lastEvent.parameters.map(parameter => {
             return parameter.name;
-        });
-    });
+        })
+    })
 
     return uniq(sortBy(flatten(mapped), name => name))
 }
@@ -198,9 +197,10 @@ const appendParameterNames = (columns: OnmsColumn[], parameterNames?: string[]) 
         columns.push({
             text: 'Param_' + parameterName,
             resource: 'lastEvent.' + parameterName,
-        });
-    });
-    return columns;
+        })
+    })
+
+    return columns
 }
 
 /**
@@ -211,19 +211,19 @@ const appendParameterNames = (columns: OnmsColumn[], parameterNames?: string[]) 
  * @param parameterNames 
  */
 const appendEventParameters = (row: OnmsRow, alarm: OnmsAlarm, parameterNames?: string[]) => {
-
     const eventParametersByName = {};
+
     if (alarm.lastEvent && alarm.lastEvent.parameters) {
         alarm.lastEvent.parameters.forEach(parameter => {
             eventParametersByName[parameter.name] = parameter.value;
-        });
+        })
     }
 
     parameterNames?.forEach(parameterName => {
         if (eventParametersByName.hasOwnProperty(parameterName)) {
-            row.push(eventParametersByName[parameterName]);
+            row.push(eventParametersByName[parameterName])
         } else {
-            row.push(undefined);
+            row.push(undefined)
         }
     })
 
