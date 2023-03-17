@@ -1,7 +1,7 @@
 
 = Performance Datasource
 
-You can use the Performance datasource to retrieve performance metrics (for example, data collection and response time metrics) from the OpenNMS Measurements API.
+You can use the Performance datasource to retrieve performance metrics (for example, data collection and response time metrics) from the https://docs.opennms.com/horizon/latest/development/rest/measurements.html[OpenNMS Measurements API].
 For an example of the Performance datasource in use, see <<panel_configuration:dynamic-dashboard.adoc#pc-template-filters, Use variables to create dynamic dashboards>>.
 
 == Query editor
@@ -109,7 +109,7 @@ Can also be a variable with a `nodeResources()` query.
 
 Expression queries are used to combine or otherwise transform one or more series into a new series.
 They support the mathematical and conditional operators that JEXL provides.
-Expression queries are sent over the https://docs.opennms.com/horizon/latest/development/rest/measurements.html#more-advanced-expressions[OpenNMS Measurements API] to be processed server-side.
+Expression queries are sent over the OpenNMS Measurements API to be processed server-side (see https://docs.opennms.com/horizon/latest/development/rest/measurements.html#more-advanced-expressions[More advanced expressions] in the main OpenNMS documentation).
 
 [caption=]
 .Expression query options
@@ -139,7 +139,7 @@ The options provided depend on the filter that you select.
 | Strips leading and trailing rows that contain nothing but `NaN` or `null` values.
 
 | HoltWinters
-| Performs Holt-Winters forecasting.
+| Performs https://orangematter.solarwinds.com/2019/12/15/holt-winters-forecasting-simplified/[Holt-Winters forecasting].
 
 | Outlier
 | Removes outliers and replaces them with interpolated values.
@@ -194,12 +194,12 @@ nodeFilter() <3>
 
 Only one argument is available for the `nodeFilter()` query:
 
-[options="autowidth"]
+[cols="1,3"]
 |===
 | Argument  | Description
 
 | filterQuery
-| Any valid node query syntax as used by core OpenNMS services (see the https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[OpenNMS Filters documentation]).
+| Any valid node query syntax as used by core OpenNMS services (see https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[Filters] in the main OpenNMS documentation).
 If omitted, all nodes are returned.
 |===
 
