@@ -30,7 +30,7 @@ export interface OnmsQueryResultMeta extends QueryResultMeta {
 
 export class EntityDataSource extends DataSourceApi<EntityQuery> {
     type: string;
-    url?: string | undefined;
+    url?: string;
     name: string;
     client: ClientDelegate;
     simpleRequest: SimpleOpenNMSRequest;
@@ -49,7 +49,6 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
     async query(request: EntityQueryRequest<EntityQuery>): Promise<DataQueryResponse> {
         const fullData: OnmsTableData[] = []
 
-        // TODO:
         // - May need to get dashboard info (via backendSrv or direct via Dashboard HTTP API)
         //   and see if there is actually a FilterPanel in the current dashboard.
         //   Right now just checking for localStorage data, which could
@@ -64,7 +63,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
         for (let target of request.targets) {
             request.entityType = target?.selectType?.label || EntityTypes.Alarms
-            // TODO looks like this should be an option in the panel editor.
+            // possibly should be an option in the panel editor
             request.enforceTimeRange = true
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 

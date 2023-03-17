@@ -63,10 +63,6 @@ export const FlowSegmentStrings = {
     Dscps: 'Dscps',
 }
 
-export const lowercaseEnumByValue = (fullEnum) => {
-
-}
-
 export const segmentOptionValues = [
     { value: FlowSegments.Applications, label: FlowSegments[FlowSegments.Applications].toLowerCase() },
     { value: FlowSegments.Conversations, label: FlowSegments[FlowSegments.Conversations].toLowerCase() },

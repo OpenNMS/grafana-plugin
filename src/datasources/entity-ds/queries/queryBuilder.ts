@@ -34,6 +34,22 @@ const normalizeSingleArrayValue = (value: any) => {
     return value
 }
 
+const normalizeMultiArrayValue = (currentValue: any[], restriction: API.Restriction) => {
+  const replacement = new API.NestedRestriction()
+
+  for (const value of currentValue) {
+      if (restriction.comparator.id === API.Comparators.EQ.id) {
+          replacement.withOrRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value))
+      } else if (restriction.comparator.id === API.Comparators.NE.id) {
+          replacement.withAndRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value))
+      } else {
+          throw new Error(`Unable to query "${restriction.attribute}": multi-select values with variable substitution must be either "=" or "!="`)
+      }
+  }
+
+  return replacement
+}
+
 const removeEmptyClauses = (clauses: API.Clause[], remove: API.Clause[]) => {
     for (const r of remove) {
         const i = clauses.indexOf(r)
@@ -108,18 +124,7 @@ const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQue
 
                 // now if it's *still* an array, we chop it up into nested restrictions
                 if (Array.isArray(templateVariable.current.value)) {
-                    const replacement = new API.NestedRestriction()
-                    let values: [] = templateVariable.current.value
-
-                    for (const value of values) {
-                        if (restriction.comparator.id === API.Comparators.EQ.id) {
-                            replacement.withOrRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value))
-                        } else if (restriction.comparator.id === API.Comparators.NE.id) {
-                            replacement.withAndRestriction(new API.Restriction(restriction.attribute, restriction.comparator, value))
-                        } else {
-                            throw new Error(`Unable to query "${restriction.attribute}": multi-select values with variable substitution must be either "=" or "!="`)
-                        }
-                    }
+                    const replacement = normalizeMultiArrayValue(templateVariable.current.value, restriction)
 
                     // we've turned a single restriction into a nested one, so re-process it as a
                     // collection and skip the simple replacement below
