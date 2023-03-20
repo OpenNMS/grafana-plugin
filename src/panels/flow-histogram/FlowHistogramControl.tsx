@@ -1,6 +1,6 @@
-import { PanelProps } from '@grafana/data'
 import React, { useEffect, useRef } from 'react'
-import { UnitInfo } from './FlowHistogramContants';
+import { PanelProps } from '@grafana/data'
+import { UnitInfo } from './FlowHistogramConstants'
 import {
     FlowHistogramElement,
     getFlowHistogramPlotConfig,
@@ -9,8 +9,8 @@ import {
     getStyleFor,
     setLegend,
     validateFlowHistogramPanelData
-} from './FlowHistogramHelpers';
-import { FlowHistogramOptionsProps } from './FlowHistogramTypes';
+} from './FlowHistogramHelpers'
+import { FlowHistogramOptionsProps } from './FlowHistogramTypes'
 
 interface FlowHistogramControlOptions { flowHistogramOptions: FlowHistogramOptionsProps }
 interface Props extends PanelProps<FlowHistogramControlOptions> { }

@@ -29,15 +29,15 @@ interface DatasourceMetadata {
   /** Grafana uid of this datasource, e.g. "xT5Xzsq7z" */
   uid: string
 
-  /** e.g. 'opennms-helm-entity-datasource */
+  /** e.g. 'opennms-entity-datasource */
   type: string
 
   /** raw version string, from plugin.json info.version
-   * probably '9' for Helm9, '' for anything previous */
+   * probably '9' for Version 9.x, '' for anything previous */
   version: string
 
   /** e.g. 8 or 9 */
-  helmVersion: number
+  pluginVersion: number
 
   /** 'entity', 'performance', 'flow' */
   datasourceType?: DsType
@@ -45,16 +45,36 @@ interface DatasourceMetadata {
 
 // Datasource info found in panel or target/query
 interface SourceDatasourceInfo {
-  isHelmDatasource: boolean
+  isOpenNmsDatasource: boolean
   isTemplateVariable: boolean
   datasourceType: string
 }
 
-// returns a string which is one of the DsTypes or else empty string
+// returns a string which is one of the DsTypes or else empty string, and
+// whether this is a "legacy" datasource or not (legacy is version < 9)
 const getDatasourceTypeFromPluginId = (pluginId: string) => {
-  const m = pluginId.match(/^opennms-helm-([^-]+)/i)
+  const legacyMatch = pluginId.match(/^opennms-helm-([^-]+)-datasource$/i)
 
-  return m && m.length > 0 ? m[1] : ''
+  if (legacyMatch && legacyMatch.length > 0) {
+    return {
+      isLegacy: true,
+      datasourceType: legacyMatch[1]
+    }
+  }
+
+  const m = pluginId.match(/^opennms-([^-]+)-datasource$/i)
+
+  if (m && m.length > 0) {
+    return {
+      isLegacy: false,
+      datasourceType: m[1]
+    }
+  }
+
+  return {
+    isLegacy: false,
+    datasourceType: ''
+  }
 }
 
 // Get datasource info from either a panel or a target
@@ -64,23 +84,25 @@ const getSourceDatasourceInfo = (source: any, datasourceMap: Map<string,DsType>)
       const dsType = datasourceMap.get(source.datasource) || ''
 
       return {
-        isHelmDatasource: true,
+        isOpenNmsDatasource: true,
         isTemplateVariable: true,
         datasourceType: dsType
       }
     } else if (!isString(source.datasource) && source.datasource?.type) {
-      const dsType = getDatasourceTypeFromPluginId(source.datasource.type)
+      const { datasourceType } = getDatasourceTypeFromPluginId(source.datasource.type)
 
-      return {
-        isHelmDatasource: true,
-        isTemplateVariable: false,
-        datasourceType: dsType
+      if (datasourceType) {
+        return {
+          isOpenNmsDatasource: true,
+          isTemplateVariable: false,
+          datasourceType
+        }
       }
-    }
+   }
   }
 
   return {
-    isHelmDatasource: false,
+    isOpenNmsDatasource: false,
     isTemplateVariable: false,
     datasourceType: ''
   }
@@ -91,25 +113,25 @@ const getDatasourceMetadata = (data: Array<DataSourceInstanceSettings<DataSource
   const metas: DatasourceMetadata[] = []
 
   for (const ds of data) {
-    if (ds.type && ds.type.startsWith('opennms-helm-')) {
+    if (ds.type && ds.type.startsWith('opennms-')) {
       const meta = {
         name: ds.name,
         id: ds.id,
         uid: ds.uid,
         type: ds.type,
         version: ds.meta?.info?.version || '',
-        helmVersion: 8,
+        pluginVersion: 8,
         datasourceType: undefined
       } as DatasourceMetadata
 
       if (meta.version) {
         const arr = meta.version.split('.')
         if (arr && arr.length > 0) {
-          meta.helmVersion = parseInt(arr[0], 10)
+          meta.pluginVersion = parseInt(arr[0], 10)
         }
       }
 
-      const datasourceType = getDatasourceTypeFromPluginId(meta.type || '')
+      const { datasourceType } = getDatasourceTypeFromPluginId(meta.type || '')
 
       if (datasourceType) {
         meta.datasourceType = datasourceType as DsType
@@ -121,7 +143,7 @@ const getDatasourceMetadata = (data: Array<DataSourceInstanceSettings<DataSource
   return metas
 }
 
-export const helmDashboardConvert = (sourceJson: string, sourceVersion: string, targetVersion: string,
+export const dashboardConvert = (sourceJson: string, sourceVersion: string, targetVersion: string,
   options: ConvertOptions): ConvertResponse => {
   let source: any = {}
   
@@ -167,10 +189,10 @@ export const helmDashboardConvert = (sourceJson: string, sourceVersion: string, 
 }
 
 // Parse the Dashboard '__inputs' section, extracting any Datasource mappings and
-// updating those items to use Helm 9 versions
+// updating those items to use Version 9 versions
 // The 'name' is the name of the variable which may be used elsewhere in queries
 // The 'pluginId' should be the datasource ID
-// We convert this to use the Helm 9 versions, plus save off the variable in the map
+// We convert this to use the Version 9 versions, plus save off the variable in the map
 // to substitute elsewhere
 //
 // "__inputs": [
@@ -187,23 +209,23 @@ const parseInputs = (source: any[], datasourceMap: Map<string,DsType>, dsMetas: 
   const results: any[] = []
 
   for (const s of source) {
-    if (s.type === 'datasource' && s.pluginId && s.pluginId.startsWith('opennms')) {
+    if (s.type === 'datasource' && s.pluginId && s.pluginId.startsWith('opennms-')) {
       const target = { ...s }
       const name = s.name
       const pluginId = s.pluginId
 
       if (name && pluginId) {
-        // find corresponding Helm9 datasource info and substitute
-        const dsType = getDatasourceTypeFromPluginId(pluginId)
-        let dsMeta = dsMetas.find(d => d.datasourceType === dsType && d.helmVersion === 9)
+        // find corresponding v9 datasource info and substitute
+        const { datasourceType } = getDatasourceTypeFromPluginId(pluginId)
+        let dsMeta = dsMetas.find(d => d.datasourceType && d.datasourceType === datasourceType && d.pluginVersion === 9)
 
         if (!dsMeta) {
-          console.log(`Dashboard convert: did not find Helm9 datasource for '${dsType}', falling back to first available:`)
-          dsMeta = dsMetas.find(d => d.datasourceType === dsType)
+          console.log(`Dashboard convert: did not find Version 9 datasource for '${datasourceType}', falling back to first available:`)
+          dsMeta = dsMetas.find(d => d.datasourceType && d.datasourceType === datasourceType)
         }
 
         if (dsMeta) {
-          addVariationsToMap(name, dsType as DsType, datasourceMap)
+          addVariationsToMap(name, datasourceType as DsType, datasourceMap)
           target.label = dsMeta.name
           target.pluginId = dsMeta.type
           target.pluginName = dsMeta.name
@@ -222,10 +244,10 @@ const parseInputs = (source: any[], datasourceMap: Map<string,DsType>, dsMetas: 
 }
 
 // Parse the Dashboard 'templating' section, extracting any Datasource mappings and
-// updating those items to use Helm 9 versions
+// updating those items to use Version 9 versions
 // The 'name' is the name of the template variable which may be used elsewhere in queries
 // The 'query' should be the datasource ID
-// We convert this to use the Helm 9 versions, plus save off the variable in the map
+// We convert this to use the Version 9 versions, plus save off the variable in the map
 // to substitute elsewhere
 //
 // "templating": {
@@ -264,17 +286,17 @@ const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, dsMetas
       const name = s.name
       const pluginId = s.query
 
-      // find corresponding Helm9 datasource info and substitute
-      const dsType = getDatasourceTypeFromPluginId(pluginId)
-      let dsMeta = dsMetas.find(d => d.datasourceType === dsType && d.helmVersion === 9)
+      // find corresponding Version 9 datasource info and substitute
+      const { datasourceType } = getDatasourceTypeFromPluginId(pluginId)
+      let dsMeta = dsMetas.find(d => d.datasourceType && d.datasourceType === datasourceType && d.pluginVersion === 9)
 
       if (!dsMeta) {
-        console.log(`Dashboard convert: did not find Helm9 datasource for '${dsType}', falling back to first available:`)
-        dsMeta = dsMetas.find(d => d.datasourceType === dsType)
+        console.log(`Dashboard convert: did not find Version 9 datasource for '${datasourceType}', falling back to first available:`)
+        dsMeta = dsMetas.find(d => d.datasourceType && d.datasourceType === datasourceType)
       }
 
       if (dsMeta) {
-        addVariationsToMap(name, dsType as DsType, datasourceMap)
+        addVariationsToMap(name, datasourceType as DsType, datasourceMap)
         target.query = dsMeta.type
 
         if (s.current) {
@@ -287,9 +309,9 @@ const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, dsMetas
       }
     } else if (s.type === 'query') {
       const sourceDsInfo = getSourceDatasourceInfo(s, datasourceMap)
-      if (sourceDsInfo.isHelmDatasource && !sourceDsInfo.isTemplateVariable && sourceDsInfo.datasourceType) {
 
-        const sourceDsMeta = dsMetas.find(d => d.datasourceType === sourceDsInfo.datasourceType && d.helmVersion === 9)
+      if (sourceDsInfo.isOpenNmsDatasource && !sourceDsInfo.isTemplateVariable && sourceDsInfo.datasourceType) {
+        const sourceDsMeta = dsMetas.find(d => d.datasourceType === sourceDsInfo.datasourceType && d.pluginVersion === 9)
 
         if (sourceDsMeta) {
           s.datasource = {
@@ -309,7 +331,7 @@ const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, dsMetas
 }
 
 // Parse Dashboard panels
-// If panel has a legacy Helm datasource, convert the query to use the new schema
+// If panel has a legacy datasource, convert the query to use the new schema
 const parsePanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas: DatasourceMetadata[],
   unhideAllQueries: boolean) => {
   const result: any[] = []
@@ -318,15 +340,15 @@ const parsePanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas:
     const panel = { ...p }
 
     // p.datasource could be:
-    // - a template variable like '$datasource' which points to a Helm DS
+    // - a template variable like '$datasource' which points to an OpenNMS DS
     //    in which case we leave as-is
-    // - an object like { type, uid }, which points to a Helm DS, in which case we update it to Helm 9 version
-    // - either of those which points to a non-Helm DS, in which case leave as-is
+    // - an object like { type, uid }, which points to an OpenNMS DS, in which case we update it to version 9
+    // - either of those which points to a non-OpenNMS DS, in which case leave as-is
     // - empty/null/undefined, in which case DS should be in the individual targets, leave as-is
     const panelDsInfo = getSourceDatasourceInfo(panel, datasourceMap)
 
-    if (panelDsInfo.isHelmDatasource && !panelDsInfo.isTemplateVariable && panelDsInfo.datasourceType) {
-      const panelDsMeta = dsMetas.find(d => d.datasourceType === panelDsInfo.datasourceType && d.helmVersion === 9)
+    if (panelDsInfo.isOpenNmsDatasource && !panelDsInfo.isTemplateVariable && panelDsInfo.datasourceType) {
+      const panelDsMeta = dsMetas.find(d => d.datasourceType === panelDsInfo.datasourceType && d.pluginVersion === 9)
 
       if (panelDsMeta) {
         panel.datasource = {
@@ -343,10 +365,10 @@ const parsePanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas:
         let updated = { ...t }
 
         const targetDsInfo = getSourceDatasourceInfo(t, datasourceMap)
-        const isHelm = panelDsInfo.isHelmDatasource || targetDsInfo.isHelmDatasource
+        const isOpenNmsDatasource = panelDsInfo.isOpenNmsDatasource || targetDsInfo.isOpenNmsDatasource
         const dsType = panelDsInfo.datasourceType || targetDsInfo.datasourceType
 
-        if (isHelm) {
+        if (isOpenNmsDatasource) {
           switch (dsType) {
             case 'entity':
               updated = updateEntityQuery(t)
@@ -365,8 +387,8 @@ const parsePanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas:
             updated.hide = false
           }
 
-          if (targetDsInfo.isHelmDatasource && !targetDsInfo.isTemplateVariable && targetDsInfo.datasourceType) {
-            const targetDsMeta = dsMetas.find(d => d.datasourceType === targetDsInfo.datasourceType && d.helmVersion === 9)
+          if (targetDsInfo.isOpenNmsDatasource && !targetDsInfo.isTemplateVariable && targetDsInfo.datasourceType) {
+            const targetDsMeta = dsMetas.find(d => d.datasourceType === targetDsInfo.datasourceType && d.pluginVersion === 9)
 
             if (targetDsMeta) {
               updated.datasource = {

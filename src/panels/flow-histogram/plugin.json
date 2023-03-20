@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Flow Histogram",
-  "id": "opennms-helm-flow-histogram-panel",
+  "id": "opennms-flow-histogram-panel",
   "info": {
     "description": "OpenNMS Flow Histogram Panel",
     "logos": {

@@ -1,5 +1,5 @@
 {
-  "name": "OpenNMS Helm",
+  "name": "OpenNMS Plugin for Grafana",
   "id": "opennms-helm-app",
   "type": "app",
   "info": {
@@ -8,7 +8,7 @@
       "name": "The OpenNMS Group Inc.",
       "url": "https://www.opennms.com"
     },
-    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "snmp"],
+    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "plugin", "snmp"],
     "logos": {
       "small": "img/helm.svg",
       "large": "img/helm.svg"

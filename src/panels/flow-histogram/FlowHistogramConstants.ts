@@ -1,11 +1,12 @@
-import { FlowHistogramOptionsProps, FlowPanelUnitInfo } from "./FlowHistogramTypes";
-import { validateFlowHistogramPanelData } from "./FlowHistogramHelpers"
-import { DataFrame } from "@grafana/data"
+import { FlowHistogramOptionsProps, FlowPanelUnitInfo } from './FlowHistogramTypes'
+import { validateFlowHistogramPanelData } from './FlowHistogramHelpers'
+import { DataFrame } from '@grafana/data'
 
 export const DirectionOptions = [
     { label: 'Horizontal', value: '0' },
     { label: 'Vertical', value: '1' }
 ]
+
 export const UnitOptions = [
     { label: 'B', value: '0' },
     { label: 'KB', value: '1' },
@@ -32,14 +33,13 @@ export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsPr
     let divisor = 1
     let units = 'Bytes'
     
-    if(!validateFlowHistogramPanelData(dataSeries)){
+    if (!validateFlowHistogramPanelData(dataSeries)){
         return { units, divisor }
     }
     
     const toBits = dataSeries?.[0]?.meta?.custom?.['toBits'] ? true : false
     const rate = options.flowHistogramOptions.display.label === 'Rate'
     const option = options.flowHistogramOptions.units.label
-
     
     switch (option) {
         case 'B':
@@ -58,11 +58,12 @@ export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsPr
             units = toBits ? 'Gb' : 'GB'
             break
     }
+
     if (rate) {
         units = units + '/s'
     }
-    return { units, divisor }
 
+    return { units, divisor }
 }
 
 export const DataPosition = {
@@ -82,7 +83,7 @@ export const DataPosition = {
     }
 }
 
-export const FLowDataDirection = {
+export const FlowDataDirection = {
     dataIn: { label: 'In', value: 0 },
     dataOut: { label: 'Out', value: 1 }
 }

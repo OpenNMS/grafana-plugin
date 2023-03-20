@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Filter Panel",
-  "id": "opennms-helm-filter-panel",
+  "id": "opennms-filter-panel",
 
   "info": {
     "description": "OpenNMS Filter Panel",

@@ -1,60 +1,67 @@
-import { SelectableValue } from '@grafana/data';
-import React from 'react';
+import React from 'react'
+import { SelectableValue } from '@grafana/data'
 
-interface HelmDragListProps {
+interface DragListProps {
     values: Array<SelectableValue<string | number>>,
     onChange: Function
 }
 
-export const HelmDragList: React.FC<HelmDragListProps> = ({ values, onChange }) => {
+export const DragList: React.FC<DragListProps> = ({ values, onChange }) => {
     const moveUp = (e: React.UIEvent<HTMLSpanElement>, index: number) => {
         const newValues = [...values]
         const movingValue = newValues.splice(index, 1);
         newValues.splice(index - 1, 0, movingValue[0])
-        onChange(newValues);
+        onChange(newValues)
     }
+
     const moveDown = (e: React.UIEvent<HTMLSpanElement>, index: number) => {
         const newValues = [...values]
         const movingValue = newValues.splice(index, 1);
         newValues.splice(index + 1, 0, movingValue[0])
-        onChange(newValues);
+        onChange(newValues)
     }
+
     const remove = (e: React.UIEvent<HTMLSpanElement>, index: number) => {
         const newValues = [...values]
         newValues.splice(index, 1);
         onChange(newValues)
     }
+
     const isEnterOrSpace = (key: string) => {
         return key === ' ' || key === 'Enter'
     }
+
     const keyUp = (e: React.KeyboardEvent<HTMLSpanElement>, index: number) => {
         if (isEnterOrSpace(e.key)) {
             moveUp(e, index)
         }
     }
+
     const keyDown = (e: React.KeyboardEvent<HTMLSpanElement>, index: number) => {
         if (isEnterOrSpace(e.key)) {
             moveDown(e, index)
         }
     }
+
     const keyDelete = (e: React.KeyboardEvent<HTMLSpanElement>, index: number) => {
         if (isEnterOrSpace(e.key)) {
             remove(e, index)
         }
     }
+
     return (
-        <div className='helm-drag-list'>
+        <div className='onms-drag-list'>
             <style>
                 {
                     `
-                    .helm-drag-buttons {
+                    .onms-drag-buttons {
                         display:flex;
                         margin-left:auto;
                     }
-                    .helm-drag-list {
+                    .onms-drag-list {
                         max-width:360px;
                     }
-                    .helm-drag-button {
+                    .onms-drag-button {
                         background-color:rgb(61, 113, 217);
                         border-radius:2px;
                         width:22px;
@@ -65,10 +72,10 @@ export const HelmDragList: React.FC<HelmDragListProps> = ({ values, onChange }) 
                         margin-right:6px;
                         cursor:pointer;
                     }
-                    .helm-drag-button.helm-drag-remove {
+                    .onms-drag-button.onms-drag-remove {
                         background-color:rgb(239, 25, 32);
                     }
-                    .helm-drag-wrapper{
+                    .onms-drag-wrapper{
                         height: 40px;
                         margin-bottom:6px;
                         display: flex;
@@ -81,15 +88,15 @@ export const HelmDragList: React.FC<HelmDragListProps> = ({ values, onChange }) 
                 }
             </style>
             {values.map((val, index) => (
-                <div key={index} className='helm-drag-wrapper'>
+                <div key={index} className='onms-drag-wrapper'>
                     <span>{index + 1}.&nbsp;</span>
                     <span>{val.label}</span>
-                    <div className='helm-drag-buttons'>
-                        <span className='helm-drag-button' tabIndex={0} onKeyUp={(e) => keyUp(e,index)} onClick={(e) => moveUp(e, index)}><i className='fa fa-arrow-up'></i></span>
-                        <span className='helm-drag-button' tabIndex={0} onKeyUp={(e) => keyDown(e,index)} onClick={(e) => moveDown(e, index)}>
+                    <div className='onms-drag-buttons'>
+                        <span className='onms-drag-button' tabIndex={0} onKeyUp={(e) => keyUp(e,index)} onClick={(e) => moveUp(e, index)}><i className='fa fa-arrow-up'></i></span>
+                        <span className='onms-drag-button' tabIndex={0} onKeyUp={(e) => keyDown(e,index)} onClick={(e) => moveDown(e, index)}>
                             <i className='fa fa-arrow-down'></i>
                         </span>
-                        <span className='helm-drag-button helm-drag-remove' onKeyUp={(e) => keyDelete(e,index)} tabIndex={0} onClick={(e) => remove(e, index)}><i className='fa fa-ban'></i></span>
+                        <span className='onms-drag-button onms-drag-remove' onKeyUp={(e) => keyDelete(e,index)} tabIndex={0} onClick={(e) => remove(e, index)}><i className='fa fa-ban'></i></span>
                     </div>
                 </div>
             ))}

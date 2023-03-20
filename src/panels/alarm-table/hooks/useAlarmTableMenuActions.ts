@@ -1,8 +1,8 @@
-import { Field } from '@grafana/data';
-import { getBackendSrv } from '@grafana/runtime';
-import { ClientDelegate } from 'lib/client_delegate';
 import { useState, useEffect } from 'react'
-import { getAlarmIdFromFields } from '../AlarmTableHelper';
+import { Field } from '@grafana/data'
+import { getBackendSrv } from '@grafana/runtime'
+import { ClientDelegate } from 'lib/client_delegate'
+import { getAlarmIdFromFields } from '../AlarmTableHelper'
 
 export const useAlarmTableMenuActions = (indexes, fields: Field[], closeMenu, client: ClientDelegate | undefined) => {
     const [detailsModal, setDetailsModal] = useState(false)

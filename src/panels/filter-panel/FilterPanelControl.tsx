@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { MetricFindValue, PanelProps, SelectableValue } from '@grafana/data'
-import { getDataSourceSrv } from "@grafana/runtime"
+import { getDataSourceSrv } from '@grafana/runtime'
 import { HorizontalGroup, Input, Select, VerticalGroup } from '@grafana/ui'
 import { FieldDisplay } from 'components/FieldDisplay'
 import { ALL_SELECTION_VALUE } from 'constants/constants'

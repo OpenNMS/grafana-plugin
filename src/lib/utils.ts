@@ -1,8 +1,8 @@
-import _ from 'lodash';
-
-import { loadPluginCss } from '@grafana/runtime';
+import _ from 'lodash'
+import { loadPluginCss } from '@grafana/runtime'
 
 let cssInitialized = false;
+
 export function initializeCss() {
   if (!cssInitialized) {
     cssInitialized = true;

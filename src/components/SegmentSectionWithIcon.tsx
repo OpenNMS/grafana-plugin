@@ -1,14 +1,14 @@
 import React from 'react'
-import { css } from '@emotion/css';
-import { InlineFieldRow, InlineLabel, useStyles2 } from "@grafana/ui"
-import { GrafanaTheme2 } from '@grafana/data';
+import { css } from '@emotion/css'
+import { InlineFieldRow, InlineLabel, useStyles2 } from '@grafana/ui'
+import { GrafanaTheme2 } from '@grafana/data'
 
 export interface SegmentSectionWithIconProps {
-    label: string;
-    htmlFor?: string;
-    children: React.ReactNode;
-    fill?: boolean;
-    icon?: string;
+    label: string
+    htmlFor?: string
+    children: React.ReactNode
+    fill?: boolean
+    icon?: string
 }
 
 export const SegmentSectionWithIcon = ({ label, htmlFor, children, fill, icon }: SegmentSectionWithIconProps) => {
@@ -39,4 +39,4 @@ const getStyles = (theme: GrafanaTheme2) => ({
       flex-grow: 1;
       margin-bottom: ${theme.spacing(0.5)};
     `,
-});
+})

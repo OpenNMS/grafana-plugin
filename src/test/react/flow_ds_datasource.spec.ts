@@ -47,7 +47,7 @@ describe("OpenNMS_Flow_Datasource", function () {
       targets: [{
         refId: "A",
         datasource: {
-          "type": "opennms-helm-flow-datasource-react",
+          "type": "opennms-flow-datasource",
           "uid": "KLhKw1DVk"
         },
         segment: 0,

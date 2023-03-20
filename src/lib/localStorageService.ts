@@ -1,19 +1,20 @@
 import { FilterEditorData } from '../datasources/entity-ds/types'
 
 const getCircularReplacer = () => {
-    const seen = new WeakSet();
-    return (key, value) => {
-        if (typeof value === "object" && value !== null) {
-            if (seen.has(value)) {
-                return;
-            }
-            seen.add(value);
-        }
-        return value;
-    };
-};
+    const seen = new WeakSet()
 
-const FILTER_PANEL_STORAGE_KEY = 'opennms-helm-filter-panel'
+    return (key, value) => {
+        if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) {
+                return
+            }
+            seen.add(value)
+        }
+        return value
+    }
+}
+
+const FILTER_PANEL_STORAGE_KEY = 'opennms-filter-panel'
 
 export const saveFilterEditorData = (data: FilterEditorData) => {
     localStorage.setItem(FILTER_PANEL_STORAGE_KEY, JSON.stringify(data, getCircularReplacer()))

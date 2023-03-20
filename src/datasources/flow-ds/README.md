@@ -1,7 +1,6 @@
-# OpenNMS Helm Flow Datasource
+# OpenNMS Flow Datasource
 
-This plugin is used with the OpenNMS Helm Application, and this README is an effort to break down the construction of the plugin, 
-how it works, and how to modify it.
+This plugin is used with the OpenNMS Plugin for Grafana Application, and this README is an effort to break down the construction of the plugin, how it works, and how to modify it.
 
 # Architecture
 Like with all Grafana Datasource plugins, the plugin itself is defined in the plugin.json file at the root of this directory, and the bootstrap

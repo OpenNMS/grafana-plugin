@@ -1,8 +1,8 @@
+import React, { useState, useEffect } from 'react'
 import { config } from '@grafana/runtime'
 import { Button, HorizontalGroup, TextArea } from '@grafana/ui';
 import { ClientDelegate } from 'lib/client_delegate';
 import { OnmsAlarm } from 'opennms/src/model'
-import React, { useState, useEffect } from 'react'
 
 interface AlarmTableModalMemosProps {
     alarm: OnmsAlarm | undefined;

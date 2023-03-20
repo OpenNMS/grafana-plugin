@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { PanelOptionsEditorProps, SelectableValue } from '@grafana/data'
-import { GrafanaDatasource } from 'hooks/useDataSources';
+import { GrafanaDatasource } from 'hooks/useDataSources'
 import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
 import { ActiveFilter } from '../../datasources/entity-ds/types'
 import { FilterPanelDataSource } from './FilterPanelDataSource'
-import { FilterPanelFilterSelector } from './FilterPanelFilterSelector';
-import { FilterPanelActiveFilters } from './FilterPanelActiveFilters';
+import { FilterPanelFilterSelector } from './FilterPanelFilterSelector'
+import { FilterPanelActiveFilters } from './FilterPanelActiveFilters'
 import { loadFilterEditorData } from 'lib/localStorageService'
 
 interface FilterPanelOptionOptions {

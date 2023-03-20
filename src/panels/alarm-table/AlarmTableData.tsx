@@ -1,10 +1,8 @@
-import { Select } from '@grafana/ui'
-import { HelmDragList } from 'components/HelmDragList';
-import { HelmInlineField } from 'components/HelmInlineField';
 import React, { useState, useEffect } from 'react'
-import { AlarmTableDataState } from './AlarmTableTypes';
-
-
+import { Select } from '@grafana/ui'
+import { DragList } from 'components/DragList'
+import { OnmsInlineField } from 'components/OnmsInlineField'
+import { AlarmTableDataState } from './AlarmTableTypes'
 
 interface AlarmTableDataProps {
     onChange: Function;
@@ -22,20 +20,21 @@ export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, contex
             { label: 'Node Label', value: 14 },
             { label: 'Log Message', value: 9 },
         ]
-    });
+    })
 
     useEffect(() => {
         onChange(alarmTableData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [alarmTableData])
+
     const setAlarmTableState = (key, value) => {
         const newState = { ...alarmTableData }
         newState[key] = value
-        setAlarmTableData(newState);
-    }
+        setAlarmTableData(newState)
+   }
+
     return (
         <div>
-
             {/** 
               * 
               * Commented out for now. This is in the original table, but 
@@ -43,16 +42,15 @@ export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, contex
               * written, so there's no need to have the ability to swap them
               * TODO: Double check if we need the ability to 'transform' in different ways
               * 
-              * <HelmInlineField label="Table Transform">
+              * <OnmsInlineField label="Table Transform">
                 <Select
                     value={alarmTableData.transformType}
                     onChange={(val) => setAlarmTableState('transformType', val)}
                     options={[{ label: 'Table', value: 0 }]}
                 />
-            </HelmInlineField> */}
+            </OnmsInlineField> */}
 
-            <HelmInlineField label="Columns">
-
+            <OnmsInlineField label="Columns">
                 <Select
                     placeholder='Add Column'
                     value={''}
@@ -63,11 +61,8 @@ export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, contex
                     }}
                     options={context?.data?.[0]?.fields.map((field, index) => ({ ...field, value: index, label: field.name }))}
                 />
-
-
-            </HelmInlineField>
-            <HelmDragList values={alarmTableData?.columns} onChange={(val) => { setAlarmTableState('columns', val) }} />
-
+            </OnmsInlineField>
+            <DragList values={alarmTableData?.columns} onChange={(val) => { setAlarmTableState('columns', val) }} />
         </div>
     )
 }
