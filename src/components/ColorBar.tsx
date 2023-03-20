@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const HelmColorBar: React.FC<{ title: string, icon: string, color: string }> = ({ title, icon, color }) => {
+export const ColorBar: React.FC<{ title: string, icon: string, color: string }> = ({ title, icon, color }) => {
     return (<div style={{
         backgroundColor: color,
         display: 'flex',

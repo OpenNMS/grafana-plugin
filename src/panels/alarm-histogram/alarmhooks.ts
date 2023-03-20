@@ -1,10 +1,9 @@
 import { useRef } from 'react'
-import { AcknowledgedAlarms, AlarmDirections, AlarmGroups, AlarmSeverity } from "./constants";
-import { colors } from '@grafana/ui';
+import { colors } from '@grafana/ui'
+import { AcknowledgedAlarms, AlarmDirections, AlarmGroups, AlarmSeverity } from './constants'
 
 export const useAlarmHooks = () => {
-
-    const ref: any = useRef();
+    const ref: any = useRef()
 
     const getPlotDataPoint = (direction, data, index) => {
         return direction === AlarmDirections.Horizontal.value ? [data, index] : [index, data]

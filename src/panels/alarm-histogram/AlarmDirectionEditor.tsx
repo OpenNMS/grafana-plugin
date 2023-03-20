@@ -1,7 +1,7 @@
 import React from 'react'
+import { PanelOptionsEditorProps } from '@grafana/data'
 import { Select } from '@grafana/ui'
 import { AlarmDirections } from './constants'
-import { PanelOptionsEditorProps } from '@grafana/data'
 
 interface Props extends PanelOptionsEditorProps<number> { }
 

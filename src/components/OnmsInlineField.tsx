@@ -1,10 +1,12 @@
-import { InlineField } from '@grafana/ui'
 import React from 'react'
+import { InlineField } from '@grafana/ui'
+
 interface InlineFieldProps {
     label: string;
     children: React.ReactElement<any, string | React.JSXElementConstructor<any>> & React.ReactNode
 }
-export const HelmInlineField: React.FC<InlineFieldProps> = ({ children, ...props }) => {
+
+export const OnmsInlineField: React.FC<InlineFieldProps> = ({ children, ...props }) => {
     return (
         <>
             <style>

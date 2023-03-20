@@ -3,6 +3,6 @@ import { AppRootProps } from '@grafana/data'
 
 export class App extends React.PureComponent<AppRootProps> {
   render() {
-    return <div className="page-container">OpenNMS HELM</div>;
+    return <div className="page-container">OpenNMS Plugin for Grafana</div>;
   }
 }

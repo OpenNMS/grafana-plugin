@@ -1,7 +1,7 @@
+import React from 'react'
 import { css } from '@emotion/css'
 import { GrafanaTheme2 } from '@grafana/data'
 import { Menu, MenuItem, useStyles2 } from '@grafana/ui'
-import React from 'react'
 import { AlarmTableControlActions, AlarmTableControlState } from './AlarmTableTypes'
 
 interface AlarmTableMenuProps {

@@ -1,8 +1,8 @@
-import { AlarmTableData } from "./AlarmTableData"
 import React, { useEffect, useState } from 'react'
-import { AlarmTablePaging } from "./AlarmTablePaging"
-import { AlarmTableAlarms } from "./AlarmTableAlarms"
-import { PanelOptionsEditorProps } from "@grafana/data"
+import { AlarmTableData } from './AlarmTableData'
+import { AlarmTablePaging } from './AlarmTablePaging'
+import { AlarmTableAlarms } from './AlarmTableAlarms'
+import { PanelOptionsEditorProps } from '@grafana/data'
 
 export const AlarmTableOptions: React.FC<PanelOptionsEditorProps<{}>> = ({ context, onChange }) => {
     const [internalOptions, setInternalOptions] = useState({})

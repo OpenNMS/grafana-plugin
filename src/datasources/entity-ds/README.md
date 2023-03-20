@@ -1,6 +1,6 @@
-# OpenNMS Helm Entity Datasource
+# OpenNMS Plugin for Grafana Entity Datasource
 
-This plugin is used with the overall OpenNMS Helm Application, and this README is an effort to break down the construction of the Entity Datasource plugin, 
+This plugin is used with the overall OpenNMS Application, and this README is an effort to break down the construction of the Entity Datasource plugin, 
 how it works, and how to modify it.
 
 # Architecture

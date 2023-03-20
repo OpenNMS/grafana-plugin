@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS Performance",
-  "id": "opennms-helm-performance-datasource",
+  "id": "opennms-performance-datasource",
   "type": "datasource",
 
   "metrics": true,

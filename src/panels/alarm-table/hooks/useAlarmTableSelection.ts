@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlarmTableControlState } from "../AlarmTableTypes";
+import { AlarmTableControlState } from '../AlarmTableTypes'
 
 export const useAlarmTableSelection = (doubleClicked) => {
 
@@ -15,6 +15,7 @@ export const useAlarmTableSelection = (doubleClicked) => {
         const allFalse = !indexes.find((d) => d === true)
         return allFalse
     }
+
     const rowClicked = (index: number, e: MouseEvent, fromContext = false) => {
         setState((previousState) => {
             let newClickedIndexes = [...previousState.indexes];

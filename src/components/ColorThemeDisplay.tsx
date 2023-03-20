@@ -1,18 +1,18 @@
-import React from 'react';
-import { HelmColorBar } from './HelmColorBar';
-import { helmColorArray } from './HelmColors';
+import React from 'react'
+import { ColorBar } from './ColorBar'
+import { onmsColorArray } from './OnmsColors'
 
-interface HelmColorThemeDisplayProps {
+interface ColorThemeDisplayProps {
     theme: number | undefined | string;
 }
 
-export const HelmColorThemeDisplay: React.FC<HelmColorThemeDisplayProps> = ({ theme }) => {
+export const ColorThemeDisplay: React.FC<ColorThemeDisplayProps> = ({ theme }) => {
 
     const getThemeNumberFromPossibleString = () => {
         let themeNum = 0;
         if (theme && typeof theme === 'string') {
             themeNum = Number(theme)
-        } else if (theme && typeof theme === 'number' && !!helmColorArray[theme]) {
+        } else if (theme && typeof theme === 'number' && !!onmsColorArray[theme]) {
             themeNum = theme;
         }
         return themeNum;
@@ -35,11 +35,11 @@ export const HelmColorThemeDisplay: React.FC<HelmColorThemeDisplayProps> = ({ th
             }}
         >
             {titles.map((title, index) => {
-                return <HelmColorBar
+                return <ColorBar
                     key={index}
                     title={title.text}
                     icon={title.icon}
-                    color={helmColorArray[getThemeNumberFromPossibleString()][index]}
+                    color={onmsColorArray[getThemeNumberFromPossibleString()][index]}
                 />
             })}
         </div>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { DataFrame } from "@grafana/data"
-import { ClientDelegate } from 'lib/client_delegate';
-import { OnmsAlarm } from 'opennms/src/model';
-import { getAlarmIdFromFields } from '../AlarmTableHelper';
+import { DataFrame } from '@grafana/data'
+import { ClientDelegate } from 'lib/client_delegate'
+import { OnmsAlarm } from 'opennms/src/model'
+import { getAlarmIdFromFields } from '../AlarmTableHelper'
 
 export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientDelegate | undefined) => {
     const [alarmQuery, setAlarmQuery] = useState(false);

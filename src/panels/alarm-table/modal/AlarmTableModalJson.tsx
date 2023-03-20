@@ -1,5 +1,5 @@
-import { OnmsAlarm } from 'opennms/src/model'
 import React from 'react'
+import { OnmsAlarm } from 'opennms/src/model'
 
 interface AlarmTableModalJsonProps {
     alarm: OnmsAlarm | undefined;

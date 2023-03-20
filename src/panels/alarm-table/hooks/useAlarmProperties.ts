@@ -1,16 +1,18 @@
-import { ArrayVector } from '@grafana/data';
 import { useState, useEffect } from 'react'
+import { ArrayVector } from '@grafana/data'
 import _ from 'lodash'
 
-export const useAlarmHelmProperties = (oldProperties, alarmTable) => {
+export const useAlarmProperties = (oldProperties, alarmTable) => {
 
     const [filteredPropState, setFilteredProps] = useState(_.cloneDeep(oldProperties));
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+
     useEffect(() => {
         const filteredProps = _.cloneDeep(oldProperties);
         const totalRows = filteredProps.fields[0].values.length
         const rowsPerPage = Number(alarmTable.alarmTablePaging.rowsPerPage)
+
         if (filteredProps && filteredProps.meta?.entity_metadata && filteredProps.name && filteredProps.name === 'alarms') {
             // Allow background color for severity column.
             if (alarmTable?.alarmTableAlarms?.styleWithSeverity?.value === 1) {

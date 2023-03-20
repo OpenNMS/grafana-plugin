@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Dashboard Convert Panel",
-  "id": "opennms-helm-dashboard-convert-panel",
+  "id": "opennms-dashboard-convert-panel",
 
   "info": {
     "description": "OpenNMS Dashboard Convert Panel",

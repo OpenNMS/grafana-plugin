@@ -1,5 +1,4 @@
-
-export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)'];
+export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)']
 
 export const AlarmDirections = {
     Vertical: {label:'Vertical',value:1},

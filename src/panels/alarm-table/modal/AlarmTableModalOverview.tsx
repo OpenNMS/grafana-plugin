@@ -1,9 +1,10 @@
-import { OnmsAlarm } from 'opennms/src/model'
 import React from 'react'
+import { OnmsAlarm } from 'opennms/src/model'
 
 interface AlarmTableModalOverviewProps {
     alarm: OnmsAlarm | undefined
 }
+
 export const AlarmTableModalOverview: React.FC<AlarmTableModalOverviewProps> = ({ alarm }) => {
     return (<div>
         <style>

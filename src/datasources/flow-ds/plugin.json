@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS Flow",
-  "id": "opennms-helm-flow-datasource",
+  "id": "opennms-flow-datasource",
   "type": "datasource",
 
   "metrics": true,

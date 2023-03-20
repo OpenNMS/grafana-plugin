@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
-import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } from "./FlowHistogramTypes";
-import moment from 'moment';
 import { CSSProperties } from 'react'
-import { DataPosition, FLowDataDirection, UnitInfo } from "./FlowHistogramContants";
-import { DataFrame } from "@grafana/data";
+import { DataFrame } from '@grafana/data'
+import moment from 'moment'
+import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } from './FlowHistogramTypes'
+import { DataPosition, FlowDataDirection, UnitInfo } from './FlowHistogramConstants'
 
 export const getFlowHistogramPlotData = (processedData: FlowPanelDataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }): any[] => {
 
@@ -28,8 +28,8 @@ export const getFlowHistogramPlotData = (processedData: FlowPanelDataProcessed, 
                 },
                 data: processedData.separateData?.outByLabel,
             }
-            return [outSeriesData, inSeriesData]
 
+            return [outSeriesData, inSeriesData]
         }
         case 'Stacked': {
             return processedData.stackedData?.metricsByLabel ? processedData.stackedData.metricsByLabel : []
@@ -150,7 +150,7 @@ export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHist
             },
             stackedData: {
                 metricsByLabel: stackedResult,
-                ticks: [[FLowDataDirection.dataIn.value, FLowDataDirection.dataIn.label], [FLowDataDirection.dataOut.value, FLowDataDirection.dataOut.label]]
+                ticks: [[FlowDataDirection.dataIn.value, FlowDataDirection.dataIn.label], [FlowDataDirection.dataOut.value, FlowDataDirection.dataOut.label]]
             }
         }
     } else {
@@ -198,11 +198,10 @@ export const getStackedResultData = (indexedMetricLabels: any[], inByData: any[]
         const inData = inByData[index] / divisor
         const outData = outByData[index] / divisor
         return horizontal ?
-            { label: label, data: [[inData, FLowDataDirection.dataIn.value], [outData, FLowDataDirection.dataOut.value]] } :
-            { label: label, data: [[FLowDataDirection.dataIn.value, inData], [FLowDataDirection.dataOut.value, outData]] }
+            { label: label, data: [[inData, FlowDataDirection.dataIn.value], [outData, FlowDataDirection.dataOut.value]] } :
+            { label: label, data: [[FlowDataDirection.dataIn.value, inData], [FlowDataDirection.dataOut.value, outData]] }
     })
 }
-
 
 export const getSeriesMetricValues = (fields: any[], name: string) => {
     let match = fields.find(f => f.name === name)

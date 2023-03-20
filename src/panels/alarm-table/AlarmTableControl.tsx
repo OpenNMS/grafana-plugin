@@ -1,24 +1,21 @@
-import { PanelProps } from '@grafana/data';
-import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui';
-
 import React from 'react'
-import { AlarmTableMenu } from './AlarmTableMenu';
-import { AlarmTableModalContent } from './modal/AlarmTableModalContent';
-import { AlarmTableSelectionStyles } from './AlarmTableSelectionStyles';
-import { AlarmTableControlProps } from './AlarmTableTypes';
-import { useAlarmHelmProperties } from './hooks/useAlarmHelmProperties';
-import { useAlarmTableMenuActions } from './hooks/useAlarmTableMenuActions';
-import { useAlarmTableConfigDefaults } from './hooks/useAlarmTableConfigDefaults';
-import { useAlarmTableMenu } from './hooks/useAlarmTableMenu';
-import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter';
-import { useAlarmTableSelection } from './hooks/useAlarmTableSelection';
-import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs';
-import { useOpenNMSClient } from '../../hooks/useOpenNMSClient';
-import { useAlarm } from './hooks/useAlarm';
-
+import { PanelProps } from '@grafana/data'
+import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui'
+import { AlarmTableMenu } from './AlarmTableMenu'
+import { AlarmTableModalContent } from './modal/AlarmTableModalContent'
+import { AlarmTableSelectionStyles } from './AlarmTableSelectionStyles'
+import { AlarmTableControlProps } from './AlarmTableTypes'
+import { useAlarmProperties } from './hooks/useAlarmProperties'
+import { useAlarmTableMenuActions } from './hooks/useAlarmTableMenuActions'
+import { useAlarmTableConfigDefaults } from './hooks/useAlarmTableConfigDefaults'
+import { useAlarmTableMenu } from './hooks/useAlarmTableMenu'
+import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter'
+import { useAlarmTableSelection } from './hooks/useAlarmTableSelection'
+import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs'
+import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
+import { useAlarm } from './hooks/useAlarm'
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
-
 
     const { state, rowClicked, soloIndex } = useAlarmTableSelection(() => {
         setDetailsModal(true)
@@ -26,19 +23,19 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
 
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
     const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked);
-   
     const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes, props?.data?.series[0].fields,() => setMenuOpen(false),client);
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs();
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client);
-    const { filteredProps, page, setPage, totalPages } = useAlarmHelmProperties(props?.data?.series[0], props?.options?.alarmTable);
-
+    const { filteredProps, page, setPage, totalPages } = useAlarmProperties(props?.data?.series[0], props?.options?.alarmTable);
 
     useAlarmTableRowHighlighter(state, table);
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
+
     const getFontSize = () => {
         const fontSize = props.options?.alarmTable.alarmTablePaging.fontSize?.value
         return `font-size-${fontSize}`
     }
+
     return (
         <div ref={table} className={
             `

@@ -1,8 +1,8 @@
 import React from 'react'
 
 export interface SwitchBoxProps {
-    className?: string;
-    children: React.ReactNode;
+    className?: string
+    children: React.ReactNode
 }
 
 export const SwitchBox: React.FC<SwitchBoxProps> = ({className = undefined, children }) => {

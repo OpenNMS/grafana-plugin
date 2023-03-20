@@ -1,9 +1,8 @@
-import { Select } from '@grafana/ui'
-import { HelmColorThemeDisplay } from 'components/HelmColorThemeDisplay';
-import { HelmInlineField } from 'components/HelmInlineField';
 import React, { useState, useEffect } from 'react'
-import { AlarmTableAlarmDataState } from './AlarmTableTypes';
-
+import { Select } from '@grafana/ui'
+import { AlarmTableAlarmDataState } from './AlarmTableTypes'
+import { ColorThemeDisplay } from 'components/ColorThemeDisplay'
+import { OnmsInlineField } from 'components/OnmsInlineField'
 
 interface AlarmTableAlarmProps {
     onChange: Function
@@ -12,7 +11,7 @@ interface AlarmTableAlarmProps {
 export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, alarmTable }) => {
     const [alarmTableAlarmData, setAlarmTableAlarmData] = useState<AlarmTableAlarmDataState>({
         styleWithSeverity: alarmTable?.alarmTableAlarms?.styleWithSeverity || { label: 'Column', value: 1 },
-        severityTheme: alarmTable?.alarmTableAlarms?.severityTheme ||{ label: 'Helm Default', value: 0 }
+        severityTheme: alarmTable?.alarmTableAlarms?.severityTheme ||{ label: 'Default', value: 0 }
     });
 
     useEffect(() => {
@@ -28,7 +27,7 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, ala
 
     return (
         <div>
-            <HelmInlineField label="Style with severity">
+            <OnmsInlineField label="Style with severity">
                 {/** 
                   * Support for row-level colours is not coded into the current version of Grafana: https://github.com/grafana/grafana/discussions/38151     
                   * If it's supported in the future, we can re-enable the option here.
@@ -38,13 +37,13 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, ala
                     onChange={(val) => setAlarmTableState('styleWithSeverity', val)}
                     options={[{ label: 'Column', value: 1 }, { label: 'Off', value: 2 }]}
                 />
-            </HelmInlineField>
-            <HelmInlineField label="Severity theme">
+            </OnmsInlineField>
+            <OnmsInlineField label="Severity theme">
                 <Select
                     value={alarmTableAlarmData.severityTheme}
                     onChange={(val) => setAlarmTableState('severityTheme', val)}
                     options={[
-                        { label: 'Helm Default', value: 0 },
+                        { label: 'Default', value: 0 },
                         { label: 'OpenNMS', value: 1 },
                         { label: 'Oh My!', value: 2 },
                         { label: 'No, Never Mind (i)', value: 3 },
@@ -52,8 +51,8 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, ala
                         { label: 'Custom', value: 5 },
                     ]}
                 />
-            </HelmInlineField>
-            <HelmColorThemeDisplay theme={alarmTableAlarmData.severityTheme?.value} />
+            </OnmsInlineField>
+            <ColorThemeDisplay theme={alarmTableAlarmData.severityTheme?.value} />
         </div>
     )
 }
