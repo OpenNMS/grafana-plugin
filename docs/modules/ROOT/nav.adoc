@@ -3,8 +3,7 @@
 
 .Installation
 * xref:installation:requirements.adoc[]
-* xref:installation:debian.adoc[Debian/Ubuntu]
-* xref:installation:rpm.adoc[RPM-Based Linux]
+* xref:installation:package.adoc[From Package]
 * xref:installation:plugin.adoc[{page-component-title} Plugin]
 * xref:installation:source.adoc[From Source]
 * xref:installation:upgrading.adoc[]
