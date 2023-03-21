@@ -45,9 +45,15 @@ export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
         target.hide ||
         !(target.attribute &&
-          target.attribute.attribute.name &&
-          (target.attribute.resource.id || target.attribute.resource.label) &&
-          (target.attribute.node.id || target.attribute.node.label))) {
+            (target.attribute.attribute.name ||
+                target.attribute.attribute?.label &&
+                (target.attribute.attribute?.label?.indexOf('*') >= 0 ||
+                    target.attribute.attribute?.label?.indexOf('|') >= 0)) &&
+            (target.attribute.resource.id || target.attribute.resource.label ||
+                target.attribute.resource?.label &&
+                (target.attribute.resource?.label?.indexOf('*') >= 0 ||
+                    target.attribute.resource?.label?.indexOf('|') >= 0)) &&
+            (target.attribute.node.id || target.attribute.node.label))) {
         return false
     }
 
