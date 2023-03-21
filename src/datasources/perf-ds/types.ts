@@ -44,7 +44,7 @@ export interface PerformanceAttributeState {
      // this may be an OnmsNode object, or else just an id and/or label
     node: PerformanceAttributeItemState;
     resource: PerformanceAttributeItemState;
-    attribute: { name: string };
+    attribute: { name: string, label?: string };
     subAttribute?: string | number;
     fallbackAttribute?: { name: string };
     aggregation: { label?: string };

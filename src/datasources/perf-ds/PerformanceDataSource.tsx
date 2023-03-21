@@ -1,6 +1,6 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest } from "lib/utils";
+import { SimpleOpenNMSRequest, getNodeResource } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToDataFrame } from "./PerformanceHelpers";
 import {
@@ -24,6 +24,7 @@ import {
     isValidFilterTarget,
     isValidMeasurementQuery
 } from "./queries/queryBuilder";
+import { FunctionFormatter } from '../../lib/function_formatter'
 import { queryStringProperties } from "./queries/queryStringProperties"
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
 
@@ -184,9 +185,27 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async metricFindQuery(query, options) {
-        let queryResults: Array<{ text: string, value: string }> = []
+        if (!query) {
+            return Promise.resolve([]);
+        }
+        if (this.templateSrv.containsTemplate(query)) {
+            query = this.templateSrv.replace(query)
+        }
 
-        return queryResults
+        const functions = FunctionFormatter.findFunctions(query);
+
+        for (const func of functions) {
+            if (func.name === 'locations') {
+                return this.metricFindLocations.apply(this, func.arguments);
+            } else if (func.name === 'nodeFilter') {
+                return this.metricFindNodeFilterQuery.apply(this, func.arguments);
+            } else if (func.name === 'nodeResources') {
+                return this.metricFindNodeResourceQuery.apply(this, func.arguments);
+            } else {
+                console.warn('Unknown function in query: ' + query, func);
+            }
+        }
+        return Promise.resolve([]);
     }
 
     async testDatasource(): Promise<any> {
@@ -223,5 +242,69 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         })
 
         return response && response.data ? response.data as OnmsResourceDto : null
+    }
+
+    async metricFindLocations() {
+        return await this.simpleRequest.getLocations();
+    }
+
+    async metricFindNodeFilterQuery(query) {
+        let nodes = await this.simpleRequest.getNodesByFilter(query);
+        let results = [] as any[];
+        nodes.forEach(node => {
+            let nodeCriteria = node.id.toString();
+            if (node.foreignId !== null && node.foreignSource !== null) {
+                nodeCriteria = node.foreignSource + ":" + node.foreignId;
+            }
+            results.push({ text: node.label, value: nodeCriteria, expandable: true });
+        });
+        return results;
+    }
+
+    async metricFindNodeResourceQuery(query, ...options) {
+        let textProperty = "id", resourceType = '*', regex = null;
+        if (options.length > 0) {
+            textProperty = options[0];
+        }
+        if (options.length > 1) {
+            resourceType = options[1];
+        }
+        if (options.length > 2) {
+            regex = options[2];
+        }
+        const nodeResources = await this.simpleRequest.doOpenNMSRequest({
+            url: '/rest/resources/' + encodeURIComponent(getNodeResource(query)),
+            method: 'GET',
+            params: {
+                depth: 1
+            }
+        })
+
+        let results = [] as any[]
+
+        nodeResources.data.children.resource.forEach((resource) => {
+            const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
+            let textValue;
+            switch (textProperty) {
+                case "id":
+                    textValue = resourceWithoutNodePrefix[2];
+                    break;
+                case "label":
+                    textValue = resource.label;
+                    break;
+                case "name":
+                    textValue = resource.name;
+                    break;
+                default:
+                    textValue = resourceWithoutNodePrefix[2];
+                    console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
+            }
+            if (((resourceType === '*' && resourceWithoutNodePrefix) ||
+                (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) &&
+                (!regex || new RegExp(regex).test(textValue))) {
+                results.push({ text: textValue, value: resourceWithoutNodePrefix[2], expandable: true });
+            }
+        })
+        return results;
     }
 }

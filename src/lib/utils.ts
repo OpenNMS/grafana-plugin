@@ -574,4 +574,12 @@ export const getNumberOrDefault = (value: any, defaultValue: number) => {
   return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10);
 }
 
-
+export const getNodeResource = (nodeId) => {
+  let prefix = "";
+  if (nodeId.indexOf(":") > 0) {
+    prefix = "nodeSource[";
+  } else {
+    prefix = "node[";
+  }
+  return prefix + nodeId + "]";
+}
