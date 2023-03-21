@@ -4,7 +4,7 @@
 This section describes how to install {page-component-title} from source.
 
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
-If you do not have an existing Grafana instance, see xref:rpm.adoc[] or xref:debian.adoc[].
+If you do not have an existing Grafana instance, see xref:package.adoc[].
 
 == Build {page-component-title}
 
