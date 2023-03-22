@@ -95,40 +95,40 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     createExpressionsFromExpressionTarget(query: OnmsMeasurementsQueryRequest,
-      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>, i: number) {
+        target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>, i: number) {
 
-      const expression = buildExpressionQuery(target, i)
-      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-      const attributes = ['value', 'label']
+        const expression = buildExpressionQuery(target, i)
+        const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+        const attributes = ['value', 'label']
 
-      const expressions = interpolate(expression, attributes, interpolationVars)
+        const expressions = interpolate(expression, attributes, interpolationVars)
 
-      if (query.expression && query.expression.length > 0) {
-          return query.expression.concat(expressions)
-      }
+        if (query.expression && query.expression.length > 0) {
+            return query.expression.concat(expressions)
+        }
 
-      return expressions
+        return expressions
     }
 
     createFiltersFromFilterTarget(query: OnmsMeasurementsQueryRequest,
-      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
+        target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
 
-      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-      const attributes = Object.keys(target.filterState)
-      const interpolatedFilterParams = interpolate(target.filterState, attributes, interpolationVars)
-      const filters = buildFilterQuery(target, interpolatedFilterParams)
+        const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+        const attributes = Object.keys(target.filterState)
+        const interpolatedFilterParams = interpolate(target.filterState, attributes, interpolationVars)
+        const filters = buildFilterQuery(target, interpolatedFilterParams)
 
-      // Only add the filter attribute to the query when one or more filters are specified since
-      // OpenNMS versions before 17.0.0 do not support it
-      if (filters.length > 0) {
-          if (query.filter && query.filter.length > 0) {
-              return query.filter.concat(filters)
-          } else {
-              return filters
-          }
-      }
+        // Only add the filter attribute to the query when one or more filters are specified since
+        // OpenNMS versions before 17.0.0 do not support it
+        if (filters.length > 0) {
+            if (query.filter && query.filter.length > 0) {
+                return query.filter.concat(filters)
+            } else {
+                return filters
+            }
+        }
 
-      return query.filter
+        return query.filter
     }
 
     async stringPropertySearch(request: PerformanceQueryRequest<PerformanceQuery>) {
@@ -171,18 +171,17 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                     query.filter = this.createFiltersFromFilterTarget(query, target, options)
                 }
             }
+        }
 
-            if (isValidMeasurementQuery(query)) {
-                const responseData = await this.doMeasuremmentQuery(query)
+        if (isValidMeasurementQuery(query)) {
+            const responseData = await this.doMeasuremmentQuery(query)
 
-                if (responseData) {
-                    try {
-                        // convert to DataFrame format
-                        const dataFrame = measurementResponseToDataFrame(responseData, target.refId)
-                        dataFrames.push(dataFrame)
-                    } catch (e) {
-                        console.error(e);
-                    }
+            if (responseData) {
+                try {
+                    // convert to DataFrame format
+                    dataFrames = measurementResponseToDataFrame(responseData)
+                } catch (e) {
+                    console.error(e);
                 }
             }
         }
@@ -315,7 +314,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     async getAdditionalSources(sources: OnmsMeasurementsQuerySource[]) {
         let additionalSources: OnmsMeasurementsQuerySource[] = []
 
-        for(const source of sources) {
+        for (const source of sources) {
             const resourceId = this.templateSrv.replace(source.resourceId)
             const attribute = this.templateSrv.replace(source.attribute)
             if (OpenNMSGlob.hasGlob(attribute) || OpenNMSGlob.hasGlob(resourceId)) {
