@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import { loadPluginCss } from '@grafana/runtime'
+import { MetricFindValue } from '@grafana/data'
+import { OnmsLocationResponse, OnmsFlowsResponse } from './api_types'
 
 let cssInitialized = false;
 
@@ -211,9 +213,9 @@ export function containsVariable(...args) {
   const isMatchingVariable =
     matches !== null
       ? matches.find(match => {
-          const varMatch = variableRegexExec(match);
-          return varMatch !== null && varMatch.indexOf(variableName) > -1;
-        })
+        const varMatch = variableRegexExec(match);
+        return varMatch !== null && varMatch.indexOf(variableName) > -1;
+      })
       : false;
 
   return !!isMatchingVariable;
@@ -289,14 +291,14 @@ export function isFirst<T>(t: T, index: number, array: T[]) {
  */
 export function processSelectionVariables(input?: string[]): string[] {
   if (input) {
-      const mapped = input.map(i => processSelectionVariable(i, true, false))
-      if (mapped.some(m => m.some(s => s === 'all'))) {
-          return []
-      } else {
-          return ([] as string[]).concat(...mapped).filter(isFirst)
-      }
-  } else {
+    const mapped = input.map(i => processSelectionVariable(i, true, false))
+    if (mapped.some(m => m.some(s => s === 'all'))) {
       return []
+    } else {
+      return ([] as string[]).concat(...mapped).filter(isFirst)
+    }
+  } else {
+    return []
   }
 }
 
@@ -395,28 +397,28 @@ export class SimpleOpenNMSRequest {
     return this.backendSrv.datasourceRequest(options);
   }
 
-  getLocations(searchLimit = 0) {
-    return this.doOpenNMSRequest({
+  getLocations = async (searchLimit = 0) => {
+    const response = await this.doOpenNMSRequest({
       url: this.locations,
       method: 'GET',
       params: {
         limit: searchLimit
       }
+    }) as OnmsLocationResponse
+
+    if (response.data.count > response.data.totalCount) {
+      console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
+    }
+    const results: MetricFindValue[] = []
+    response.data.location?.forEach(location => {
+      const nodeLocation = location['location-name'] ? location['location-name'].toString() : null
+      const exist = _.find(results, (o) => o.text === nodeLocation)
+      if (nodeLocation && !exist) {
+        results.push({ text: nodeLocation, value: nodeLocation, expandable: true })
+      }
     })
-      .then(function (response) {
-        if (response.data.count > response.data.totalCount) {
-          console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-        }
-        let results = [] as any[];
-        _.each(response.data.location, function (location) {
-          let nodeLocation = location['location-name'] ? location['location-name'].toString() : null;
-          let exist = _.find(results, (o) => o.text === nodeLocation);
-          if (nodeLocation && !exist) {
-            results.push({ text: nodeLocation, value: nodeLocation, expandable: true });
-          }
-        });
-        return results;
-      });
+    return results
+
   }
 
   async getNodesByFilter(filter: string) {
@@ -444,23 +446,21 @@ export class SimpleOpenNMSRequest {
         'end': end,
         'limit': limit <= 0 ? this.searchLimit : limit
       }
-    })
+    }) as OnmsFlowsResponse
 
+    const results: MetricFindValue[] = []
     if (response.data.length === 0) {
-      console.warn("No matches found");
-      return response.data;
+      console.warn("No matches found")
     } else {
-      let results: any[] = [];
       response.data.forEach(val => {
-        results.push({ text: val, value: val, expandable: true });
-      });
-      return results;
+        results.push({ text: val, value: val, expandable: true })
+      })
     }
-
+    return results
   }
 
   async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
-    if(!pattern){
+    if (!pattern) {
       pattern = ".*"
     }
 
@@ -473,7 +473,7 @@ export class SimpleOpenNMSRequest {
         'limit': limit <= 0 ? this.searchLimit : limit,
         'pattern': pattern
       }
-    })
+    }) as OnmsFlowsResponse
 
     if (response.data.length === 0) {
       console.warn("No matches found");
@@ -487,15 +487,15 @@ export class SimpleOpenNMSRequest {
     }
   }
 
-  async getConversations(start: number, end: number, application: string | null = null, 
+  async getConversations(start: number, end: number, application: string | null = null,
     location: string | null = null, protocol: string | null = null, limit = 0) {
-    if(!application){
+    if (!application) {
       application = ".*";
     }
-    if(!location){
+    if (!location) {
       location = ".*";
     }
-    if(!protocol){
+    if (!protocol) {
       protocol = ".*";
     }
     const response = await this.doOpenNMSRequest({
@@ -509,21 +509,20 @@ export class SimpleOpenNMSRequest {
         'protocol': protocol,
         'limit': limit <= 0 ? this.searchLimit : limit
       }
-    })
+    }) as OnmsFlowsResponse
 
+    const results: MetricFindValue[] = [];
     if (response.data.length === 0) {
-      console.warn("No matches found");
-      return response.data;
+      console.warn("No matches found")
     } else {
-      let results: any[] = [];
       response.data.forEach(val => {
-        results.push({ text: val, value: val, expandable: true });
-      });
-      return results;
+        results.push({ text: val, value: val, expandable: true })
+      })
     }
+    return results
   }
 
-  async getNodeByIdOrFsFsId(query: string){
+  async getNodeByIdOrFsFsId(query: string) {
     const response = await this.doOpenNMSRequest({
       url: this.nodes + '/' + query.trim(),
       method: 'GET',
@@ -532,7 +531,7 @@ export class SimpleOpenNMSRequest {
       }
     })
 
-    return response.data;
+    return response.data
   }
 
   /**
@@ -548,15 +547,14 @@ export class SimpleOpenNMSRequest {
         depth: 1
       }
     });
-    if (response.data.children.resource && Array.isArray(response.data.children.resource)){
+    if (response.data.children.resource && Array.isArray(response.data.children.resource)) {
       return response.data.children.resource;
     }
     else { return []; }
   }
-
 }
 
-export function getNodeFilterMap(filterParam?: string): Map<string, string>{
+export function getNodeFilterMap(filterParam?: string): Map<string, string> {
   const filters = filterParam ? filterParam.split('&') : [];
   let filtermap = new Map<string, string>();
   filters.forEach((filter, index, arr) => {
@@ -583,3 +581,28 @@ export const getNodeResource = (nodeId) => {
   }
   return prefix + nodeId + "]";
 }
+
+/**
+ * Retrieve the node id value from the resource id
+ * @param resource : resource id as <nodeId>.<resourceId>
+ * @returns Node Id 
+ */
+export const getNodeIdFromResourceId = (resource): string => {
+  const matches = resource.match(/node(Source)?\[([^\]]*)?\]\..*/);
+  if (matches && matches.length === 3) {
+    return matches[2]
+  }
+  else {
+    return resource
+  }
+}
+
+export const getResourceId = (resource): string => {
+  const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
+  if (matches && matches.length === 3){
+    return matches[2];
+  }
+  else { return resource; }
+}
+
+
