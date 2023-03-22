@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { PanelProps, SelectableValue } from '@grafana/data'
-import { Button, HorizontalGroup, Select, Switch, TextArea, VerticalGroup } from '@grafana/ui'
+import { Button, HorizontalGroup, Input, Select, Switch, TextArea, VerticalGroup } from '@grafana/ui'
 import { FieldDisplay } from '../../components/FieldDisplay'
-import { dashboardConvert } from './convert'
+import { dashboardConvert, getDashboardTitle } from '../../lib/dashboard-convert'
 
 interface DashboardConvertPanelProps {
 }
@@ -12,10 +12,20 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
   const [sourceDashboardJson, setSourceDashboardJson] = useState<string>()
   const [targetPluginVersion, setTargetPluginVersion] = useState<SelectableValue<string>>({ value: 'Version 9', label: 'Version 9' })
   const [targetDashboardJson, setTargetDashboardJson] = useState<string>()
+  const [dashboardTitle, setDashboardTitle] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>()
   const [unhideAllQueries, setUnhideAllQueries] = useState<boolean>(false)
 
   const onSourceJsonUpdated = (text: string) => {
+    if (!sourceDashboardJson) {
+      // initial update, set the initial dashboard title
+      const title = getDashboardTitle(text)
+
+      if (title) {
+        setDashboardTitle(title)
+      }
+    }
+
     setSourceDashboardJson(text)
   }
 
@@ -35,7 +45,7 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
     }
 
     const target = dashboardConvert(sourceDashboardJson, sourcePluginVersion.value, targetPluginVersion.value,
-      { unhideAllQueries })
+      dashboardTitle, { unhideAllQueries })
 
     if (target.isError) {
       setErrorMessage(`Error converting: ${target.errorMessage || ''}`)
@@ -55,6 +65,9 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
               .error {
                 color: #f00;
                 font-weight: bold;
+              }
+              .dashboard-title-input {
+                min-width: 360px;
               }
               `
           }
@@ -79,6 +92,15 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
               />
             </HorizontalGroup>
         </div>
+
+         <HorizontalGroup spacing={'lg'}>
+            <FieldDisplay>{'Dashboard Title:'}</FieldDisplay>
+            <Input
+              className='dashboard-title-input'
+              value={dashboardTitle}
+              onChange={(el) => setDashboardTitle(el.currentTarget.value)}
+            />
+         </HorizontalGroup>
          <HorizontalGroup spacing={'lg'}>
             <VerticalGroup>
               <HorizontalGroup>
@@ -92,6 +114,7 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
               <TextArea
                 placeholder='Enter Source Dashboard Json'
                 rows={6}
+                cols={40}
                 value={sourceDashboardJson}
                 onChange={(el) => onSourceJsonUpdated(el.currentTarget.value)}
               />
@@ -109,6 +132,7 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
                 placeholder='Target Dashboard Json can be copied from here after conversion'
                 readOnly={true}
                 rows={6}
+                cols={40}
                 value={targetDashboardJson}
                 onChange={(el) => onTargetJsonUpdated(el.currentTarget.value)}
               />
