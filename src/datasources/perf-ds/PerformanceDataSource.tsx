@@ -1,6 +1,6 @@
-import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from "@grafana/data";
+import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, MetricFindValue } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest, getNodeResource } from "lib/utils";
+import { SimpleOpenNMSRequest, getNodeResource, getNodeIdFromResourceId, OpenNMSGlob, getResourceId } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToDataFrame } from "./PerformanceHelpers";
 import {
@@ -27,6 +27,7 @@ import {
 import { FunctionFormatter } from '../../lib/function_formatter'
 import { queryStringProperties } from "./queries/queryStringProperties"
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
+import { cloneDeep } from 'lodash'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;
@@ -63,29 +64,34 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return typeOfQuery;
     }
 
-    createSourcesFromAttributeTarget(query: OnmsMeasurementsQueryRequest,
-      target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
+    async createSourcesFromAttributeTarget(query: OnmsMeasurementsQueryRequest,
+        target: PerformanceQuery, options: PerformanceQueryRequest<PerformanceQuery>) {
 
-      const source = buildAttributeQuerySource(target);
-      const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
-      const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
+        const source = buildAttributeQuerySource(target);
+        const interpolationVars = collectInterpolationVariables(this.templateSrv, options.scopedVars)
+        const attributes = ['nodeId', 'resourceId', 'attribute', 'datasource', 'label']
 
-      const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
-          if (interpolatedSource.nodeId !== undefined) {
-              // Calculate the effective resource id after the interpolation
-              interpolatedSource.resourceId = getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
-              // remove nodeId since it should not be part of the Rest API measurement request payload
-              delete interpolatedSource.nodeId;
-          }
-      }
+        const callback = (interpolatedSource: OnmsMeasurementsQuerySource) => {
+            if (interpolatedSource.nodeId !== undefined) {
+                // Calculate the effective resource id after the interpolation
+                interpolatedSource.resourceId = getRemoteResourceId(interpolatedSource.nodeId, interpolatedSource.resourceId);
+                // remove nodeId since it should not be part of the Rest API measurement request payload
+                delete interpolatedSource.nodeId;
+            }
+        }
 
-      const sources = interpolate(source, attributes, interpolationVars, callback)
+        let sources = interpolate(source, attributes, interpolationVars, callback)
 
-      if (query.source && query.source.length > 0) {
-          return query.source.concat(sources)
-      }
+        const additionalSources = await this.getAdditionalSources(sources)
 
-      return sources
+        if (additionalSources.length > 0) {
+            sources = sources.concat(additionalSources)
+        }
+        if (query.source && query.source.length > 0) {
+            return query.source.concat(sources)
+        }
+
+        return sources
     }
 
     createExpressionsFromExpressionTarget(query: OnmsMeasurementsQueryRequest,
@@ -154,11 +160,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
             if (target.performanceType?.value === PerformanceTypeOptions.Attribute.value) {
                 if (isValidAttributeTarget(target)) {
-                  query.source = this.createSourcesFromAttributeTarget(query, target, options)
+                    query.source = await this.createSourcesFromAttributeTarget(query, target, options)
                 }
             } else if (target.performanceType?.value === PerformanceTypeOptions.Expression.value) {
                 if (isValidExpressionTarget(target)) {
-                  query.expression = this.createExpressionsFromExpressionTarget(query, target, options, i)
+                    query.expression = this.createExpressionsFromExpressionTarget(query, target, options, i)
                 }
             } else if (target.performanceType?.value === PerformanceTypeOptions.Filter.value) {
                 if (isValidFilterTarget(target)) {
@@ -186,7 +192,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
     async metricFindQuery(query, options) {
         if (!query) {
-            return Promise.resolve([]);
+            return []
         }
         if (this.templateSrv.containsTemplate(query)) {
             query = this.templateSrv.replace(query)
@@ -205,7 +211,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                 console.warn('Unknown function in query: ' + query, func);
             }
         }
-        return Promise.resolve([]);
+        return []
     }
 
     async testDatasource(): Promise<any> {
@@ -249,8 +255,8 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async metricFindNodeFilterQuery(query) {
-        let nodes = await this.simpleRequest.getNodesByFilter(query);
-        let results = [] as any[];
+        const nodes = await this.simpleRequest.getNodesByFilter(query);
+        const results: MetricFindValue[] = []
         nodes.forEach(node => {
             let nodeCriteria = node.id.toString();
             if (node.foreignId !== null && node.foreignSource !== null) {
@@ -272,17 +278,15 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         if (options.length > 2) {
             regex = options[2];
         }
-        const nodeResources = await this.simpleRequest.doOpenNMSRequest({
-            url: '/rest/resources/' + encodeURIComponent(getNodeResource(query)),
-            method: 'GET',
-            params: {
-                depth: 1
-            }
-        })
 
-        let results = [] as any[]
+        return await this.getNodeResources(query, textProperty, resourceType, regex)
+    }
 
-        nodeResources.data.children.resource.forEach((resource) => {
+    async getNodeResources(node: string, textProperty: string, resourceType: string, regex?: string | null) {
+        const nodeResources = await this.simpleRequest.getResourcesForNode(getNodeResource(node))
+        const results: MetricFindValue[] = []
+
+        nodeResources.forEach((resource) => {
             const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
             let textValue;
             switch (textProperty) {
@@ -305,6 +309,76 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
                 results.push({ text: textValue, value: resourceWithoutNodePrefix[2], expandable: true });
             }
         })
-        return results;
+        return results
     }
+
+    async getAdditionalSources(sources: OnmsMeasurementsQuerySource[]) {
+        let additionalSources: OnmsMeasurementsQuerySource[] = []
+
+        for(const source of sources) {
+            const resourceId = this.templateSrv.replace(source.resourceId)
+            const attribute = this.templateSrv.replace(source.attribute)
+            if (OpenNMSGlob.hasGlob(attribute) || OpenNMSGlob.hasGlob(resourceId)) {
+                const extraQueries = await this.getSourcesFor(source)
+                if (extraQueries) {
+                    additionalSources = additionalSources.concat(extraQueries)
+                }
+            }
+        }
+
+        return additionalSources
+    }
+
+
+    async getSourcesFor(source: OnmsMeasurementsQuerySource) {
+
+        const result: OnmsMeasurementsQuerySource[] = []
+
+        const resourceId = this.templateSrv.replace(source.resourceId)
+        const attribute = this.templateSrv.replace(source.attribute)
+        const nodeId = getNodeIdFromResourceId(resourceId)
+        const responseResources = await this.doResourcesForNodeRequest(nodeId)
+
+        if (responseResources) {
+            let nodeResources: OnmsResourceDto[] = this.flattenResourcesWithAttributes([responseResources], [])
+            // get only queries with glob expressions
+            const globQueryResource = new RegExp(OpenNMSGlob.getGlobAsRegexPattern(resourceId))
+            const globQueryAttribute = new RegExp(OpenNMSGlob.getGlobAsRegexPattern(attribute))
+
+            nodeResources = OpenNMSGlob.hasGlob(resourceId) ?
+                nodeResources.filter(r => globQueryResource.test(getRemoteResourceId(nodeId, getResourceId(r.id)))) :
+                nodeResources.filter(r => getResourceId(r.id) === getResourceId(resourceId))
+
+            //find all matching resourceId and attribues
+            nodeResources.forEach(resource => {
+                let resourceAttributes = Object.entries(resource.rrdGraphAttributes)
+                resourceAttributes = OpenNMSGlob.hasGlob(attribute) ?
+                    resourceAttributes.filter(([k, o]) => globQueryAttribute.test(k)) :
+                    resourceAttributes.filter(([k, o]) => k === attribute)
+
+                resourceAttributes.forEach(([k, o]) => {
+                    const sourceClone = cloneDeep(source)
+                    sourceClone.resourceId = resource.id
+                    sourceClone.attribute = o.name
+                    sourceClone.label += `-${resource.id}-${o.name}`
+                    result.push(sourceClone)
+                })
+            })
+        }
+
+        return result
+    }
+
+    flattenResourcesWithAttributes = (resources: OnmsResourceDto[], resourcesWithAttributes: OnmsResourceDto[]) => {
+        resources.forEach(resource => {
+            if (resource.rrdGraphAttributes !== undefined && Object.keys(resource.rrdGraphAttributes).length > 0) {
+                resourcesWithAttributes.push(resource);
+            }
+            if (resource.children !== undefined && resource.children.resource.length > 0) {
+                this.flattenResourcesWithAttributes(resource.children.resource, resourcesWithAttributes);
+            }
+        });
+        return resourcesWithAttributes
+    }
+
 }

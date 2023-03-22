@@ -8,6 +8,7 @@ import {
     PerformanceQuery,
     PerformanceQueryFilterStateItem
 } from '../types';
+import { OpenNMSGlob } from '../../../lib/utils'
 
 export const buildPerformanceMeasurementQuery = (start: number, end: number, step: number, maxRows: number) => {
     return {
@@ -45,7 +46,7 @@ export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
         target.hide ||
         !(target.attribute &&
-          target.attribute.attribute.name &&
+          (target.attribute.attribute.name || (target.attribute.attribute.label && OpenNMSGlob.hasGlob(target.attribute.attribute.label))) &&
           (target.attribute.resource.id || target.attribute.resource.label) &&
           (target.attribute.node.id || target.attribute.node.label))) {
         return false
@@ -98,12 +99,13 @@ export const buildAttributeQuerySource = (target: PerformanceQuery) => {
     // even if the field is removed later after interpolation but before calling the Rest API
     const nodeId = target.attribute.node.id || target.attribute.node.label || ''
     const resourceId = target.attribute.resource.id || target.attribute.resource.label || ''
+    const attribute = target.attribute.attribute.name || target.attribute.attribute.label || ''
 
     const source = {
-        label: target.attribute.label || target.attribute.attribute.name,
+        label: target.attribute.label || target.attribute.attribute.name || target.attribute.attribute.label,
         nodeId: nodeId,
         resourceId: resourceId.replace('node[', 'nodeSource['),
-        attribute: target.attribute.attribute.name,
+        attribute: attribute,
         ['fallback-attribute']: target.attribute.fallbackAttribute?.name || undefined,
         aggregation: target.attribute.aggregation?.label?.toUpperCase() || 'AVERAGE',
         transient: false

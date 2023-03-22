@@ -7,3 +7,15 @@ export interface OnmsMeasurementResource {
     name?: string,
     label?: string
 }
+
+export interface OnmsLocationResponse {
+    data: {
+        count: number, 
+        totalCount: number, 
+        location?: any[]
+    }
+}
+
+export interface OnmsFlowsResponse {
+    data: any[]
+}
