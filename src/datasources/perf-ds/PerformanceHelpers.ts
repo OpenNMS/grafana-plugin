@@ -56,45 +56,48 @@ export const measurementResponseToDataFrame =
 
         let dataFrame: DataFrame = getEmptyDataFrame()
 
-        if (!columns || !columns.length || !timestamps || !timestamps.length) {
+        if (!timestamps || !timestamps.length) {            
             dataFrames.push(dataFrame)
-        }
+        } else {
+            const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
 
-        const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
+            // no data or no data within the start/end timespan, return an empty DataFrame
+            if (windowedTimestamps.length === 0) {
+                dataFrames.push(dataFrame)
+            } else {
 
-        // no data or no data within the start/end timespan, return an empty DataFrame
-        if (windowedTimestamps.length === 0) {
-            dataFrames.push(dataFrame)
-        }
+                for (let i = 0; i < labels?.length; i++) {
+                    dataFrame = getEmptyDataFrame()
 
-        for (let i = 0; i < labels?.length; i++) {
-            dataFrame = getEmptyDataFrame()
-            
-            dataFrame.length = windowedTimestamps.length
+                    dataFrame.length = windowedTimestamps.length
 
-            dataFrame.fields.push({
-                name: 'Time',
-                type: FieldType.time,
-                config: {},
-                values: new ArrayVector<number>(windowedTimestamps)
-            } as Field)
+                    dataFrame.fields.push({
+                        name: 'Time',
+                        type: FieldType.time,
+                        config: {},
+                        values: new ArrayVector<number>(windowedTimestamps)
+                    } as Field)
 
-            const label = metadata && metadata.resources ?
-                FunctionFormatter.format(labels[i], metadata) :
-                labels[i]
+                    const label = metadata && metadata.resources ?
+                        FunctionFormatter.format(labels[i], metadata) :
+                        labels[i]
 
-            const column = columns[i]
-            const windowedValues = column.values.slice(startIndex, endIndex + 1)
+                    if (columns && columns.length) {
 
-            let field = {
-                name: label || 'Value',
-                type: FieldType.number, // number but actual data may be a string representing a number or "NaN"
-                config: {},
-                values: new ArrayVector<string | number | null>(windowedValues)
-            } as Field
+                        const column = columns[i]
+                        const windowedValues = column.values.slice(startIndex, endIndex + 1)
 
-            dataFrame.fields.push(field)
-            dataFrames.push(dataFrame)
+                        let field = {
+                            name: label || 'Value',
+                            type: FieldType.number, // number but actual data may be a string representing a number or "NaN"
+                            config: {},
+                            values: new ArrayVector<string | number | null>(windowedValues)
+                        } as Field
+                        dataFrame.fields.push(field)
+                    }
+                    dataFrames.push(dataFrame)
+                }
+            }
         }
 
         return dataFrames
