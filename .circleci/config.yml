@@ -84,7 +84,7 @@ commands:
           command: |
             export PATH="./node_modules/.bin:${PATH}"
             export NODE_OPTIONS=--openssl-legacy-provider
-            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v webpack)" -c ./.config/webpack/webpack.config.ts --env production
+            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v webpack)" -c ./webpack.config.ts --env production
             node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v npx)" --yes @grafana/sign-plugin@latest
             unset NODE_OPTIONS
             
