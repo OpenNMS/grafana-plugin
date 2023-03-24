@@ -44,11 +44,11 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
-   const updateStringQuery = (performanceState) => {
+   const updateStringQuery = (stringPropertyState) => {
         onChange({
             ...query,
             performanceType,
-            performanceState,
+            stringPropertyState,
         })
         onRunQuery();
     }
@@ -199,6 +199,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 isPerformanceType(PerformanceTypeOptions.StringProperty.value) &&
 
                 <PerformanceStringProperty
+                    query={query}
                     updateQuery={updateStringQuery}
                     loadNodes={loadNodes}
                     loadResourcesByNodeId={loadResourcesByNodeId}
