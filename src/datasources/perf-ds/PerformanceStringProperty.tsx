@@ -10,12 +10,13 @@ export const defaultPerformanceStringState = {
 }
 
 export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps> = ({
+    query,
     updateQuery,
     loadNodes,
     loadResourcesByNodeId,
 }) => {
 
-    const [performanceState, setPerformanceState] = useState<PerformanceStringPropertyState>(defaultPerformanceStringState)
+    const [performanceState, setPerformanceState] = useState<PerformanceStringPropertyState>(query.stringPropertyState || defaultPerformanceStringState)
 
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
         setPerformanceState({ ...performanceState, [propertyName]: propertyValue })

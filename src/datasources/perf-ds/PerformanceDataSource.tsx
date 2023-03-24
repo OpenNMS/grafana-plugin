@@ -53,7 +53,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         const totalStrings = activeTargets.filter((t) =>
             t.performanceType.value &&
             t.performanceType.value === PerformanceTypeOptions.StringProperty.value &&
-            t.performanceState?.stringProperty?.value)
+            t.stringPropertyState?.stringProperty?.value)
         let typeOfQuery = 'normal'
 
         if (totalStrings.length > 0 && totalStrings.length === activeTargets.length) {

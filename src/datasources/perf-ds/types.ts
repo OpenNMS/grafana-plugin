@@ -60,7 +60,7 @@ export interface PerformanceQuery extends DataQuery {
   attribute: PerformanceAttributeState;
   filter: PerformanceQueryFilter;
   filterState: { [key: string]: PerformanceQueryFilterStateItem};
-  performanceState: PerformanceStringPropertyState;
+  stringPropertyState: PerformanceStringPropertyState;
 }
 
 export interface PerformanceQueryRequest<T extends DataQuery> extends DataQueryRequest<T> {
@@ -186,6 +186,7 @@ export interface OnmsResourceDto {
 }
 
 export interface PerformanceStringPropertyProps {
+    query: PerformanceQuery;
     updateQuery: Function;
     loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
     loadResourcesByNodeId: Function;

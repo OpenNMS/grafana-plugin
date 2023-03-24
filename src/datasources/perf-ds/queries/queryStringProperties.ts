@@ -11,31 +11,17 @@ import {
 import { TemplateSrv } from "@grafana/runtime"
 import { Client, ServerMetadata } from "opennms"
 import { ClientDelegate } from "../../../lib/client_delegate"
-import { SimpleOpenNMSRequest } from "../../../lib/utils"
+import { getResourceId, SimpleOpenNMSRequest } from "../../../lib/utils"
 import {
     DefinedStringPropertyQuery,
-    PerformanceQuery
+    PerformanceQuery,
+    OnmsResourceDto
 } from "./../types";
 
 interface RestResourceSelectQuery {
     nodes: Set<string>;
     nodeSubresources: Set<string>;
     stringProperties: Set<string>;
-}
-
-interface RestResourceDTOCollection {
-    resource: RestResourceDTO[];
-}
-
-interface RestResourceDTOBase {
-    id: string;
-    label: string;
-}
-
-interface RestResourceDTO extends RestResourceDTOBase {
-    name: string;
-    children: RestResourceDTOCollection;
-    stringPropertyAttributes: Map<string,string>;
 }
 
 // constructs a single string valued data frame field
@@ -49,18 +35,18 @@ const toStringField = (name: string, value: string): Field<string, Vector<string
 }
 
 // constructs all data frame fields for a string property
-const toStringFields = (node: RestResourceDTOBase, resource: RestResourceDTOBase, key: string, value: string) => {
+const toStringFields = (node: OnmsResourceDto, resource: OnmsResourceDto, key: string, value: string) => {
     return [
-        toStringField('nodeId', node.id),
+        toStringField('nodeId', node.name || node.id),
         toStringField('nodeLabel', node.label),
-        toStringField('resourceId', resource.id),
+        toStringField('resourceId', resource.name || resource.id),
         toStringField('resourceLabel', resource.label),
         toStringField(key, value)
     ]
 }
 
 const isDefinedStringPropertyQuery = (q: PerformanceQuery | undefined) => {
-    const ps = q?.performanceState
+    const ps = q?.stringPropertyState
 
     return ps && ps.node.id && ps.resource.id && ps.stringProperty.value ? true : false
 }
@@ -80,9 +66,9 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
                 datasource: q.datasource,
 
                 // StringPropertyQuery fields
-                nodeId: templateSrv.replace('' + q.performanceState.node.id),
-                resourceId: templateSrv.replace(q.performanceState.resource.id),
-                stringProperty: q.performanceState.stringProperty.value
+                nodeId: templateSrv.replace('' + q.stringPropertyState.node.id),
+                resourceId: templateSrv.replace(getResourceId(q.stringPropertyState.resource.id)),
+                stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
         })
 
@@ -102,13 +88,12 @@ const queryAllStringProperties = async (simpleRequest: SimpleOpenNMSRequest,
         }
     })
 
-    const responseData = response.data as RestResourceDTO[];
+    const responseData = response.data as OnmsResourceDto[];
 
     const fieldSets =
         responseData.flatMap(node =>
             node.children.resource.flatMap(resource =>
-                //Object.entries<string>(resource.stringPropertyAttributes).flatMap(([key, value]) => {
-                Array.from(resource.stringPropertyAttributes.entries()).flatMap(([key, value]) => {
+                Object.entries<string>(resource.stringPropertyAttributes).flatMap(([key, value]) => {
                     return {
                         fields: toStringFields(node, resource, key, value)
                     }
@@ -151,8 +136,8 @@ const queryStringPropertiesForAllNodesInBulk = async (
 
 const extractStringProperties = (
     query: DefinedStringPropertyQuery,
-    resource: RestResourceDTO,
-    node?: RestResourceDTO): DataFrame[] /*DataQueryResponseData[]*/ => {
+    resource: OnmsResourceDto,
+    node?: OnmsResourceDto): DataFrame[] /*DataQueryResponseData[]*/ => {
 
     const matchingKeys =
         Object.keys(resource.stringPropertyAttributes)
@@ -185,7 +170,7 @@ const queryStringPropertiesOfNode = async (
         method: 'GET'
     })
 
-    const nodeDto = response.data as RestResourceDTO;
+    const nodeDto = response.data as OnmsResourceDto;
 
     const data =
         queries.flatMap(query => {
