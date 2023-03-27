@@ -50,7 +50,7 @@ export const updateEntityQuery = (source: any) => {
     // Confirm this logic
     let entityType = i === 0 ? OnmsEntityType.FIRST : OnmsEntityType.AND
 
-    if (i !== 0 && c.operator?.id && c.operator.id >= 0) {
+    if (i !== 0 && (c.operator?.id !== undefined) && c.operator.id >= 0) {
       entityType = c.operator.id
     }
 
