@@ -7,15 +7,15 @@ This section demonstrates how to create a simple dashboard in {page-component-ti
 
 You must have the following pre-requisites to create a dashboard:
 
-* An instance of Grafana with the {page-component-title} plugin installed.
+* An instance of Grafana with the plugin installed.
 * An instance of OpenNMS that is reachable from your Grafana instance.
 * One or more nodes being monitored by OpenNMS.
 
-If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to {page-component-title}.
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to the{page-component-title}.
 
-== Set up {page-component-title}
+== Set up the plugin
 
-First, you must enable the {page-component-title} plugin in Grafana and <<custom-actions, create custom actions>> to help with alarm diagnosis:
+First, you must enable the plugin in Grafana and <<custom-actions, create custom actions>> to help with alarm diagnosis:
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, select menu:Configuration[Plugins]:
@@ -130,7 +130,7 @@ A panel is a component of a dashboard; it displays your specified fault and perf
 Before you add a panel to your dashboard, determine the type of data that you want to visualize (performance, metrics, alarms or nodes, and so on), and make sure that you have <<bw-ds-setup, set up a datasource>>.
 Default graph types in Grafana work only with their appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified).
 
-{page-component-title} includes the following custom panels:
+The plugin includes the following custom panels:
 
 * Alarm histogram
 * Alarm table

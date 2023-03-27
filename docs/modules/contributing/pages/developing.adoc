@@ -6,7 +6,7 @@ This section describes the codebase and how to prepare your development environm
 
 == Codebase
 
-{page-component-title} development is done in the project's default GitHub branch (`develop`).
+Plugin development is done in the project's default GitHub branch (`develop`).
 Commits are automatically compiled, tested, and merged to the `master` branch.
 Releases are tagged from the `master` branch and submitted to the https://github.com/grafana/grafana-plugin-repository[Grafana plugin repository].
 
@@ -30,7 +30,7 @@ allow_loading_unsigned_plugins = opennms-helm-app
 [source, console]
 git clone https://github.com/OpenNMS/opennms-helm.git
 
-. Navigate to your {page-component-title} directory:
+. Navigate to your plugin directory:
 +
 [source, console]
 cd opennnms-helm
@@ -40,7 +40,7 @@ cd opennnms-helm
 [source, console]
 npm ci
 
-. Build {page-component-title} to prime your `dist` directory:
+. Build the plugin to prime your `dist` directory:
 +
 [source, console]
 npm run dev
@@ -57,4 +57,4 @@ ln -s /path/to/opennms-helm/dist /var/lib/grafana/plugins/opennms-helm-app
 npm run watch
 ----
 +
-After you save a change to {page-component-title}, refresh Grafana to load the updates.
+After you save a change to the plugin, refresh Grafana to load the updates.

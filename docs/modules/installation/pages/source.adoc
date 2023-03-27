@@ -6,9 +6,9 @@ This section describes how to install {page-component-title} from source.
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
 
-== Build {page-component-title}
+== Build the plugin
 
-Follow these steps to build {page-component-title}:
+Follow these steps to build the plugin:
 
 . Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory:
 +
@@ -19,7 +19,7 @@ cd /var/lib/grafana/plugins
 git clone https://github.com/OpenNMS/opennms-helm.git opennms-helm-app
 ----
 
-. Compile {page-component-title}:
+. Compile the plugin:
 +
 [source, console]
 ----
@@ -38,7 +38,7 @@ systemctl restart grafana-server
 We use the following conventions for build arguments in this procedure:
 
 * *GRAFANA_VERSION:* The version number for Grafana (default: `latest`).
-* *OPENNMS_HELM_VERSION:* Used as a label in `org.opennms.helm.version` to identify the running {page-component-title} version.
+* *OPENNMS_HELM_VERSION:* Used as a label in `org.opennms.helm.version` to identify the running plugin version.
 
 Follow these steps to build a Docker image from source:
 
@@ -70,4 +70,4 @@ docker run -p 3000:3000 myhelm:snapshot
 
 == Next steps
 
-After you install Grafana and {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].
+After you install Grafana and the plugin, you can xref:getting_started:index.adoc[create your first dashboard].

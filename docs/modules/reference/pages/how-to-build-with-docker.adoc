@@ -5,7 +5,7 @@ This section describes how to build {page-component-title} with Docker.
 
 == Simple build
 
-You can compile {page-component-title} from source with a Docker build image:
+You can compile the plugin from source with a Docker build image:
 
 . Check out the repository, compile the code, and install the plugin:
 +
@@ -17,15 +17,15 @@ docker build -t myopennmshelmimage .
 [source, console]
 docker run -p 3000:3000 -t myopennmshelmimage
 
-. Log in to your {page-component-title} instance with the default admin credentials (`admin`/`admin`).
-. Navigate to *Plugins* and enable the *OpenNMS Helm* plugin.
+. Log in to your Grafana plugin instance with the default admin credentials (`admin`/`admin`).
+. Navigate to *Plugins* and enable the *OpenNMS plugin for Grafana*.
 
 IMPORTANT: The Grafana plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins`.
 This is because the base Grafana image defines `/var/lib/grafana` as a volume, which cannot be changed.
 
 == Advanced build
 
-If you want to build a {page-component-title} image based on a specific GitHub fork or branch, you can use `--build-arg`:
+If you want to build a plugin image based on a specific GitHub fork or branch, you can use `--build-arg`:
 
 [source, console]
 ----
@@ -38,10 +38,10 @@ This creates the plugin based on the GitHub URL and branch that you provide.
 
 == Build service stack with Docker Compose
 
-The {page-component-title} package includes an example `docker-compose.yml`, which builds a service stack with a compiled Grafana OpenNMS {page-component-title} plugin that you can test.
+The plugin package includes an example `docker-compose.yml`, which builds a service stack with a compiled {page-component-title} that you can test.
 You can modify the build arguments in `docker-compose.yml` if you want to build from a specific GitHub fork, branch, or version tag.
 
-When you first run `docker-compose up -d`, the Grafana {page-component-title} plugin is compiled from the source.
+When you first run `docker-compose up -d`, the plugin is compiled from the source.
 Subsequent runs will use the compiled image from your local system.
 If you want to rebuild the image, run `docker-compose build --no-cache`.
 
@@ -51,5 +51,5 @@ The URL for your Horizon or Meridian datasource is `\http://opennms:8980/opennms
 
 Horizon and Meridian include templates from which you can create PDF reports.
 They use an existing Grafana dashboard (see https://docs.opennms.com/horizon/31/operation/deep-dive/database-reports/templates/grafana.html[Grafana Dashboard] in the main OpenNMS documentation).
-If you want to use this feature, and you are running {page-component-title} through Docker, you must complete additional configuration.
+If you want to use this feature, and you are running the plugin through Docker, you must complete additional configuration.
 Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information.

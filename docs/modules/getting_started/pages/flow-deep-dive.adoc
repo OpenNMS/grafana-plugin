@@ -33,4 +33,4 @@ You can further configure the dashboard by creating queries or editing existing 
 For more information, see xref:panel_configuration:index.adoc[].
 
 IMPORTANT: Use *Save As* to save your customized version of the flow deep-dive dashboard.
-Otherwise, changes that you make to the default dashboard will be overwritten when you update the {page-component-title} plugin or reimport the dashboard.
+Otherwise, changes that you make to the default dashboard will be overwritten when you update the plugin or reimport the dashboard.

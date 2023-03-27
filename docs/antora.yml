@@ -1,6 +1,6 @@
 name: helm
 version: '9-SNAPSHOT'
-title: HELM
+title: OpenNMS Plugin for Grafana
 asciidoc:
   attributes:
     full-display-version: '9.0.0-SNAPSHOT'
