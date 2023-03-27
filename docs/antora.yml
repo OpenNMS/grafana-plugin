@@ -1,4 +1,4 @@
-name: helm
+name: OpenNMS Plugin for Grafana
 version: '9-SNAPSHOT'
 title: OpenNMS Plugin for Grafana
 asciidoc:
