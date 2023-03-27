@@ -111,10 +111,10 @@ const convertLegacyEntityType = (entityId: string) => {
       return { label: 'Monitored Services', value: '4'}
     case 'outage':
       return { label: 'Outages', value: '5' }
+    case 'node':
+    default:
+      return { label: 'Nodes', value: '1' }
   }
-
-  // 'node' or default
-  return { label: 'Nodes', value: '1' }
 }
 
 const convertLegacySelectionType = (inputType: string) => {
