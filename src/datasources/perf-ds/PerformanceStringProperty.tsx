@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Segment, SegmentAsync } from '@grafana/ui';
+import { SegmentAsync } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types';
+import { isTemplateVariable, getStringPropertiesForState } from './PerformanceHelpers'
 
 export const defaultPerformanceStringState = {
     node: { id: '' },
@@ -13,7 +14,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     query,
     updateQuery,
     loadNodes,
-    loadResourcesByNodeId,
+    loadResourcesByNode,
 }) => {
 
     const [performanceState, setPerformanceState] = useState<PerformanceStringPropertyState>(query.stringPropertyState || defaultPerformanceStringState)
@@ -29,9 +30,6 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [performanceState])
 
-    const stringPropertyAttributes = Object.entries(performanceState?.resource?.stringPropertyAttributes).map(([key, item]) => {
-        return { label: key, value: key }
-    })
 
     return (
         <>
@@ -49,13 +47,13 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
             <div className='spacer' />
 
             {
-                performanceState?.node?.id &&
+                (performanceState?.node?.id  || isTemplateVariable(performanceState?.node)) &&
 
                 <SegmentSectionWithIcon label='Resource' icon='leaf'>
                     <SegmentAsync
                         value={performanceState?.resource}
                         placeholder='Select Resource'
-                        loadOptions={() => loadResourcesByNodeId(performanceState?.node?.id)}
+                        loadOptions={() => loadResourcesByNode(performanceState?.node)}
                         onChange={(value) => {
                             setPerformanceStateProperty('resource', value);
                         }}
@@ -64,13 +62,14 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
             }
             <div className='spacer' />
             {
-                performanceState?.node?.id && performanceState?.resource?.id &&
+                (performanceState?.node?.id || isTemplateVariable(performanceState?.node)) && 
+                (performanceState?.resource?.id || isTemplateVariable(performanceState?.resource)) &&
 
                 <SegmentSectionWithIcon label='String Property' icon='tag'>
-                    <Segment
+                    <SegmentAsync
                         value={performanceState?.stringProperty}
                         placeholder='Select String Property'
-                        options={stringPropertyAttributes}
+                        loadOptions={() => getStringPropertiesForState(performanceState, loadResourcesByNode)}
                         onChange={(value) => {
                             setPerformanceStateProperty('stringProperty', value);
                         }}
