@@ -259,7 +259,7 @@ The following arguments are available for the `nodeResources()` query:
 
 == Label formatters
 
-he plugin provides a number of formatting functions that you can use to transform the labels displayed in graph legends.
+The plugin provides a number of formatting functions that you can use to transform the labels displayed in graph legends.
 You can use one or more of them to transform the labels based on node or resource metadata returned from OpenNMS (requires Horizon 24 or newer).
 
 === nodeToLabel(<nodeCriteria>)

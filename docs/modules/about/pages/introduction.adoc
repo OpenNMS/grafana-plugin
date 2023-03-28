@@ -9,7 +9,7 @@ It works with https://grafana.com[Grafana] to customize and display <<fault, fau
 You can create and customize dashboards to display the data that you want to see--alarms, outages, key performance indicators--in a way that best meets your needs.
 
 .Sample plugin dashboard
-image::helm-sample-dash.png["{page-component-title} displaying a sample dashboard, populated with bar graphs and pie charts."]
+image::helm-sample-dash.png["The {page-component-title} displaying a sample dashboard, populated with bar graphs and pie charts."]
 
 == How does it work?
 
@@ -21,7 +21,7 @@ All interactions between the plugin and OpenNMS are done via the https://docs.op
 No fault management or performance management data is stored within the plugin or Grafana.
 
 .Plugin data architecture
-image::data-architecture.png["Data architecture diagram showing the relationship among {page-component-title}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
+image::data-architecture.png["Data architecture diagram showing the relationship among the {page-component-title}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
 
 [[fault]]
 == Fault management

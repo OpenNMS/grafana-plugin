@@ -1,7 +1,7 @@
 
 = Install from Package
 
-This section describes how to install {page-component-title} from a package on Debian, Ubuntu, and RPM-based Linux distributions (CentOS, Fedora, and so on).
+This section describes how to install the {page-component-title} from a package on Debian, Ubuntu, and RPM-based Linux distributions (CentOS, Fedora, and so on).
 
 IMPORTANT: These instructions assume that you do not have Grafana installed on your target system.
 If you have an existing Grafana instance that you want to use, see xref:plugin.adoc[].

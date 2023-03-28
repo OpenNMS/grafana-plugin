@@ -1,7 +1,7 @@
 
 = Migrate From OpenNMS Data Source Plugin
 
-This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to {page-component-title}.
+This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to the {page-component-title}.
 
 IMPORTANT: This section applies only to those still using the OpenNMS Data Source plugin, which was deprecated in 2016.
 
@@ -15,7 +15,7 @@ To complete this migration, you must have the following:
 
 Before completing the migration, ensure that you have xref:installation:requirements.adoc[installed the plugin] on your Grafana instance.
 
-NOTE: Both the OpenNMS Data Source plugin and {page-component-title} can be installed on your Grafana instance while you complete the migration.
+NOTE: Both the OpenNMS Data Source plugin and the {page-component-title} can be installed on your Grafana instance while you complete the migration.
 
 == Grafana setup
 

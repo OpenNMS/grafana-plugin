@@ -3,7 +3,7 @@
 
 = Expressions
 
-{page-component-title} supports https://commons.apache.org/proper/commons-jexl/index.html[JEXL] mathematical and conditional operators in performance data queries.
+The {page-component-title} supports https://commons.apache.org/proper/commons-jexl/index.html[JEXL] mathematical and conditional operators in performance data queries.
 You can use them to combine or otherwise transform one or more series into a new series.
 For example, you can specify a filter to display the sum of data from different attribute queries (such as available memory on two nodes).
 

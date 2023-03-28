@@ -3,7 +3,7 @@
 
 = Panel Configuration
 
-{page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
+The {page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
 
 image::gf-panel-config.png["Panel displaying configuration options", 850]

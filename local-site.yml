@@ -1,5 +1,5 @@
 site:
-  title: OpenNMS Plugin for Documentation
+  title: Grafana Plugin Documentation
   url: https://docs.opennms.org/helm/
   start_page: helm::index.adoc
 content:

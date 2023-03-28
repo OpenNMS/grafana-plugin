@@ -1,6 +1,6 @@
 
 = Write and Build Documentation
 
-{page-component-title} is free and open source and, as such, we welcome any kind of contribution.
+The {page-component-title} is free and open source and, as such, we welcome any kind of contribution.
 
 For guidelines on writing documentation for the project and information on how to build the documentation locally, see https://docs.opennms.com/horizon/latest/write-the-docs/overview.html[Write the Docs] in the main OpenNMS documentation.

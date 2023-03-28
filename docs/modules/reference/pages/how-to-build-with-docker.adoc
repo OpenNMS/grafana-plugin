@@ -1,7 +1,7 @@
 
 = Build from Source with Docker
 
-This section describes how to build {page-component-title} with Docker.
+This section describes how to build the {page-component-title} with Docker.
 
 == Simple build
 

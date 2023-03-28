@@ -1,7 +1,7 @@
 
 = Install from Source
 
-This section describes how to install {page-component-title} from source.
+This section describes how to install the {page-component-title} from source.
 
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
