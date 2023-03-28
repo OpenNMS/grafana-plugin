@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { API, Client, DAO, Model, Rest } from 'opennms';
+import { API, Client, DAO, Model, Rest, GrafanaError } from 'opennms';
 
 export class ClientDelegate {
     type?: string;
@@ -119,7 +119,7 @@ export class ClientDelegate {
 
                     const mapped = {} as [number: Model.OnmsIpInterface];
 
-                    do {
+                    while (clauses.length > 0) {
                         // do this 100 at a time so the query strings don't get too long
                         const temporary = clauses.splice(0, 100);
 
@@ -137,7 +137,7 @@ export class ClientDelegate {
                         } catch (err) {
                             console.warn('An error occurred querying the IP interface')
                         }
-                    } while (clauses.length > 0);
+                    }
 
                     nodes = nodes.map((node) => {
                         if (mapped[node.id]) {
@@ -163,13 +163,13 @@ export class ClientDelegate {
         .catch(this.decorateError);
     }
 
-    getNodeProperties(): Promise<any[]> {
+    getNodeProperties(): Promise<API.SearchProperty[]> {
         return this.getNodeDao()
             .then((nodeDao) => nodeDao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findNodeProperty(propertyId) {
+    findNodeProperty(propertyId): API.SearchProperty {
         return this.getNodeProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
@@ -211,13 +211,13 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getIpInterfaceProperties(): Promise<any[]> {
+    getIpInterfaceProperties(): Promise<API.SearchProperty[]> {
         return this.getIpInterfaceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findIpInterfaceProperty(propertyId) {
+    findIpInterfaceProperty(propertyId): API.SearchProperty {
         return this.getIpInterfaceProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
@@ -259,13 +259,13 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getSnmpInterfaceProperties(): Promise<any[]> {
+    getSnmpInterfaceProperties(): Promise<API.SearchProperty[]> {
         return this.getSnmpInterfaceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
     }
 
-    findSnmpInterfaceProperty(propertyId) {
+    findSnmpInterfaceProperty(propertyId): API.SearchProperty {
         return this.getSnmpInterfaceProperties()
             .then((properties) => {
                 return _.find(properties, (property) => property.id === propertyId);
@@ -307,7 +307,7 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getMonitoredServiceProperties(): Promise<any[]> {
+    getMonitoredServiceProperties(): Promise<API.SearchProperty[]> {
         return this.getMonitoredServiceDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
@@ -355,7 +355,7 @@ export class ClientDelegate {
             .catch(this.decorateError);
     }
 
-    getOutageProperties(): Promise<any[]> {
+    getOutageProperties(): Promise<API.SearchProperty[]> {
         return this.getOutageDao()
             .then((dao) => dao.searchProperties())
             .catch(this.decorateError);
@@ -679,5 +679,32 @@ export class ClientDelegate {
             return flowDao.getSeriesForDscps(start, end, step, nodeCriteria, interfaceId, dscp);
           }).catch(this.decorateError);
     }
+
+    testConnection = async () => {
+        const defaultErrorMessage = 'Cannot connect to API';
+        console.log('Testing the data source!');
+        let response = { status: '', message: '' }
+        try {
+          const metadata = await this.getClientWithMetadata();
+          console.log('Testing the data source!', metadata);
+          response = { status: "Success", message: "Success" }
+        } catch (err) {
+          let message = '';
+          if (_.isString(err)) {
+            message = err;
+          } else {
+            let grafanaError = err as GrafanaError
+            if (grafanaError) {
+              message = `Fetch error: ${(grafanaError.data.statusText ? grafanaError.data.statusText : defaultErrorMessage)}`;
+              if (grafanaError.data && grafanaError.data?.error && grafanaError.data?.message) {
+                message += `: ${grafanaError.data.error. grafanaError.data.message}`;
+              }
+            }
+          }
+          response = { status: "error", message: message }
+          console.log('CAUGHT!', err);
+        }
+        return response
+      }
 
 }

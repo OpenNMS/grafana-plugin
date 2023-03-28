@@ -24,4 +24,4 @@ ADD artifacts/opennms-helm*.tar.gz ${GF_PATHS_PLUGINS}/opennms-helm
 LABEL license="AGPLv3" \
       org.opennms.helm.version="${OPENNMS_HELM_VERSION}" \
       vendor="The OpenNMS Group, Inc." \
-      name="Grafana Helm App"
+      name="OpenNMS Plugin for Grafana"
