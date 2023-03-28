@@ -189,11 +189,11 @@ export interface PerformanceStringPropertyProps {
     query: PerformanceQuery;
     updateQuery: Function;
     loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
-    loadResourcesByNodeId: Function;
+    loadResourcesByNode: Function;
 }
 
 export interface PerformanceStringPropertyState {
-    node: { id: string };
-    resource: { id: string, stringPropertyAttributes: Record<string, string> };
+    node: { id?: string, label?: string };
+    resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> };
     stringProperty: { label: string, value: string };
 }

@@ -48,7 +48,7 @@ const toStringFields = (node: OnmsResourceDto, resource: OnmsResourceDto, key: s
 const isDefinedStringPropertyQuery = (q: PerformanceQuery | undefined) => {
     const ps = q?.stringPropertyState
 
-    return ps && ps.node.id && ps.resource.id && ps.stringProperty.value ? true : false
+    return ps && (ps.node.id || ps.node.label) && (ps.resource.id || ps.resource.label) && ps.stringProperty.value ? true : false
 }
 
 export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, targets: PerformanceQuery[]) => {
@@ -56,6 +56,8 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
         .filter(q => !q.hide)
         .filter(isDefinedStringPropertyQuery)
         .map(q => {
+            const nodeId = q.stringPropertyState.node.id || q.stringPropertyState.node.label
+            const resourceId = q.stringPropertyState.resource.id || q.stringPropertyState.resource.label
             return {
                 //...q,
                 // DataQuery fields
@@ -66,8 +68,8 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
                 datasource: q.datasource,
 
                 // StringPropertyQuery fields
-                nodeId: templateSrv.replace('' + q.stringPropertyState.node.id),
-                resourceId: templateSrv.replace(getResourceId(q.stringPropertyState.resource.id)),
+                nodeId: templateSrv.replace('' + nodeId),
+                resourceId: templateSrv.replace(getResourceId(resourceId)),
                 stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
         })

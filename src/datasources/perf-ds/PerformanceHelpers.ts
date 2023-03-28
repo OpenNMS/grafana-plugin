@@ -1,6 +1,8 @@
 import { ArrayVector, DataFrame, Field, FieldType } from "@grafana/data"
+import { getTemplateSrv } from "@grafana/runtime";
 import { FunctionFormatter } from "lib/function_formatter";
-import { OnmsMeasurementsQueryResponse } from "./types";
+import { getResourceId } from "lib/utils";
+import { OnmsMeasurementsQueryResponse , PerformanceStringPropertyState} from "./types";
 
 /**
  * Get 'windowed' timestamps that are between start/end range.
@@ -109,4 +111,31 @@ const getEmptyDataFrame = () => {
         length: 0,
         fields: []
     }
+}
+
+export const isTemplateVariable = (property: { id?: string, label?: string } | undefined) => {
+    return property?.label && getTemplateSrv().containsTemplate(property.label)
+}
+
+export const getStringPropertiesForState = async (performanceState: PerformanceStringPropertyState, loadResourcesByNode: Function) => {
+    let stringProperties: Array<{ label: string, value: string }> = []
+    const ts = getTemplateSrv()
+    if (performanceState?.resource?.stringPropertyAttributes) {
+        stringProperties = getStringProperties(performanceState?.resource)
+    } else if(performanceState?.resource?.label && ts.containsTemplate(performanceState?.resource?.label)) {       
+        const resourceId = ts.replace(performanceState?.resource?.label)
+        const resources = await loadResourcesByNode(performanceState.node)
+        stringProperties = getStringProperties(resources.find(r => getResourceId(r.id) === resourceId))
+    }
+    return stringProperties
+}
+
+const getStringProperties = (resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> }) => {
+    let stringProperties: Array<{ label: string, value: string }> = [] 
+    if (resource?.stringPropertyAttributes) {
+        stringProperties = Object.entries(resource?.stringPropertyAttributes).map(([key, item]) => {
+            return { label: key, value: key }
+        })
+    }
+    return stringProperties
 }

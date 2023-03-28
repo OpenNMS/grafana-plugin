@@ -11,6 +11,7 @@ import { PerformanceStringProperty } from './PerformanceStringProperty';
 import { OnmsRrdGraphAttribute, PerformanceQueryEditorProps, QuickSelect } from './types';
 import { collectInterpolationVariables, interpolate } from './queries/interpolate'
 import { getRemoteResourceId } from './queries/queryBuilder'
+import { isTemplateVariable } from './PerformanceHelpers';
 
 export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
     const [performanceType, setPerformanceType] = useState<QuickSelect>(query.performanceType);
@@ -70,18 +71,20 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
      * Load resources for the PerformanceAttribute Resources dropdown by either a node id (selected from
      * Node dropdown) or from a template variable that evaluates to a node id.
      */
-    const loadResourcesByNode = async (value) => {
+    const loadResourcesByNode = async (value) => {    
         const ts = getTemplateSrv()
         let nodeId = value
-
-        if (ts.containsTemplate(value)) {
-            nodeId = ts.replace(value)
+        if(isTemplateVariable(value)){
+            nodeId = ts.replace(value.label)
+        }else if(value instanceof Object && value.id){
+            nodeId = value.id
         }
 
         return loadResourcesByNodeId(nodeId)
     }
 
     const loadResourcesByNodeId = async (nodeId) => {
+        
         const resourceData = await datasource.doResourcesForNodeRequest(nodeId)
 
         if (resourceData) {
@@ -202,7 +205,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                     query={query}
                     updateQuery={updateStringQuery}
                     loadNodes={loadNodes}
-                    loadResourcesByNodeId={loadResourcesByNodeId}
+                    loadResourcesByNode={loadResourcesByNode}
                 />
             }
         </div>
