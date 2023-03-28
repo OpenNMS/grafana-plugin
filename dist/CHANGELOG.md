@@ -1,3 +1,38 @@
+### v8.0.4
+
+Helm 8.0.4 is a re-release of 8.0.3, with a minor test-suite fix.
+
+### v8.0.3
+
+Helm 8.0.3 is a minor release with focus on improving documentations.
+
+* Create documentation for each of the panels provided by Helm (Issue [HELM-348](https://issues.opennms.org/browse/HELM-348))
+* Cleanup Helm Documentation formatting (Issue [HELM-341](https://issues.opennms.org/browse/HELM-341))
+
+### v8.0.2
+
+Helm 8.0.2 is primarily a bugfix release.
+
+* Possible fix when passing snmp interfaces from Perf DS to Flow filters (#543) (Issue [HELM-333](https://issues.opennms.org/browse/HELM-333))
+* nodeResources doc update  (Issue [HELM-351](https://issues.opennms.org/browse/HELM-351))
+* Fix Helm Flow Histogram Panel (#552) (Issue [HELM-353](https://issues.opennms.org/browse/HELM-353))
+
+### v8.0.1
+
+Helm 8.0.1 is primarily a bugfix release.
+
+It contains a number of small fixes and enhancements to improve querying of nodes and interfaces.
+
+It also contains a large number of node dependency updates.
+
+* HELM: Regex for Grafana Template Variable does not work on labels [Performance Datasource] (Issue [HELM-332](https://issues.opennms.org/browse/HELM-332))
+* Entity Datasource does not provide node information (Issue [HELM-334](https://issues.opennms.org/browse/HELM-334))
+* Flow DS query interfacesOnExporterWithFlows() does not accept FS:FID as argument (Issue [HELM-336](https://issues.opennms.org/browse/HELM-336))
+* exporterNodesWithFlows() query handles criteria differently than other queries (Issue [HELM-337](https://issues.opennms.org/browse/HELM-337))
+* Entity nodeFilter is not working (Issue [HELM-338](https://issues.opennms.org/browse/HELM-338))
+* Cleanup Helm Documentation formatting (Issue [HELM-341](https://issues.opennms.org/browse/HELM-341))
+* Alarm Details missing TroubleTicketState if state is 0 (Issue [HELM-345](https://issues.opennms.org/browse/HELM-345))
+
 ### v8.0.0
 
 Helm 8 contains updates to the core to use Grafana 8, the start of a move to

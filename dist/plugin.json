@@ -1,5 +1,5 @@
 {
-  "name": "OpenNMS Helm",
+  "name": "OpenNMS Plugin for Grafana",
   "id": "opennms-helm-app",
   "type": "app",
   "info": {
@@ -8,7 +8,7 @@
       "name": "The OpenNMS Group Inc.",
       "url": "https://www.opennms.com"
     },
-    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "snmp"],
+    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "plugin", "snmp"],
     "logos": {
       "small": "img/helm.svg",
       "large": "img/helm.svg"
@@ -25,7 +25,7 @@
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
     "version": "9.0.0-SNAPSHOT",
-    "updated": "2022-06-07"
+    "updated": "2022-12-13"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
@@ -40,8 +40,8 @@
     {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Helm", "path": "dashboards/cortex_flow_deep_dive.json"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=8.0.0",
-    "grafanaVersion": "8.0.0",
+    "grafanaDependency": ">=9.0.0",
+    "grafanaVersion": "9.0.0",
     "plugins": []
   }
 }
