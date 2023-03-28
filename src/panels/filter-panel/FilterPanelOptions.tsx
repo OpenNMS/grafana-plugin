@@ -7,6 +7,7 @@ import { FilterPanelDataSource } from './FilterPanelDataSource'
 import { FilterPanelFilterSelector } from './FilterPanelFilterSelector'
 import { FilterPanelActiveFilters } from './FilterPanelActiveFilters'
 import { loadFilterEditorData } from 'lib/localStorageService'
+import { ClearFilterData } from '../../components/ClearFilterData'
 
 interface FilterPanelOptionOptions {
     datasource: SelectableValue<GrafanaDatasource>
@@ -50,6 +51,16 @@ export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOpt
 
     return (
         <>
+            <style>
+            {
+                `
+                .spacer {
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                }
+              `
+            }
+            </style>
             <FilterPanelDataSource
                 onChange={(d) => onOptionChange(d, 'datasource')}
                 datasource={internalOptions.datasource}
@@ -64,6 +75,8 @@ export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOpt
                 activeFilters={internalOptions.activeFilters}
                 onChange={(d) => onOptionChange(d, 'activeFilters')}
             />
+
+            <ClearFilterData />
         </>
     )
 }
