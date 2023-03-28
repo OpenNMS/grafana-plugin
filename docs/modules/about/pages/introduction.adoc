@@ -3,13 +3,13 @@
 
 = About the {page-component-title}
 
-The {page-component-title} is an application that lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
+The {page-component-title} lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
 It works with https://grafana.com[Grafana] to customize and display <<fault, fault management>> and <<performance, performance management>> data from OpenNMS https://www.opennms.org[Horizon] and https://www.opennms.com[Meridian].
 
 You can create and customize dashboards to display the data that you want to see--alarms, outages, key performance indicators--in a way that best meets your needs.
 
 .Sample plugin dashboard
-image::helm-sample-dash.png["The {page-component-title} displaying a sample dashboard, populated with bar graphs and pie charts."]
+image::helm-sample-dash.png["Grafana displaying a sample dashboard, populated with bar graphs and pie charts."]
 
 == How does it work?
 

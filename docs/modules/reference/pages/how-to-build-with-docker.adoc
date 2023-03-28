@@ -17,8 +17,8 @@ docker build -t myopennmshelmimage .
 [source, console]
 docker run -p 3000:3000 -t myopennmshelmimage
 
-. Log in to your Grafana plugin instance with the default admin credentials (`admin`/`admin`).
-. Navigate to *Plugins* and enable the *OpenNMS plugin for Grafana*.
+. Log in to your Grafana instance with the default admin credentials (`admin`/`admin`).
+. Navigate to *Plugins* and enable the *OpenNMS Plugin for Grafana*.
 
 IMPORTANT: The Grafana plugin directory location is changed from `/var/lib/grafana/plugins` to `/opt/grafana/plugins`.
 This is because the base Grafana image defines `/var/lib/grafana` as a volume, which cannot be changed.

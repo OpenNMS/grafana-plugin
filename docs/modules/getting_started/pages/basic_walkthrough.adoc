@@ -3,9 +3,9 @@
 
 = Create a Dashboard
 
-This section demonstrates how to create a simple dashboard in the {page-component-title}.
+This section demonstrates how to create a simple dashboard using the {page-component-title}.
 
-You must have the following pre-requisites to create a dashboard:
+You must have the following set up to create a dashboard:
 
 * An instance of Grafana with the plugin installed.
 * An instance of OpenNMS that is reachable from your Grafana instance.

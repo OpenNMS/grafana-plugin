@@ -62,7 +62,7 @@ To find a list of valid attributes, see your OpenNMS server's `\http://HOSTNAME:
 
 Follow these steps to filter nodes by a custom asset record:
 
-. On your plugin dashboard, create a variable named `region`, and set its datasource to an entity datasource that points to your server.
+. On your dashboard, create a variable named `region`, and set its datasource to an entity datasource that points to your server.
 . Set the variable's query to `nodes(assetRecord.region)`.
 . Click *Save* and return to the list of variables.
 . Create a variable named `node`, and set its datasource to a performance datasource.

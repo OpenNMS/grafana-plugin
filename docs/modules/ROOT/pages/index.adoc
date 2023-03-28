@@ -10,7 +10,7 @@
 [.lead]
 Welcome to the {page-component-title} documentation.
 Here, you will find information and guides to help you learn about the plugin and start exploring its features.
-Learn how to set up and manage your plugin environment, from installation to creating your first dashboard and using advanced filtering.
+Learn how to set up and manage your environment, from installing the plugin to creating your first dashboard and using advanced filtering.
 
 [big]*Need help?*
 
