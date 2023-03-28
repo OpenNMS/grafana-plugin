@@ -40,3 +40,7 @@ You can use these metrics for historical analysis, or to automatically generate 
 {page-component-title} can retrieve and visualize metric data that OpenNMS stores.
 
 TIP: If you are not familiar with how OpenNMS collects and stores data, you can learn more from https://youtu.be/7qRrTM1Wv-0[OpenNMS 101 - Module 11: Data Collection on YouTube].
+
+== Flow management
+
+Flow management is the process of 
