@@ -58,17 +58,17 @@ export const updateEntityQuery = (source: any) => {
       attribute: {
         label: attrName,
         type: {
-          id: "STRING",
-          label: "string"
+          id: 'STRING',
+          label: 'string'
         },
         value: {
           id: attrId,
           label: attrName,  // these aren't necessarily specified in the source
           name: attrName,
           type: {
-            id: "STRING",
-            label: "string"
-          },
+            id: 'STRING',
+            label: 'string'
+          }
         }
       },
       comparator: {
