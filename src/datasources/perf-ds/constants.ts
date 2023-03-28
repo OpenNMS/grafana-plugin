@@ -1,8 +1,7 @@
-export const STRING_PROPERTY_TYPE = 'stringProperty'
 
-export const QueryType = Object.freeze({
-  Attribute: 'attribute',
-  Expression: 'expression',
-  Filter: 'filter',
-  'String Property': STRING_PROPERTY_TYPE
-});
+export const PerformanceTypeOptions = {
+    Attribute: { label: 'Attribute', value: 1 },
+    Expression: { label: 'Expression', value: 2 },
+    Filter: { label: 'Filter', value: 3 },
+    StringProperty: { label: 'String Property', value: 4 },
+}

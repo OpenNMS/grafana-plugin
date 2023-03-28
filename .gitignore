@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 npm-debug.log
+yarn-error.log
 coverage/
 .aws-config.json
 awsconfig
@@ -55,3 +56,7 @@ build/
 
 # final resting place of binary packages
 /artifacts
+
+# do not want package-lock.json and yarn.lock at the same time
+# remove this from .gitignore if we move to yarn from npm
+yarn.lock

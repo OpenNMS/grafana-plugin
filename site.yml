@@ -1,5 +1,5 @@
 site:
-  title: OpenNMS Helm Documentation
+  title: OpenNMS Plugin for Grafana Documentation
   url: https://opennms-helm-doc.netlify.com
   start_page: helm::index.adoc
 content:

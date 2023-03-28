@@ -1,38 +1,12 @@
-import { OpenNMSEntityDatasource } from './datasource';
-import { OpenNMSEntityDatasourceQueryCtrl } from './query_ctrl';
-import { Example, Examples } from './Examples';
-import '../../components/timeout';
+import { DataSourcePlugin } from '@grafana/data'
+import { EntityConfigEditor } from './EntityConfigEditor'
+import { EntityDataSource } from './EntityDataSource'
+import { EntityQueryEditor } from './EntityQueryEditor'
+import { EntityQueryEditorHelp } from './EntityQueryEditorHelp'
+import { EntityDataSourceOptions, EntityQuery } from './types'
 
-class OpenNMSEntityDatasourceConfigCtrl {
-  static templateUrl = 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/config.html';
-}
 
-class OpenNMSEntityDatasourceQueryOptionsCtrl {
-  static templateUrl = 'public/plugins/opennms-helm-app/datasources/entity-ds/partials/query.options.html';
-
-  examples: Example[];
-  panelCtrl: any;
-  uiSegmentSrv: any;
-
-  /** @ngInject */
-  constructor(uiSegmentSrv: any) {
-    this.uiSegmentSrv = uiSegmentSrv;
-    this.examples = Examples;
-  }
-
-  createQueryFromExample(example: Example) {
-    const target = {
-      isNew: true,
-      filter: example.apiFilter,
-    };
-
-    this.panelCtrl.panel.targets.push(target);
-  }
-}
-
-export {
-  OpenNMSEntityDatasource as Datasource,
-  OpenNMSEntityDatasourceQueryCtrl as QueryCtrl,
-  OpenNMSEntityDatasourceConfigCtrl as ConfigCtrl,
-  OpenNMSEntityDatasourceQueryOptionsCtrl as QueryOptionsCtrl,
-};
+export const plugin = new DataSourcePlugin<EntityDataSource, EntityQuery, EntityDataSourceOptions>(EntityDataSource)
+  .setConfigEditor(EntityConfigEditor)
+  .setQueryEditor(EntityQueryEditor)
+  .setQueryEditorHelp(EntityQueryEditorHelp);
