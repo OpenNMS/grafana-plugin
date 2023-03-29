@@ -30,3 +30,7 @@ export const loadFilterEditorData = (): FilterEditorData | null => {
 
     return null
 }
+
+export const clearFilterEditorData = () => {
+  localStorage.removeItem(FILTER_PANEL_STORAGE_KEY)
+}
