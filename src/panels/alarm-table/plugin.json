@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Alarm Table",
-  "id": "opennms-helm-alarm-table-panel",
+  "id": "opennms-alarm-table-panel",
 
   "dateFormats": ["table", "time_series"],
 
@@ -12,5 +12,4 @@
       "large": "img/alarm-table.svg"
     }
   }
-
 }

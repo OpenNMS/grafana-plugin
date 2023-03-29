@@ -1,11 +1,7 @@
 {
   "name": "OpenNMS Performance",
-  "id": "opennms-helm-performance-datasource",
+  "id": "opennms-performance-datasource",
   "type": "datasource",
-
-  "partials": {
-    "config": "datasources/perf-ds/partials/config.html"
-  },
 
   "metrics": true,
   "annotations": false,
@@ -21,7 +17,7 @@
     "logos": {
       "small": "img/pm-ds.svg",
       "large": "img/pm-ds.svg"
-    }
+    },
+    "version": "9"
   }
-
 }

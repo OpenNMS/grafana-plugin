@@ -40,3 +40,11 @@ You can use these metrics for historical analysis, or to automatically generate 
 The plugin can retrieve and visualize metric data that OpenNMS stores.
 
 TIP: If you are not familiar with how OpenNMS collects and stores data, you can learn more from https://youtu.be/7qRrTM1Wv-0[OpenNMS 101 - Module 11: Data Collection on YouTube].
+
+[[flow]]
+== Flow management
+
+Flow management is the process of managing data flows between devices or nodes on a network.
+{page-component-title} can visualize flow metric data that OpenNMS stores.
+
+For an example of how you can visualize flows, see xref:getting_started:flow-deep-dive.adoc[].
