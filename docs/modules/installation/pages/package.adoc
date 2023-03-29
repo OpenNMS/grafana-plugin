@@ -30,7 +30,7 @@ wget -O- https://debian.opennms.org/OPENNMS-GPG-KEY | tee -a /etc/apt/trusted.gp
 [source, console]
 ----
 sudo apt-get update
-sudo apt-get install opennms-helm
+sudo apt-get install opennms-grafana-plugin
 ----
 
 == RPM-based Linux
@@ -50,7 +50,7 @@ sudo rpm --import https://yum.opennms.org/OPENNMS-GPG-KEY
 . Install the packages:
 +
 [source, console]
-sudo yum install opennms-helm
+sudo yum install opennms-grafana-plugin
 
 == Start Grafana
 

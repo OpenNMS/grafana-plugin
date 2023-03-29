@@ -41,7 +41,7 @@ wizzy import datasources
 . Convert any `fault` datasources to `entity`:
 +
 [source, console]
-perl -pi -e 's/opennms-helm-fault-datasource/opennms-helm-entity-datasource/g' datasources/*.json
+perl -pi -e 's/opennms-grafana-plugin-fault-datasource/opennms-grafana-plugin-entity-datasource/g' datasources/*.json
 
 . Publish your changes to your Grafana instance:
 +

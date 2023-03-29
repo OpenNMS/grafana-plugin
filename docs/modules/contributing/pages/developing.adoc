@@ -1,7 +1,7 @@
 
 = Contribute Code
 
-You can contribute code to the {page-component-title} project via https://github.com/OpenNMS/opennms-helm[GitHub].
+You can contribute code to the {page-component-title} project via https://github.com/OpenNMS/grafana-plugin[GitHub].
 This section describes the codebase and how to prepare your development environment.
 
 == Codebase
@@ -22,18 +22,18 @@ Follow these steps to prepare your development environment:
 app_mode = development
 ...
 [plugins]
-allow_loading_unsigned_plugins = opennms-helm-app
+allow_loading_unsigned_plugins = opennms-grafana-plugin-app
 ----
 
 . Use Git to check out the repository:
 +
 [source, console]
-git clone https://github.com/OpenNMS/opennms-helm.git
+git clone https://github.com/OpenNMS/grafana-plugin.git
 
 . Navigate to your plugin directory:
 +
 [source, console]
-cd opennnms-helm
+cd opennnms-grafana-plugin
 
 . Install the build and runtime dependencies:
 +
@@ -48,7 +48,7 @@ npm run dev
 . Symlink your `dist` directory to Grafana's plugin path:
 +
 [source, console]
-ln -s /path/to/opennms-helm/dist /var/lib/grafana/plugins/opennms-helm-app
+ln -s /path/to/opennms-grafana-plugin/dist /var/lib/grafana/plugins/opennms-grafana-plugin-app
 
 . Run a continuous build that watches for changes:
 +

@@ -26,12 +26,12 @@ After you have installed the {page-component-title}, you must enable it in Grafa
 +
 image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins option is highlighted.", 250]
 
-. Select the *OpenNMS Helm* plugin.
+. Select the *OpenNMS plugin for Grafana*.
 ** If the plugin is not listed, try restarting your Grafana instance.
 ** If the issue persists, make sure the plugin is in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
 . Click menu:Config[Enable].
 +
-NOTE: The Disable option indicates that the OpenNMS Helm plugin is already enabled.
+NOTE: The Disable option indicates that the OpenNMS {page-component-title} is already enabled.
 You can also choose *Update* to download the latest version of the plugin.
 
 == Migrate datasources

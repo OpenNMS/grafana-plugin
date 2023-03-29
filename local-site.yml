@@ -1,7 +1,7 @@
 site:
   title: Grafana Plugin Documentation
-  url: https://docs.opennms.org/helm/
-  start_page: helm::index.adoc
+  url: https://docs.opennms.org/grafana-plugin/
+  start_page: grafana-plugin::index.adoc
 content:
   sources:
   - url: .

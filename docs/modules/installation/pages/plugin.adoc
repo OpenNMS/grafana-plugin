@@ -21,7 +21,7 @@ Follow these steps to install the plugin using the Grafana UI:
 You can the `grafana-cli` tool to install the plugin:
 
 [source, console]
-grafana-cli plugins install opennms-helm-app
+grafana-cli plugins install opennms-grafana-plugin-app
 
 This installs the plugin in your Grafana plugins directory (default: `/var/lib/grafana/plugins`).
 For more information on `grafana-cli`, see the http://docs.grafana.org/plugins/installation/[official Grafana documentation].

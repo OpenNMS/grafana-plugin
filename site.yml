@@ -1,10 +1,10 @@
 site:
   title: Grafana Plugin Documentation
-  url: https://opennms-helm-doc.netlify.com
-  start_page: helm::index.adoc
+  url: https://opennms-grafana-plugin-doc.netlify.com
+  start_page: grafana-plugin::index.adoc
 content:
   sources:
-  - url: https://github.com/OpenNMS/opennms-helm.git
+  - url: https://github.com/OpenNMS/grafana-plugin
     branches: HEAD
     tags: v*
     start_path: docs
