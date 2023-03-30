@@ -70,4 +70,4 @@ docker run -p 3000:3000 mygrafanaplugin:snapshot
 
 == Next steps
 
-After you install Grafana and the plugin, you can xref:getting_started:index.adoc[create your first dashboard].
+After you install Grafana and the {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].
