@@ -45,6 +45,6 @@ TIP: If you are not familiar with how OpenNMS collects and stores data, you can 
 == Flow management
 
 Flow management is the process of managing data flows between devices or nodes on a network.
-{page-component-title} can visualize flow metric data that OpenNMS stores.
+The plugin can visualize flow metric data that OpenNMS stores.
 
 For an example of how you can visualize flows, see xref:getting_started:flow-deep-dive.adoc[].
