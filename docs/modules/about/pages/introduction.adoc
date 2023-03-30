@@ -4,7 +4,7 @@
 = About the {page-component-title}
 
 The {page-component-title} lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
-It works with https://grafana.com[Grafana] to customize and display <<fault, fault management>> and <<performance, performance management>> data from OpenNMS https://www.opennms.org[Horizon] and https://www.opennms.com[Meridian].
+It works with https://grafana.com[Grafana] to customize and display <<fault, fault management>>, <<performance, performance management>>, and <<flow, flow management>> data from OpenNMS https://www.opennms.org[Horizon] and https://www.opennms.com[Meridian].
 
 You can create and customize dashboards to display the data that you want to see--alarms, outages, key performance indicators--in a way that best meets your needs.
 
@@ -13,7 +13,7 @@ image::helm-sample-dash.png["Grafana displaying a sample dashboard, populated wi
 
 == How does it work?
 
-The plugin includes datasources for retrieving both fault management and performance management data from an existing OpenNMS instance.
+The plugin includes datasources for retrieving fault management, performance management, and flow management data from an existing OpenNMS instance.
 It also includes specialized panels that let you display and interact with the data.
 Because you can aggregate data from multiple OpenNMS instances, you can use the plugin to create a single view that encompasses your distributed deployments.
 

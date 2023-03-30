@@ -22,9 +22,9 @@ First, you must enable the plugin in Grafana and <<custom-actions, create custom
 +
 image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins option is highlighted.", 250]
 
-. Select the *OpenNMS Plugin for Grafana*.
+. Select *OpenNMS Plugin for Grafana*.
 ** If the plugin is not listed, try restarting your Grafana server.
-** If the issue persists, make sure the plugin is in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
+** If the issue persists, make sure the plugin's files are in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
 . Click menu:Config[Enable].
 +
 NOTE: The Disable option indicates that the plugin is already enabled.
@@ -67,8 +67,8 @@ The action should be displayed in the context menu when you right-click an entry
 
 The type of data that you can display in a dashboard depends on the datasource that you select.
 
-Before you create a dashboard, you must set up the datasource (either xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
-For this walk-through, we will configure the entity datasource.
+Before you create a dashboard, you must set up the datasource (xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
+For this walk-through, we will configure an entity datasource.
 Note that you can follow the same process to configure a flow or performance datasource.
 
 You need to configure only the *URL*, *Basic Auth*, and *Basic Auth Details* (username and password) fields.

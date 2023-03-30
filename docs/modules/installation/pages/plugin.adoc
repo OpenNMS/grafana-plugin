@@ -10,15 +10,16 @@ If you do not have an existing Grafana instance, see xref:package.adoc[].
 
 Follow these steps to install the plugin using the Grafana UI:
 
-. Navigate to your Grafana dashboard.
-. Click the *Configuration* symbol and choose *Plugins*.
+
+. Navigate to the home page of your Grafana instance.
+. In the left navigation menu, click menu:Configuration[Plugins].
 . Change the *State* to *All*.
-. Search for "OpenNMS" and select the *OpenNMS plugin for Grafana*.
+. Search for "OpenNMS" and select *OpenNMS Plugin for Grafana*.
 . Click *Install*.
 
 == Install via CLI
 
-You can the `grafana-cli` tool to install the plugin:
+You can the `grafana-cli` tool to install the {page-component-title}:
 
 [source, console]
 grafana-cli plugins install opennms-grafana-plugin-app
