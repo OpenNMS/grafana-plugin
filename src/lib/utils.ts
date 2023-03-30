@@ -599,10 +599,20 @@ export const getNodeIdFromResourceId = (resource): string => {
 
 export const getResourceId = (resource): string => {
   const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
-  if (matches && matches.length === 3){
+  if (matches && matches.length === 3) {
     return matches[2];
   }
   else { return resource; }
+}
+
+export const trimChar = (str: string, sStart: string, sEnd?: string) => {
+  str = str.trim()
+  let result: string = str
+  sEnd ??= sStart
+  if (str.startsWith(sStart) && str.endsWith(sEnd)) {
+    result = str.substring(str.indexOf(sStart) + 1, str.lastIndexOf(sEnd))
+  }
+  return result
 }
 
 

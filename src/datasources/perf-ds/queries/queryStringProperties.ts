@@ -1,17 +1,13 @@
 import {
-    ArrayVector,
-    DataFrame,
     DataQueryRequest,
     DataQueryResponse,
     DataQueryResponseData,
-    Field,
-    FieldType,
-    Vector
+    FieldType
 } from "@grafana/data";
 import { TemplateSrv } from "@grafana/runtime"
 import { Client, ServerMetadata } from "opennms"
 import { ClientDelegate } from "../../../lib/client_delegate"
-import { getResourceId, SimpleOpenNMSRequest } from "../../../lib/utils"
+import { getResourceId, SimpleOpenNMSRequest, trimChar } from "../../../lib/utils"
 import {
     DefinedStringPropertyQuery,
     PerformanceQuery,
@@ -25,12 +21,12 @@ interface RestResourceSelectQuery {
 }
 
 // constructs a single string valued data frame field
-const toStringField = (name: string, value: string): Field<string, Vector<string>> => {
+const toStringField = (name: string, value: string) => {
     return {
         name,
         type: FieldType.string,
         config: {},
-        values: new ArrayVector<string>([value])
+        values: [value]
     }
 }
 
@@ -69,7 +65,7 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
 
                 // StringPropertyQuery fields
                 nodeId: templateSrv.replace('' + nodeId),
-                resourceId: templateSrv.replace(getResourceId(resourceId)),
+                resourceId: trimChar(templateSrv.replace(getResourceId(resourceId)), '{', '}'),
                 stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
         })
@@ -108,8 +104,8 @@ const queryAllStringProperties = async (simpleRequest: SimpleOpenNMSRequest,
             return {
                 fields: f.fields,
                 length: f.fields.length
-            } as DataFrame
-        })
+            } 
+        }) 
 
     return {
         data: dataFrames
@@ -129,7 +125,7 @@ const queryStringPropertiesForAllNodesInBulk = async (
                 accu.stringProperties.add(query.stringProperty)
                 return accu
             },
-        { nodes: new Set(), nodeSubresources: new Set(), stringProperties: new Set() })
+            { nodes: new Set(), nodeSubresources: new Set(), stringProperties: new Set() })
 
     const response: DataQueryResponse = await queryAllStringProperties(simpleRequest, selection)
 
@@ -139,11 +135,11 @@ const queryStringPropertiesForAllNodesInBulk = async (
 const extractStringProperties = (
     query: DefinedStringPropertyQuery,
     resource: OnmsResourceDto,
-    node?: OnmsResourceDto): DataFrame[] /*DataQueryResponseData[]*/ => {
+    node?: OnmsResourceDto): any[] /*DataQueryResponseData[]*/ => {
 
     const matchingKeys =
         Object.keys(resource.stringPropertyAttributes)
-        .filter(key => key === query.stringProperty)
+            .filter(key => key === query.stringProperty)
 
     const dataFrames = matchingKeys.map(key => {
         return {
@@ -156,7 +152,7 @@ const extractStringProperties = (
                 toStringField(key, resource.stringPropertyAttributes[key])
             ],
             length: 5
-        } as DataFrame
+        } 
     })
 
     return dataFrames
@@ -191,12 +187,12 @@ const queryStringPropertiesForEachNodeSeparately = async (
     const groupedByNodeId = definedQueries.reduce<{ [key: string]: DefinedStringPropertyQuery[] }>(
         (accu, query) => {
             if (!accu[query.nodeId]) {
-              accu[query.nodeId] = []
+                accu[query.nodeId] = []
             }
 
             accu[query.nodeId].push(query)
             return accu
-    }, {})
+        }, {})
 
     // send a request for each node separately...
     const datas: Array<Promise<DataQueryResponseData[]>> =
@@ -224,9 +220,11 @@ export const queryStringProperties = async (
     const client: Client = await clientDelegate.getClientWithMetadata()
     const metadata: ServerMetadata = client.http.server.metadata;
 
+    let result: DataQueryResponse
     if (metadata.selectPartialResources()) {
-        return queryStringPropertiesForAllNodesInBulk(simpleRequest, definedQueries)
+        result = await queryStringPropertiesForAllNodesInBulk(simpleRequest, definedQueries)
     } else {
-        return queryStringPropertiesForEachNodeSeparately(simpleRequest, definedQueries)
+        result = await queryStringPropertiesForEachNodeSeparately(simpleRequest, definedQueries)
     }
+    return result
 }

@@ -8,7 +8,7 @@ import { PerformanceAttribute } from './PerformanceAttribute';
 import { PerformanceExpression } from './PerformanceExpression';
 import { PerformanceFilter } from './PerformanceFilter';
 import { PerformanceStringProperty } from './PerformanceStringProperty';
-import { OnmsRrdGraphAttribute, PerformanceQueryEditorProps, QuickSelect } from './types';
+import { OnmsRrdGraphAttribute, PerformanceQueryEditorProps, PerformanceTemplateVariableStatus, QuickSelect } from './types';
 import { collectInterpolationVariables, interpolate } from './queries/interpolate'
 import { getRemoteResourceId } from './queries/queryBuilder'
 import { isTemplateVariable } from './PerformanceHelpers';
@@ -25,7 +25,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
-    const updateExpressionQuery = (expression,label) => {
+    const updateExpressionQuery = (expression, label) => {
         onChange({
             ...query,
             performanceType,
@@ -35,7 +35,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
-    const updateFilterQuery = (filter,filterState) => {
+    const updateFilterQuery = (filter, filterState) => {
         onChange({
             ...query,
             performanceType,
@@ -45,7 +45,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         onRunQuery();
     }
 
-   const updateStringQuery = (stringPropertyState) => {
+    const updateStringQuery = (stringPropertyState) => {
         onChange({
             ...query,
             performanceType,
@@ -71,12 +71,12 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
      * Load resources for the PerformanceAttribute Resources dropdown by either a node id (selected from
      * Node dropdown) or from a template variable that evaluates to a node id.
      */
-    const loadResourcesByNode = async (value) => {    
-        const ts = getTemplateSrv()
+    const loadResourcesByNode = async (value) => {
+        let templateVariable: PerformanceTemplateVariableStatus = { isTemplateVariable: false }
         let nodeId = value
-        if(isTemplateVariable(value)){
-            nodeId = ts.replace(value.label)
-        }else if(value instanceof Object && value.id){
+        if ((templateVariable = isTemplateVariable(value)).isTemplateVariable) {
+            nodeId = templateVariable.value
+        } else if (value instanceof Object && value.id) {
             nodeId = value.id
         }
 
@@ -84,7 +84,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
     }
 
     const loadResourcesByNodeId = async (nodeId) => {
-        
+
         const resourceData = await datasource.doResourcesForNodeRequest(nodeId)
 
         if (resourceData) {
