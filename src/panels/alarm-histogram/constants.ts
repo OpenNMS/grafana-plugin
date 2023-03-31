@@ -1,13 +1,13 @@
 export const defaultColors = ['rgba(245, 54, 54, 0.9)', 'rgba(237, 129, 40, 0.89)', 'rgba(50, 172, 45, 0.97)']
 
 export const AlarmDirections = {
-    Vertical: {label:'Vertical',value:1},
-    Horizontal: {label: 'Horizontal', value:2}
+    Vertical: { label: 'Vertical', value: 1 },
+    Horizontal: { label: 'Horizontal', value: 2 }
 }
 
 export const AlarmGroups = {
-    Acknowledged: {label: 'Acknowledged', value:1},
-    Severity: {label: 'Severity', value:2},
+    Acknowledged: { label: 'Acknowledged', value: 1 },
+    Severity: { label: 'Severity', value: 2 },
 }
 
 export const AcknowledgedAlarms = {

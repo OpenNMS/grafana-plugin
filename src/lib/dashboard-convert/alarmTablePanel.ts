@@ -1,7 +1,7 @@
-import { alarmSeverityThemeOptions, fontSizeOptions } from '../../panels/alarm-table/constants'
+import { onmsColorArray } from '../../components/OnmsColors'
 import { getAlarmColumns } from '../../datasources/entity-ds/queries'
 import { AlarmTableAlarmDataState, AlarmTablePaginationState } from '../../panels/alarm-table/AlarmTableTypes'
-import { onmsColorArray } from '../../components/OnmsColors'
+import { alarmSeverityThemeOptions, fontSizeOptions } from '../../panels/alarm-table/constants'
 
 // map to alarmSeverityThemeOptions
 const legacyAlarmSeverityThemes = [
@@ -239,11 +239,11 @@ export const convertLegacyAlarmTablePanel = (source: any) => {
     ...source,
     fieldConfig: createFieldConfig(source),
     type: 'opennms-alarm-table-panel',
-    options: createOptions(source),
-    targets: [] // similar or same as entity query editor
+    options: createOptions(source)
   }
 
   // remove legacy fields that are not in new data structure
+  // targets should already have been converted
   delete panel.columns
   delete panel.fontSize
   delete panel.styles
