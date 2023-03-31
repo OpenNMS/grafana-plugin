@@ -3,6 +3,7 @@ import { Input, Switch, Select } from '@grafana/ui'
 import { OnmsInlineField } from 'components/OnmsInlineField'
 import { SwitchBox } from 'components/SwitchBox'
 import { AlarmTablePaginationState } from './AlarmTableTypes'
+import { fontSizeOptions } from './constants'
 
 interface AlarmTablePagingPanelProps {
     onChange: Function
@@ -28,22 +29,6 @@ export const AlarmTablePaging: React.FC<AlarmTablePagingPanelProps> = ({ onChang
         onChange(alarmTablePaging)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [alarmTablePaging])
-
-    const fontSizeOptions = [
-        { label: '80%', value: 0 },
-        { label: '90%', value: 1 },
-        { label: '100%', value: 2 },
-        { label: '110%', value: 3 },
-        { label: '120%', value: 4 },
-        { label: '130%', value: 5 },
-        { label: '140%', value: 6 },
-        { label: '150%', value: 7 },
-        { label: '160%', value: 8 },
-        { label: '180%', value: 9 },
-        { label: '200%', value: 10 },
-        { label: '220%', value: 11 },
-        { label: '250%', value: 12 },
-    ]
 
     return (
         <div>

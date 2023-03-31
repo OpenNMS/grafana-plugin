@@ -3,6 +3,7 @@ import { Select } from '@grafana/ui'
 import { DragList } from 'components/DragList'
 import { OnmsInlineField } from 'components/OnmsInlineField'
 import { AlarmTableDataState } from './AlarmTableTypes'
+import { alarmTableDefaultColumns } from './constants'
 
 interface AlarmTableDataProps {
     onChange: Function;
@@ -11,15 +12,7 @@ interface AlarmTableDataProps {
 
 export const AlarmTableData: React.FC<AlarmTableDataProps> = ({ onChange, context }) => {
     const [alarmTableData, setAlarmTableData] = useState<AlarmTableDataState>(context?.options?.alarmTable?.alarmTableData || {
-        columns: [
-            { label: 'Is Acknowledged', value: 20 },
-            { label: 'Severity', value: 5 },
-            { label: 'Count', value: 1 },
-            { label: 'Last Event Time', value: 23 },
-            { label: 'Location', value: 8 },
-            { label: 'Node Label', value: 14 },
-            { label: 'Log Message', value: 9 },
-        ]
+        columns: alarmTableDefaultColumns
     })
 
     useEffect(() => {

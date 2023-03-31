@@ -3,6 +3,7 @@ import { Select } from '@grafana/ui'
 import { AlarmTableAlarmDataState } from './AlarmTableTypes'
 import { ColorThemeDisplay } from 'components/ColorThemeDisplay'
 import { OnmsInlineField } from 'components/OnmsInlineField'
+import { alarmSeverityThemeOptions } from './constants'
 
 interface AlarmTableAlarmProps {
     onChange: Function
@@ -42,14 +43,7 @@ export const AlarmTableAlarms: React.FC<AlarmTableAlarmProps> = ({ onChange, ala
                 <Select
                     value={alarmTableAlarmData.severityTheme}
                     onChange={(val) => setAlarmTableState('severityTheme', val)}
-                    options={[
-                        { label: 'Default', value: 0 },
-                        { label: 'OpenNMS', value: 1 },
-                        { label: 'Oh My!', value: 2 },
-                        { label: 'No, Never Mind (i)', value: 3 },
-                        { label: 'That\'s Cool', value: 4 },
-                        { label: 'Custom', value: 5 },
-                    ]}
+                    options={alarmSeverityThemeOptions}
                 />
             </OnmsInlineField>
             <ColorThemeDisplay theme={alarmTableAlarmData.severityTheme?.value} />

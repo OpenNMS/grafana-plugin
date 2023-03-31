@@ -1,7 +1,7 @@
 import { getDataSourceSrv } from '@grafana/runtime'
 import { getDatasourceMetadata } from './datasources'
 import { parseInputs } from './inputs'
-import { parsePanels } from './panels'
+import { convertPanels } from './panels'
 import { parseTemplating } from './templating'
 import { DsType } from './types'
 
@@ -49,8 +49,8 @@ export const dashboardConvert = (sourceJson: string, sourceVersion: string, targ
   dashboard.templating = parsedTemplating
 
   const panels = source.panels || []
-  const parsedPanels = parsePanels(panels, datasourceMap, dsMetas, options.unhideAllQueries)
-  dashboard.panels = parsedPanels
+  const convertedPanels = convertPanels(panels, datasourceMap, dsMetas, options.unhideAllQueries)
+  dashboard.panels = convertedPanels
 
   // remove uid, Grafana will create a new unique one
   delete dashboard.uid
