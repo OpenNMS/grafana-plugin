@@ -11,7 +11,7 @@ To complete this migration, you must have the following:
 * A configured OpenNMS datasource.
 * One or more dashboards using the OpenNMS datasource.
 
-== Install the plugin
+== Install the {page-component-title}
 
 Before completing the migration, ensure that you have xref:installation:requirements.adoc[installed the plugin] on your Grafana instance.
 
@@ -37,7 +37,6 @@ You can also choose *Update* to download the latest version of the plugin.
 == Migrate datasources
 
 The plugin provides two datasource types; the OpenNMS Performance type is equivalent to the previous "OpenNMS" datasource.
-
 After you enable the plugin, you can convert your existing datasources to use the OpenNMS Performance type.
 Note that when switching the type, you may need to re-enter the datasource's URL and authentication details.
 

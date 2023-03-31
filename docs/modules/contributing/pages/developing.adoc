@@ -27,27 +27,27 @@ allow_loading_unsigned_plugins = opennms-grafana-plugin-app
 
 . Use Git to check out the repository:
 +
-[source, console]
+[source, shell]
 git clone https://github.com/OpenNMS/grafana-plugin.git
 
 . Navigate to your plugin directory:
 +
-[source, console]
+[source, shell]
 cd opennnms-grafana-plugin
 
 . Install the build and runtime dependencies:
 +
-[source, console]
+[source, shell]
 npm ci
 
 . Build the plugin to prime your `dist` directory:
 +
-[source, console]
+[source, shell]
 npm run dev
 
 . Symlink your `dist` directory to Grafana's plugin path:
 +
-[source, console]
+[source, shell]
 ln -s /path/to/opennms-grafana-plugin/dist /var/lib/grafana/plugins/opennms-grafana-plugin-app
 
 . Run a continuous build that watches for changes:

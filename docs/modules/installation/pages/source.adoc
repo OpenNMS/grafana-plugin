@@ -12,7 +12,7 @@ Follow these steps to build the plugin:
 
 . Download the source tree into a subfolder called `opennms-grafana-plugin-app` in Grafana's plugin directory:
 +
-[source, console]
+[source, shell]
 ----
 mkdir -p /var/lib/grafana/plugins
 cd /var/lib/grafana/plugins
@@ -21,7 +21,7 @@ git clone https://github.com/OpenNMS/grafana-plugin.git opennms-grafana-plugin-a
 
 . Compile the plugin:
 +
-[source, console]
+[source, shell]
 ----
 cd /var/lib/grafana/plugins/opennms-grafana-plugin-app
 npm install
@@ -65,7 +65,7 @@ docker build \
 
 . Run Docker:
 +
-[source, console]
+[source, shell]
 docker run -p 3000:3000 mygrafanaplugin:snapshot
 
 == Next steps

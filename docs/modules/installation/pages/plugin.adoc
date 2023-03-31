@@ -6,10 +6,9 @@ This section describes how to install the {page-component-title} plugin for Graf
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
 
-== Install via web UI
+== Install via Grafana UI
 
 Follow these steps to install the plugin using the Grafana UI:
-
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, click menu:Configuration[Plugins].
@@ -21,7 +20,7 @@ Follow these steps to install the plugin using the Grafana UI:
 
 You can the `grafana-cli` tool to install the {page-component-title}:
 
-[source, console]
+[source, shell]
 grafana-cli plugins install opennms-grafana-plugin-app
 
 This installs the plugin in your Grafana plugins directory (default: `/var/lib/grafana/plugins`).

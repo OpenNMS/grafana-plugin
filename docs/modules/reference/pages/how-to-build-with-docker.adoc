@@ -9,12 +9,12 @@ You can compile the plugin from source with a Docker build image:
 
 . Check out the repository, compile the code, and install the plugin:
 +
-[source, console]
+[source, shell]
 docker build -t mygrafanapluginimage .
 
 . Run the image:
 +
-[source, console]
+[source, shell]
 docker run -p 3000:3000 -t mygrafanapluginimage
 
 . Log in to your Grafana instance with the default admin credentials (`admin`/`admin`).
@@ -27,7 +27,7 @@ This is because the base Grafana image defines `/var/lib/grafana` as a volume, w
 
 If you want to build the {page-component-title} based on a specific GitHub fork or branch, you can use `--build-arg`:
 
-[source, console]
+[source, shell]
 ----
 docker build -t mycustomforkbranch \
             --build-arg OPENNMS_GRAFANA_PLUGIN_GIT_URL=https://github.com/OpenNMS/grafana-plugin.git \
@@ -50,6 +50,6 @@ The URL for your Horizon or Meridian datasource is `\http://opennms:8980/opennms
 == Configure Docker for PDF reports
 
 Horizon and Meridian include templates from which you can create PDF reports.
-They use an existing Grafana dashboard (see https://docs.opennms.com/horizon/31/operation/deep-dive/database-reports/templates/grafana.html[Grafana Dashboard] in the main OpenNMS documentation).
+They use an existing Grafana dashboard (see https://docs.opennms.com/horizon/latest/operation/deep-dive/database-reports/templates/grafana.html[Grafana Dashboard] in the main OpenNMS documentation).
 If you want to use this feature, and you are running the {page-component-title} through Docker, you must complete additional configuration.
-Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[Remote rendering service documentation] for more information.
+Refer to Grafana's https://grafana.com/docs/grafana/latest/administration/image_rendering/#remote-rendering-service[remote rendering service documentation] for more information.

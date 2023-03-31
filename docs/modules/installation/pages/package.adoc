@@ -22,12 +22,12 @@ deb-src https://debian.opennms.org stable main
 
 . Import the authentication key:
 +
-[source, console]
+[source, shell]
 wget -O- https://debian.opennms.org/OPENNMS-GPG-KEY | tee -a /etc/apt/trusted.gpg.d/opennms.asc
 
 . Install the plugin packages:
 +
-[source, console]
+[source, shell]
 ----
 sudo apt-get update
 sudo apt-get install opennms-grafana-plugin
@@ -49,7 +49,7 @@ sudo rpm --import https://yum.opennms.org/OPENNMS-GPG-KEY
 
 . Install the packages:
 +
-[source, console]
+[source, shell]
 sudo yum install opennms-grafana-plugin
 
 == Start Grafana
