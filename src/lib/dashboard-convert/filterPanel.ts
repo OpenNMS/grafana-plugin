@@ -1,28 +1,6 @@
 import { DatasourceMetadata, DsType } from './types'
 
-// Convert any legacy Filter Panels to v9, otherwise just return existing panel object
-export const convertFilterPanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas: DatasourceMetadata[]) => {
-  const convertedPanels: any[] = []
-
-  for (const p of panels) {
-    let panel = p
-    
-    if (isLegacyFilterPanel(p)) {
-      panel = convertLegacyFilterPanel(p, datasourceMap, dsMetas)
-    }
-
-    // recursively process panel panels
-    if (p.panels) {
-      panel.panels = convertFilterPanels(p.panels, datasourceMap, dsMetas)
-    }
-
-    convertedPanels.push(panel)
-  }
-
-  return convertedPanels
-}
-
-const isLegacyFilterPanel = (panel: any) => {
+export const isLegacyFilterPanel = (panel: any) => {
   return panel && panel.type && panel.type === 'opennms-helm-filter-panel'
 }
 
@@ -50,7 +28,7 @@ const isLegacyFilterPanel = (panel: any) => {
 //     "value": "multi"
 //   }
 // }
-const convertLegacyFilterPanel = (p: any, datasourceMap: Map<string, DsType>, dsMetas: DatasourceMetadata[]) => {
+export const convertLegacyFilterPanel = (p: any, datasourceMap: Map<string, DsType>, dsMetas: DatasourceMetadata[]) => {
   const panel = { ...p }
 
   const panelDsMeta = dsMetas.find(d => d.datasourceType === 'entity' && d.pluginVersion >= 9)
