@@ -1,5 +1,6 @@
 import { convertLegacyAlarmTablePanel, isLegacyAlarmTablePanel } from './alarmTablePanel'
 import { convertLegacyAlarmHistogramPanel, isLegacyAlarmHistogramPanel } from './alarmHistogramPanel'
+import { convertLegacyFlowHistogramPanel, isLegacyFlowHistogramPanel } from './flowHistogramPanel'
 import { getSourceDatasourceInfo } from './datasources'
 import { updateEntityQuery } from './entityDs'
 import { convertLegacyFilterPanel, isLegacyFilterPanel } from './filterPanel'
@@ -26,6 +27,8 @@ export const convertPanels = (panels: any[], datasourceMap: Map<string, DsType>,
       panel = convertLegacyAlarmTablePanel(panel)
     } else if (isLegacyAlarmHistogramPanel(panel)) {
       panel = convertLegacyAlarmHistogramPanel(panel)
+    } else if (isLegacyFlowHistogramPanel(panel)) {
+      panel = convertLegacyFlowHistogramPanel(panel)
     }
 
     // recursively process panel panels
