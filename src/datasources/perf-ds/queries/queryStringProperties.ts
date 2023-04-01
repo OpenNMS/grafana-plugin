@@ -8,17 +8,14 @@ import { TemplateSrv } from "@grafana/runtime"
 import { Client, ServerMetadata } from "opennms"
 import { ClientDelegate } from "../../../lib/client_delegate"
 import { getResourceId, SimpleOpenNMSRequest, trimChar } from "../../../lib/utils"
+import { OnmsResourceSelectQuery, OnmsResourceDto} from '../../../lib/api_types'
 import {
     DefinedStringPropertyQuery,
     PerformanceQuery,
-    OnmsResourceDto
+    
 } from "./../types";
 
-interface RestResourceSelectQuery {
-    nodes: Set<string>;
-    nodeSubresources: Set<string>;
-    stringProperties: Set<string>;
-}
+
 
 // constructs a single string valued data frame field
 const toStringField = (name: string, value: string) => {
@@ -64,7 +61,7 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
                 datasource: q.datasource,
 
                 // StringPropertyQuery fields
-                nodeId: templateSrv.replace('' + nodeId),
+                nodeId: trimChar(templateSrv.replace('' + nodeId), '{', '}'),
                 resourceId: trimChar(templateSrv.replace(getResourceId(resourceId)), '{', '}'),
                 stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
@@ -74,7 +71,7 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
 }
 
 const queryAllStringProperties = async (simpleRequest: SimpleOpenNMSRequest,
-    selection: RestResourceSelectQuery): Promise<DataQueryResponse> => {
+    selection: OnmsResourceSelectQuery): Promise<DataQueryResponse> => {
 
     const response = await simpleRequest.doOpenNMSRequest({
         url: '/rest/resources/select',
@@ -118,7 +115,7 @@ const queryStringPropertiesForAllNodesInBulk = async (
 
     // send a single request that selects all nodes, subresources, and string properties
     const selection =
-        definedQueries.reduce<RestResourceSelectQuery>(
+        definedQueries.reduce<OnmsResourceSelectQuery>(
             (accu, query) => {
                 accu.nodes.add(query.nodeId)
                 accu.nodeSubresources.add(query.resourceId)

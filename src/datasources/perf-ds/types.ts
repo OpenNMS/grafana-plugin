@@ -163,33 +163,15 @@ export interface OnmsQueryResultMeta extends QueryResultMeta {
   entity_metadata: any[];
 }
 
-// See org.opennms.netmgt.model.resource.ResourceDTO
-// Response from /rest/resources/fornode and other queries
-export interface OnmsRrdGraphAttribute {
-  name: string;
-  relativePath: string;
-  rrdFile: string;
-}
 
-export interface OnmsResourceCollection {
-  resource: OnmsResourceDto[];
-}
-
-export interface OnmsResourceDto {
-  id: string;
-  label: string;
-  name: string;
-  children: OnmsResourceCollection;
-  stringPropertyAttributes: { [key: string]: string };
-  externalValueAttributes: { [key: string]: string };
-  rrdGraphAttributes: { [key: string]: OnmsRrdGraphAttribute };
-}
 
 export interface PerformanceStringPropertyProps {
   query: PerformanceQuery;
   updateQuery: Function;
   loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
-  loadResourcesByNode: Function;
+  loadResourcesByNode: Function
+  loadStringPropertiesForState: Function
+  loadResourcesForStringPropertyState: Function
 }
 
 export interface PerformanceStringPropertyState {
@@ -197,9 +179,3 @@ export interface PerformanceStringPropertyState {
   resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> };
   stringProperty: { label: string, value: string };
 }
-
-  export interface PerformanceTemplateVariableStatus {
-    isTemplateVariable : boolean,
-    label?: string,
-    value?: string
-  }
