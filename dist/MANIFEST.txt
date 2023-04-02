@@ -9,7 +9,7 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-helm-app",
   "version": "9.0.0-SNAPSHOT",
-  "time": 1680284973646,
+  "time": 1680471334836,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "14531c8ac8074aa427a4f4a07dde50c593e45ae8295304ffd5cb5a11c1ff23be",
@@ -57,9 +57,9 @@ Hash: SHA512
     "panels/alarm-table/module.js.map": "1488214d158505beb0f84f57beaf6ad30b8b815e029ab2010d324a8cbf2e1477",
     "panels/alarm-table/plugin.json": "c46ad64dcd9a50017bec9c81d832246fa54743b11a9adf3f713729ae057f3072",
     "panels/dashboard-convert/img/dashboard-convert.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
-    "panels/dashboard-convert/module.js": "8353a0fd6b78381a7303eab0249043e5e8b0c9e494a8ea59d16af55b9d7acf28",
+    "panels/dashboard-convert/module.js": "f8d44c7231b49e5467af814a835dfb82be030e413695f0a2a2eb2695db19cea3",
     "panels/dashboard-convert/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/dashboard-convert/module.js.map": "91cf8409a60065320554ec21488de3edf260a51b66825da2bc846b54b941ebf3",
+    "panels/dashboard-convert/module.js.map": "4d74ea06ab3f025206f06fd12ce60e6563bc471262e7c56021faafea89c5acfa",
     "panels/dashboard-convert/plugin.json": "577ca7d79b56db9c3596afd1a681521705b82544739bf4d01e6c811ae2906508",
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/filter-panel/module.js": "b6e3d5a070d843b5264042745825713dff84919536a9442770835ce758401ed1",
@@ -67,8 +67,8 @@ Hash: SHA512
     "panels/filter-panel/module.js.map": "03cb54d6270c650843db19fb49651b1bae82b63f2fa5e1b5b2d7c8c498115854",
     "panels/filter-panel/plugin.json": "5c1729da3b4bf6e640ea070fe3a26a949f295cc172f891e987c416ab3856fba6",
     "panels/flow-histogram/img/flow-histogram.svg": "d96cd2b128992c77616cd2275023f6b5ba38deec128e42734896933d547cced1",
-    "panels/flow-histogram/module.js": "e88a5543988f5e7846fbbf302581ab2a362c5bc01310fa7512c1040e3267fa17",
-    "panels/flow-histogram/module.js.map": "348ba41870154b173a3eb1c499540e70f217a10ba26b062c09263c12cb8b90fa",
+    "panels/flow-histogram/module.js": "2fba7d7297b06e91f3e427198e05e6c86b4ecf59ed62dc17047c49081da99b48",
+    "panels/flow-histogram/module.js.map": "5eb72d61e89f9df9304aa2b4dd057cce271aa3d7f35604a054d533aeb5691171",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
     "plugin.json": "868c2f5015995ec42d919ccb5d2e8b103f46f5060d82cea5d29cf5c64077fba2"
   }
@@ -77,10 +77,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmQnHS0AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm53ZmAgkBsXExJQ2YbiGOaQSd/4M1eaBPh0Q4xdnnmkky+e9BtXtbdrhc
-KhBR9nrLMY1GYhKHzCyKuCaVIt6bVyRuTYhYrPcCBizqIpoBbVtXPYIdb0tF
-/CYsHGpGqAbdyzko524H1SoL031IpI036QPCkMN676kUhFEfh8PJtfG+XA+t
-xJzzix5r
-=fmpp
+wrcEARMKAAYFAmQp9ScAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5z+uAgUVuhJvcROCHbLGOgQQIQzo69VccKodewiUmxjtzOuGtRCJ37O0
+PGpe7hNpBD1l8VsaijgjjP8SCmMFPjorDNhJfgIIu6/nXOVTNWUOgDA+nkwz
+QttopjnE8PO510r9CuXK5sqdqLdZIVAs+d15tqMoJc269eGxh1pqE/6M9s8Z
+c+vAPLw=
+=dJxL
 -----END PGP SIGNATURE-----
