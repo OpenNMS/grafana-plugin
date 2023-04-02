@@ -19,17 +19,16 @@ export const FlowHistogramControl: React.FC<Props> = ({ data, height, width, opt
     const ref: any = useRef();
 
     useEffect(() => {
-        validateFlowHistogramPanelData(data?.series)
+        if (validateFlowHistogramPanelData(data?.series)) {
+          const processedData = getLabeledValues(data, options)
+          const plotData = getFlowHistogramPlotData(processedData, options)
+          const plotConfig = getFlowHistogramPlotConfig(processedData, options)
 
-        const processedData = getLabeledValues(data, options)
-        const plotData = getFlowHistogramPlotData(processedData, options)
-        const plotConfig = getFlowHistogramPlotConfig(processedData, options)
+          $.plot(ref.current, plotData, plotConfig)
 
-        $.plot(ref.current, plotData, plotConfig)
-
-        //TODO: remove this fix once flot library is updated in grafana. Use container option in plotConfig instead
-        setLegend(options)
-
+          // TODO: remove this fix once flot library is updated in grafana. Use container option in plotConfig instead
+          setLegend(options)
+        }
     }, [data, width, height, ref, options]);
 
     return (
