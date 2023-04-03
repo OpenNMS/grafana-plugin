@@ -82,6 +82,9 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
 
         let sources = interpolate(source, attributes, interpolationVars, callback)
 
+        // There is no need for include scopedVars here, because additional resources and attributes are defined
+        // using glob expressions, so they will never come from template variables.
+        // If they come from template variables they should be already handled in the previous interpolate call.
         const additionalSources = await this.getAdditionalSources(sources)
 
         if (additionalSources.length > 0) {
@@ -387,6 +390,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return resourcesWithAttributes
     }
 
+    /**
+     * Used when defining template variables, hence there is no scopedVars argument in templateSrv.replace() method
+     * @param args 
+     * @returns 
+     */
     replaceTemplateVariablesInArguments = (args?: string[]) => {
         if (args && Array.isArray(args)) {
             args = args.map(arg => trimChar(this.templateSrv.replace(arg), '{', '}'))
