@@ -25,8 +25,8 @@ export interface PerformanceFilterProps {
 
 export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, updateQuery, loadFilters }) => {
     // TODO: Initialize these from 'query' prop
-    const [filter, setFilter] = useState<SelectableValue<FilterResponse>>({});
-    const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>({});
+    const [filter, setFilter] = useState<SelectableValue<FilterResponse>>(query.filter);
+    const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>(query.filterState);
 
     const updateFilterState = (propertyName: string, value: {value: any, filter: any}) => {
         setFilterState({ ...filterState, [propertyName]: value })
@@ -34,6 +34,7 @@ export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, upd
 
     useEffect(() => {
         updateQuery(filter, filterState);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filterState, filter])
 
@@ -58,9 +59,9 @@ export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, upd
                             {param.type === 'boolean' &&
                                 <Segment
                                     placeholder={param.key}
-                                    value={filterState[param.displayName]?.value || false}
+                                    value={filterState[param.key]?.value || false}
                                     onChange={(value: unknown) => {
-                                        updateFilterState(param.displayName, {value,filter:param})
+                                        updateFilterState(param.key, { value, filter: param })
                                     }}
                                     options={[{ label: 'True', value: 'true'}, { label: 'False', value: 'false' }]}
                                 />
@@ -68,26 +69,23 @@ export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, upd
                             {(param.type === 'double' || param.type === 'int' || param.type === 'long') &&
                                 <SegmentInput
                                     type='number'
-                                    value={filterState[param.displayName]?.value || ''}
+                                    value={filterState[param.key]?.value || ''}
                                     placeholder={param.key}
                                     onChange={(value) => {
-                                        updateFilterState(param.displayName, {value,filter:param})
+                                        updateFilterState(param.key, { value, filter: param })
                                     }}
                                 />
                             }
-
-                            {
-                                param.type !== 'double' && param.type !== 'boolean' && param.type !== 'int' && param.type !== 'long' &&
-
+                            {(param.type !== 'double' && param.type !== 'boolean' && param.type !== 'int' && param.type !== 'long') &&
                                 <SegmentInput
-                                    value={filterState[param.displayName]?.value || ''}
+                                    value={filterState[param.key]?.value || ''}
                                     placeholder={param.key}
                                     onChange={(value) => {
-                                        updateFilterState(param.displayName, {value,filter:param})
+                                        updateFilterState(param.key, { value, filter: param })
                                     }}
                                 />}
                             <p style={{ margin: 0, paddingTop: 6, paddingLeft: 5 }}>
-                                {param.description}
+                                { param.description }
                             </p>
                         </SegmentSectionWithIcon>
                     </>
