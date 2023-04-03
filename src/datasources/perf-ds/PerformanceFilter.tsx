@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { SelectableValue } from '@grafana/data';
-import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui';
-import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
+import { SelectableValue } from '@grafana/data'
+import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui'
+import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon'
 import { PerformanceQuery } from './types'
 
 export interface FilterItem {
@@ -24,7 +24,6 @@ export interface PerformanceFilterProps {
 }
 
 export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, updateQuery, loadFilters }) => {
-    // TODO: Initialize these from 'query' prop
     const [filter, setFilter] = useState<SelectableValue<FilterResponse>>(query.filter);
     const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>(query.filterState);
 
