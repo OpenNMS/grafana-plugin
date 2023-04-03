@@ -9,7 +9,7 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-helm-app",
   "version": "9.0.0-SNAPSHOT",
-  "time": 1680526390186,
+  "time": 1680545649096,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "14531c8ac8074aa427a4f4a07dde50c593e45ae8295304ffd5cb5a11c1ff23be",
@@ -32,9 +32,9 @@ Hash: SHA512
     "datasources/flow-ds/plugin.json": "9c91bbbd3f2b8eb288ea10c8b7011740dd6df4e2051eb47d60673e2bba213a47",
     "datasources/perf-ds/README.md": "e83c50bb60a8dadab170f56b2e15dd28227fde70bd5e0a1d79568025f26bea64",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
-    "datasources/perf-ds/module.js": "776ce8f8aa921969398312aaa9a4260b50ca9f6bd8ee5a441db5d0925cd04f4a",
+    "datasources/perf-ds/module.js": "87784a120f6c84feb13d0ee99d9b7c734efc31939d53862bdcb432c8dbaf342c",
     "datasources/perf-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/perf-ds/module.js.map": "df7ca9f40de9ac24a29898acad3424e861badb062332a41c8505c26e47a47b5d",
+    "datasources/perf-ds/module.js.map": "b0992b6f277d4c33a24f719bc4b3fc8cd4cca50b00d1df586ef9c13eaa65628a",
     "datasources/perf-ds/plugin.json": "59ab660793f7f3230948650d921677b8ea422939d47b0574bb2fc5a0c388355b",
     "img/Helm_Screenshot_Alarms.png": "c4be68860d9a71ea0a9d99df7e3f3e4db9858f4b378925bb3e9d16c0a23c2646",
     "img/Helm_Screenshot_Entities_Data_Source.png": "a5da3654cf6b09fdf3e4a95b9e722334e7a0eb1f2a667279cdac9b5db4be18d1",
@@ -77,10 +77,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmQqzDYAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5xCYAgiF7BmhyCOhBFQjQh9NwsYT/hWNoJy3gKmZsCrteHzfYGS/3tRR
-2pRRlWENpLx9UYKArIbLXd3+lTq5gWfmQ6/9jAIJAYDmSjdsk5VFm82icpb3
-0MgNLClpoYuD0cEmw/IcE6x8fSeVeqqHhLtFjdtB9I2r+ENpgArisw4Z1PNs
-kRGANliB
-=Ce4m
+wrcEARMKAAYFAmQrF3EAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm561RAgdZM4IEo1IS+egmmqnfcJLWSt99XmeLgA7RMufdMaDlqaXHIF/s
+WIG2TDuwHt7OjSCx84CSZCpC0W6MXE9SK1XoWAIIj7ap9+ImTHAtgRzrEpFx
+omVfXhlGNPV2z1Rtp9BlBADwMKxScodjMFu80HdJ7kG+vVuV4gQ2xWUFsCRd
+ooTx+I0=
+=zg+Q
 -----END PGP SIGNATURE-----
