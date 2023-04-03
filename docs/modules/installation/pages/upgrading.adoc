@@ -1,7 +1,7 @@
 
-= Upgrade {page-component-title}
+= Upgrade the {page-component-title}
 
-This section describes how to upgrade your {page-component-title} installation.
+This section describes how to upgrade your {page-component-title}.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
@@ -14,7 +14,7 @@ Follow these steps to upgrade your datasources:
 
 . Install https://github.com/grafana-wizzy/wizzy[Wizzy] and create a directory for your datasources:
 +
-[source, console]
+[source, shell]
 ----
 npm i -g wizzy
 mkdir /tmp/wizzy
@@ -23,7 +23,7 @@ cd /tmp/wizzy
 
 . Configure Wizzy to communicate with your Grafana instance:
 +
-[source, console]
+[source, shell]
 ----
 # create a local wizzy project directory
 wizzy init
@@ -35,15 +35,20 @@ wizzy set grafana password admin
 
 . Export your datasources to the Wizzy project directory:
 +
-[source, console]
+[source, shell]
 wizzy import datasources
 
 . Convert any `fault` datasources to `entity`:
 +
-[source, console]
+[source, shell]
 perl -pi -e 's/opennms-helm-fault-datasource/opennms-helm-entity-datasource/g' datasources/*.json
 
 . Publish your changes to your Grafana instance:
 +
-[source, console]
+[source, shell]
 wizzy export datasources
+
+== Upgrade dashboards
+
+When you upgrade your {page-component-title} to version 9, any dashboards that you have must be upgraded.
+If they are not upgraded, they will not be displayed.
