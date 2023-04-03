@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { SegmentAsync } from '@grafana/ui';
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types';
-import { isTemplateVariable, getStringPropertiesForState } from './PerformanceHelpers'
+import { isTemplateVariable } from './PerformanceHelpers'
 
 export const defaultPerformanceStringState = {
     node: { id: '' },
@@ -15,6 +15,8 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     updateQuery,
     loadNodes,
     loadResourcesByNode,
+    loadResourcesForStringPropertyState,
+    loadStringPropertiesForState
 }) => {
 
     const [performanceState, setPerformanceState] = useState<PerformanceStringPropertyState>(query.stringPropertyState || defaultPerformanceStringState)
@@ -53,7 +55,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
                     <SegmentAsync
                         value={performanceState?.resource}
                         placeholder='Select Resource'
-                        loadOptions={() => loadResourcesByNode(performanceState?.node)}
+                        loadOptions={() => loadResourcesForStringPropertyState(performanceState)}
                         onChange={(value) => {
                             setPerformanceStateProperty('resource', value);
                         }}
@@ -69,7 +71,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
                     <SegmentAsync
                         value={performanceState?.stringProperty}
                         placeholder='Select String Property'
-                        loadOptions={() => getStringPropertiesForState(performanceState, loadResourcesByNode)}
+                        loadOptions={() => loadStringPropertiesForState(performanceState)}
                         onChange={(value) => {
                             setPerformanceStateProperty('stringProperty', value);
                         }}

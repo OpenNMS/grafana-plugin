@@ -36,19 +36,19 @@ export interface PerformanceQueryFilterStateItem {
 }
 
 export interface PerformanceAttributeItemState {
-    id: string;
-    label?: string;
+  id: string;
+  label?: string;
 }
 
 export interface PerformanceAttributeState {
-     // this may be an OnmsNode object, or else just an id and/or label
-    node: PerformanceAttributeItemState;
-    resource: PerformanceAttributeItemState;
-    attribute: { name: string, label?: string };
-    subAttribute?: string | number;
-    fallbackAttribute?: { name: string };
-    aggregation: { label?: string };
-    label: string;
+  // this may be an OnmsNode object, or else just an id and/or label
+  node: PerformanceAttributeItemState;
+  resource: PerformanceAttributeItemState;
+  attribute: { name: string, label?: string };
+  subAttribute?: string | number;
+  fallbackAttribute?: { name: string };
+  aggregation: { label?: string };
+  label: string;
 }
 
 export interface PerformanceQuery extends DataQuery {
@@ -59,7 +59,7 @@ export interface PerformanceQuery extends DataQuery {
   performanceType: QuickSelect;
   attribute: PerformanceAttributeState;
   filter: PerformanceQueryFilter;
-  filterState: { [key: string]: PerformanceQueryFilterStateItem};
+  filterState: { [key: string]: PerformanceQueryFilterStateItem };
   stringPropertyState: PerformanceStringPropertyState;
 }
 
@@ -68,10 +68,10 @@ export interface PerformanceQueryRequest<T extends DataQuery> extends DataQueryR
 }
 
 export interface StringPropertyQuery extends DataQuery {
-    type?: string;
-    nodeId?: string;
-    resourceId?: string;
-    stringProperty?: string;
+  type?: string;
+  nodeId?: string;
+  resourceId?: string;
+  stringProperty?: string;
 }
 
 export type DefinedStringPropertyQuery = Required<StringPropertyQuery>
@@ -98,8 +98,8 @@ export interface OnmsMeasurementsQueryExpression {
 }
 
 export interface OnmsMeasurementsQueryFilterParam {
-    key: string;
-    value: string | { value: string }
+  key: string;
+  value: string | { value: string }
 }
 
 export interface OnmsMeasurementsQueryFilter {
@@ -153,47 +153,29 @@ export interface OnmsMeasurementsQueryResponse {
 }
 
 export interface QuickSelect {
- label?: string, 
- value?: number 
+  label?: string,
+  value?: number
 }
 
 export type PerformanceQueryEditorProps = QueryEditorProps<PerformanceDataSource, PerformanceQuery, PerformanceDataSourceOptions>;
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
-    entity_metadata: any[];
+  entity_metadata: any[];
 }
 
-// See org.opennms.netmgt.model.resource.ResourceDTO
-// Response from /rest/resources/fornode and other queries
-export interface OnmsRrdGraphAttribute {
-  name: string;
-  relativePath: string;
-  rrdFile: string;
-}
 
-export interface OnmsResourceCollection {
-  resource: OnmsResourceDto[];
-}
-
-export interface OnmsResourceDto {
-  id: string;
-  label: string;
-  name: string;
-  children: OnmsResourceCollection;
-  stringPropertyAttributes: { [key: string]: string };
-  externalValueAttributes: { [key: string]: string };
-  rrdGraphAttributes: { [key: string]: OnmsRrdGraphAttribute };
-}
 
 export interface PerformanceStringPropertyProps {
-    query: PerformanceQuery;
-    updateQuery: Function;
-    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
-    loadResourcesByNode: Function;
+  query: PerformanceQuery;
+  updateQuery: Function;
+  loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<{ id: string }>>>;
+  loadResourcesByNode: Function
+  loadStringPropertiesForState: Function
+  loadResourcesForStringPropertyState: Function
 }
 
 export interface PerformanceStringPropertyState {
-    node: { id?: string, label?: string };
-    resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> };
-    stringProperty: { label: string, value: string };
+  node: { id?: string, label?: string };
+  resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> };
+  stringProperty: { label: string, value: string };
 }
