@@ -44,8 +44,8 @@ const isDefinedStringPropertyQuery = (q: PerformanceQuery | undefined) => {
     return ps && (ps.node.id || ps.node.label) && (ps.resource.id || ps.resource.label) && ps.stringProperty.value ? true : false
 }
 
-export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, targets: PerformanceQuery[]) => {
-    const definedQueries: DefinedStringPropertyQuery[] = targets
+export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, request: DataQueryRequest<PerformanceQuery>) => {
+    const definedQueries: DefinedStringPropertyQuery[] = request.targets
         .filter(q => !q.hide)
         .filter(isDefinedStringPropertyQuery)
         .map(q => {
@@ -61,8 +61,8 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, target
                 datasource: q.datasource,
 
                 // StringPropertyQuery fields
-                nodeId: trimChar(templateSrv.replace('' + nodeId), '{', '}'),
-                resourceId: trimChar(templateSrv.replace(getResourceId(resourceId)), '{', '}'),
+                nodeId: trimChar(templateSrv.replace(nodeId, request.scopedVars), '{', '}'),
+                resourceId: trimChar(templateSrv.replace(getResourceId(resourceId), request.scopedVars), '{', '}'),
                 stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
         })
@@ -212,7 +212,7 @@ export const queryStringProperties = async (
     templateSrv: TemplateSrv,
     request: DataQueryRequest<PerformanceQuery>): Promise<DataQueryResponse> => {
 
-    const definedQueries = getDefinedStringPropertyQueries(templateSrv, request.targets)
+    const definedQueries = getDefinedStringPropertyQueries(templateSrv, request)
 
     const client: Client = await clientDelegate.getClientWithMetadata()
     const metadata: ServerMetadata = client.http.server.metadata;
