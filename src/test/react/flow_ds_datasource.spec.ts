@@ -8,6 +8,7 @@ import {
 } from '../../datasources/flow-ds/types';
 import { FlowStrings } from '../../datasources/flow-ds/constants';
 import { SimpleOpenNMSRequest } from 'lib/utils';
+import { OnmsResourceDto } from "lib/api_types";
 
 describe("OpenNMS_Flow_Datasource", function () {
 
@@ -21,17 +22,17 @@ describe("OpenNMS_Flow_Datasource", function () {
     const simpleRequest =  new SimpleOpenNMSRequest({}, 'http://localhost/dummy')
     simpleRequest.getResourcesForNode = async (node) => [
       {
-        "id": "node[selfmonitor:1].interfaceSnmp[opennms-jvm]",
-        "label": "opennms-jvm (*)",
-        "name": "opennms-jvm",
-        "link": "element/snmpinterface.jsp?node=1&ifindex=2",
-        "typeLabel": "SNMP Interface Data",
-        "parentId": "node[selfmonitor:1]",
-        "stringPropertyAttributes": {},
-        "externalValueAttributes": {},
-        "rrdGraphAttributes": {}
+        id: "node[selfmonitor:1].interfaceSnmp[opennms-jvm]",
+        label: "opennms-jvm (*)",
+        name: "opennms-jvm",
+        link: "element/snmpinterface.jsp?node=1&ifindex=2",
+        typeLabel: "SNMP Interface Data",
+        parentId: "node[selfmonitor:1]",
+        stringPropertyAttributes: {},
+        externalValueAttributes: {},
+        rrdGraphAttributes: {}
       }
-    ]
+    ] as OnmsResourceDto[]
 
   beforeEach(() => {
 

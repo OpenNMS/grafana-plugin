@@ -1,8 +1,8 @@
 import { ArrayVector, DataFrame, Field, FieldType } from "@grafana/data"
 import { getTemplateSrv } from "@grafana/runtime";
 import { FunctionFormatter } from "lib/function_formatter";
-import { getResourceId } from "lib/utils";
-import { OnmsMeasurementsQueryResponse , PerformanceStringPropertyState} from "./types";
+import { trimChar, isString } from "lib/utils";
+import { OnmsMeasurementsQueryResponse } from "./types";
 
 /**
  * Get 'windowed' timestamps that are between start/end range.
@@ -58,7 +58,7 @@ export const measurementResponseToDataFrame =
 
         let dataFrame: DataFrame = getEmptyDataFrame()
 
-        if (!timestamps || !timestamps.length) {            
+        if (!timestamps || !timestamps.length) {
             dataFrames.push(dataFrame)
         } else {
             const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
@@ -113,25 +113,29 @@ const getEmptyDataFrame = () => {
     }
 }
 
-export const isTemplateVariable = (property: { id?: string, label?: string } | undefined) => {
-    return property?.label && getTemplateSrv().containsTemplate(property.label)
-}
-
-export const getStringPropertiesForState = async (performanceState: PerformanceStringPropertyState, loadResourcesByNode: Function) => {
-    let stringProperties: Array<{ label: string, value: string }> = []
+export const isTemplateVariable = (property: { id?: string, label?: string }) => {
     const ts = getTemplateSrv()
-    if (performanceState?.resource?.stringPropertyAttributes) {
-        stringProperties = getStringProperties(performanceState?.resource)
-    } else if(performanceState?.resource?.label && ts.containsTemplate(performanceState?.resource?.label)) {       
-        const resourceId = ts.replace(performanceState?.resource?.label)
-        const resources = await loadResourcesByNode(performanceState.node)
-        stringProperties = getStringProperties(resources.find(r => getResourceId(r.id) === resourceId))
-    }
-    return stringProperties
+    return (property?.label && ts.containsTemplate(property.label)) ||
+        (isString(property) && ts.containsTemplate(String(property)))
 }
 
-const getStringProperties = (resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> }) => {
-    let stringProperties: Array<{ label: string, value: string }> = [] 
+export const getTemplateVariable = (property?: { label?: string } | string) => {
+    const ts = getTemplateSrv()
+    let result = '' 
+    if (property) {
+        if (property.hasOwnProperty('id')) {
+            result = property['id']
+        } else if (property.hasOwnProperty('label')) {
+            result = trimChar(ts.replace(property['label']), '{', '}')
+        } else if (isString(property) && ts.containsTemplate(String(property))) {
+            result = trimChar(ts.replace(String(property)), '{', '}')
+        }
+    }
+    return result
+}
+
+export const getStringProperties = (resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> }) => {
+    let stringProperties: Array<{ label: string, value: string }> = []
     if (resource?.stringPropertyAttributes) {
         stringProperties = Object.entries(resource?.stringPropertyAttributes).map(([key, item]) => {
             return { label: key, value: key }

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { loadPluginCss } from '@grafana/runtime'
 import { MetricFindValue } from '@grafana/data'
-import { OnmsLocationResponse, OnmsFlowsResponse } from './api_types'
+import { OnmsLocationResponse, OnmsFlowsResponse, OnmsResourceDto, OnmsResourceSelectQuery } from './api_types'
 
 let cssInitialized = false;
 
@@ -535,24 +535,82 @@ export class SimpleOpenNMSRequest {
   }
 
   /**
-   *
+   * Get resources for a single node
    * @param nodeQuery needs to be used with getNodeAsResourceQuery()
    * @returns Array of resources if they exists for a node
    */
   async getResourcesForNode(nodeQuery: string) {
+    const result: OnmsResourceDto[] = []
     const response = await this.doOpenNMSRequest({
       url: this.resources + '/' + encodeURIComponent(nodeQuery),
       method: 'GET',
       params: {
         depth: 1
       }
-    });
+    })
     if (response.data.children.resource && Array.isArray(response.data.children.resource)) {
-      return response.data.children.resource;
+      result.push(...response.data.children.resource)
     }
-    else { return []; }
+  return result
   }
+
+  /**
+   * Get resources using the rest/resources/select endpoint
+   * this allows:
+   * - multiple nodes (comma separated id's)
+   * - multiple resources (comma separated id's without node prefix
+   * - multiple string properties if is necessary to narrow down
+   * @param nodes 
+   * @param nodeResources 
+   * @param stringProperties 
+   * @returns 
+   */
+  async getResourcesFor(nodes: string, nodeResources?: string, stringProperties?: string) {
+    const nodesSet = new Set<string>()
+    const nodeResourcesSet = new Set<string>()
+    const stringPropertiesSet = new Set<string>()
+
+    getMultiValues(nodes).forEach(n => nodesSet.add(n))
+    if (nodeResources) {
+      getMultiValues(nodeResources).forEach(n => nodeResourcesSet.add(n))
+    }
+    if (stringProperties) {
+      getMultiValues(stringProperties).forEach(n => stringPropertiesSet.add(n))
+    }
+
+    return this.getResourcesForMultipleNodes(
+      {
+        nodes: nodesSet,
+        nodeSubresources: nodeResourcesSet,
+        stringProperties: stringPropertiesSet
+      }
+    )
+  }
+
+  /**
+   * Get resources for multiple nodes as one array of OnmsResourceDto using the /rest/resources/select endpoint
+   */
+  async getResourcesForMultipleNodes(selection: OnmsResourceSelectQuery) {
+
+    const response = await this.doOpenNMSRequest({
+      url: '/rest/resources/select',
+      method: 'GET',
+      params: {
+        nodes: Array.from(selection.nodes).join(','),
+        nodeSubresources: Array.from(selection.nodeSubresources).join(','),
+        stringProperties: Array.from(selection.stringProperties).join(',')
+      }
+    })
+
+    const resources = response.data as OnmsResourceDto[]
+
+    return resources.flatMap(r => r.children.resource)
+
+  }
+
 }
+
+
 
 export function getNodeFilterMap(filterParam?: string): Map<string, string> {
   const filters = filterParam ? filterParam.split('&') : [];
@@ -599,10 +657,42 @@ export const getNodeIdFromResourceId = (resource): string => {
 
 export const getResourceId = (resource): string => {
   const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
-  if (matches && matches.length === 3){
+  if (matches && matches.length === 3) {
     return matches[2];
   }
   else { return resource; }
 }
 
+/**
+ * Modify a string by trimming the starting and ending character(s) in a string passed in the arguments
+ * If no ending character is defined will use start character as estart and end character(s).
+ * @param str string to modify 
+ * @param sStart character/string to trim at start of the string
+ * @param sEnd character/string to trim at the end of a string
+ * @returns the string without the start and end characters passed as argument (if they exist)
+ */
+export const trimChar = (str: string, sStart: string, sEnd?: string) => {
+  str = str.trim()
+  let result: string = str
+  sEnd ??= sStart
+  if (str.startsWith(sStart) && str.endsWith(sEnd)) {
+    result = str.substring(str.indexOf(sStart) + 1, str.lastIndexOf(sEnd))
+  }
+  return result
+}
 
+export const getMultiValues = (values: string): string[]  => {
+  if(!isString(values)){
+    values = String(values)
+  }
+  return trimChar(values, '{', '}').split(',')
+}
+
+/**
+ * 
+ * @param value returns true if value is primitive string or a String object
+ * @returns 
+ */
+export const isString = (value) => {
+  return typeof(value) === 'string' || value instanceof String
+}

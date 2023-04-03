@@ -1,17 +1,17 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, MetricFindValue } from "@grafana/data";
 import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest, getNodeResource, getNodeIdFromResourceId, OpenNMSGlob, getResourceId } from "lib/utils";
+import { SimpleOpenNMSRequest, getNodeIdFromResourceId, OpenNMSGlob, getResourceId, trimChar } from "lib/utils";
 import { PerformanceTypeOptions } from "./constants";
 import { measurementResponseToDataFrame } from "./PerformanceHelpers";
 import {
     OnmsMeasurementsQueryRequest,
     OnmsMeasurementsQueryResponse,
     OnmsMeasurementsQuerySource,
-    OnmsResourceDto,
     PerformanceDataSourceOptions,
     PerformanceQuery,
     PerformanceQueryRequest
 } from "./types";
+import { OnmsResourceDto } from '../../lib/api_types'
 import { collectInterpolationVariables, interpolate } from "./queries/interpolate";
 import {
     buildAttributeQuerySource,
@@ -193,13 +193,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         if (!query) {
             return []
         }
-        if (this.templateSrv.containsTemplate(query)) {
-            query = this.templateSrv.replace(query)
-        }
 
         const functions = FunctionFormatter.findFunctions(query);
 
         for (const func of functions) {
+            func.arguments = this.replaceTemplateVariablesInArguments(func.arguments)
             if (func.name === 'locations') {
                 return this.metricFindLocations.apply(this, func.arguments);
             } else if (func.name === 'nodeFilter') {
@@ -240,6 +238,11 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return response && response.data ? response.data as OnmsResourceDto : null
     }
 
+    /**
+     * Get OnmsResourceDto's by using rest/resources/fonode endpoint
+     * @param nodeId 
+     * @returns 
+     */
     async doResourcesForNodeRequest(nodeId: string) {
         const response = await this.simpleRequest.doOpenNMSRequest({
             url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
@@ -281,25 +284,29 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return await this.getNodeResources(query, textProperty, resourceType, regex)
     }
 
-    async getNodeResources(node: string, textProperty: string, resourceType: string, regex?: string | null) {
-        const nodeResources = await this.simpleRequest.getResourcesForNode(getNodeResource(node))
+    async getNodeResources(nodes: string, textProperty: string, resourceType: string, regex?: string | null) {
+
+        const nodeResources = await this.simpleRequest.getResourcesFor(nodes)
         const results: MetricFindValue[] = []
 
         nodeResources.forEach((resource) => {
             const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
+            if (!resourceWithoutNodePrefix) {
+                throw new Error(`No resources found for node: ${resource.id}`)
+            }
             let textValue;
             switch (textProperty) {
                 case "id":
-                    textValue = resourceWithoutNodePrefix[2];
+                    textValue = resourceWithoutNodePrefix[2]
                     break;
                 case "label":
-                    textValue = resource.label;
+                    textValue = resource.label
                     break;
                 case "name":
-                    textValue = resource.name;
+                    textValue = resource.name
                     break;
                 default:
-                    textValue = resourceWithoutNodePrefix[2];
+                    textValue = resourceWithoutNodePrefix[2]
                     console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
             }
             if (((resourceType === '*' && resourceWithoutNodePrefix) ||
@@ -378,6 +385,13 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
             }
         });
         return resourcesWithAttributes
+    }
+
+    replaceTemplateVariablesInArguments = (args?: string[]) => {
+        if (args && Array.isArray(args)) {
+            args = args.map(arg => trimChar(this.templateSrv.replace(arg), '{', '}'))
+        }
+        return args
     }
 
 }
