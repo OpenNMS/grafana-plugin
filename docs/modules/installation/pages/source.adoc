@@ -1,29 +1,29 @@
 
 = Install from Source
 
-This section describes how to install {page-component-title} from source.
+This section describes how to install the {page-component-title} from source.
 
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
 
-== Build {page-component-title}
+== Build the plugin
 
-Follow these steps to build {page-component-title}:
+Follow these steps to build the plugin:
 
-. Download the source tree into a subfolder called `opennms-helm-app` in Grafana's plugin directory:
+. Download the source tree into a subfolder called `opennms-grafana-plugin-app` in Grafana's plugin directory:
 +
-[source, console]
+[source, shell]
 ----
 mkdir -p /var/lib/grafana/plugins
 cd /var/lib/grafana/plugins
-git clone https://github.com/OpenNMS/opennms-helm.git opennms-helm-app
+git clone https://github.com/OpenNMS/grafana-plugin.git opennms-grafana-plugin-app
 ----
 
-. Compile {page-component-title}:
+. Compile the plugin:
 +
-[source, console]
+[source, shell]
 ----
-cd /var/lib/grafana/plugins/opennms-helm-app
+cd /var/lib/grafana/plugins/opennms-grafana-plugin-app
 npm install
 npm run build
 ----
@@ -38,7 +38,7 @@ systemctl restart grafana-server
 We use the following conventions for build arguments in this procedure:
 
 * *GRAFANA_VERSION:* The version number for Grafana (default: `latest`).
-* *OPENNMS_HELM_VERSION:* Used as a label in `org.opennms.helm.version` to identify the running {page-component-title} version.
+* *OPENNMS_GRAFANA_PLUGIN_VERSION:* Used as a label in `org.opennms.grafana-plugin.version` to identify the running plugin version.
 
 Follow these steps to build a Docker image from source:
 
@@ -50,7 +50,7 @@ mkdir -p ./artifacts
 tar --exclude='.git' \
     --exclude='.circleci' \
     --exclude='./artifacts' \
-    -czf "./artifacts/opennms-helm.tar.gz" .
+    -czf "./artifacts/opennms-grafana-plugin.tar.gz" .
 ----
 
 . Build the Docker image and install the plugin from the tarball artifact:
@@ -59,15 +59,15 @@ tar --exclude='.git' \
 ----
 docker build \
     --build-arg GRAFANA_VERSION=latest \
-    --build-arg OPENNMS_HELM_VERSION=SNAPSHOT \
-    -t myhelm:snapshot .
+    --build-arg OPENNMS_GRAFANA-PLUGIN_VERSION=SNAPSHOT \
+    -t mygrafana-plugin:snapshot .
 ----
 
 . Run Docker:
 +
-[source, console]
-docker run -p 3000:3000 myhelm:snapshot
+[source, shell]
+docker run -p 3000:3000 mygrafanaplugin:snapshot
 
 == Next steps
 
-After you install Grafana and {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].
+After you install Grafana and the {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].

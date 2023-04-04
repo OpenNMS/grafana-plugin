@@ -3,31 +3,31 @@
 
 = Create a Dashboard
 
-This section demonstrates how to create a simple dashboard in {page-component-title}.
+This section demonstrates how to create a simple dashboard using the {page-component-title}.
 
-You must have the following pre-requisites to create a dashboard:
+You must have the following set up to create a dashboard:
 
-* An instance of Grafana with the {page-component-title} plugin installed.
+* An instance of Grafana with the plugin installed.
 * An instance of OpenNMS that is reachable from your Grafana instance.
 * One or more nodes being monitored by OpenNMS.
 
-If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to {page-component-title}.
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to the {page-component-title}.
 
-== Set up {page-component-title}
+== Set up the plugin
 
-First, you must enable the {page-component-title} plugin in Grafana and <<custom-actions, create custom actions>> to help with alarm diagnosis:
+First, you must enable the plugin in Grafana and <<custom-actions, create custom actions>> to help with alarm diagnosis:
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, select menu:Configuration[Plugins]:
 +
 image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins option is highlighted.", 250]
 
-. Select the *OpenNMS Helm* plugin.
+. Select *OpenNMS Plugin for Grafana*.
 ** If the plugin is not listed, try restarting your Grafana server.
-** If the issue persists, make sure the plugin is in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
+** If the issue persists, make sure the plugin's files are in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
 . Click menu:Config[Enable].
 +
-NOTE: The Disable option indicates that the OpenNMS Helm plugin is already enabled.
+NOTE: The Disable option indicates that the plugin is already enabled.
 You can also choose *Update* to download the latest version of the plugin.
 
 [[custom-actions]]
@@ -38,7 +38,7 @@ Once created, custom actions are displayed when you right-click an alarm in an a
 
 image::gf-cust-action-context.png["Alarms table with three alarms. The context menu is displayed, listing three custom actions.", 500]
 
-You can create a custom action on the Helm Config page.
+You can create a custom action on the plugin's Config page.
 Each custom action includes a label and a URL; the URL may contain `$variables` that reference OpenNMS alarm properties.
 Note that variables are URL-encoded when injected into a URL.
 See the https://docs.opennms.com/opennms-js/latest/index.html[OpenNMS.js documentation] for a list of available properties.
@@ -54,7 +54,7 @@ To create a custom action, follow these steps:
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, select menu:Configuration[Plugins].
-. Select *OpenNMS Helm*.
+. Select *OpenNMS Plugin for Grafana*.
 . On the Config tab, click *Add Custom Action*.
 . Specify a label and enter a URL.
 ** In most cases, the URL should point to your OpenNMS instance (for example, `\http://localhost:8980/opennms/`, appended with a `$variable` that references an alarm property).
@@ -67,9 +67,9 @@ The action should be displayed in the context menu when you right-click an entry
 
 The type of data that you can display in a dashboard depends on the datasource that you select.
 
-Before you create a dashboard, you must set up the datasource (either xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
-For this walk-through, we will configure the entity datasource.
-Note, however, that you can follow the same process to configure a flow or performance datasource.
+Before you create a dashboard, you must set up the datasource (xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
+For this walk-through, we will configure an entity datasource.
+Note that you can follow the same process to configure a flow or performance datasource.
 
 You need to configure only the *URL*, *Basic Auth*, and *Basic Auth Details* (username and password) fields.
 See the https://grafana.com/docs/grafana/latest/datasources/[official Grafana documentation] for information on configuring other fields.
@@ -130,7 +130,7 @@ A panel is a component of a dashboard; it displays your specified fault and perf
 Before you add a panel to your dashboard, determine the type of data that you want to visualize (performance, metrics, alarms or nodes, and so on), and make sure that you have <<bw-ds-setup, set up a datasource>>.
 Default graph types in Grafana work only with their appropriate datasource (for example, an alarm table visualization will not display data if a flow datasource is specified).
 
-{page-component-title} includes the following custom panels:
+The plugin includes the following custom panels:
 
 * Alarm histogram
 * Alarm table

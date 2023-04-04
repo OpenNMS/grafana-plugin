@@ -4,9 +4,9 @@
 = Plan Your Dashboard
 
 Every network is unique, and each has different monitoring requirements.
-{page-component-title} has the flexibility to let you customize dashboards to display data in a way that best meets your needs and workflow.
+The {page-component-title} has the flexibility to let you customize dashboards to display data in a way that best meets your needs and workflow.
 
-{page-component-title} dashboards display multiple panels, each of which visualizes specific data.
+The plugin's dashboards display multiple panels, each of which visualizes specific data.
 For example, this sample dashboard displays performance metrics collected through SNMP:
 
 image::gf-helm-sample-dash.png["Sample dashboard displaying various panels that visualize performance metrics."]
