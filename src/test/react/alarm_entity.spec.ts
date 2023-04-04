@@ -5,7 +5,7 @@ import { OnmsEvent } from 'opennms/src/model/OnmsEvent'
 import { OnmsAlarm } from 'opennms/src/model/OnmsAlarm'
 import { OnmsParm } from 'opennms/src/model/OnmsParm'
 import { Client } from 'opennms/src/Client'
-import { queryAlarms } from 'datasources/entity-ds-react/queries/queryAlarms'
+import { queryAlarms } from 'datasources/entity-ds/queries/queryAlarms'
 import { ClientDelegate } from 'lib/client_delegate'
 
 describe('queryAlarms', function () {
