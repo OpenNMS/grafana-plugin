@@ -24,7 +24,7 @@
 * xref:datasources:entity_datasource.adoc[]
 * xref:datasources:flow_datasource.adoc[]
 
-.Contribute to {page-component-title}
+.Contribute to the plugin
 * xref:contributing:developing.adoc[]
 * xref:contributing:how-to-build-docs.adoc[]
 

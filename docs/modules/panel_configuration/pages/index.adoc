@@ -3,7 +3,7 @@
 
 = Panel Configuration
 
-{page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
+The {page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
 
 image::gf-panel-config.png["Panel displaying configuration options", 850]
@@ -19,7 +19,7 @@ This section describes the following types of panel configuration:
 [[custom-panel]]
 == Included custom panels
 
-{page-component-title} comes with several preconfigured custom panels:
+The plugin comes with several preconfigured custom panels:
 
 * *Alarm histogram:* A bar chart that shows the distribution of alarms by severity level.
 +
@@ -49,7 +49,7 @@ You can also add any other function or transformation to customize the visualize
 
 == Customize panels
 
-You can customize the data visualized on {page-component-title} panels by editing their settings and changing their datasources.
+You can customize the data visualized on the plugin panels by editing their settings and changing their datasources.
 The following procedures demonstrate how to set up each panel type to show data from the flows datasource.
 
 === Alarm histogram

@@ -1,7 +1,7 @@
 
 = Get Started
 
-To leverage all of the features that {page-component-title} has to offer, you should be familiar with both OpenNMS and Grafana.
+To use all of the features that the {page-component-title} offers, you should be familiar with both OpenNMS and Grafana.
 In-depth documentation about both is beyond the scope of this guide; however, the following materials can serve as a primer:
 
 * https://youtu.be/GJzmkshdjiI?list=PLsXgBGH3nG7iZSlssmZB3xWsAJlst2j2z[OpenNMS 101 training videos].
@@ -11,4 +11,4 @@ In-depth documentation about both is beyond the scope of this guide; however, th
 TIP: Consider taking the time to decide what information you want to include in your dashboard and how you want to organize it.
 xref:dashboard_planning.adoc[Planning your dashboard] can make setup easier.
 
-After you familiarize yourself with OpenNMS and Grafana, you can get started with {page-component-title}.
+After you familiarize yourself with OpenNMS and Grafana, you can get started with the plugin.

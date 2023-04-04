@@ -1,16 +1,16 @@
 
 = Install from Package
 
-This section describes how to install {page-component-title} from a package on Debian, Ubuntu, and RPM-based Linux distributions (CentOS, Fedora, and so on).
+This section describes how to install the {page-component-title} from a package on Debian, Ubuntu, and RPM-based Linux distributions (CentOS, Fedora, and so on).
 
 IMPORTANT: These instructions assume that you do not have Grafana installed on your target system.
 If you have an existing Grafana instance that you want to use, see xref:plugin.adoc[].
 
 == Debian & Ubuntu
 
-Follow these steps to install the stable version of {page-component-title} on Debian or Ubuntu.
+Follow these steps to install the stable version of the plugin on Debian or Ubuntu.
 
-NOTE: If {page-component-title} is installed on your Horizon or Meridian server, you can skip steps 1 and 2 in this procedure.
+NOTE: If the plugin is installed on your Horizon or Meridian server, you can skip steps 1 and 2 in this procedure.
 
 . Create a new apt file (for example, `/etc/apt/sources.list.d/opennms.list`) and add the following code:
 +
@@ -22,22 +22,22 @@ deb-src https://debian.opennms.org stable main
 
 . Import the authentication key:
 +
-[source, console]
+[source, shell]
 wget -O- https://debian.opennms.org/OPENNMS-GPG-KEY | tee -a /etc/apt/trusted.gpg.d/opennms.asc
 
-. Install the {page-component-title} packages:
+. Install the plugin packages:
 +
-[source, console]
+[source, shell]
 ----
 sudo apt-get update
-sudo apt-get install opennms-helm
+sudo apt-get install opennms-grafana-plugin
 ----
 
 == RPM-based Linux
 
-Follow these steps to install the stable version of {page-component-title} on an RPM-based Linux distribution.
+Follow these steps to install the stable version of the plugin on an RPM-based Linux distribution.
 
-NOTE: If {page-component-title} is installed on your Horizon or Meridian server, skip step 1 in this procedure.
+NOTE: If the plugin is installed on your Horizon or Meridian server, skip step 1 in this procedure.
 
 . Install the package repository:
 +
@@ -49,8 +49,8 @@ sudo rpm --import https://yum.opennms.org/OPENNMS-GPG-KEY
 
 . Install the packages:
 +
-[source, console]
-sudo yum install opennms-helm
+[source, shell]
+sudo yum install opennms-grafana-plugin
 
 == Start Grafana
 
@@ -106,4 +106,4 @@ sudo /sbin/chkconfig --add grafana-server
 
 == Next steps
 
-After you install Grafana and {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].
+After you install Grafana and the plugin, you can xref:getting_started:index.adoc[create your first dashboard].

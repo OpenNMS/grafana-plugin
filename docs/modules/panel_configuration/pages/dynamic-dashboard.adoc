@@ -3,7 +3,7 @@
 
 = Dynamic Dashboards
 
-Rather than hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} offers several ways to create more dynamic and interactive dashboards.
+Rather than hard-coding specific information (such as node names or resource IDs) in a panel, the {page-component-title} offers several ways to create more dynamic and interactive dashboards.
 
 [[pc-template-filters]]
 == Template variables
@@ -29,7 +29,7 @@ Follow these steps to use template variables in a query for a category of nodes 
 . Select or xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel].
 For this example, we created a panel that displays active TCP connections:
 +
-image::pc-TCP-panel.png["Example configuration settings for a {page-component-title} dashboard panel.", 500]
+image::pc-TCP-panel.png["Example configuration settings for an {page-component-title} dashboard panel.", 500]
 
 . Click the *Dashboard Settings* symbol at the top-right of the panel.
 . Select menu:Variables[Add Variable].
@@ -92,7 +92,7 @@ image::pc-filter-panel-cust.png["Filter panel configuration page. The plus symbo
 
 The filter panel is displayed on your dashboard:
 
-image::pc-filter-panel2.png["Example filter panel on a {page-component-title} dashboard.", 500]
+image::pc-filter-panel2.png["Example filter panel on an {page-component-title} dashboard.", 500]
 
 All panels on the dashboard that use an Entities datasource will be updated as you modify the values in the filter panel.
 You can drag the panel to appear anywhere on your dashboard.
