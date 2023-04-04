@@ -59,39 +59,6 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
                 ' or something'
             ]);
         });
-        /*
-        it('outerFunction(nestedFunction(withArgs))', () => {
-            const parsed = FunctionFormatter.parenthesize('outerFunction(nestedFunction(withArgs))');
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(1);
-            expect(parsed).toStrictEqual([
-                {
-                    name: 'outerFunction',
-                    arguments: [{
-                        name: 'nestedFunction',
-                        arguments: ['withArgs']
-                    }]
-                }
-            ]);
-        });
-        it('outerFunction(nestedFunction(withArgs), (foo) (bar))', () => {
-            const parsed = FunctionFormatter.parenthesize('outerFunction(nestedFunction(withArgs), (foo) (bar))', true);
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(1);
-            expect(parsed).toStrictEqual([
-                {
-                    name: 'outerFunction',
-                    arguments: [
-                        {
-                            name: 'nestedFunction',
-                            arguments: ['withArgs']
-                        },
-                        '(foo) (bar)'
-                    ]
-                }
-            ]);
-        });
-        */
     });
 
     describe('findFunctions()', () => {
@@ -169,35 +136,7 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
                 },
             ]);
         });
-        /*
-        it('find multiple recursive functions with arguments', () => {
-            const found = FunctionFormatter.findFunctions('complexFunction(simpleFunction(foo), bar, baz), anotherThing(extraThing(recursiveThing($nodes)))');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(5);
-            expect(found).toStrictEqual([
-                {
-                    name: 'simpleFunction',
-                    arguments: ['foo']
-                },
-                {
-                    name: 'complexFunction',
-                    arguments: ['simpleFunction(foo)', 'bar', 'baz']
-                },
-                {
-                    name: 'recursiveThing',
-                    arguments: ['$nodes']
-                },
-                {
-                    name: 'extraThing',
-                    arguments: ['recursiveThing($nodes)']
-                },
-                {
-                    name: 'anotherThing',
-                    arguments: ['extraThing(recursiveThing($nodes))']
-                }
-            ]);
-        });
-        */
+        
     });
 
     describe('replace()', () => {
@@ -229,12 +168,7 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
             const res = FunctionFormatter.replace('exclamationer(Hey)  insulter(Bob, jerk)', FUNCS);
             expect(res).toEqual('Hey!!!  Bob is a total jerk!');
         });
-        /*
-        it('handles nested parentheses', () => {
-            const res = FunctionFormatter.replace('exclamationer((foo) or (bar))  insulter((baz) (monkey(shoe)) (this is raw parentheses), jerk)', FUNCS, true);
-            expect(res).toEqual('(foo) or (bar)!!!  (baz) (monkey(shoe)) (this is raw parentheses) is a total jerk!');
-        });
-        */
+        
     });
 
     const metadata = {
