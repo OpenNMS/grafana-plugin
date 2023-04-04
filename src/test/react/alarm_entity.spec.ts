@@ -51,7 +51,7 @@ describe('queryAlarms', function () {
       for (let j = 0; j < NUM_PARMS_PER_ALARM; j++) {
         parms.push(new OnmsParm(
           ".1.3.6.1.2.1.15.3.1.14.39.252.8." + ((i + j) % NUM_UNIQUE_PARM_NAMES),
-          process.env.TEST_IP_1,
+          process.env.TEST_IP_1 as string,
           "string")
         );
       }
