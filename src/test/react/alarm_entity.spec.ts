@@ -9,6 +9,12 @@ import { queryAlarms } from 'datasources/entity-ds/queries/queryAlarms'
 import { ClientDelegate } from 'lib/client_delegate'
 
 describe('queryAlarms', function () {
+  
+  beforeEach(() => {
+    jest.resetModules()
+  });
+
+  
   const settings = { url: 'http://localhost', type: null, name: null }
   const client = new ClientDelegate(settings, undefined)
   client.getClientWithMetadata = async () => {
@@ -45,7 +51,7 @@ describe('queryAlarms', function () {
       for (let j = 0; j < NUM_PARMS_PER_ALARM; j++) {
         parms.push(new OnmsParm(
           ".1.3.6.1.2.1.15.3.1.14.39.252.8." + ((i + j) % NUM_UNIQUE_PARM_NAMES),
-          "10.1.1.1",
+          process.env.TEST_IP_1,
           "string")
         );
       }
