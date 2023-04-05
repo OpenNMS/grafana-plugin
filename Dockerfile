@@ -4,7 +4,7 @@ FROM grafana/grafana:${GRAFANA_VERSION}
 
 ARG OPENNMS_HELM_VERSION="bleeding"
 
-LABEL maintainer "Ronny Trommer <ronny@opennms.org>"
+LABEL maintainer "Jeff Gehlbach <jeffg@opennms.com>"
 
 USER grafana
 
@@ -22,6 +22,6 @@ fi
 ADD artifacts/opennms-helm*.tar.gz ${GF_PATHS_PLUGINS}/opennms-helm
 
 LABEL license="AGPLv3" \
-      org.opennms.helm.version="${OPENNMS_HELM_VERSION}" \
+      org.opennms.grafanaPlugin.version="${OPENNMS_HELM_VERSION}" \
       vendor="The OpenNMS Group, Inc." \
       name="OpenNMS Plugin for Grafana"
