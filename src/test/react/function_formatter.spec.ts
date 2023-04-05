@@ -125,7 +125,7 @@ describe('OpenNMSPMDatasource :: LabelFormatter', () => {
                 },
             ]);
         });
-        it('HELM-131', () => {
+        it('GRAFANA-PLUGIN-131', () => {
             const found = FunctionFormatter.findFunctions('nodeFilter((nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’))');
             expect(found).toBeDefined();
             expect(found.length).toEqual(1);

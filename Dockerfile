@@ -2,7 +2,7 @@ ARG GRAFANA_VERSION="latest"
 
 FROM grafana/grafana:${GRAFANA_VERSION}
 
-ARG OPENNMS_HELM_VERSION="bleeding"
+ARG OPENNMS_GRAFANA-PLUGIN_VERSION="bleeding"
 
 LABEL maintainer "Ronny Trommer <ronny@opennms.org>"
 
@@ -19,9 +19,9 @@ RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
     done; \
 fi
 
-ADD artifacts/opennms-helm*.tar.gz ${GF_PATHS_PLUGINS}/opennms-helm
+ADD artifacts/grafana-plugin*.tar.gz ${GF_PATHS_PLUGINS}/grafana-plugin
 
 LABEL license="AGPLv3" \
-      org.opennms.helm.version="${OPENNMS_HELM_VERSION}" \
+      org.opennms.grafana-plugin.version="${OPENNMS_GRAFANA-PLUGIN_VERSION}" \
       vendor="The OpenNMS Group, Inc." \
-      name="OpenNMS Plugin for Grafana"
+      name="OpenNMS plugin for Grafana"
