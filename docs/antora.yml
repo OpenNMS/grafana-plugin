@@ -1,6 +1,6 @@
-name: OpenNMS Plugin for Grafana
+name: grafana-plugin
 version: '9-SNAPSHOT'
-title: OpenNMS Plugin for Grafana
+title: Plugin for Grafana
 asciidoc:
   attributes:
     full-display-version: '9.0.0-SNAPSHOT'
