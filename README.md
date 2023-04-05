@@ -2,7 +2,7 @@
 
 OpenNMS Plugin for Grafana is a [Grafana](https://grafana.com/) application that allows users to create flexible dashboards using both fault management (FM) and performance management (PM) data from [OpenNMS® Horizon™](https://www.opennms.org) and/or [OpenNMS® Meridian™](https://www.opennms.com/).
 
-Consult the [Plugin Documentation](http://docs.opennms.org/helm/branches/master/helm/latest/welcome/index.html) for help on installing, configuring and using the application.
+Consult the [Plugin Documentation](https://docs.opennms.com/OpenNMS%20Plugin%20for%20Grafana/latest/index.html) for help on installing, configuring and using the application.
 
 ## Features
 
