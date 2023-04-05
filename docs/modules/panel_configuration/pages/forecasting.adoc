@@ -3,7 +3,7 @@
 
 = Use Filters to Forecast Metrics
 
-Horizon and Meridian include several predefined filters that the {page-component-title} can use to display forecast metrics in a panel.
+Horizon and Meridian include several predefined filters that the {product-name} can use to display forecast metrics in a panel.
 
 Adding a forecast filter can help you anticipate when you might need to make changes to your network depending on, for example, anticipated bandwidth usage, disk space capacity, network traffic, and so on.
 This section describes how to create forecast metrics based on network usage, using `ifHCOutOctets` (the number of octets sent by an interface).
@@ -12,7 +12,7 @@ This section describes how to create forecast metrics based on network usage, us
 
 Follow these steps to create a panel that visualizes network usage:
 
-. Navigate to your {page-component-title} dashboard.
+. Navigate to your {product-name} dashboard.
 . Click the *Add Panel* symbol.
 . Click *Add Query*.
 . Select a datasource from the *Query* list.

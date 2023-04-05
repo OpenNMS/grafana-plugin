@@ -21,7 +21,7 @@ All interactions between the plugin and OpenNMS are done via the https://docs.op
 No fault management or performance management data is stored within the plugin or Grafana.
 
 .Plugin data architecture
-image::data-architecture.png["Data architecture diagram showing the relationship among the {page-component-title}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
+image::data-architecture.png["Data architecture diagram showing the relationship among the {product-name}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
 
 [[fault]]
 == Fault management

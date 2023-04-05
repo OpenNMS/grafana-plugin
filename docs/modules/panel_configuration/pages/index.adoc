@@ -126,7 +126,7 @@ image::flow-histogram-example.png["Example of a flow histogram panel in edit mor
 
 == Functions and transformations
 
-Each {page-component-title} datasource has functions and transformations associated with it.
+Each {product-name} datasource has functions and transformations associated with it.
 Functions let you perform actions based on the data transmitted by the datasource.
 Transformations are functions that let you convert data or choose to display only certain types of information (for example, only ingress or egress traffic).
 
