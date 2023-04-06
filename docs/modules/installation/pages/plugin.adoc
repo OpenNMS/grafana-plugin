@@ -1,7 +1,7 @@
 
-= Install {page-component-title} Plugin
+= Install {product-name} Plugin
 
-This section describes how to install the {page-component-title} plugin for Grafana.
+This section describes how to install the {product-name} plugin for Grafana.
 
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
@@ -18,7 +18,7 @@ Follow these steps to install the plugin using the Grafana UI:
 
 == Install via CLI
 
-You can the `grafana-cli` tool to install the {page-component-title}:
+You can the `grafana-cli` tool to install the {product-name}:
 
 [source, shell]
 grafana-cli plugins install opennms-grafana-plugin-app

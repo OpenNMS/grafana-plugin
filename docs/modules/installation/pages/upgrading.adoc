@@ -1,11 +1,11 @@
 
-= Upgrade {page-component-title}
+= Upgrade {product-name}
 
-This section describes how to upgrade your {page-component-title} installation.
+This section describes how to upgrade your {product-name} installation.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-Before proceeding, make sure that you have installed the latest version of the {page-component-title}.
+Before proceeding, make sure that you have installed the latest version of the {product-name}.
 You should also have https://nodejs.org/[Node.js] installed.
 
 == Upgrade datasources

@@ -23,7 +23,7 @@ import { addVariationsToMap, getDatasourceTypeFromPluginId } from './utils'
 //       "multi": false,
 //       "name": "datasource",
 //       "options": [],
-//       "query": "opennms-helm-performance-datasource",
+//       "query": "grafana-plugin-performance-datasource",
 //       "refresh": 1,
 //       "regex": "",
 //       "skipUrlSync": false,

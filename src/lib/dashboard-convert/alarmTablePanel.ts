@@ -14,7 +14,7 @@ const legacyAlarmSeverityThemes = [
 ]
 
 export const isLegacyAlarmTablePanel = (panel: any) => {
-  return panel && panel.type && panel.type === 'opennms-helm-alarm-table-panel'
+  return panel && panel.type && panel.type === 'grafana-plugin-alarm-table-panel'
 }
 
 const getSeverityThemeValue = (theme: string) => {

@@ -1,9 +1,9 @@
 
 :imagesdir: ../assets/images
 
-= About the {page-component-title}
+= About the {product-name}
 
-The {page-component-title} lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
+The {product-name} lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
 It works with https://grafana.com[Grafana] to customize and display <<fault, fault management>>, <<performance, performance management>>, and <<flow, flow management>> data from OpenNMS https://www.opennms.org[Horizon] and https://www.opennms.com[Meridian].
 
 You can create and customize dashboards to display the data that you want to see--alarms, outages, key performance indicators--in a way that best meets your needs.
@@ -21,7 +21,7 @@ All interactions between the plugin and OpenNMS are done via the https://docs.op
 No fault management or performance management data is stored within the plugin or Grafana.
 
 .Plugin data architecture
-image::data-architecture.png["Data architecture diagram showing the relationship among the {page-component-title}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
+image::data-architecture.png["Data architecture diagram showing the relationship among the {product-name}, Grafana, OpenNMS, and the fault management and performance management data.", 500]
 
 [[fault]]
 == Fault management

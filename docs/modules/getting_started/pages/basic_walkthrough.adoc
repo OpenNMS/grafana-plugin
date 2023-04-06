@@ -3,7 +3,7 @@
 
 = Create a Dashboard
 
-This section demonstrates how to create a simple dashboard using the {page-component-title}.
+This section demonstrates how to create a simple dashboard using the {product-name}.
 
 You must have the following set up to create a dashboard:
 
@@ -11,7 +11,7 @@ You must have the following set up to create a dashboard:
 * An instance of OpenNMS that is reachable from your Grafana instance.
 * One or more nodes being monitored by OpenNMS.
 
-If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to the {page-component-title}.
+If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrating_from_opennms_datasource.adoc[] for information on how to switch to the {product-name}.
 
 == Set up the plugin
 

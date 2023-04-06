@@ -3,7 +3,7 @@
 
 = Panel Configuration
 
-The {page-component-title} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
+The {page-component-name} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
 
 image::gf-panel-config.png["Panel displaying configuration options", 850]
@@ -126,7 +126,7 @@ image::flow-histogram-example.png["Example of a flow histogram panel in edit mor
 
 == Functions and transformations
 
-Each {page-component-title} datasource has functions and transformations associated with it.
+Each {product-name} datasource has functions and transformations associated with it.
 Functions let you perform actions based on the data transmitted by the datasource.
 Transformations are functions that let you convert data or choose to display only certain types of information (for example, only ingress or egress traffic).
 

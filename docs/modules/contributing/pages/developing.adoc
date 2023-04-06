@@ -1,7 +1,7 @@
 
 = Contribute Code
 
-You can contribute code to the {page-component-title} project via https://github.com/OpenNMS/grafana-plugin[GitHub].
+You can contribute code to the {product-name} project via https://github.com/OpenNMS/grafana-plugin[GitHub].
 This section describes the codebase and how to prepare your development environment.
 
 == Codebase

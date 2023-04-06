@@ -1,7 +1,7 @@
 
 = Requirements
 
-This section describes the requirements to install the {page-component-title}.
+This section describes the requirements to install the {product-name}.
 
 == Runtime requirements
 
@@ -9,7 +9,7 @@ For runtime operations, you need to install and set up either https://www.opennm
 You also need a http://docs.grafana.org/installation[Grafana instance] (version {grafana-version-required} or newer).
 
 NOTE: The plugin has been tested with Grafana versions up to {grafana-version-tested}.
-We recommend that you use matching versions of the plugin and Grafana (for example, {page-component-title} 8.x and Grafana 8.x).
+We recommend that you use matching versions of the plugin and Grafana (for example, {product-name} 8.x and Grafana 8.x).
 
 The OpenNMS Grafana Dashboard Report feature requires the https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
 

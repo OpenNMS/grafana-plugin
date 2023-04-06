@@ -48,7 +48,7 @@ build/
 /SOURCES
 
 # Debian package droppings
-/dist/opennms-helm
+/dist/opennms-grafana-plugin
 *.dsc
 *.tar.gz
 *.deb
