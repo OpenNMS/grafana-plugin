@@ -59,7 +59,7 @@ tar --exclude='.git' \
 ----
 docker build \
     --build-arg GRAFANA_VERSION=latest \
-    --build-arg OPENNMS_GRAFANA-PLUGIN_VERSION=SNAPSHOT \
+    --build-arg OPENNMS_GRAFANA_PLUGIN_VERSION=SNAPSHOT \
     -t mygrafana-plugin:snapshot .
 ----
 

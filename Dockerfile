@@ -2,7 +2,7 @@ ARG GRAFANA_VERSION="latest"
 
 FROM grafana/grafana:${GRAFANA_VERSION}
 
-ARG OPENNMS_GRAFANA-PLUGIN_VERSION="bleeding"
+ARG OPENNMS_GRAFANA_PLUGIN_VERSION="bleeding"
 
 LABEL maintainer "Jeff Gehlbach <jeffg@opennms.com>"
 
@@ -22,6 +22,6 @@ fi
 ADD artifacts/grafana-plugin*.tar.gz ${GF_PATHS_PLUGINS}/grafana-plugin
 
 LABEL license="AGPLv3" \
-      org.opennms.grafana-plugin.version="${OPENNMS_GRAFANA-PLUGIN_VERSION}" \
+      org.opennms.grafana-plugin.version="${OPENNMS_GRAFANA_PLUGIN_VERSION}" \
       vendor="The OpenNMS Group, Inc." \
       name="OpenNMS plugin for Grafana"
