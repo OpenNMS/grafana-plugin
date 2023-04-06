@@ -14,7 +14,7 @@ import { addVariationsToMap, getDatasourceTypeFromPluginId } from './utils'
 //     "label": "OpenNMS Performance",
 //     "description": "",
 //     "type": "datasource",
-//     "pluginId": "grafana-plugin-performance-datasource",
+//     "pluginId": "opennms-performance-datasource",
 //     "pluginName": "OpenNMS Performance"
 //   }
 // ]
