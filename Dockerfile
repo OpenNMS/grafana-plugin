@@ -4,7 +4,7 @@ FROM grafana/grafana:${GRAFANA_VERSION}
 
 ARG OPENNMS_GRAFANA-PLUGIN_VERSION="bleeding"
 
-LABEL maintainer "Ronny Trommer <ronny@opennms.org>"
+LABEL maintainer "Jeff Gehlbach <jeffg@opennms.com>"
 
 USER grafana
 
