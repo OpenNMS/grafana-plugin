@@ -73,7 +73,7 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
     [
       '--define', '_topdir ' + path.join(os.tmpdir(), 'rpmbuild'),
       '-ba',
-      'SPECS/opennms-helm.spec'
+      'SPECS/grafana-plugin.spec'
     ],
     {
       stdio: ['inherit', 'inherit', 'inherit']

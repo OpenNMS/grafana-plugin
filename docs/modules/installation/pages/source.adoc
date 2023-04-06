@@ -1,7 +1,7 @@
 
 = Install from Source
 
-This section describes how to install the {page-component-title} from source.
+This section describes how to install the {product-name} from source.
 
 IMPORTANT: These instructions assume that you already have Grafana installed on your target system.
 If you do not have an existing Grafana instance, see xref:package.adoc[].
@@ -59,7 +59,7 @@ tar --exclude='.git' \
 ----
 docker build \
     --build-arg GRAFANA_VERSION=latest \
-    --build-arg OPENNMS_GRAFANA-PLUGIN_VERSION=SNAPSHOT \
+    --build-arg OPENNMS_GRAFANA_PLUGIN_VERSION=SNAPSHOT \
     -t mygrafana-plugin:snapshot .
 ----
 
@@ -70,4 +70,4 @@ docker run -p 3000:3000 mygrafanaplugin:snapshot
 
 == Next steps
 
-After you install Grafana and the {page-component-title}, you can xref:getting_started:index.adoc[create your first dashboard].
+After you install Grafana and the {product-name}, you can xref:getting_started:index.adoc[create your first dashboard].

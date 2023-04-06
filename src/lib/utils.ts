@@ -9,8 +9,8 @@ export function initializeCss() {
   if (!cssInitialized) {
     cssInitialized = true;
     loadPluginCss({
-      dark: 'plugins/opennms-helm-app/styles/dark.css',
-      light: 'plugins/opennms-helm-app/styles/light.css',
+      dark: 'plugins/opennms-grafana-plugin-app/styles/dark.css',
+      light: 'plugins/opennms-grafana-plugin-app/styles/light.css',
     });
   }
 }

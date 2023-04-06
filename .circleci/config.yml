@@ -84,8 +84,8 @@ commands:
           command: |
             export PATH="./node_modules/.bin:${PATH}"
             export NODE_OPTIONS=--openssl-legacy-provider
-            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v webpack)" -c ./webpack.config.ts --env production
-            node --optimize-for-size --memory-reducer --max-old-space-size=12288 "$(command -v npx)" --yes @grafana/sign-plugin@latest
+            npm run build
+            npm run sign
             unset NODE_OPTIONS
             
 jobs:
@@ -197,7 +197,7 @@ jobs:
             mkdir -p ./artifacts
             cd dist
             tar --exclude='test' \
-              -czf "../artifacts/opennms-helm_$(../.circleci/get-version.sh).tar.gz" .
+              -czf "../artifacts/grafana-plugin_$(../.circleci/get-version.sh).tar.gz" .
       - store_artifacts:
           path: ~/project/artifacts
       - persist_to_workspace:
@@ -237,16 +237,16 @@ jobs:
             echo "version: $(.circleci/get-version.sh)"
             docker build \
               --build-arg GRAFANA_VERSION=$(cat grafana.version) \
-              -t helm:$(.circleci/get-version.sh) .
+              -t grafana-plugin:$(.circleci/get-version.sh) .
       - run:
           name: Export Docker Image as Artifact
-          command: docker image save helm:$(.circleci/get-version.sh) -o opennms-helm.oci
+          command: docker image save grafana-plugin:$(.circleci/get-version.sh) -o grafana-plugin.oci
       - store_artifacts:
-          path: ./opennms-helm.oci
+          path: ./grafana-plugin.oci
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/opennms-helm.oci
+            - ./project/grafana-plugin.oci
   make-rpm:
     executor: build-executor-centos
     resource_class: small
@@ -316,7 +316,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./opennms-helm.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./helm-docker-image-name.txt
+            docker image load -q -i ./grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -344,9 +344,9 @@ jobs:
       - run:
           name: Tag Docker Container Images for release and publish to DockerHub
           command: |
-            HELM_IMAGE_NAME="$(cat ./helm-docker-image-name.txt)"
-            docker tag "${HELM_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
-            docker tag "${HELM_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
+            GRAFANA-PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
+            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
 
@@ -361,7 +361,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./opennms-helm.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./helm-docker-image-name.txt
+            docker image load -q -i ./grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -389,8 +389,8 @@ jobs:
       - run:
           name: Tag Docker Container Images for bleeding and publish to DockerHub
           command: |
-            HELM_IMAGE_NAME="$(cat ./helm-docker-image-name.txt)"
-            docker tag "${HELM_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
+            GRAFANA-PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
 
   publish-rpm:

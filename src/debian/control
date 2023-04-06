@@ -1,11 +1,11 @@
-Source: opennms-helm
+Source: grafana-plugin
 Section: contrib/net
 Priority: optional
 Maintainer: Benjamin Reed <ranger@opennms.org>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.7.3
 
-Package: opennms-helm
+Package: grafana-plugin
 Architecture: all
 Depends: grafana (>= 7.5)
 Description: An OpenNMS Console for Grafana

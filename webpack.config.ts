@@ -39,7 +39,7 @@ const config = async (env): Promise<Configuration> => {
           rules: [
             {
               search: /\%OPG_DOCS_BASE_URL\%/g,
-              replace: 'https://docs.opennms.com/helm/latest'
+              replace: 'https://docs.opennms.com/grafana-plugin/latest'
             }
           ]
         }

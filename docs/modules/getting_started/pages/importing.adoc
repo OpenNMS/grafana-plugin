@@ -3,7 +3,7 @@
 
 = Predesigned Dashboards
 
-You can import a number of official and community-built https://grafana.com/grafana/dashboards?search=opennms&orderBy=name&direction=asc[{page-component-title} dashboards].
+You can import a number of official and community-built https://grafana.com/grafana/dashboards?search=opennms&orderBy=name&direction=asc[{product-name} dashboards].
 They display the following data points, among others:
 
 * SNMP data collected by Linux hosts.

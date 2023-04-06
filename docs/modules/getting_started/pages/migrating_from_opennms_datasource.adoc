@@ -1,7 +1,7 @@
 
 = Migrate from OpenNMS Data Source Plugin
 
-This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to the {page-component-title}.
+This section describes how to migrate an existing installation of Grafana that uses the OpenNMS Data Source plugin to the {product-name}.
 
 IMPORTANT: This section applies only to those still using the OpenNMS Data Source plugin, which was deprecated in 2016.
 
@@ -11,15 +11,15 @@ To complete this migration, you must have the following:
 * A configured OpenNMS datasource.
 * One or more dashboards using the OpenNMS datasource.
 
-== Install the {page-component-title}
+== Install the {product-name}
 
 Before completing the migration, ensure that you have xref:installation:requirements.adoc[installed the plugin] on your Grafana instance.
 
-NOTE: Both the OpenNMS Data Source plugin and the {page-component-title} can be installed on your Grafana instance while you complete the migration.
+NOTE: Both the OpenNMS Data Source plugin and the {product-name} can be installed on your Grafana instance while you complete the migration.
 
 == Grafana setup
 
-After you have installed the {page-component-title}, you must enable it in Grafana to make the provided panels and datasources available:
+After you have installed the {product-name}, you must enable it in Grafana to make the provided panels and datasources available:
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, click menu:Configuration[Plugins]:
@@ -31,7 +31,7 @@ image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins o
 ** If the issue persists, make sure the plugin files are in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
 . Click menu:Config[Enable].
 +
-NOTE: The Disable option indicates that the OpenNMS {page-component-title} is already enabled.
+NOTE: The Disable option indicates that the OpenNMS {product-name} is already enabled.
 You can also choose *Update* to download the latest version of the plugin.
 
 == Migrate datasources

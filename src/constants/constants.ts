@@ -9,4 +9,4 @@ export const EntityTypes = {
 
 export const ALL_SELECTION_VALUE = '$__all'
 
-export const DATASOURCE_HELP_BASE_URL = 'https://docs.opennms.com/helm/latest'
+export const DATASOURCE_HELP_BASE_URL = 'https://docs.opennms.com/grafana-plugin/latest'
