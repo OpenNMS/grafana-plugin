@@ -21,7 +21,7 @@ const topdir = process.cwd();
 
 const version = pkginfo.version;
 
-const pkgname = 'grafana-plugin-app';
+const pkgname = 'opennms-grafana-plugin-app';
 const srcdir = path.join(topdir, 'dist');
 const tmpdir = path.join(topdir, 'tmp');
 const workdir = path.join(tmpdir, pkgname);
