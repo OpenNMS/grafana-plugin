@@ -1,7 +1,7 @@
 import { DatasourceMetadata, DsType } from './types'
 
 export const isLegacyFilterPanel = (panel: any) => {
-  return panel && panel.type && panel.type === 'grafana-plugin-filter-panel'
+  return panel && panel.type && panel.type === 'opennms-filter-panel'
 }
 
 // NOTE: Selected Filter Panel values will be lost, as they are now saved in

@@ -1,7 +1,7 @@
 import { AlarmDirections, AlarmGroups } from '../../panels/alarm-histogram/constants'
 
 export const isLegacyAlarmHistogramPanel = (panel: any) => {
-  return panel && panel.type && panel.type === 'grafana-plugin-alarm-histogram-panel'
+  return panel && panel.type && panel.type === 'opennms-alarm-histogram-panel'
 }
 
 export const convertLegacyAlarmHistogramPanel = (source: any) => {

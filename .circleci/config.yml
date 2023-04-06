@@ -346,7 +346,7 @@ jobs:
           command: |
             GRAFANA-PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
             docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
-            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
+            docker tag "${GRAFANA_PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
 

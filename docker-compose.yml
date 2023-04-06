@@ -4,7 +4,7 @@ volumes:
     driver: "local"
   data-opennms:
     driver: "local"
-  data-grafana-plugin:
+  data-opennms-grafana-plugin:
     driver: "local"
 networks:
   onms-net:
@@ -61,13 +61,13 @@ services:
       context: ./
       dockerfile: Dockerfile
       args:
-        OPENNMS_GRAFANA-PLUGIN_GIT_URL: https://github.com/OpenNMS/grafana-plugin.git
-        OPENNMS_GRAFANA-PLUGIN_BRANCH_REF: master
+        OPENNMS_GRAFANA_PLUGIN_GIT_URL: https://github.com/OpenNMS/grafana-plugin.git
+        OPENNMS_GRAFANA_PLUGIN_BRANCH_REF: master
     image: grafana-plugin:master
     volumes:
-      - data-grafana-plugin:/var/lib/grafana
-      - data-grafana-plugin:/var/log/grafana
-      - data-grafana-plugin:/etc/grafana
+      - data-opennms-grafana-plugin:/var/lib/grafana
+      - data-opennms-grafana-plugin:/var/log/grafana
+      - data-opennms-grafana-plugin:/etc/grafana
     networks:
       - onms-net
     ports:

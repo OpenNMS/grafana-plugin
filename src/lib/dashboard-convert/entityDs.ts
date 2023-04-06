@@ -5,7 +5,7 @@ import { OnmsEntityNestType, OnmsEntityType } from '../../datasources/entity-ds/
 // Legacy Entity target looks something like this:
 // {
 //   "datasource": {
-//     "type": "grafana-plugin-entity-datasource",
+//     "type": "opennms-entity-datasource",
 //     "uid": "IeFyksx4k"
 //   },
 //   "entityType": {
