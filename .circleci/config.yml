@@ -344,9 +344,9 @@ jobs:
       - run:
           name: Tag Docker Container Images for release and publish to DockerHub
           command: |
-            GRAFANA-PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
             docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
-            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
+            docker tag "${GRAFANA_PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
 
@@ -389,8 +389,8 @@ jobs:
       - run:
           name: Tag Docker Container Images for bleeding and publish to DockerHub
           command: |
-            GRAFANA-PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
-            docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
+            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            docker tag "${GRAFANA_PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
 
   publish-rpm:
