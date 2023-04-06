@@ -427,7 +427,7 @@ workflows:
             tags:
               only: /^v.*/
       - build:
-          conetext: grafana
+          context: grafana
           requires:
             - pre-build
           filters:
@@ -440,7 +440,7 @@ workflows:
             tags:
               only: /^v.*/
       - create-merge-branch:
-          conetext: grafana
+          context: grafana
           # these all imply "build", plus "make-docker-image" implies "make-tarball"
           requires:
             - make-deb
