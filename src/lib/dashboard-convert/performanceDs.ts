@@ -1,5 +1,5 @@
 import { PerformanceTypeOptions } from '../../datasources/perf-ds/constants'
-import { PerformanceQuery, StringPropertyQuery } from '../../datasources/perf-ds/types'
+import { PerformanceQuery, PerformanceQueryFilterParameter } from '../../datasources/perf-ds/types'
 
 export const updatePerformanceQuery = (source: any) => {
   // Note, target.datasource will be set in caller
@@ -56,7 +56,7 @@ const convertAttributeQuery = (source: any): PerformanceQuery | any => {
         label: source.attribute || ''
       },
       subAttribute: source.subAttribute || undefined,
-      fallbackAttribute: source.fallbackAttribute || source['fallback-attribute'] || undefined,
+      fallbackAttribute: {},
       aggregation: {
         label: source.aggregation || ''
       }
@@ -66,6 +66,15 @@ const convertAttributeQuery = (source: any): PerformanceQuery | any => {
     performanceState: {},
     format: source.format || undefined,
     rawSql: source.rawSql || undefined
+  }
+
+  const fallbackAttr = source.fallbackAttribute || source['fallback-attribute']
+
+  if (fallbackAttr) {
+    query.attribute.fallbackAttribute = {
+      name: fallbackAttr,
+      label: fallbackAttr
+    }
   }
 
   // TODO: Figure out "new" representation of these "time_series" attribute queries with "rawSql"
@@ -169,31 +178,129 @@ const convertFilterQuery = (source: any): PerformanceQuery | any => {
         backend: source.filter.backend,
         canonicalName: source.filter.canonicalName,
         description: source.filter.description,
-        label: source.filter.label,
+        label: source.filter.label || source.filter.name,
         name: source.filter.name,
-        // these seem to have the same contents, see PerformanceQueryFilterParameter
-        parameter: [...source.filter.parameter]
+        parameter: []
       },
       filterState: {}
     }
 
-    if (source.filterParameters) {
-      Object.keys(source.filterParameters).forEach(k => {
-        query.filterState[k] = {
-          filter: {},
-          value: source.filterParameters[k]
-        }
-      })
-    }
+    query.filter.parameter = source.filter.parameter.map(p => {
+      return {
+        default: p.default ?? null,
+        description: p.description,
+        displayName: p.displayName,
+        key: p.key,
+        required: p.required || true,
+        type: p.type
+      } as PerformanceQueryFilterParameter
+    })
+
+    query.filterState = convertFilterState(source)
 
     return query
   }
 
+  // was not a filter query, return original
   return source
 }
 
-const convertStringPropertyQuery = (source: any): StringPropertyQuery | any => {
-  // TODO!
+const convertFilterState = (source: any) => {
+  const filterState = {}
 
-  return source
+  Object.keys(source.filterParameters).forEach(key => {
+    const sourceItem = source.filter?.parameter?.find(f => f.key === key)
+    const description = sourceItem?.description || ''
+    const displayName = sourceItem?.displayName || ''
+    const required = sourceItem?.required || true
+    const itemType = sourceItem?.type || 'string'
+
+    const item =
+      {
+        filter: {
+          description,
+          displayName,
+          key,
+          required,
+          type: itemType
+        },
+        value: source.filterParameters[key]
+      }
+
+      filterState[key] = item
+  })
+
+  return filterState
+}
+
+// Legacy string property:
+// {
+//   nodeId: 'selfmonitor:1',
+//   refId: 'A',
+//   resourceId: 'rpcMetrics[Loc0.SNMP]',
+//   stringProperty: 'domain',
+//   type: 'stringProperty'
+// }
+//
+// New:
+// {
+//   node: {
+//
+//   },
+//   resource: {
+//     id: 'node[selfmonitor:1].rpcMetrics[Loc0.SNMP]',
+//     label: 'Loc0.SNMP',
+//     name: 'Loc0.SNMP',
+//     parentId: 'node[selfmonitor:1]'
+//   }
+// }
+const convertStringPropertyQuery = (source: any) => {
+  const legacyNodeId: string = source.nodeId || ''
+
+  // this needs some work, may need to do an API call to get
+  // node id and label from legacyNodeId value
+  // as it may be in FS:FID or node id or hostname form
+  // however, at least the values will show up in the query editor and user could change them
+  const nodeState = {
+    id: legacyNodeId,
+    label: legacyNodeId
+  }
+
+  const legacyResourceId: string = source.resourceId || ''
+
+  // 'label' and 'name' will be filled in at runtime
+  const resourceState = {
+    id: `node[${legacyNodeId}].${legacyResourceId}]`,
+    label: legacyResourceId,
+    parentId: `node[${legacyNodeId}]`
+  }
+
+  const stringProperty = source.stringProperty || ''
+
+  const stringPropertyState = {
+    node: nodeState,
+    resource: resourceState,
+    stringProperty: {
+      label: stringProperty,
+      value: stringProperty
+    }
+  }
+
+  const query = {
+    datasource: source.datasource,
+    hide: source.hide || false,
+    key: source.key || '',
+    label: source.label || '',
+    queryType: source.queryType || '',
+    refId: source.refId || '',
+    performanceType: PerformanceTypeOptions.StringProperty,
+    expression: {},
+    attribute: {},
+    filter: {},
+    filterState: {},
+    performanceState: {},
+    stringPropertyState
+  }
+
+  return query
 }

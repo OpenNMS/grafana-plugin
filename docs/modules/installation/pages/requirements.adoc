@@ -1,20 +1,20 @@
 
 = Requirements
 
-This section describes the requirements to install {page-component-title}.
+This section describes the requirements to install the {product-name}.
 
 == Runtime requirements
 
 For runtime operations, you need to install and set up either https://www.opennms.org[OpenNMS Horizon 29+] or https://www.opennms.com[Meridian 2021+].
 You also need a http://docs.grafana.org/installation[Grafana instance] (version {grafana-version-required} or newer).
 
-NOTE: {page-component-title} {full-display-version} has been tested with Grafana versions up to {grafana-version-tested}.
-We recommend that you use matching versions of {page-component-title} and Grafana (for example, {page-component-title} 8.x and Grafana 8.x).
+NOTE: The plugin has been tested with Grafana versions up to {grafana-version-tested}.
+We recommend that you use matching versions of the plugin and Grafana (for example, {product-name} 8.x and Grafana 8.x).
 
 The OpenNMS Grafana Dashboard Report feature requires the https://grafana.com/grafana/plugins/grafana-image-renderer/[Grafana Image Renderer plugin] to be installed.
 
 == Build requirements
 
-To build {page-component-title}, you must have https://nodejs.org/en/download[Node.js] installed (version {node-js-build-version} or newer).
+To build the plugin, you must have https://nodejs.org/en/download[Node.js] installed (version {node-js-build-version} or newer).
 
-NOTE: This is required only if you are xref:source.adoc[installing {page-component-title} from source].
+NOTE: This is required only if you are xref:source.adoc[installing the plugin from source].

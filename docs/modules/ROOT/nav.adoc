@@ -4,7 +4,7 @@
 .Installation
 * xref:installation:requirements.adoc[]
 * xref:installation:package.adoc[From Package]
-* xref:installation:plugin.adoc[{page-component-title} Plugin]
+* xref:installation:plugin.adoc[{product-name} Plugin]
 * xref:installation:source.adoc[From Source]
 * xref:installation:upgrading.adoc[]
 
@@ -24,7 +24,7 @@
 * xref:datasources:entity_datasource.adoc[]
 * xref:datasources:flow_datasource.adoc[]
 
-.Contribute to {page-component-title}
+.Contribute to the plugin
 * xref:contributing:developing.adoc[]
 * xref:contributing:how-to-build-docs.adoc[]
 

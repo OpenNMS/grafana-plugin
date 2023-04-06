@@ -1,17 +1,17 @@
 {
-  "name": "opennms-helm",
+  "name": "grafana-plugin",
   "version": "9.0.0-SNAPSHOT",
   "description": "An OpenNMS Integration for Grafana",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenNMS/opennms-helm.git"
+    "url": "git+https://github.com/OpenNMS/grafana-plugin.git"
   },
   "author": "Benjamin Reed",
   "license": "MIT",
   "bugs": {
-    "url": "https://issues.opennms.org/projects/HELM/summary"
+    "url": "https://issues.opennms.org/projects/GRAFANA-PLUGIN/summary"
   },
-  "homepage": "https://github.com/OpenNMS/opennms-helm",
+  "homepage": "https://github.com/OpenNMS/grafana-plugin",
   "devDependencies": {
     "@antora/cli": "^3.1.2",
     "@antora/site-generator-default": "^3.1.2",

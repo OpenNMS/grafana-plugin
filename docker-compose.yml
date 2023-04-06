@@ -4,7 +4,7 @@ volumes:
     driver: "local"
   data-opennms:
     driver: "local"
-  data-opennms-helm:
+  data-grafana-plugin:
     driver: "local"
 networks:
   onms-net:
@@ -56,18 +56,18 @@ services:
       - "61616:61616"
       - "5817:5817"
       - "162:162/udp"
-  opennms-helm:
+  opennms-grafana-plugin:
     build:
       context: ./
       dockerfile: Dockerfile
       args:
-        OPENNMS_HELM_GIT_URL: https://github.com/OpenNMS/opennms-helm.git
-        OPENNMS_HELM_GIT_BRANCH_REF: master
-    image: opennms-helm:master
+        OPENNMS_GRAFANA-PLUGIN_GIT_URL: https://github.com/OpenNMS/grafana-plugin.git
+        OPENNMS_GRAFANA-PLUGIN_BRANCH_REF: master
+    image: grafana-plugin:master
     volumes:
-      - data-opennms-helm:/var/lib/grafana
-      - data-opennms-helm:/var/log/grafana
-      - data-opennms-helm:/etc/grafana
+      - data-grafana-plugin:/var/lib/grafana
+      - data-grafana-plugin:/var/log/grafana
+      - data-grafana-plugin:/etc/grafana
     networks:
       - onms-net
     ports:

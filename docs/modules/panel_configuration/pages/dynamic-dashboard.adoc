@@ -3,7 +3,7 @@
 
 = Dynamic Dashboards
 
-Rather than hard-coding specific information (such as node names or resource IDs) in a panel, {page-component-title} offers several ways to create more dynamic and interactive dashboards.
+Rather than hard-coding specific information (such as node names or resource IDs) in a panel, the {product-name} offers several ways to create more dynamic and interactive dashboards.
 
 [[pc-template-filters]]
 == Template variables
@@ -12,7 +12,7 @@ Template variables can be used in metric queries and panel titles.
 They are also displayed as a drop-down list at the top of each dashboard.
 You can select variables from the list to filter the data that your dashboard displays:
 
-image::pc-variable-drop.png["{page-component-title} dashboard displaying the template variable drop-down list.", 500]
+image::pc-variable-drop.png["{product-name} dashboard displaying the template variable drop-down list.", 500]
 
 Each datasource can accept different template variable queries.
 For example, the xref:datasources:performance_datasource.adoc[Performance datasource] has two available template queries:
@@ -29,7 +29,7 @@ Follow these steps to use template variables in a query for a category of nodes 
 . Select or xref:getting_started:basic_walkthrough.adoc#bw-panel-create[create a panel].
 For this example, we created a panel that displays active TCP connections:
 +
-image::pc-TCP-panel.png["Example configuration settings for a {page-component-title} dashboard panel.", 500]
+image::pc-TCP-panel.png["Example configuration settings for an {product-name} dashboard panel.", 500]
 
 . Click the *Dashboard Settings* symbol at the top-right of the panel.
 . Select menu:Variables[Add Variable].
@@ -58,7 +58,7 @@ image::pc-node-Final.png["Example panel configuration settings.", 500]
 . Click *Save*.
 . Select the nodes whose data you want to display from the *Node* list:
 +
-image::pc-select-nodes.png["{page-component-title} panel displaying a node selection list.", 700]
+image::pc-select-nodes.png["{product-name} panel displaying a node selection list.", 700]
 
 [[pc-filter-panel]]
 == Create a filter panel
@@ -75,7 +75,7 @@ To create a filter panel, follow these steps:
 . Click *Choose Visualization* and choose a *Filter Panel*.
 . Under Filter Columns, choose an Entities datasource:
 +
-image::pc-filter-ds.png["{page-component-title} Choose Visualization page. The filter panel type is selected, and the OpenNMS Entities datasource is highlighted."]
+image::pc-filter-ds.png["{product-name} Choose Visualization page. The filter panel type is selected, and the OpenNMS Entities datasource is highlighted."]
 
 . Choose *Alarms* or *Nodes*, as appropriate.
 . Click the *plus* symbol (*+*) and choose an attribute to filter on from the list (for example, Alarm Type, "Is Acknowledged"):
@@ -92,7 +92,7 @@ image::pc-filter-panel-cust.png["Filter panel configuration page. The plus symbo
 
 The filter panel is displayed on your dashboard:
 
-image::pc-filter-panel2.png["Example filter panel on a {page-component-title} dashboard.", 500]
+image::pc-filter-panel2.png["Example filter panel on an {product-name} dashboard.", 500]
 
 All panels on the dashboard that use an Entities datasource will be updated as you modify the values in the filter panel.
 You can drag the panel to appear anywhere on your dashboard.

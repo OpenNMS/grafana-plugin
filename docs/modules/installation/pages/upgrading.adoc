@@ -1,11 +1,11 @@
 
-= Upgrade the {page-component-title}
+= Upgrade {product-name}
 
-This section describes how to upgrade your {page-component-title}.
+This section describes how to upgrade your {product-name} installation.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-Before proceeding, make sure that you have installed the latest {page-component-title} plugin.
+Before proceeding, make sure that you have installed the latest version of the {product-name}.
 You should also have https://nodejs.org/[Node.js] installed.
 
 == Upgrade datasources
@@ -41,7 +41,7 @@ wizzy import datasources
 . Convert any `fault` datasources to `entity`:
 +
 [source, shell]
-perl -pi -e 's/opennms-helm-fault-datasource/opennms-helm-entity-datasource/g' datasources/*.json
+perl -pi -e 's/opennms-grafana-plugin-fault-datasource/opennms-grafana-plugin-entity-datasource/g' datasources/*.json
 
 . Publish your changes to your Grafana instance:
 +

@@ -1,12 +1,13 @@
 import React from 'react'
 import { QueryEditorHelpProps } from '@grafana/data'
+import { DatasourceQueryEditorHelpLink } from '../../components/DatasourceQueryEditorHelpLink'
 import { PerformanceQuery } from './types'
 
 export const PerformanceQueryEditorHelp: React.FC<QueryEditorHelpProps<PerformanceQuery>> = () => {
-
   return (
-    <div>
-      Help for Performance Data source queries
-    </div>
+    <DatasourceQueryEditorHelpLink
+      datasourceName='Performance Datasource'
+      relativeLink='datasources/performance_datasource.html'
+    />
   )
 }
