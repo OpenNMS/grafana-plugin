@@ -1,4 +1,5 @@
 
+:imagesdir: ../assets/images
 = Upgrade {product-name}
 
 This section describes how to upgrade your {product-name} installation.
@@ -50,5 +51,30 @@ wizzy export datasources
 
 == Upgrade dashboards
 
-When you upgrade your {page-component-title} to version 9, any dashboards that you have must be upgraded.
+When you upgrade your {product-name} to version 9, any previously existing dashboards must be upgraded.
 If they are not upgraded, they will not be displayed.
+
+{product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created in version 8.x and lower.
+To use the tool, you need to export your dashboards from the previous version of the plugin.
+Exporting dashboards produces a JSON file containing their settings and associated data.
+
+After you export your old dashboards, upgrade your plugin to version 9.x.
+Next, use the conversion tool to update your dashboards:
+
+. xref:getting_started:basic_walkthrough.adoc#bw-dashboard-create[Create a new dashboard].
+. Click the *Add Panel* symbol.
+. Click *Add New Panel*.
+. Select the *Dashboard Convert* panel.
+
+.Dashboard Convert panel
+image::dashboard-conversion-tool.png["Dashboard Convert panel displaying blank configuration options."]
+
+. On the Dashboard Convert panel, select the version of the plugin from which you exported the dashboard using the *Source Plugin Version* list.
+. Paste the contents of a dashboard JSON file in the *Source Dashboard JSON* box.
+The dashboard's name should appear in the *Dashboard Title* box.
+** (Optional) Edit the *Dashboard Title*.
+** (Optional) Toggle *Unhide All Queries* on or off, as desired.
+Toggling this on marks all OpenNMS datasource queries as visible, which may be useful for troubleshooting.
+. Click *Convert*.
+The converted JSON is displayed in the *Target Dashboard JSON* box.
+. Copy the converted JSON and use it to import a dashboard.
