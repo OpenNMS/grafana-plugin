@@ -71,7 +71,7 @@ Next, use the conversion tool to update your dashboards:
 .Dashboard Convert panel
 image::dashboard-conversion-tool.png["Dashboard Convert panel displaying blank configuration options.", 650]
 
-. Paste the contents of a dashboard JSON file in the *Source Dashboard JSON* box.
+. Paste the contents of a dashboard JSON file in the *Enter Source Dashboard JSON* box.
 The dashboard's name should appear in the *Dashboard Title* box.
 ** (Optional) Edit the *Dashboard Title*.
 ** (Optional) Toggle *Unhide All Queries* on or off, as desired.
