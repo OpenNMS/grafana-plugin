@@ -1,5 +1,6 @@
 
 :imagesdir: ../assets/images
+
 = Upgrade {product-name}
 
 This section describes how to upgrade your {product-name} installation.
@@ -49,14 +50,14 @@ perl -pi -e 's/opennms-grafana-plugin-fault-datasource/opennms-grafana-plugin-en
 [source, shell]
 wizzy export datasources
 
-== Upgrade dashboards
+== Upgrade dashboards for version 9.x
 
-When you upgrade your {product-name} to version 9, any previously existing dashboards must be upgraded.
+When you upgrade your {product-name} installation to version 9.x, you must upgrade any previously existing dashboards.
 If they are not upgraded, they will not be displayed.
 
-{product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created in version 8.x and lower.
-To use the tool, you need to export your dashboards from the previous version of the plugin.
-Exporting dashboards produces a JSON file containing their settings and associated data.
+{product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created using previous versions.
+To use the tool, you must export your dashboards from the previous version of the plugin.
+A JSON file is produced for each dashboard, containing its settings and associated data.
 
 After you export your old dashboards, upgrade your plugin to version 9.x.
 Next, use the conversion tool to update your dashboards:
@@ -65,11 +66,11 @@ Next, use the conversion tool to update your dashboards:
 . Click the *Add Panel* symbol.
 . Click *Add New Panel*.
 . Select the *Dashboard Convert* panel.
-
-.Dashboard Convert panel
-image::dashboard-conversion-tool.png["Dashboard Convert panel displaying blank configuration options."]
-
 . On the Dashboard Convert panel, select the version of the plugin from which you exported the dashboard using the *Source Plugin Version* list.
++
+.Dashboard Convert panel
+image::dashboard-conversion-tool.png["Dashboard Convert panel displaying blank configuration options.", 650]
+
 . Paste the contents of a dashboard JSON file in the *Source Dashboard JSON* box.
 The dashboard's name should appear in the *Dashboard Title* box.
 ** (Optional) Edit the *Dashboard Title*.
@@ -78,3 +79,6 @@ Toggling this on marks all OpenNMS datasource queries as visible, which may be u
 . Click *Convert*.
 The converted JSON is displayed in the *Target Dashboard JSON* box.
 . Copy the converted JSON and use it to import a dashboard.
+
+NOTE: The conversion tool may not handle all patterns in variables and resource names.
+After you convert your dashboards, test them to ensure that all of the associated data is correct.

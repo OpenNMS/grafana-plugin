@@ -1,12 +1,12 @@
 
-* xref:about:introduction.adoc[]
+* xref:about:introduction.adoc[About the {page-component-title}]
 
 .Installation
 * xref:installation:requirements.adoc[]
 * xref:installation:package.adoc[From Package]
-* xref:installation:plugin.adoc[{product-name} Plugin]
+* xref:installation:plugin.adoc[{page-component-title}]
 * xref:installation:source.adoc[From Source]
-* xref:installation:upgrading.adoc[]
+* xref:installation:upgrading.adoc[Upgrade {page-component-title}]
 
 .xref:getting_started:index.adoc[]
 * xref:getting_started:dashboard_planning.adoc[]
