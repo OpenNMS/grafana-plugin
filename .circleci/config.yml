@@ -293,8 +293,9 @@ jobs:
             if [ "$(grep -c -- -SNAPSHOT package.json)" -eq 0 ]; then
               RELEASE=1
             fi
+            ls -l
             cd ..
-            ln -s grafana-plugin opennms-grafana-plugin
+            ln -s project opennms-grafana-plugin
             ls -l
             cd opennms-grafana-plugin
             ./makedeb.js --release "$RELEASE"
