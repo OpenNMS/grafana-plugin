@@ -8,10 +8,10 @@
       "name": "The OpenNMS Group Inc.",
       "url": "https://www.opennms.com"
     },
-    "keywords": ["opennms", "helm", "fault management", "performance management", "monitoring", "plugin", "snmp"],
+    "keywords": ["opennms", "opennms helm", "fault management", "performance management", "monitoring", "plugin", "snmp"],
     "logos": {
-      "small": "img/helm.svg",
-      "large": "img/helm.svg"
+      "small": "img/opennms-grafana-plugin.svg",
+      "large": "img/opennms-grafana-plugin.svg"
     },
     "links": [
       {"name": "Project site", "url": "https://github.com/OpenNMS/grafana-plugin"},
