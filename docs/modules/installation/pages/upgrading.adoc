@@ -1,13 +1,16 @@
 
 :imagesdir: ../assets/images
 
-= Upgrade {product-name}
+= Upgrade the {page-component-title}
 
-This section describes how to upgrade your {product-name} installation.
+This section describes how to upgrade your {page-component-title} installation.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-Before proceeding, make sure that you have installed the latest version of the {product-name}.
+IMPORTANT: If you are upgrading your plugin to version 9.x, you must export and <<upgrade-dashboards, upgrade your dashboards>>.
+If you have only one Grafana instance running one {page-component-title} installation, your dashboards must be exported before you upgrade the plugin.
+
+Before proceeding, make sure that you have installed the latest version of the plugin.
 You should also have https://nodejs.org/[Node.js] installed.
 
 == Upgrade datasources
@@ -50,14 +53,18 @@ perl -pi -e 's/opennms-grafana-plugin-fault-datasource/opennms-grafana-plugin-en
 [source, shell]
 wizzy export datasources
 
+[[upgrade-dashboards]]
 == Upgrade dashboards for version 9.x
 
-When you upgrade your {product-name} installation to version 9.x, you must upgrade any previously existing dashboards.
+When you upgrade your {page-component-title} installation to version 9.x, you must upgrade any previously existing dashboards.
 If they are not upgraded, they will not be displayed.
 
-{product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created using previous versions.
-To use the tool, you must export your dashboards from the previous version of the plugin.
-A JSON file is produced for each dashboard, containing its settings and associated data.
+The {product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created using previous versions.
+
+IMPORTANT: You must export your dashboards from a previous version of the plugin.
+You can export them before you upgrade your {page-component-title} installation, or from a separate Grafana instance that is running the previous version.
+
+When you export a dashboard, a JSON file is produced containing its settings and associated data.
 
 After you export your old dashboards, upgrade your plugin to version 9.x.
 Next, use the conversion tool to update your dashboards:
