@@ -295,6 +295,7 @@ jobs:
             fi
             cd ..
             ln -s grafana-plugin opennms-grafana-plugin
+            ls -l
             cd opennms-grafana-plugin
             ./makedeb.js --release "$RELEASE"
       - sign-packages/sign-debs:
