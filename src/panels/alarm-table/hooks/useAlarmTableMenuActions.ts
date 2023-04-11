@@ -4,23 +4,23 @@ import { getBackendSrv } from '@grafana/runtime'
 import { ClientDelegate } from 'lib/client_delegate'
 import { getAlarmIdFromFields } from '../AlarmTableHelper'
 
-export const useAlarmTableMenuActions = (indexes, fields: Field[], closeMenu, client: ClientDelegate | undefined) => {
+export const useAlarmTableMenuActions = (indexes: boolean[], fields: Field[], closeMenu, client: ClientDelegate | undefined) => {
     const [detailsModal, setDetailsModal] = useState(false)
-    const [user, setUser] = useState<{ id: string }>();
+    const [user, setUser] = useState<{ id: string }>()
 
     useEffect(() => {
         const getUserFromGrafana = async () => {
             setUser((await getBackendSrv().get('/api/users'))?.[0])
         }
 
-        getUserFromGrafana();
+        getUserFromGrafana()
     }, [])
 
     const loopAction = async (action) => {
         for (let i = 0; i < indexes.length; i++) {
             if (indexes[i]) {
-                const alarmId = getAlarmIdFromFields(fields, i);
-                await action(alarmId, user?.id);
+                const alarmId = getAlarmIdFromFields(fields, i)
+                await action(alarmId, user?.id)
             }
         }
     }
@@ -29,26 +29,26 @@ export const useAlarmTableMenuActions = (indexes, fields: Field[], closeMenu, cl
         await loopAction(async (alarmId, userId) => {
             await client?.doClear(alarmId, user?.id)
         })
-        closeMenu();
+        closeMenu()
     }
 
     const details = () => {
-        closeMenu();
-        setDetailsModal(true);
+        closeMenu()
+        setDetailsModal(true)
     }
 
     const escalate = async () => {
         await loopAction(async (alarmId, userId) => {
             await client?.doEscalate(alarmId, user?.id)
         })
-        closeMenu();
+        closeMenu()
     }
 
     const acknowledge = async () => {
         await loopAction(async (alarmId, userId) => {
             await client?.doAck(alarmId, user?.id)
         })
-        closeMenu();
+        closeMenu()
     }
 
     return { actions: { clear, details, escalate, acknowledge }, detailsModal, setDetailsModal }
