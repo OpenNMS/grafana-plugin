@@ -1,11 +1,11 @@
-Source: grafana-plugin
+Source: opennms-grafana-plugin
 Section: contrib/net
 Priority: optional
 Maintainer: Benjamin Reed <ranger@opennms.org>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.7.3
 
-Package: grafana-plugin
+Package: openms-grafana-plugin
 Architecture: all
-Depends: grafana (>= 7.5)
+Depends: grafana (>= 9.0.0)
 Description: An OpenNMS Console for Grafana
