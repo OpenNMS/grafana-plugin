@@ -8,7 +8,7 @@ Supported data:
 * Inventory (nodes, IP & SNMP interfaces, services)
 * NetFlow (NetFlow v5 & v9, IPFIX, sFlow)
 
-For help on installing, configuring, and using the application, read the [documentation](https://docs.opennms.com/OpenNMS%20Plugin%20for%20Grafana/latest/index.html).
+For help on installing, configuring, and using the application, read the [documentation](https://docs.opennms.com/grafana-plugin/latest/index.html).
 
 ## Features
 
