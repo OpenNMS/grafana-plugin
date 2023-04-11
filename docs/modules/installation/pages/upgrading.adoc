@@ -1,11 +1,16 @@
 
-= Upgrade {product-name}
+:imagesdir: ../assets/images
 
-This section describes how to upgrade your {product-name} installation.
+= Upgrade the {page-component-title}
+
+This section describes how to upgrade your {page-component-title} installation.
 Usually, upgrading simply involves installing the new package.
 Major version releases, however, can sometimes introduce breaking changes; in this case, upgrading may be more complex.
 
-Before proceeding, make sure that you have installed the latest version of the {product-name}.
+IMPORTANT: If you are upgrading your plugin to version 9.x, you must export and <<upgrade-dashboards, upgrade your dashboards>>.
+If you have only one Grafana instance running one {page-component-title} installation, your dashboards must be exported before you upgrade the plugin.
+
+Before proceeding, make sure that you have installed the latest version of the plugin.
 You should also have https://nodejs.org/[Node.js] installed.
 
 == Upgrade datasources
@@ -14,7 +19,7 @@ Follow these steps to upgrade your datasources:
 
 . Install https://github.com/grafana-wizzy/wizzy[Wizzy] and create a directory for your datasources:
 +
-[source, console]
+[source, shell]
 ----
 npm i -g wizzy
 mkdir /tmp/wizzy
@@ -23,7 +28,7 @@ cd /tmp/wizzy
 
 . Configure Wizzy to communicate with your Grafana instance:
 +
-[source, console]
+[source, shell]
 ----
 # create a local wizzy project directory
 wizzy init
@@ -35,7 +40,7 @@ wizzy set grafana password admin
 
 . Export your datasources to the Wizzy project directory:
 +
-[source, console]
+[source, shell]
 wizzy import datasources
 
 . Convert any `fault` datasources to `entity`:
@@ -45,5 +50,42 @@ perl -pi -e 's/opennms-grafana-plugin-fault-datasource/opennms-grafana-plugin-en
 
 . Publish your changes to your Grafana instance:
 +
-[source, console]
+[source, shell]
 wizzy export datasources
+
+[[upgrade-dashboards]]
+== Upgrade dashboards for version 9.x
+
+When you upgrade your {page-component-title} installation to version 9.x, you must upgrade any previously existing dashboards.
+If they are not upgraded, they will not be displayed.
+
+The {product-name} version 9.x includes a dashboard conversion tool to upgrade dashboards created using previous versions.
+
+IMPORTANT: You must export your dashboards from a previous version of the plugin.
+You can export them before you upgrade your {page-component-title} installation, or from a separate Grafana instance that is running the previous version.
+
+When you export a dashboard, a JSON file is produced containing its settings and associated data.
+
+After you export your old dashboards, upgrade your plugin to version 9.x.
+Next, use the conversion tool to update your dashboards:
+
+. xref:getting_started:basic_walkthrough.adoc#bw-dashboard-create[Create a new dashboard].
+. Click the *Add Panel* symbol.
+. Click *Add New Panel*.
+. Select the *Dashboard Convert* panel.
+. On the Dashboard Convert panel, select the version of the plugin from which you exported the dashboard using the *Source Plugin Version* list.
++
+.Dashboard Convert panel
+image::dashboard-conversion-tool.png["Dashboard Convert panel displaying blank configuration options.", 650]
+
+. Paste the contents of a dashboard JSON file in the *Enter Source Dashboard JSON* box.
+The dashboard's name should appear in the *Dashboard Title* box.
+** (Optional) Edit the *Dashboard Title*.
+** (Optional) Toggle *Unhide All Queries* on or off, as desired.
+Toggling this on marks all OpenNMS datasource queries as visible, which may be useful for troubleshooting.
+. Click *Convert*.
+The converted JSON is displayed in the *Target Dashboard JSON* box.
+. Copy the converted JSON and use it to import a dashboard.
+
+NOTE: The conversion tool may not handle all patterns in variables and resource names.
+After you convert your dashboards, test them to ensure that all of the associated data is correct.
