@@ -197,7 +197,7 @@ jobs:
             mkdir -p ./artifacts
             cd dist
             tar --exclude='test' \
-              -czf "../artifacts/grafana-plugin_$(../.circleci/get-version.sh).tar.gz" .
+              -czf "../artifacts/opennms-grafana-plugin_$(../.circleci/get-version.sh).tar.gz" .
       - store_artifacts:
           path: ~/project/artifacts
       - persist_to_workspace:
