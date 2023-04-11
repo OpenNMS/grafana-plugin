@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ArrayVector } from '@grafana/data'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 export const useAlarmProperties = (oldProperties, alarmTable) => {
 

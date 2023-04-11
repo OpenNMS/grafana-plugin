@@ -1,7 +1,8 @@
-import { ScopedVars, VariableModel } from "@grafana/data"
-import { clone, isArray, isEmpty, isNil, isString } from "lodash"
-import { TemplateSrv } from "@grafana/runtime"
-import { ALL_SELECTION_VALUE } from 'constants/constants';
+import { ScopedVars, VariableModel } from '@grafana/data'
+import { TemplateSrv } from '@grafana/runtime'
+import cloneDeep from 'lodash/cloneDeep'
+import { ALL_SELECTION_VALUE } from 'constants/constants'
+import { isString } from '../../../lib/utils'
 
 export interface InterpolationArrayVariable {
     name: string;
@@ -44,7 +45,7 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
         } as InterpolationArrayVariable
 
         // If this templateVar exists in scopedVars, we need to look at the scoped values
-        if (scopedVars && !isNil(scopedVars[variable.name])) {
+        if (scopedVars && scopedVars[variable.name] !== undefined && scopedVars[variable.name] !== null) {
             variable.value = [scopedVars[variable.name].value.toString()];
         } else {
             // TODO: templateSrv.getVariables() in Grafana 8.5 returns VariableModel[],
@@ -57,14 +58,14 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
 
             if (isString(currentValue)) {
                 // If currentValue is a single-valued string
-                variable.value = [currentValue]
+                variable.value = [currentValue as string]
             } else {
                 // If currentValue is a string[]
-                currentValue.forEach(value => {
+                (currentValue as string[])?.forEach(value => {
                     if (value === ALL_SELECTION_VALUE) {(
                         templateSrvVariable.options
                         .filter(o => o.value !== ALL_SELECTION_VALUE)
-                        .forEach(option => variable.value.push(isArray(option.value) ? (option.value as string[])[0] : option.value as string))
+                        .forEach(option => variable.value.push(Array.isArray(option.value) ? (option.value as string[])[0] : option.value as string))
                     )
                     } else {
                         variable.value.push(value);
@@ -80,15 +81,15 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
 }
 
 const defaultContainsVariable = (value: any | undefined, variableName: string) => {
-    if (isNil(value) || isEmpty(value) || !isString(value)) {
-        return false;
+    if (value === null || value === undefined || !isString(value)) {
+        return false
     }
 
-    return value.indexOf("$" + variableName) >= 0;
+    return (value as string).indexOf('$' + variableName) >= 0
 }
 
 const defaultReplace = (value: any, variables: InterpolationVariable[]) => {
-    if (isNil(value) || isEmpty(value)) {
+    if (value === null || value === undefined || value === '') {
         return value;
     }
 
@@ -131,22 +132,21 @@ const cartesianProductOfVariables = (variables: InterpolationVariable[]) => {
     const allValues: string[][] = variables.map(v => Array.isArray(v.value) ? v.value : [v.value])
 
     // Generate the cartesian product
-    const productOfAllValues = cartesianProductOfArrays<string>(allValues);
+    const productOfAllValues = cartesianProductOfArrays<string>(allValues)
 
     // Rebuild the variables
-    const productOfAllVariables = [] as InterpolationVariable[][];
+    const productOfAllVariables = [] as InterpolationVariable[][]
 
     productOfAllValues.forEach((rowOfValues: string[]) => {
-        const rowOfVariables = [] as InterpolationVariable[];
+        const rowOfVariables = [] as InterpolationVariable[]
 
         for (let i = 0, l = variables.length; i < l; i++) {
-            // Deep clone
-            const variable = JSON.parse(JSON.stringify(variables[i]));
-            variable.value = rowOfValues[i];
-            rowOfVariables.push(variable);
+            const variable = cloneDeep(variables[i])
+            variable.value = rowOfValues[i]
+            rowOfVariables.push(variable)
         }
 
-        productOfAllVariables.push(rowOfVariables);
+        productOfAllVariables.push(rowOfVariables)
     })
 
     return productOfAllVariables
@@ -184,7 +184,7 @@ export const interpolate = <T extends any>(object: T, attributes: string[],
     callback: (src: T) => void = () => {}): T[] => {
 
     // Add the index variable with a single value
-    const variablesWithIndex = clone(interpolationVars)
+    const variablesWithIndex = [...interpolationVars]
     variablesWithIndex.push({ name: 'index', value: ['0'] })
 
     // Collect the list of variables that are referenced by one or more of the keys
@@ -194,7 +194,7 @@ export const interpolate = <T extends any>(object: T, attributes: string[],
         const isVariableReferenced = attributes.find(attribute => defaultContainsVariable(object[attribute], variable.name))
 
         if (isVariableReferenced) {
-            referencedVariables.push(variable);
+            referencedVariables.push(variable)
         }
     })
 
@@ -208,28 +208,27 @@ export const interpolate = <T extends any>(object: T, attributes: string[],
     const productOfAllVariables = cartesianProductOfVariables(referencedVariables)
 
     // Perform the required variable substitution
-    const objects = [] as T[];
-    let index = 0;
+    const objects = [] as T[]
+    let index = 0
 
     productOfAllVariables.forEach((rowOfReferencedVariables: InterpolationVariable[]) => {
         // Update the value of the index variable to reflect the index of the row
         rowOfReferencedVariables.forEach(variable => {
             if (variable.name === 'index') {
-                variable.value = 'idx' + index;
-                index += 1;
+                variable.value = 'idx' + index
+                index += 1
             }
         })
 
-        const o = clone(object);
+        const o = { ...(object as any) }
 
         attributes.forEach(attribute => {
-            o[attribute] = defaultReplace(o[attribute], rowOfReferencedVariables);
-        });
+            o[attribute] = defaultReplace(o[attribute], rowOfReferencedVariables)
+        })
 
-        callback(o);
-
-        objects.push(o);
+        callback(o)
+        objects.push(o)
     })
 
-    return objects;
+    return objects
 }
