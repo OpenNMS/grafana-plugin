@@ -1,3 +1,9 @@
+### v8.0.5
+
+Helm 8.0.5 contains no feature updates, just dependency and security fixes.
+
+This is the last release of Helm 8.x, in favor of the upcoming Grafana plugin for OpenNMS, version 9.
+
 ### v8.0.4
 
 Helm 8.0.4 is a re-release of 8.0.3, with a minor test-suite fix.
