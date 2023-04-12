@@ -197,7 +197,7 @@ jobs:
             mkdir -p ./artifacts
             cd dist
             tar --exclude='test' \
-              -czf "../artifacts/grafana-plugin_$(../.circleci/get-version.sh).tar.gz" .
+              -czf "../artifacts/opennms-grafana-plugin_$(../.circleci/get-version.sh).tar.gz" .
       - store_artifacts:
           path: ~/project/artifacts
       - persist_to_workspace:
@@ -240,13 +240,13 @@ jobs:
               -t grafana-plugin:$(.circleci/get-version.sh) .
       - run:
           name: Export Docker Image as Artifact
-          command: docker image save grafana-plugin:$(.circleci/get-version.sh) -o grafana-plugin.oci
+          command: docker image save grafana-plugin:$(.circleci/get-version.sh) -o opennms-grafana-plugin.oci
       - store_artifacts:
-          path: ./grafana-plugin.oci
+          path: ./opennms-grafana-plugin.oci
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/grafana-plugin.oci
+            - ./project/opennms-grafana-plugin.oci
   make-rpm:
     executor: build-executor-centos
     resource_class: small
@@ -316,7 +316,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./grafana-plugin-docker-image-name.txt
+            docker image load -q -i ./opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -344,7 +344,7 @@ jobs:
       - run:
           name: Tag Docker Container Images for release and publish to DockerHub
           command: |
-            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./opennms-grafana-plugin-docker-image-name.txt)"
             docker tag "${GRAFANA-PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
             docker tag "${GRAFANA_PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:latest
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:$(.circleci/get-version.sh)
@@ -361,7 +361,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./grafana-plugin-docker-image-name.txt
+            docker image load -q -i ./opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -389,7 +389,7 @@ jobs:
       - run:
           name: Tag Docker Container Images for bleeding and publish to DockerHub
           command: |
-            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./grafana-plugin-docker-image-name.txt)"
+            GRAFANA_PLUGIN_IMAGE_NAME="$(cat ./opennms-grafana-plugin-docker-image-name.txt)"
             docker tag "${GRAFANA_PLUGIN_IMAGE_NAME}" ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
             docker push ${DOCKERHUB_PROJECT_USER}/${DOCKERHUB_PROJECT_NAME}:bleeding
 

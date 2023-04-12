@@ -48,7 +48,7 @@
     "prettier": "^2.5.0",
     "recursive-copy": "^2.0.13",
     "replace-in-file-webpack-plugin": "^1.0.6",
-    "rimraf": "^4.1.2",
+    "rimraf": "^5.0.0",
     "sass": "1.56.1",
     "sass-loader": "13.2.0",
     "specit": "^1.4.4",

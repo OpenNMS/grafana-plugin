@@ -96,6 +96,7 @@ In most cases, this URL should end with `/opennms`.
 A success message should be displayed.
 ** If the message indicates a failure, review the information that you entered and click *Save & Test* to retest the settings.
 
+[[bw-dashboard-create]]
 == Create a dashboard
 
 For this walk-through, we will create a dashboard with an alarms table.

@@ -28,7 +28,7 @@ allow_loading_unsigned_plugins = opennms-grafana-plugin-app
 . Use Git to check out the repository:
 +
 [source, shell]
-git clone https://github.com/OpenNMS/grafana-plugin.git
+git clone https://github.com/OpenNMS/grafana-plugin.git opennms-grafana-plugin
 
 . Navigate to your plugin directory:
 +
