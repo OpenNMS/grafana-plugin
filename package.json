@@ -9,7 +9,7 @@
   "author": "Benjamin Reed",
   "license": "MIT",
   "bugs": {
-    "url": "https://issues.opennms.org/projects/GRAFANA-PLUGIN/summary"
+    "url": "https://opennms.atlassian.net/projects/OPG"
   },
   "homepage": "https://github.com/OpenNMS/grafana-plugin",
   "devDependencies": {
