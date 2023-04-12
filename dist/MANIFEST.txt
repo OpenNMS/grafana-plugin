@@ -12,7 +12,7 @@ Hash: SHA512
   ],
   "plugin": "opennms-grafana-plugin-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1681340431465,
+  "time": 1681340960715,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "77126f3b7f13847fbc507497cf0a96901e786c96e4e1e93b342153f6f8264b6e",
@@ -80,10 +80,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrcEARMKAAYFAmQ3OA8AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm52VxAgUSFq7IimECYRDWZv69fQGhJYSctebYvB31aMHGT+vgVOsYC4Re
-TKXmM5yRq1TMO2QHVit2p1NxI4nVFcwwAyjEiAIGJiRAJg1Mk08BJEmTlpMN
-Zm9fj+fqcvkx3wz7TuyQBP/08Bm0iHjfvM4OfSViTHuCffZDarbI4j0OZoSO
-iqANKD0=
-=tKOZ
+wrgEARMKAAYFAmQ3OiAAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm52FzAgj1uzvIwF7fYN/d8gXw/qbx8bo6COkgnoISukcWZh8uqGrd9cHY
+D+9tA7OPVtbAnqkXqUhZZCalz/RKOpzeSl7RHAIJAcqDH75+JOiYmPwOnEVR
+TAtrwesi1SvGzWtjK9Po9s6r2e1TIQ3Rok9RErtbZZhhI+HtwIHqZ89t++fQ
+ncQuey9I
+=JZsm
 -----END PGP SIGNATURE-----
