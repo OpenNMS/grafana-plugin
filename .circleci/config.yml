@@ -31,7 +31,7 @@ defaults: &defaults
     to_branch:
       description: the auto-merge target branch
       type: string
-      default: release-9.x
+      default: develop
 
 docker_container_config: &docker_container_config
   executor: node-executor
