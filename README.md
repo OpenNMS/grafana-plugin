@@ -49,7 +49,7 @@ Remove outliers and perform trending or forecasting using the built-in series fi
   * Alarms
     * OpenNMS Horizon 20 or greater
     * OpenNMS Meridian 2018 or greater
-  * IP and SNMP interfaces, Outages, and Services
+  * IP and SNMP interfaces, outages, and services
     * OpenNMS Horizon 26 or greater
     * OpenNMS Meridian 2020 or greater
 * Flows data source
