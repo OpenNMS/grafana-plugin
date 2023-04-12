@@ -9,7 +9,7 @@ It works with https://grafana.com[Grafana] to customize and display <<fault, fau
 You can create and customize dashboards to display the data that you want to see--alarms, outages, key performance indicators--in a way that best meets your needs.
 
 .Sample plugin dashboard
-image::helm-sample-dash.png["Grafana displaying a sample dashboard, populated with bar graphs and pie charts."]
+image::sample-dash.png["Grafana displaying a sample dashboard, populated with bar graphs and pie charts."]
 
 == How does it work?
 

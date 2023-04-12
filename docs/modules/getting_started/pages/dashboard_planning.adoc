@@ -9,7 +9,7 @@ The {product-name} has the flexibility to let you customize dashboards to displa
 The plugin's dashboards display multiple panels, each of which visualizes specific data.
 For example, this sample dashboard displays performance metrics collected through SNMP:
 
-image::gf-helm-sample-dash.png["Sample dashboard displaying various panels that visualize performance metrics."]
+image::gf-sample-dash.png["Sample dashboard displaying various panels that visualize performance metrics."]
 
 Another dashboard might display traffic flows:
 

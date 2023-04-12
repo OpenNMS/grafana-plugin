@@ -19,7 +19,7 @@ RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
     done; \
 fi
 
-ADD artifacts/grafana-plugin*.tar.gz ${GF_PATHS_PLUGINS}/grafana-plugin
+ADD artifacts/opennms-grafana-plugin*.tar.gz ${GF_PATHS_PLUGINS}/opennms-grafana-plugin
 
 LABEL license="AGPLv3" \
       org.opennms.grafana-plugin.version="${OPENNMS_GRAFANA_PLUGIN_VERSION}" \
