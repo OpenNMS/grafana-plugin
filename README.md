@@ -34,7 +34,7 @@ This custom dashboard, included in the app, provides a powerful, flexible interf
 
 ### Template support
 
-Populate template variables with query results from any of the included OpenNMs data source plugins.
+Populate template variables with query results from any of the included OpenNMS data source plugins.
 
 ### Trending and forecasting of time series data
 
