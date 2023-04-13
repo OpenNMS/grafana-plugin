@@ -2,8 +2,8 @@
 
 ## OpenNMS Helm is dead. Long live OpenNMS plugin for Grafana.
 
-**Important**: From its 9.0.0 release, this plugin is known as [OpenNMS plugin for Grafana](https://grafana.com/grafana/plugins/opennms-grafana-plugin/).
-When installing from `grafana-cli`, please use the name `opennms-grafana-plugin` in place of `opennms-helm-app`.
+**Important**: From its 9.0.0 release, this plugin is known as [OpenNMS plugin for Grafana](https://grafana.com/grafana/plugins/opennms-app/).
+When installing from `grafana-cli`, please use the name `opennms-app` in place of `opennms-helm-app`.
 
 Helm is a [Grafana](https://grafana.com/) application that allows users to create flexible dashboards using both fault management (FM) and performance management (PM) data from [OpenNMS® Horizon™](https://www.opennms.org) and/or [OpenNMS® Meridian™](https://www.opennms.com/).
 
