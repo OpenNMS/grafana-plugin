@@ -16,6 +16,7 @@ const spawn = require('child_process').spawnSync;
 const cwd = process.cwd();
 
 const pkginfo = require('./package.json');
+const plugininfo = require('./src/plugin.json');
 
 let version = pkginfo.version;
 let release = 1;
@@ -46,10 +47,13 @@ pkginfo.version = version;
 pkginfo.release = release;
 release = options.release;
 
-console.log('Generating RPM spec for ' + pkginfo.name + ' ' + pkginfo.version + '-' + options.release);
+const props = Object.assign({}, plugininfo, pkginfo);
 
+console.log('Cleaning up after any previous RPM builds');
 clean('.', pkginfo);
-generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
+
+console.log('Generating RPM spec for ' + props.name + ' (' + props.id + ') ' + props.version + '-' + options.release);
+generate(cwd, props, options, pkginfo.name, function (err, generated) {
   if (err) {
     console.error('Error:', err.message);
     process.exit(1);
@@ -72,6 +76,7 @@ generate(cwd, pkginfo, options, pkginfo.name, function (err, generated) {
     'rpmbuild',
     [
       '--define', '_topdir ' + path.join(os.tmpdir(), 'rpmbuild'),
+      '--define', 'pluginid ' + plugininfo.id,
       '-ba',
       'SPECS/opennms-grafana-plugin.spec'
     ],

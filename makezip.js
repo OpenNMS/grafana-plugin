@@ -9,6 +9,7 @@ const rimraf = require('rimraf');
 const which = require('which');
 
 const pkginfo = require('./package.json');
+const plugininfo = require('./src/plugin.json');
 
 try {
   which.sync('zip');
@@ -21,10 +22,11 @@ const topdir = process.cwd();
 
 const version = pkginfo.version;
 
-const pkgname = 'opennms-grafana-plugin';
+const pkgname = pkginfo.name;
+const pkgid = plugininfo.id;
 const srcdir = path.join(topdir, 'dist');
 const tmpdir = path.join(topdir, 'tmp');
-const workdir = path.join(tmpdir, pkgname);
+const workdir = path.join(tmpdir, pkgid);
 const packagedir = path.join(topdir, 'artifacts');
 const zipfile = path.join(packagedir, `${pkgname}-${version}.zip`);
 
@@ -44,7 +46,7 @@ return copy(path.join(srcdir), workdir, {
   console.info(results.length + ' files copied to ' + workdir);
 
   console.info('* running zip');
-  const ret = spawn('zip', ['-r', zipfile, pkgname], {
+  const ret = spawn('zip', ['-r', zipfile, pkgid], {
     cwd: path.join(tmpdir),
     stdio: ['inherit', 'inherit', 'inherit'],
   });
