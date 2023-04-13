@@ -46,7 +46,7 @@ return copy(path.join(srcdir), workdir, {
   console.info(results.length + ' files copied to ' + workdir);
 
   console.info('* running zip');
-  const ret = spawn('zip', ['-r', zipfile, pkgid], {
+  const ret = spawn('zip', ['-r', zipfile, pkgid], { // NOSONAR
     cwd: path.join(tmpdir),
     stdio: ['inherit', 'inherit', 'inherit'],
   });
