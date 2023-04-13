@@ -1,7 +1,0 @@
-{
-  "extends": ["@grafana/eslint-config"],
-  "rules": {
-    "no-console": "off",
-    "prettier/prettier": "off"
-  }
-}
