@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS Plugin for Grafana",
-  "id": "opennms-grafana-plugin-app",
+  "id": "opennms-app",
   "type": "app",
   "info": {
     "description": "Create flexible dashboards using data from OpenNMS® Horizon™ and/or OpenNMS® Meridian™.",

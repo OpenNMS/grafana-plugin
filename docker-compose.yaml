@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   grafana:
-    container_name: 'opennms-grafana-plugin-app'
+    container_name: 'opennms-grafana-plugin'
     build:
       context: ./.config
       args:
@@ -10,5 +10,5 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/opennms-grafana-plugin-app
+      - ./dist:/var/lib/grafana/plugins/opennms-app
       - ./provisioning:/etc/grafana/provisioning
