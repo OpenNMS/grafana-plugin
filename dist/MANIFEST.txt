@@ -11,14 +11,14 @@ Hash: SHA512
     "http://localhost:3000/"
   ],
   "plugin": "opennms-grafana-plugin-app",
-  "version": "9.0.0-SNAPSHOT",
-  "time": 1681325374624,
+  "version": "10.0.0-SNAPSHOT",
+  "time": 1681393270069,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "CHANGELOG.md": "87aeb4f42aa4acf75acbf31e77c1ca57f134aaab1da4297462a040fac7a75bfb",
+    "CHANGELOG.md": "77126f3b7f13847fbc507497cf0a96901e786c96e4e1e93b342153f6f8264b6e",
     "LICENSE": "bc8d96831c4914a537bd291adcfccc5559934f7435900200dc9dee767afc5097",
     "README.md": "f675a38bd3cd3be514abdf521f16f0b5e4ab73e3c8ddd9a1cb530a88089bd88d",
-    "dashboards/about.json": "564affe154306798d18f486b854ac899260a17cc2a7eb72f0a09a3c72be6a74a",
+    "dashboards/about.json": "ffb2b80e2f6ec9f99d45c8998095c13d96197778c5f19f96dd64be5bc76dec8f",
     "dashboards/cortex_flow_deep_dive.json": "1a9d7a90fe5e27248fe6183d46992f84074420dec4a7aa7692180c097ff26200",
     "dashboards/flow_deep_dive.json": "8dcba56b12a97189ce7cdd0f597fbce6c87999e0ea9ec4a54e891587c3057ead",
     "datasources/entity-ds/README.md": "1defafff3b5a2f01cefb58312a02b2346a54c7e4ff50692919c6c565e04e7421",
@@ -73,17 +73,17 @@ Hash: SHA512
     "panels/flow-histogram/module.js": "2fba7d7297b06e91f3e427198e05e6c86b4ecf59ed62dc17047c49081da99b48",
     "panels/flow-histogram/module.js.map": "5eb72d61e89f9df9304aa2b4dd057cce271aa3d7f35604a054d533aeb5691171",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
-    "plugin.json": "13923e9d10a1227d0013122c78c51de7032a2fcf573ba8d4f0b3ff6a5fe3185e"
+    "plugin.json": "416b0230f9e6bd2e9b1573d7f5309656295cc137904438a53c7381a30aadf3e4"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrkEARMKAAYFAmQ2/T4AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm565ZAgkBzvWZHp9kXKN/U1JThUZCxwc+jUQSgp+KOX2DI0CwgGSMb/Ab
-N6X0JEMjWeSda9v6UJRyUyVQGUojzTijYjvArDICCQF7gfnbql8rv3aKbZXW
-VSC6rECE0ufCNDEp+ONe6OZ4lcScoZESaiyhhjJgjvJS9rJfcEi84a5GA8Gd
-pdVXLRlGwg==
-=lq/h
+wrgEARMKAAYFAmQ4BnYAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5/YDAgYjzC71o6WZAxt8ippwm1qNGncUll58QGJWjOArplguQBpHjvrt
+7uI1IJfZvzmIdssTMLhr/Z+ipv9zRZQ1ZzXCEAIJAQu3XcQW0dNPDIMU5uUy
+1GXy8MyumGdaWdWTx1elf3xmyhF3mW556kux7RYL4nmQyPndZcplJyvXtacy
+2mCS1vRJ
+=WBTd
 -----END PGP SIGNATURE-----
