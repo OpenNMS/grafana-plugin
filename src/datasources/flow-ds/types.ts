@@ -1,6 +1,6 @@
-import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue } from "@grafana/data";
-import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest } from "lib/utils";
+import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue } from '@grafana/data'
+import { ClientDelegate } from 'lib/client_delegate'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 
 //Workaround for this not being available in all browsers.
 //We check for it's use and fall back to a random number

@@ -1,4 +1,3 @@
-import { isEmpty, isNil, isNumber, isObject, isString } from "lodash"
 import {
     OnmsMeasurementsQueryRequest,
     OnmsMeasurementsQueryExpression,
@@ -7,8 +6,8 @@ import {
     OnmsMeasurementsQuerySource,
     PerformanceQuery,
     PerformanceQueryFilterStateItem
-} from '../types';
-import { OpenNMSGlob } from '../../../lib/utils'
+} from '../types'
+import { OpenNMSGlob, isString } from '../../../lib/utils'
 
 export const buildPerformanceMeasurementQuery = (start: number, end: number, step: number, maxRows: number) => {
     return {
@@ -84,9 +83,13 @@ export const isValidFilterTarget = (target: PerformanceQuery) => {
 const isValidFilterStateItemValue = (item: PerformanceQueryFilterStateItem) => {
     if (item.value) {
         return (
-            (isString(item.value) && item.value.length > 0) ||
-            isNumber(item.value) ||
-            (isObject(item.value) && !isNil(item.value.value) && ('' + item.value.value).length > 0)
+            (isString(item.value) && (item.value as string).length > 0) ||
+            (typeof(item.value === 'number')) ||
+            (
+              typeof(item.value) === 'object' &&
+              item.value.value &&
+              ('' + item.value.value).length > 0
+            )
         )
     }
 
@@ -179,7 +182,7 @@ export const buildFilterQuery = (target: PerformanceQuery, interpolatedFilterPar
     const filters = interpolatedFilterParams.map(filterParams => {
         const parameters: OnmsMeasurementsQueryFilterParam[] = (
             Object.entries(filterParams)
-            .filter(([, value]) => !isNil(value) && !isEmpty(value))
+            .filter(([, value]) => value !== null)
             .map(([key, value]) => {
                 const v = value as any
                 return { key: v.filter?.key || '', value: v.value || '' } as OnmsMeasurementsQueryFilterParam

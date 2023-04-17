@@ -1,4 +1,3 @@
-import { isNil, uniq, sortBy, flatten } from 'lodash'
 import { API } from 'opennms'
 import { OnmsAlarm } from 'opennms/src/model/OnmsAlarm'
 import { OnmsColumn, OnmsTableData, OnmsRow } from '../types'
@@ -79,6 +78,9 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
     cols = appendParameterNames(cols, parameterNames)
 
     const rows = alarms?.map((alarm) => {
+        const isAcknowledged = !(alarm.ackUser === undefined || alarm.ackUser === null ||
+          alarm.ackTime === undefined || alarm.ackTime === null)
+
         let row = [
             alarm.id,
             alarm.count,
@@ -101,7 +103,7 @@ export const queryAlarms = async (client: ClientDelegate, filter: API.Filter): P
             alarm.suppressedUntil,
             alarm.suppressedBy,
             alarm.lastEvent?.ipAddress?.address ?? '',
-            !isNil(alarm.ackUser) && !isNil(alarm.ackTime),  // isAcknowledged
+            isAcknowledged,
 
             // Event
             alarm.firstEventTime,
@@ -184,7 +186,11 @@ const getParameterNames = (alarms?: OnmsAlarm[]) => {
         })
     })
 
-    return uniq(sortBy(flatten(mapped), name => name))
+    // flattened, distinct, sorted
+    const names = [...new Set((mapped || []).flat())]
+    names.sort()
+
+    return names
 }
 
 /**

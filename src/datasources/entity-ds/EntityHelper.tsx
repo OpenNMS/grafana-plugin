@@ -16,7 +16,7 @@ import {
 } from './types'
 import { ClientDelegate } from 'lib/client_delegate'
 import { FunctionFormatter } from '../../lib/function_formatter'
-import { SimpleOpenNMSRequest } from 'lib/utils'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import {
     getAlarmColumns,
     getIPInterfaceColumns,
