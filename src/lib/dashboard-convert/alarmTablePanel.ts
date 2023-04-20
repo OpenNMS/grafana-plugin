@@ -14,7 +14,7 @@ const legacyAlarmSeverityThemes = [
 ]
 
 export const isLegacyAlarmTablePanel = (panel: any) => {
-  return panel && panel.type && panel.type === 'opennms-alarm-table-panel'
+  return panel && panel.type && panel.type === 'opennms-helm-alarm-table-panel'
 }
 
 const getSeverityThemeValue = (theme: string) => {
@@ -59,7 +59,7 @@ const createOptions = (source: any) => {
   const alarmTablePaging: AlarmTablePaginationState = {
     rowsPerPage: source.pageSize || 10,
     pauseRefresh: source.pagingPausesRefresh || false,
-    scroll: source.scroll || false,
+    scroll: true, // source.scroll - force to true
     fontSize: {
       label: fontSizeLabel,
       value: fontSizeValue
@@ -188,7 +188,10 @@ const createFieldOverrides = (source: any) => {
     if (col.style.type === 'number') {
       item.properties.push({
         id: 'unit',
-        value: col.unit && col.unit === 'short' ? 'short' : 'number'
+        value: 'none'
+        // Note, setting value to 'number' results in the text 'number' after the numeric data value
+        // 'none' results in "Standard options > Unit > Number"
+        //value: col.unit && col.unit === 'short' ? 'short' : 'number'
       })
 
       if (col.style.decimals && col.style.decimals > 0) {
