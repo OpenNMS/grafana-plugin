@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Select } from '@grafana/ui'
 import { DragList } from 'components/DragList'
 import { OnmsInlineField } from 'components/OnmsInlineField'
