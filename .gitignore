@@ -55,3 +55,6 @@ build/
 
 # final resting place of binary packages
 /artifacts
+
+# linter droppings
+.eslintcache
