@@ -86,6 +86,26 @@ commands:
             export NODE_OPTIONS=--openssl-legacy-provider
             npm run build
             npm run sign
+
+            curl -L -o /tmp/release-lint.sh https://raw.githubusercontent.com/OpenNMS/opennms-repo/master/script/release-lint.sh
+            chmod 755 /tmp/release-lint.sh
+
+            LINT_WARN_ONLY=1
+            if [ -n "${CIRCLE_TAG}" ]; then
+              LINT_WARN_ONLY=0
+            fi
+            case "${CIRCLE_BRANCH}" in
+              main-*)
+                LINT_WARN_ONLY=0
+                ;;
+            esac
+
+            if [ "${LINT_WARN_ONLY}" -eq 1 ]; then
+              /tmp/release-lint.sh -w
+            else
+              /tmp/release-lint.sh
+            fi
+
             unset NODE_OPTIONS
 
 jobs:
