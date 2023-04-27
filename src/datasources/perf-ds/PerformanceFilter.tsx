@@ -25,7 +25,7 @@ export interface PerformanceFilterProps {
 
 export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, updateQuery, loadFilters }) => {
     const [filter, setFilter] = useState<SelectableValue<FilterResponse>>(query.filter);
-    const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>(query.filterState);
+    const [filterState, setFilterState] = useState<Record<string, {value: any, filter: any}>>(query.filterState || {});
 
     const updateFilterState = (propertyName: string, value: {value: any, filter: any}) => {
         setFilterState({ ...filterState, [propertyName]: value })
@@ -59,8 +59,8 @@ export const PerformanceFilter: React.FC<PerformanceFilterProps> = ({ query, upd
                                 <Segment
                                     placeholder={param.key}
                                     value={filterState[param.key]?.value || false}
-                                    onChange={(value: unknown) => {
-                                        updateFilterState(param.key, { value, filter: param })
+                                    onChange={(value: SelectableValue<string>) => {
+                                        updateFilterState(param.key, { value: value?.value, filter: param })
                                     }}
                                     options={[{ label: 'True', value: 'true'}, { label: 'False', value: 'false' }]}
                                 />
