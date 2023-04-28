@@ -1864,7 +1864,7 @@
         "multi": false,
         "name": "perfds",
         "options": [],
-        "query": "openmms-performance-datasource",
+        "query": "opennms-performance-datasource",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
