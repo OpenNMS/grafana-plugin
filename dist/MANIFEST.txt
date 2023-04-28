@@ -10,9 +10,9 @@ Hash: SHA512
   "rootUrls": [
     "http://localhost:3000/"
   ],
-  "plugin": "opennms-grafana-plugin-app",
+  "plugin": "opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1681393270069,
+  "time": 1682715772925,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "77126f3b7f13847fbc507497cf0a96901e786c96e4e1e93b342153f6f8264b6e",
@@ -23,21 +23,21 @@ Hash: SHA512
     "dashboards/flow_deep_dive.json": "8dcba56b12a97189ce7cdd0f597fbce6c87999e0ea9ec4a54e891587c3057ead",
     "datasources/entity-ds/README.md": "1defafff3b5a2f01cefb58312a02b2346a54c7e4ff50692919c6c565e04e7421",
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
-    "datasources/entity-ds/module.js": "aa4ebf3a801178e99b0886628204aea94bbc74eda388041506552a8824ccff9e",
+    "datasources/entity-ds/module.js": "466b8e12625247cc99852e3bc5ef44f9418b008f199150a4ab4a9c47002eeed3",
     "datasources/entity-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/entity-ds/module.js.map": "53f73d4410b26dd1232ebb063b56fc8ad6d83264e353e836d6c034e54fe27ce4",
+    "datasources/entity-ds/module.js.map": "5087d501a61c55e029eb609b62080922436ac304d41a01adb783a2f9e672db29",
     "datasources/entity-ds/plugin.json": "065c5c5ee1fe69e8b99ed5a203b2ff93fd4aab00433dcb4e970f6098e9760294",
     "datasources/flow-ds/README.md": "d174d946392f146eb7e843b6f4ab713a1e6c5972933febbdb2c66bcc241e4a66",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
-    "datasources/flow-ds/module.js": "b3fb9abc6c363dcde2ed8b0e2716af96a48f5241dd11d18100f50f1806fa3bbb",
+    "datasources/flow-ds/module.js": "0935188b701b39024bb51d20f19ea21d93d05e7aa9aec45de36a6cdff5416427",
     "datasources/flow-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/flow-ds/module.js.map": "c9131120b5a5b8d0ba9fd188c53e30c0a340904a25fbffef3f9893928f704d0e",
+    "datasources/flow-ds/module.js.map": "68f094966a4e0308fa9475dfe507846f9bcceab77c2c63cb766a3155730052e0",
     "datasources/flow-ds/plugin.json": "9c91bbbd3f2b8eb288ea10c8b7011740dd6df4e2051eb47d60673e2bba213a47",
     "datasources/perf-ds/README.md": "3ea1a62a3479f30e185d91dad12dfff5ff3085b7d32760f06d9226314b2c3381",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
-    "datasources/perf-ds/module.js": "ec725873f97902c23a76033fbb406b9ec189bd87a6c7d5b17282bd9786a90b6b",
+    "datasources/perf-ds/module.js": "39b7dfa74d20370979bc4f8c08013f0a458de5b4fb74502893b46a29ee8fb9c1",
     "datasources/perf-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/perf-ds/module.js.map": "6de772a9657b9a1f46de1414159251c58163eacd2175682007957fa798d683be",
+    "datasources/perf-ds/module.js.map": "575381893373afffb23ab8ecc08d4ead23b5fd0cef23b0f940ab66bd97b02afc",
     "datasources/perf-ds/plugin.json": "59ab660793f7f3230948650d921677b8ea422939d47b0574bb2fc5a0c388355b",
     "img/Helm_Screenshot_Alarms.png": "c4be68860d9a71ea0a9d99df7e3f3e4db9858f4b378925bb3e9d16c0a23c2646",
     "img/Helm_Screenshot_Entities_Data_Source.png": "a5da3654cf6b09fdf3e4a95b9e722334e7a0eb1f2a667279cdac9b5db4be18d1",
@@ -48,42 +48,42 @@ Hash: SHA512
     "img/if_icon-close_211652.png": "003d2cff140c4e483bc4124b95d100b197f9d0e05608a90d2400d805d21cc1cd",
     "img/if_icon-ios7-checkmark-outline_211714.png": "300dd8c97f176f39b4b8b7494eb38620b57eb53412b91c9a968f0ebf7983eec0",
     "img/if_icon-ios7-checkmark_211715.png": "33c698c8405cb44a2686bf4711b30bdaa6368b021373419dbb20e6e95fa0ed85",
-    "img/opennms-grafana-plugin.svg": "fd79c1e012c9f1c138d32acfb04d3d5b55aedbca5aebbb55fa8e7c22ac613b28",
-    "module.js": "a0e6b1d1ea25fafda273d3ee5fcd8a33533e11acb5c4d898fdd26f85c7f32add",
-    "module.js.map": "03250685132eb4f447e1ddb42ce36a3738c6c754d980085464d3b439ed54bdd3",
+    "img/opennms-grafana-plugin.svg": "44c74d3ed6e53d1fbf31da5ea8b8d65aaa9b411391f0b9b8ed69700d2a29bb8d",
+    "module.js": "4bdfe98e00386c894d74ef7f290a2bdc9bf76d82b8c45c864d8d5e3850345a33",
+    "module.js.map": "827165ced553c1a724a4b8d1a3528de55609bce23678d2d53858df841b2b6323",
     "panels/alarm-histogram/img/alarm-histogram.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
-    "panels/alarm-histogram/module.js": "fc40abedeca4f18847b354f38c1332809da4b6fd50eb0bbaa1f0de18d32938b9",
-    "panels/alarm-histogram/module.js.map": "f7ec6f5be1bd4b598407564110df8bcd88dc90a4582f11fc0d02a8abe68893df",
+    "panels/alarm-histogram/module.js": "f0238bc935d591c94fe1782ce80e322775bed0afe8729bcb8a7cca97afd4b380",
+    "panels/alarm-histogram/module.js.map": "124649dbd1fc9f4f35d107050af4b4affad26df75c54da5f68341cdfe499be7c",
     "panels/alarm-histogram/plugin.json": "4ebbb72587909457d1167ca0b470606a8f585cc761c1b3a81a89be1be6ae1254",
     "panels/alarm-table/img/alarm-table.svg": "ab33624041ca4cec42e4e3a216234c98a13a7a15d2aea4b8cc1753eea67f0576",
-    "panels/alarm-table/module.js": "a7a788d277439d5992548ca874c397431f8c44f0cdadba9acaef790975e1d232",
-    "panels/alarm-table/module.js.map": "8c39b364353551567eb77dc35a3bb3b3ef591261866f0a1a994d32b96a6488c0",
+    "panels/alarm-table/module.js": "33960dfe273f521bfd279cf38cc920ed768a5643ef45ee715b72a2c683487bd3",
+    "panels/alarm-table/module.js.map": "5b2662e218b6d629ddee644d2568551acb8a7201c7fef53a218c1c0d9490fb2d",
     "panels/alarm-table/plugin.json": "c46ad64dcd9a50017bec9c81d832246fa54743b11a9adf3f713729ae057f3072",
     "panels/dashboard-convert/img/dashboard-convert.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
-    "panels/dashboard-convert/module.js": "465895251893d20c1f0c826b17e5ed663f1f437f43f734adaf96e5175b5cd70f",
+    "panels/dashboard-convert/module.js": "f186a452c83491e64ce6e07c5a9606977e82fa626a68b2706716e9b17573f857",
     "panels/dashboard-convert/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/dashboard-convert/module.js.map": "be79bcd5934d4ea89d43a238c8343749ff51e00f82a8847d48f00cad3d9d0222",
+    "panels/dashboard-convert/module.js.map": "fdef3708ab2ecbb64522c69053e0c8db0f61c63994bd909d0a722eca0b6a7f77",
     "panels/dashboard-convert/plugin.json": "577ca7d79b56db9c3596afd1a681521705b82544739bf4d01e6c811ae2906508",
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
-    "panels/filter-panel/module.js": "b6e3d5a070d843b5264042745825713dff84919536a9442770835ce758401ed1",
+    "panels/filter-panel/module.js": "6158940942e8757dff41b7320bb240dcd61e769ef28ee8f223e5ddb9b699b4d8",
     "panels/filter-panel/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/filter-panel/module.js.map": "7e4ede887786a3eec3d64c9165a9697a9a9c790455b47c9104ada67b11175383",
+    "panels/filter-panel/module.js.map": "7493d9a0df5d154804b2edb4a83d2bdd6ae4109bc7ed5bbad480411870b101cd",
     "panels/filter-panel/plugin.json": "5c1729da3b4bf6e640ea070fe3a26a949f295cc172f891e987c416ab3856fba6",
     "panels/flow-histogram/img/flow-histogram.svg": "d96cd2b128992c77616cd2275023f6b5ba38deec128e42734896933d547cced1",
-    "panels/flow-histogram/module.js": "2fba7d7297b06e91f3e427198e05e6c86b4ecf59ed62dc17047c49081da99b48",
-    "panels/flow-histogram/module.js.map": "5eb72d61e89f9df9304aa2b4dd057cce271aa3d7f35604a054d533aeb5691171",
+    "panels/flow-histogram/module.js": "b3cac8a3fa5fb63eb4dfde4079efe2bf70c4e7629254a301e0b1a547de5f1cc4",
+    "panels/flow-histogram/module.js.map": "52e8cb7b29ddde861b7a08da3cfa8ba191c000f97886d8f5a5d00c5a90779d8a",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
-    "plugin.json": "416b0230f9e6bd2e9b1573d7f5309656295cc137904438a53c7381a30aadf3e4"
+    "plugin.json": "3f930491e349e0f42e875473445c217f4bfb3ddb349dd51084844e8a65415852"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmQ4BnYAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5/YDAgYjzC71o6WZAxt8ippwm1qNGncUll58QGJWjOArplguQBpHjvrt
-7uI1IJfZvzmIdssTMLhr/Z+ipv9zRZQ1ZzXCEAIJAQu3XcQW0dNPDIMU5uUy
-1GXy8MyumGdaWdWTx1elf3xmyhF3mW556kux7RYL4nmQyPndZcplJyvXtacy
-2mCS1vRJ
-=WBTd
+wrcEARMKAAYFAmRMNH0AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm58kgAgirtsBjGe0u/1M4HjQdSzYZh51kVeCZLq2jQ3vckpfsTg11prwL
+Lcg0QNjuBkxM2U4RSSHOebJczb50RbA+3se35gIHTSM4SbmEVlROs2ZwdwXp
+/u+oraVbxjTvGKwxw3/0+fU7xNP7+Ywb/rtOpGueNdJ24951iZr8l/w1kbAJ
+EOuwT7Y=
+=6dRK
 -----END PGP SIGNATURE-----
