@@ -1,16 +1,13 @@
-import { rangeUtil, SelectableValue } from "@grafana/data";
-import { ClientDelegate } from "lib/client_delegate";
-import {
-    dscpLabel,
-    dscpSelectOptions
-} from '../../lib/tos_helper';
+import { rangeUtil, SelectableValue } from '@grafana/data'
+import { ClientDelegate } from 'lib/client_delegate'
+import { dscpLabel, dscpSelectOptions } from '../../lib/tos_helper'
 import {
     swapColumns,
     getNodeFilterMap,
-    SimpleOpenNMSRequest,
     getNumberOrDefault,
     getNodeAsResourceQuery
-} from "lib/utils";
+} from 'lib/utils'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import {
     defaultSegmentOptions,
     FlowFunctionNames,
@@ -29,7 +26,7 @@ import {
     ExporterNodesParams,
     InterfacesOnExporterNodeWithFlowsParams,
     DscpOnExporterNodeAndInterfaceParams
-} from "./constants";
+} from './constants'
 
 import {
     FlowParsedQueryData,
@@ -40,8 +37,7 @@ import {
     FlowTemplateVariableClientService,
     FlowTemplateVariableQueryService,
     SegmentOption
-} from "./types";
-import _ from 'lodash';
+} from './types'
 import { OnmsMeasurementResource } from '../../lib/api_types'
 
 /**
@@ -837,58 +833,60 @@ const getTemplateVariableResultsFor = async (templateQueryFunction: FlowTemplate
 }
 
 const retrieveParametersFor = (templateQueryFunction: FlowTemplateVariableQueryService) => {
-    const queryResult = templateQueryFunction.function.result ?? '';
-    const queryName = templateQueryFunction.function.name ?? '';
+    const queryResult = templateQueryFunction.function.result ?? ''
+    const queryName = templateQueryFunction.function.name ?? ''
 
-    let args = queryResult.length > 1 ? queryResult[1] : null;
-    //params need to be added in order
-    let params: any[] = [templateQueryFunction.start, templateQueryFunction.end];
+    let args = queryResult.length > 1 ? queryResult[1] : null
+    // params need to be added in order
+    let params: any[] = [templateQueryFunction.start, templateQueryFunction.end]
 
     switch (queryName) {
         case FlowTemplateVariablesStrings.applications:
-            params.push(getNumberOrDefault(args, 0));
-            params.forEach((p, idx) => templateQueryFunction[ApplicationsParams[idx].name] = p);
-            break;
+            params.push(getNumberOrDefault(args, 0))
+            params.forEach((p, idx) => templateQueryFunction[ApplicationsParams[idx].name] = p)
+            break
         case FlowTemplateVariablesStrings.conversations:
             if (args) {
-                args = args.split(',').map(v => v.trim());
-                if (args.length === 4 || _.every(args, s => isNaN(parseInt(s, 10)))) {
-                    params.push(args);
-                } else if (args.length === 1) {
-                    params.push([null, null, null, getNumberOrDefault(args[0], 0)]);
-                } else if (args.length === 2) {
-                    params.push([args[0], null, null, getNumberOrDefault(args[1], 0)]);
-                } else if (args.length === 3) {
-                    params.push([args[0], args[1], null, getNumberOrDefault(args[2], 0)]);
+                const splitArgs: string[] = args.split(',').map(v => v.trim())
+
+                if (splitArgs.length === 4 || splitArgs.every(s => isNaN(parseInt(s, 10)))) {
+                    params.push(splitArgs)
+                } else if (splitArgs.length === 1) {
+                    params.push([null, null, null, getNumberOrDefault(splitArgs[0], 0)])
+                } else if (splitArgs.length === 2) {
+                    params.push([splitArgs[0], null, null, getNumberOrDefault(splitArgs[1], 0)])
+                } else if (splitArgs.length === 3) {
+                    params.push([splitArgs[0], splitArgs[1], null, getNumberOrDefault(splitArgs[2], 0)])
                 }
             }
-            params.forEach((p, idx) => templateQueryFunction[ConversationParams[idx].name] = p);
-            break;
+            params.forEach((p, idx) => templateQueryFunction[ConversationParams[idx].name] = p)
+            break
         case FlowTemplateVariablesStrings.hosts:
             if (args) {
-                args = args.split(',').map(v => v.trim());
-                if (args.length === 2 || _.every(args, s => isNaN(parseInt(s, 10)))) {
-                    params.push(args);
-                } else if (args.length === 1) {
-                    params.push([null, ...args]);
+                const splitArgs: string[] = args.split(',').map(v => v.trim())
+                if (splitArgs.length === 2 || splitArgs.every(s => isNaN(parseInt(s, 10)))) {
+                    params.push(splitArgs)
+                } else if (splitArgs.length === 1) {
+                    params.push([null, ...splitArgs])
                 }
             }
-            params.forEach((p, idx) => templateQueryFunction[HostsParams[idx].name] = p);
-            break;
+            params.forEach((p, idx) => templateQueryFunction[HostsParams[idx].name] = p)
+            break
         case FlowTemplateVariablesStrings.exporterNodesWithFlows:
-            params = [args];
-            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p);
-            break;
+            params = [args]
+            params.forEach((p, idx) => templateQueryFunction[ExporterNodesParams[idx].name] = p)
+            break
         case FlowTemplateVariablesStrings.interfacesOnExporterNodeWithFlows:
-            params = [args];
-            params.forEach((p, idx) => templateQueryFunction[InterfacesOnExporterNodeWithFlowsParams[idx].name] = p);
-            break;
+            params = [args]
+            params.forEach((p, idx) => templateQueryFunction[InterfacesOnExporterNodeWithFlowsParams[idx].name] = p)
+            break
         case FlowTemplateVariablesStrings.dscpOnExporterNodeAndInterface:
-            params = queryResult.slice(1, 4);
-            params.forEach((p, idx) => templateQueryFunction[DscpOnExporterNodeAndInterfaceParams[idx].name] = p);
+            params = queryResult.slice(1, 4)
+            params.forEach((p, idx) => templateQueryFunction[DscpOnExporterNodeAndInterfaceParams[idx].name] = p)
             break
     }
-    return templateQueryFunction;
+
+    return templateQueryFunction
 }
 
 const metricFindLocations = async ({ client, simpleRequest }) => {

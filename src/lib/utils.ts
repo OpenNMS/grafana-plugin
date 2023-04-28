@@ -1,224 +1,123 @@
-import _ from 'lodash'
 import { loadPluginCss } from '@grafana/runtime'
-import { MetricFindValue } from '@grafana/data'
-import { OnmsLocationResponse, OnmsFlowsResponse, OnmsResourceDto, OnmsResourceSelectQuery } from './api_types'
+import cloneDeep from 'lodash/cloneDeep'
+import escapeRegExp from 'lodash/escapeRegExp'
 
-let cssInitialized = false;
+let cssInitialized = false
 
 export function initializeCss() {
   if (!cssInitialized) {
-    cssInitialized = true;
+    cssInitialized = true
+
     loadPluginCss({
-      dark: 'plugins/opennms-grafana-plugin-app/styles/dark.css',
-      light: 'plugins/opennms-grafana-plugin-app/styles/light.css',
-    });
+      dark: 'plugins/opennms-app/styles/dark.css',
+      light: 'plugins/opennms-app/styles/light.css',
+    })
   }
 }
 
 export function assignModelProperties(target, source, defaults = {}) {
   for (const key in defaults) {
     if (!defaults.hasOwnProperty(key)) {
-      continue;
+      continue
     }
 
-    target[key] = source[key] === undefined ? defaults[key] : source[key];
+    target[key] = source[key] === undefined ? defaults[key] : source[key]
   }
 }
 
 export function selectOptionsForCurrentValue(variable) {
-  let i, y, value, option;
-  const selected = [] as any[];
+  let i, y, value, option
+  const selected = [] as any[]
 
   for (i = 0; i < variable.options.length; i++) {
-    option = variable.options[i];
-    option.selected = false;
-    if (_.isArray(variable.current.value)) {
+    option = variable.options[i]
+    option.selected = false
+
+    if (Array.isArray(variable.current.value)) {
       for (y = 0; y < variable.current.value.length; y++) {
-        value = variable.current.value[y];
+        value = variable.current.value[y]
         if (option.value === value) {
-          option.selected = true;
-          selected.push(option);
+          option.selected = true
+          selected.push(option)
         }
       }
     } else if (option.value === variable.current.value) {
-      option.selected = true;
-      selected.push(option);
+      option.selected = true
+      selected.push(option)
     }
   }
 
-  return selected;
+  return selected
 }
 
 export function setOptionAsCurrent(variable, option) {
-  variable.current = _.cloneDeep(option || {});
+  variable.current = cloneDeep(option || {})
 
-  if (_.isArray(variable.current.text) && variable.current.text.length > 0) {
-    variable.current.text = variable.current.text.join(' + ');
-  } else if (_.isArray(variable.current.value) && variable.current.value[0] !== '$__all') {
-    variable.current.text = variable.current.value.join(' + ');
+  if (Array.isArray(variable.current.text) && variable.current.text.length > 0) {
+    variable.current.text = variable.current.text.join(' + ')
+  } else if (Array.isArray(variable.current.value) && variable.current.value[0] !== '$__all') {
+    variable.current.text = variable.current.value.join(' + ')
   }
 
-  selectOptionsForCurrentValue(variable);
-  return variableUpdated(variable);
+  selectOptionsForCurrentValue(variable)
+
+  return variableUpdated(variable)
 }
 
 export function variableUpdated(variable, emitChangeEvents = false) {
-  const dashboardSrv = variable.dashboardSrv;
-  const templateSrv = variable.templateSrv;
+  const dashboardSrv = variable.dashboardSrv
+  const templateSrv = variable.templateSrv
 
   // if there is a variable lock ignore cascading update because we are in a boot up scenario
   if (variable.initLock) {
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
-  const getVariables = templateSrv.getVariables.bind(templateSrv) || dashboardSrv.dashboard.getVariables.bind(dashboardSrv.dashboard);
-  const variables = getVariables();
-  let promises = [] as Array<Promise<any>>;
+  const getVariables = templateSrv.getVariables.bind(templateSrv) || dashboardSrv.dashboard.getVariables.bind(dashboardSrv.dashboard)
+  const variables = getVariables()
+  const promises = [] as Array<Promise<any>>
 
   // in theory we should create an efficient sub-list of variables to update, but for now just do them all YOLO
   variables.forEach(v => {
     // variables don't always seem to have updateOptions method, so check here
     if (v.updateOptions) {
-      promises.push(v.updateOptions());
+      promises.push(v.updateOptions())
     }
-  });
+  })
 
-  templateSrv.setGlobalVariable(variable.id, variable.current);
+  templateSrv.setGlobalVariable(variable.id, variable.current)
 
   return Promise.all(promises).then(() => {
     if (emitChangeEvents) {
-      dashboardSrv.dashboard.templateVariableValueUpdated();
-      dashboardSrv.dashboard.startRefresh();
+      dashboardSrv.dashboard.templateVariableValueUpdated()
+      dashboardSrv.dashboard.startRefresh()
     }
-  });
+  })
 }
 
-
-export function setOptionFromUrl(variable: any, urlValue: any) {
-  let promise = Promise.resolve();
-
-  if (variable.refresh) {
-    promise = variable.updateOptions();
-  }
-
-  return promise.then(() => {
-    // Simple case. Value in url matches existing options text or value.
-    let option = _.find(variable.options, op => {
-      return op.text === urlValue || op.value === urlValue;
-    });
-
-    // No luck either it is array or value does not exist in the variables options.
-    if (!option) {
-      let defaultText = urlValue;
-      const defaultValue = urlValue;
-
-      if (_.isArray(urlValue)) {
-        // Multiple values in the url. We construct text as a list of texts from all matched options.
-        defaultText = urlValue.reduce((acc, item) => {
-          const t = _.find(variable.options, { value: item });
-          if (t) {
-            acc.push(t.text);
-          } else {
-            acc.push(item);
-          }
-
-          return acc;
-        }, []);
-      }
-
-      // It is possible that we did not match the value to any existing option. In that case the url value will be
-      // used anyway for both text and value.
-      option = { text: defaultText, value: defaultValue };
-    }
-
-    if (variable.multi) {
-      // In case variable is multiple choice, we cast to array to preserve the same behaviour as when selecting
-      // the option directly, which will return even single value in an array.
-      option = { text: _.castArray(option.text), value: _.castArray(option.value) };
-    }
-
-    return variable.setValue(option);
-  });
-}
-
-export function validateVariableSelectionState(variable: any, defaultValue?: any) {
-  if (!variable.current) {
-    variable.current = {};
-  }
-
-  if (_.isArray(variable.current.value)) {
-    let selected = selectOptionsForCurrentValue(variable);
-
-    // if none pick first
-    if (selected.length === 0) {
-      let firstOption = variable.options[0];
-      if (firstOption) {
-        return variable.setValue(firstOption);
-      }
-      return Promise.resolve();
-    } else {
-      let val = {
-        value: _.map(selected, val => {
-          return val.value;
-        }),
-        text: _.map(selected, val => {
-          return val.text;
-        }),
-      };
-      return variable.setValue(val);
-    }
-  } else {
-    let option = undefined;
-
-    // 1. find the current value
-    option = _.find(variable.options, {
-      text: variable.current.text,
-    });
-    if (option) {
-      return variable.setValue(option);
-    }
-
-    // 2. find the default value
-    if (defaultValue) {
-      option = _.find(variable.options, {
-        text: defaultValue,
-      });
-      if (option) {
-        return variable.setValue(option);
-      }
-    }
-
-    // 3. use the first value
-    if (variable.options) {
-      return variable.setValue(variable.options[0]);
-    }
-
-    // 4... give up
-    return Promise.resolve();
-  }
-}
-
-export const variableRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g;
+export const variableRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g
 
 export const variableRegexExec = (variableString) => {
-  variableRegex.lastIndex = 0;
-  return variableRegex.exec(variableString);
-};
+  variableRegex.lastIndex = 0
+  return variableRegex.exec(variableString)
+}
 
 export function containsVariable(...args) {
-  const variableName = args[args.length - 1];
-  args[0] = _.isString(args[0]) ? args[0] : Object['values'](args[0]).join(' ');
-  const variableString = args.slice(0, -1).join(' ');
-  const matches = variableString.match(variableRegex);
+  const variableName = args[args.length - 1]
+  args[0] = isString(args[0]) ? args[0] : Object['values'](args[0]).join(' ')
+
+  const variableString = args.slice(0, -1).join(' ')
+  const matches = variableString.match(variableRegex)
+
   const isMatchingVariable =
     matches !== null
       ? matches.find(match => {
-        const varMatch = variableRegexExec(match);
-        return varMatch !== null && varMatch.indexOf(variableName) > -1;
+        const varMatch = variableRegexExec(match)
+        return varMatch !== null && varMatch.indexOf(variableName) > -1
       })
-      : false;
+      : false
 
-  return !!isMatchingVariable;
+  return !!isMatchingVariable
 }
 
 /**
@@ -233,18 +132,19 @@ export function containsVariable(...args) {
 export function processSelectionVariable(input: string, dropUnresolved: boolean, dropAll: boolean): string[] {
   if (input) {
     if (input.startsWith('{') && input.endsWith('}')) {
-      input = input.substring(1, input.length - 1);
+      input = input.substring(1, input.length - 1)
     }
-    const args = getInputsAsArray(input);
+
+    const args = getInputsAsArray(input)
 
     if (dropAll && args.some(s => s === 'all')) {
       return []
     } else if (dropUnresolved && input.startsWith('$')) {
-      return [];
+      return []
     } else if (dropAll && input === 'all') {
       return []
     } else {
-      return args;
+      return args
     }
   } else {
     return []
@@ -252,19 +152,22 @@ export function processSelectionVariable(input: string, dropUnresolved: boolean,
 }
 
 export function getInputsAsArray(input: string) {
-  const pattern = /(\[[^\]]*\])/g;
-  //handle conversation type 
-  let inputArrays = input.match(pattern);
+  const pattern = /(\[[^\]]*\])/g
+
+  // handle conversation type 
+  const inputArrays = input.match(pattern)
+
   if (inputArrays && inputArrays.length > 0) {
-    const args: string[] = [];
+    const args: string[] = []
     inputArrays.forEach(array => {
-      args.push(array);
-    });
-    return args;
+      args.push(array)
+    })
+
+    return args
   } else if (input.indexOf(',') >= 0) {
-    return input.split(',').map(s => s.trim());
+    return input.split(',').map(s => s.trim())
   } else {
-    return [input];
+    return [input]
   }
 }
 
@@ -273,12 +176,12 @@ export function getInputsAsArray(input: string) {
  * Utility function to get either.
  */
 export function getValueOrFirstElement<T>(input: T | T[]): T {
-  return _.isArray(input) && input.length > 0 ? input[0] : (input as T);
+  return Array.isArray(input) && input.length > 0 ? input[0] : (input as T)
 }
 
 /** Checks if the given index is the first index of the given t. */
 export function isFirst<T>(t: T, index: number, array: T[]) {
-  return array.indexOf(t) === index;
+  return array.indexOf(t) === index
 }
 
 /**
@@ -292,6 +195,7 @@ export function isFirst<T>(t: T, index: number, array: T[]) {
 export function processSelectionVariables(input?: string[]): string[] {
   if (input) {
     const mapped = input.map(i => processSelectionVariable(i, true, false))
+
     if (mapped.some(m => m.some(s => s === 'all'))) {
       return []
     } else {
@@ -302,12 +206,11 @@ export function processSelectionVariables(input?: string[]): string[] {
   }
 }
 
-
 export class OpenNMSGlob {
-  private static globExpressions: string[] = ['*', '|'];
+  private static globExpressions: string[] = ['*', '|']
 
   static getGlobAsRegexPattern(expr: string) {
-    return _.escapeRegExp(expr).replace(/\\\*/ig, '.*').replace(/\\\|/ig, '|');
+    return escapeRegExp(expr).replace(/\\\*/ig, '.*').replace(/\\\|/ig, '|')
   }
 
   /**
@@ -316,9 +219,9 @@ export class OpenNMSGlob {
    * @returns true if expression contains allowed glob characters ('*', '|')
    */
   static hasGlob(expr: string): boolean {
-    return _.some([...expr], (char) => {
-      return _.includes(OpenNMSGlob.globExpressions, char);
-    });
+    return [...expr].some((char) => {
+      return OpenNMSGlob.globExpressions.includes(char)
+    })
   }
 }
 
@@ -327,10 +230,11 @@ export class OpenNMSGlob {
  * @param thisArray 
  */
 export function swap(thisArray: any[], colIndex1: number, colIndex2: number): any[] {
-  const tmp = thisArray[colIndex1];
-  thisArray[colIndex1] = thisArray[colIndex2];
-  thisArray[colIndex2] = tmp;
-  return thisArray;
+  const tmp = thisArray[colIndex1]
+  thisArray[colIndex1] = thisArray[colIndex2]
+  thisArray[colIndex2] = tmp
+
+  return thisArray
 }
 
 /**
@@ -342,302 +246,50 @@ export function swapColumns(rows: any[][], colIndex1: number, colIndex2: number)
   if (rows && rows.length > 0 && colIndex1 >= 0 && colIndex2 >= 0) {
     for (let i = 0; i < rows.length; i++) {
       if (colIndex1 >= rows[i].length || colIndex2 >= rows[i].length) {
-        throw new Error('Index out of bounds');
+        throw new Error('Index out of bounds')
       }
-      rows[i] = swap(rows[i], colIndex1, colIndex2);
+
+      rows[i] = swap(rows[i], colIndex1, colIndex2)
     }
   }
-  return rows;
+
+  return rows
 }
-
-export function getNodeAsResourceQuery(nodeId: string | undefined) {
-  if (!nodeId) { return nodeId; }
-  let prefix = "";
-  if (nodeId.indexOf(":") > 0) {
-    prefix = "nodeSource[";
-  } else {
-    prefix = "node[";
-  }
-  return prefix + nodeId + "]";
-}
-
-export class SimpleOpenNMSRequest {
-  backendSrv: any;
-  timeout = 10000;
-  url?: string;
-  withCredentials = false;
-  basicAuth?: string;
-  searchLimit = 25;
-
-  readonly flows = "/rest/flows";
-  readonly locations = "/rest/monitoringLocations";
-  readonly nodes = "/rest/nodes";
-  readonly resources = "/rest/resources";
-
-  constructor(backendSrv, url) {
-    this.backendSrv = backendSrv;
-    this.url = url;
-  }
-
-  doOpenNMSRequest(options: any): Promise<any> {
-
-    if (this.basicAuth || this.withCredentials) {
-      options.withCredentials = true;
-    }
-    if (this.basicAuth) {
-      options.headers = options.headers || {};
-      options.headers.Authorization = this.basicAuth;
-    }
-
-    options.url = this.url + options.url;
-    if (this.timeout) {
-      options.timeout = this.timeout;
-    }
-
-    return this.backendSrv.datasourceRequest(options);
-  }
-
-  getLocations = async (searchLimit = 0) => {
-    const response = await this.doOpenNMSRequest({
-      url: this.locations,
-      method: 'GET',
-      params: {
-        limit: searchLimit
-      }
-    }) as OnmsLocationResponse
-
-    if (response.data.count > response.data.totalCount) {
-      console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-    }
-    const results: MetricFindValue[] = []
-    response.data.location?.forEach(location => {
-      const nodeLocation = location['location-name'] ? location['location-name'].toString() : null
-      const exist = _.find(results, (o) => o.text === nodeLocation)
-      if (nodeLocation && !exist) {
-        results.push({ text: nodeLocation, value: nodeLocation, expandable: true })
-      }
-    })
-    return results
-
-  }
-
-  async getNodesByFilter(filter: string) {
-    const response = await this.doOpenNMSRequest({
-      url: this.nodes,
-      method: 'GET',
-      params: {
-        filterRule: filter,
-        limit: 0
-      }
-    })
-
-    if (response.data.count > response.data.totalCount) {
-      console.warn("Filter matches " + response.data.totalCount + " records, but only " + response.data.count + " will be used.");
-    }
-    return response.data.node;
-  }
-
-  async getApplications(start: number, end: number, limit = 0) {
-    const response = await this.doOpenNMSRequest({
-      url: this.flows + '/applications/enumerate',
-      method: 'GET',
-      params: {
-        'start': start,
-        'end': end,
-        'limit': limit <= 0 ? this.searchLimit : limit
-      }
-    }) as OnmsFlowsResponse
-
-    const results: MetricFindValue[] = []
-    if (response.data.length === 0) {
-      console.warn("No matches found")
-    } else {
-      response.data.forEach(val => {
-        results.push({ text: val, value: val, expandable: true })
-      })
-    }
-    return results
-  }
-
-  async getHosts(start: number, end: number, pattern: string | null, limit = 0) {
-    if (!pattern) {
-      pattern = ".*"
-    }
-
-    const response = await this.doOpenNMSRequest({
-      url: this.flows + '/hosts/enumerate',
-      method: 'GET',
-      params: {
-        'start': start,
-        'end': end,
-        'limit': limit <= 0 ? this.searchLimit : limit,
-        'pattern': pattern
-      }
-    }) as OnmsFlowsResponse
-
-    if (response.data.length === 0) {
-      console.warn("No matches found");
-      return response.data;
-    } else {
-      let results: any[] = [];
-      response.data.forEach(val => {
-        results.push({ text: val, value: val, expandable: true });
-      });
-      return results;
-    }
-  }
-
-  async getConversations(start: number, end: number, application: string | null = null,
-    location: string | null = null, protocol: string | null = null, limit = 0) {
-    if (!application) {
-      application = ".*";
-    }
-    if (!location) {
-      location = ".*";
-    }
-    if (!protocol) {
-      protocol = ".*";
-    }
-    const response = await this.doOpenNMSRequest({
-      url: this.flows + '/conversations/enumerate',
-      method: 'GET',
-      params: {
-        'start': start,
-        'end': end,
-        'application': application,
-        'location': location,
-        'protocol': protocol,
-        'limit': limit <= 0 ? this.searchLimit : limit
-      }
-    }) as OnmsFlowsResponse
-
-    const results: MetricFindValue[] = [];
-    if (response.data.length === 0) {
-      console.warn("No matches found")
-    } else {
-      response.data.forEach(val => {
-        results.push({ text: val, value: val, expandable: true })
-      })
-    }
-    return results
-  }
-
-  async getNodeByIdOrFsFsId(query: string) {
-    const response = await this.doOpenNMSRequest({
-      url: this.nodes + '/' + query.trim(),
-      method: 'GET',
-      params: {
-        limit: 0
-      }
-    })
-
-    return response.data
-  }
-
-  /**
-   * Get resources for a single node
-   * @param nodeQuery needs to be used with getNodeAsResourceQuery()
-   * @returns Array of resources if they exists for a node
-   */
-  async getResourcesForNode(nodeQuery: string) {
-    const result: OnmsResourceDto[] = []
-    const response = await this.doOpenNMSRequest({
-      url: this.resources + '/' + encodeURIComponent(nodeQuery),
-      method: 'GET',
-      params: {
-        depth: 1
-      }
-    })
-    if (response.data.children.resource && Array.isArray(response.data.children.resource)) {
-      result.push(...response.data.children.resource)
-    }
-  return result
-  }
-
-  /**
-   * Get resources using the rest/resources/select endpoint
-   * this allows:
-   * - multiple nodes (comma separated id's)
-   * - multiple resources (comma separated id's without node prefix
-   * - multiple string properties if is necessary to narrow down
-   * @param nodes 
-   * @param nodeResources 
-   * @param stringProperties 
-   * @returns 
-   */
-  async getResourcesFor(nodes: string, nodeResources?: string, stringProperties?: string) {
-    const nodesSet = new Set<string>()
-    const nodeResourcesSet = new Set<string>()
-    const stringPropertiesSet = new Set<string>()
-
-    getMultiValues(nodes).forEach(n => nodesSet.add(n))
-    if (nodeResources) {
-      getMultiValues(nodeResources).forEach(n => nodeResourcesSet.add(n))
-    }
-    if (stringProperties) {
-      getMultiValues(stringProperties).forEach(n => stringPropertiesSet.add(n))
-    }
-
-    return this.getResourcesForMultipleNodes(
-      {
-        nodes: nodesSet,
-        nodeSubresources: nodeResourcesSet,
-        stringProperties: stringPropertiesSet
-      }
-    )
-  }
-
-  /**
-   * Get resources for multiple nodes as one array of OnmsResourceDto using the /rest/resources/select endpoint
-   */
-  async getResourcesForMultipleNodes(selection: OnmsResourceSelectQuery) {
-
-    const response = await this.doOpenNMSRequest({
-      url: '/rest/resources/select',
-      method: 'GET',
-      params: {
-        nodes: Array.from(selection.nodes).join(','),
-        nodeSubresources: Array.from(selection.nodeSubresources).join(','),
-        stringProperties: Array.from(selection.stringProperties).join(',')
-      }
-    })
-
-    const resources = response.data as OnmsResourceDto[]
-
-    return resources.flatMap(r => r.children.resource)
-
-  }
-
-}
-
-
 
 export function getNodeFilterMap(filterParam?: string): Map<string, string> {
-  const filters = filterParam ? filterParam.split('&') : [];
-  let filtermap = new Map<string, string>();
+  const filters = filterParam ? filterParam.split('&') : []
+  const filtermap = new Map<string, string>()
+
   filters.forEach((filter, index, arr) => {
-    let propValue = filter ? filter.split('=') : null;
+    let propValue = filter ? filter.split('=') : null
+
     if (propValue && propValue.length === 2) {
-      let propertyKey = propValue[0].trim();
-      let propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1');
-      filtermap.set(propertyKey, propertyValue);
+      const propertyKey = propValue[0].trim()
+      const propertyValue = propValue[1].trim().replace(/^["'](.+(?=["']$))["']$/, '$1')
+
+      filtermap.set(propertyKey, propertyValue)
     }
-  });
-  return filtermap;
+  })
+
+  return filtermap
 }
 
 export const getNumberOrDefault = (value: any, defaultValue: number) => {
-  return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10);
+  return isNaN(parseInt(value, 10)) ? defaultValue : parseInt(value, 10)
 }
 
 export const getNodeResource = (nodeId) => {
-  let prefix = "";
-  if (nodeId.indexOf(":") > 0) {
-    prefix = "nodeSource[";
-  } else {
-    prefix = "node[";
+  const prefix = nodeId.indexOf(':') > 0 ? 'nodeSource[' : 'node['
+
+  return `${prefix}${nodeId}]`
+}
+
+export function getNodeAsResourceQuery(nodeId: string | undefined) {
+  if (!nodeId) {
+    return nodeId
   }
-  return prefix + nodeId + "]";
+
+  return getNodeResource(nodeId)
 }
 
 /**
@@ -646,21 +298,23 @@ export const getNodeResource = (nodeId) => {
  * @returns Node Id 
  */
 export const getNodeIdFromResourceId = (resource): string => {
-  const matches = resource.match(/node(Source)?\[([^\]]+)?\]\..*/);
+  const matches = resource.match(/node(Source)?\[([^\]]+)?\]\..*/)
+
   if (matches && matches.length === 3) {
     return matches[2]
-  }
-  else {
+  } else {
     return resource
   }
 }
 
 export const getResourceId = (resource): string => {
-  const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/);
+  const matches = resource.match(/node(Source)?\[[^\]]*?\]\.(.*)/)
+
   if (matches && matches.length === 3) {
-    return matches[2];
+    return matches[2]
+  } else {
+    return resource
   }
-  else { return resource; }
 }
 
 /**
@@ -675,24 +329,29 @@ export const trimChar = (str: string, sStart: string, sEnd?: string) => {
   str = str.trim()
   let result: string = str
   sEnd ??= sStart
+
   if (str.startsWith(sStart) && str.endsWith(sEnd)) {
     result = str.substring(str.indexOf(sStart) + 1, str.lastIndexOf(sEnd))
   }
+
   return result
 }
 
 export const getMultiValues = (values: string): string[]  => {
-  if(!isString(values)){
+  if (!isString(values)) {
     values = String(values)
   }
+
   return trimChar(values, '{', '}').split(',')
 }
 
+export const capitalize = (value: string) => {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : ''
+}
+
 /**
- * 
- * @param value returns true if value is primitive string or a String object
- * @returns 
+ * Returns true if value is non-null and is a primitive string or a String object
  */
 export const isString = (value) => {
-  return typeof(value) === 'string' || value instanceof String
+  return value !== null && (typeof(value) === 'string' || value instanceof String)
 }

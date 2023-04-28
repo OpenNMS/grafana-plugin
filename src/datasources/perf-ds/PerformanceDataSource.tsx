@@ -1,8 +1,11 @@
-import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, MetricFindValue } from "@grafana/data";
-import { ClientDelegate } from "lib/client_delegate";
-import { SimpleOpenNMSRequest, getNodeIdFromResourceId, OpenNMSGlob, getResourceId, trimChar } from "lib/utils";
-import { PerformanceTypeOptions } from "./constants";
-import { measurementResponseToDataFrame } from "./PerformanceHelpers";
+import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, MetricFindValue } from '@grafana/data'
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
+import cloneDeep from 'lodash/cloneDeep'
+import { ClientDelegate } from 'lib/client_delegate'
+import { getNodeIdFromResourceId, OpenNMSGlob, getResourceId, trimChar } from 'lib/utils'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
+import { PerformanceTypeOptions } from './constants'
+import { measurementResponseToDataFrame } from './PerformanceHelpers'
 import {
     OnmsMeasurementsQueryRequest,
     OnmsMeasurementsQueryResponse,
@@ -10,9 +13,9 @@ import {
     PerformanceDataSourceOptions,
     PerformanceQuery,
     PerformanceQueryRequest
-} from "./types";
+} from './types'
 import { OnmsResourceDto } from '../../lib/api_types'
-import { collectInterpolationVariables, interpolate } from "./queries/interpolate";
+import { collectInterpolationVariables, interpolate } from './queries/interpolate'
 import {
     buildAttributeQuerySource,
     buildExpressionQuery,
@@ -23,11 +26,9 @@ import {
     isValidExpressionTarget,
     isValidFilterTarget,
     isValidMeasurementQuery
-} from "./queries/queryBuilder";
+} from './queries/queryBuilder'
 import { FunctionFormatter } from '../../lib/function_formatter'
-import { queryStringProperties } from "./queries/queryStringProperties"
-import { TemplateSrv, getTemplateSrv, getBackendSrv } from "@grafana/runtime";
-import { cloneDeep } from 'lodash'
+import { queryStringProperties } from './queries/queryStringProperties'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string;

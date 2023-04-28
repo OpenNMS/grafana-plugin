@@ -1,8 +1,8 @@
-import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from '@grafana/data';
-import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime';
-import { ClientDelegate } from 'lib/client_delegate';
-import { SimpleOpenNMSRequest } from 'lib/utils';
-import { FlowStrings } from './constants';
+import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings } from '@grafana/data'
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
+import { ClientDelegate } from 'lib/client_delegate'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
+import { FlowStrings } from './constants'
 
 import {
     buildFullQueryData,
@@ -10,12 +10,12 @@ import {
     extractDataFromQuery,
     queryOpenNMS,
     queryTemplateVariable
-} from './helpers';
+} from './helpers'
 import {
     FlowDataSourceOptions,
     FlowQuery,
     FlowQueryRequest
-} from './types';
+} from './types'
 
 export class FlowDataSource extends DataSourceApi<FlowQuery> {
     type: string;

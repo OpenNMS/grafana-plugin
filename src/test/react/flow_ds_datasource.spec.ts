@@ -1,14 +1,14 @@
-import { dateTimeAsMoment } from "@grafana/data";
-import { OnmsFlowSeries } from 'opennms/src/model';
-import *  as helpers from '../../datasources/flow-ds/helpers';
+import { dateTimeAsMoment } from '@grafana/data'
+import { OnmsFlowSeries } from 'opennms/src/model'
+import *  as helpers from '../../datasources/flow-ds/helpers'
 import {
   FlowQueryData,
   FlowParsedQueryData,
   FlowParsedQueryRow,
-} from '../../datasources/flow-ds/types';
-import { FlowStrings } from '../../datasources/flow-ds/constants';
-import { SimpleOpenNMSRequest } from 'lib/utils';
-import { OnmsResourceDto } from "lib/api_types";
+} from '../../datasources/flow-ds/types'
+import { FlowStrings } from '../../datasources/flow-ds/constants'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
+import { OnmsResourceDto } from 'lib/api_types'
 
 describe("OpenNMS_Flow_Datasource", function () {
 
