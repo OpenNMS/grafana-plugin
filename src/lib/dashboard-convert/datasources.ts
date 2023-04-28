@@ -1,7 +1,7 @@
-import { isString } from 'lodash'
 import { DataSourceInstanceSettings, DataSourceJsonData } from '@grafana/data'
 import { DatasourceMetadata, DsType } from './types'
 import { getDatasourceTypeFromPluginId } from './utils'
+import { isString } from '../utils'
 
 // Datasource info found in panel or target/query
 interface SourceDatasourceInfo {
@@ -11,9 +11,39 @@ interface SourceDatasourceInfo {
 }
 
 // Get datasource info from either a panel or a target
+// Legacy entries e.g. for panels, may be in various forms:
+// 1. datasource is a string:
+// "panels:" [
+//     {
+//         "datasource": "opennms-performance-datasource"
+//     }
+// ]
+//
+// 2. datasource is an object with type and uid:
+//
+// "panels:" [
+//     {
+//         "datasource": {
+//             "type": "opennms-performance-datasource",
+//             "uid": "ab1z3q4d"
+//         }
+//     }
+// ]
+//
+// 3. datasource is an object with just uid, and uid is a string or template variable
+//
+// "panels:" [
+//     {
+//         "datasource": {
+//             "uid": "$datasource"
+//         }
+//     }
+// ]
+//
 export const getSourceDatasourceInfo = (source: any, datasourceMap: Map<string,DsType>): SourceDatasourceInfo => {
   if (source && source.datasource) {
     if (isString(source.datasource) && datasourceMap.has(source.datasource)) {
+      // 1. datasource is a string
       const dsType = datasourceMap.get(source.datasource) || ''
 
       return {
@@ -22,6 +52,7 @@ export const getSourceDatasourceInfo = (source: any, datasourceMap: Map<string,D
         datasourceType: dsType
       }
     } else if (!isString(source.datasource) && source.datasource?.type) {
+      // 2. datasource is an object with type
       const { datasourceType } = getDatasourceTypeFromPluginId(source.datasource.type)
 
       if (datasourceType) {
@@ -31,7 +62,19 @@ export const getSourceDatasourceInfo = (source: any, datasourceMap: Map<string,D
           datasourceType
         }
       }
-   }
+    } else if (!isString(source.datasource) && !source.datasource?.type && source.datasource?.uid) {
+      // 3. datasource is an object with uid only
+      const uid: string = source.datasource.uid || ''
+      const dsType = datasourceMap.get(uid)
+
+      if (dsType) {
+        return {
+          isOpenNmsDatasource: true,
+          isTemplateVariable: uid.startsWith('$'),
+          datasourceType: dsType
+        }
+      }
+    }
   }
 
   return {

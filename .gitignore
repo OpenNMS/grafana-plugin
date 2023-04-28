@@ -60,3 +60,6 @@ build/
 # do not want package-lock.json and yarn.lock at the same time
 # remove this from .gitignore if we move to yarn from npm
 yarn.lock
+
+# linter droppings
+.eslintcache

@@ -3,19 +3,17 @@ import {
     DataQueryResponse,
     DataQueryResponseData,
     FieldType
-} from "@grafana/data";
-import { TemplateSrv } from "@grafana/runtime"
-import { Client, ServerMetadata } from "opennms"
-import { ClientDelegate } from "../../../lib/client_delegate"
-import { getResourceId, SimpleOpenNMSRequest, trimChar } from "../../../lib/utils"
+} from '@grafana/data'
+import { TemplateSrv } from '@grafana/runtime'
+import { Client, ServerMetadata } from 'opennms'
+import { ClientDelegate } from '../../../lib/client_delegate'
+import { getResourceId, trimChar } from '../../../lib/utils'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import { OnmsResourceSelectQuery, OnmsResourceDto} from '../../../lib/api_types'
 import {
     DefinedStringPropertyQuery,
     PerformanceQuery,
-    
-} from "./../types";
-
-
+} from './../types'
 
 // constructs a single string valued data frame field
 const toStringField = (name: string, value: string) => {

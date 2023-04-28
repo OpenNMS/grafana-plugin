@@ -77,6 +77,17 @@ commands:
           key: npm-packages-v3-{{ checksum "/tmp/filtered-package-lock.json" }}-{{ .Branch }}-{{ .Revision }}
           paths:
             - ~/.npm
+  validate-schema:
+    steps:
+      - run:
+          name: Validate Plugin Schema
+          command: |
+            export PATH="./node_modules/.bin:${PATH}"
+            curl -L -o /tmp/plugin.schema.json https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json
+            sudo apt-get update
+            sudo apt-get -y --no-install-recommends install python3-pip
+            pip3 install check-jsonschema
+            check-jsonschema --schemafile /tmp/plugin.schema.json src/plugin.json
   build-and-sign:
     steps:
       - run:
@@ -86,6 +97,26 @@ commands:
             export NODE_OPTIONS=--openssl-legacy-provider
             npm run build
             npm run sign
+
+            curl -L -o /tmp/release-lint.sh https://raw.githubusercontent.com/OpenNMS/opennms-repo/master/script/release-lint.sh
+            chmod 755 /tmp/release-lint.sh
+
+            LINT_WARN_ONLY=1
+            if [ -n "${CIRCLE_TAG}" ]; then
+              LINT_WARN_ONLY=0
+            fi
+            case "${CIRCLE_BRANCH}" in
+              main-*)
+                LINT_WARN_ONLY=0
+                ;;
+            esac
+
+            if [ "${LINT_WARN_ONLY}" -eq 1 ]; then
+              /tmp/release-lint.sh -w
+            else
+              /tmp/release-lint.sh
+            fi
+
             unset NODE_OPTIONS
             
 jobs:
@@ -120,6 +151,7 @@ jobs:
               echo "|1|jopvDXD+uqD0jpXcT1YtIRhc8jQ=|KkoqYK0ZpHiiNZE6GBiYlI3cRmQ= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
               chmod 600 ~/.ssh/known_hosts
       - install-node-dependencies
+      - validate-schema
       - build-and-sign
       - save-node-cache
       - store_test_results:

@@ -12,7 +12,7 @@ export const addVariationsToMap = (varName: string, dsType: DsType,  datasourceM
 // returns a string which is one of the DsTypes or else empty string, and
 // whether this is a "legacy" datasource or not (legacy is version < 9)
 export const getDatasourceTypeFromPluginId = (pluginId: string) => {
-  const legacyMatch = pluginId.match(/^opennms-([^-]+)-datasource$/i)
+  const legacyMatch = pluginId.match(/^opennms-helm-([^-]+)-datasource$/i)
 
   if (legacyMatch && legacyMatch.length > 0) {
     return {

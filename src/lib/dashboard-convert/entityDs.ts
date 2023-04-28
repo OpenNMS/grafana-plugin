@@ -40,7 +40,7 @@ export const updateEntityQuery = (source: any) => {
   //   name: "Category: Name",
   // }
 
-  const columns = getColumns(target.entityType.label)
+  const columns = getColumns(target.entityType?.label || target.entityType?.id)
 
   target.clauses = (target.filter?.clauses || []).map((c, i) => {
     const attrLabel = c.restriction.attribute // 'label'
