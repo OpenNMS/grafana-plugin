@@ -10,7 +10,7 @@ export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientD
     const [alarm, setAlarm] = useState<OnmsAlarm>()
 
     useEffect(() => {
-        if (series?.[0].name === 'alarms') {
+        if (series?.[0]?.name === 'alarms') {
             setAlarmQuery(true)
             const localAlarmId = getAlarmIdFromFields(series?.[0].fields,soloIndex)
             setAlarmId(localAlarmId ?? -1)
