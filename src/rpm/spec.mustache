@@ -2,6 +2,7 @@
 %define version {{version}}
 %define release {{release}}
 %define buildroot %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+%define pluginid opennms-app
 
 Name: %{name}
 Version: %{version}
@@ -55,8 +56,8 @@ npm rebuild
 {{/noarch}}
 
 %install
-mkdir -p %{buildroot}{{installDir}}/{{name}}-app
-cp -r ./dist/* %{buildroot}{{installDir}}/{{name}}-app
+mkdir -p %{buildroot}{{installDir}}/%{pluginid}
+cp -r ./dist/* %{buildroot}{{installDir}}/%{pluginid}
 
 %post
 {{#postInstallCommands}}
@@ -68,7 +69,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644, grafana, grafana, 755)
-{{installDir}}/{{name}}-app
+{{installDir}}/%{pluginid}
 {{#hasExecutableFiles}}
 %defattr(755, grafana, grafana, 755)
 {{#executableFiles}}

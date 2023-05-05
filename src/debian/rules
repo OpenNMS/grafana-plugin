@@ -28,5 +28,5 @@ override_dh_compress:
 
 override_dh_auto_install:
 	echo "installing"
-	install -d -m 755 debian/grafana-plugin/var/lib/grafana/plugins/opennms-opennms-app/
-	find * -maxdepth 0 | grep -vE '^debian$$' | while read LINE; do cp -pR "$$LINE" "debian/grafana-plugin/var/lib/grafana/plugins/opennms-opennms-app/$$LINE"; done
+	install -d -m 755 debian/opennms-grafana-plugin/var/lib/grafana/plugins/opennms-opennms-app/
+	find * -maxdepth 0 | grep -vE '^debian$$' | while read LINE; do cp -pR "$$LINE" "debian/opennms-grafana-plugin/var/lib/grafana/plugins/opennms-opennms-app/$$LINE"; done

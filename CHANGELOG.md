@@ -1,3 +1,11 @@
+### v9.0.2
+
+Grafana Plugin for OpenNMS version 9.0.2 is a bugfix release.
+
+### v9.0.1
+
+Grafana Plugin for OpenNMS version 9.0.1 is a re-release of 9.0.0, with a change to the plugin ID used for publication to Grafana's registry and updated logo.
+
 ### v9.0.0
 
 Grafana Plugin for OpenNMS version 9 is a large refactor of the codebase from Helm 8.
