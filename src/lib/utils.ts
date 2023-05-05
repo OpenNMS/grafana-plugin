@@ -9,8 +9,8 @@ export function initializeCss() {
     cssInitialized = true
 
     loadPluginCss({
-      dark: 'plugins/opennms-app/styles/dark.css',
-      light: 'plugins/opennms-app/styles/light.css',
+      dark: 'plugins/opennms-opennms-app/styles/dark.css',
+      light: 'plugins/opennms-opennms-app/styles/light.css',
     })
   }
 }

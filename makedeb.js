@@ -12,6 +12,7 @@ const which = require('which');
 const program = require('commander');
 
 const pkginfo = require('./package.json');
+const plugininfo = require('./src/plugin.json');
 
 try {
   which.sync('dpkg-buildpackage');
@@ -51,8 +52,8 @@ const changelog = `${pkginfo.name} (${version}-${release}) unstable; urgency=low
  -- Benjamin Reed <ranger@opennms.org>  ${date}
 `;
 
-const pkgname = pkginfo.name;
-const workdir = path.join(process.cwd(), 'artifacts', pkgname);
+const pkgid   = plugininfo.id;
+const workdir = path.join(process.cwd(), 'artifacts', pkgid);
 const distdir = path.join(process.cwd(), 'dist');
 
 rimraf.sync(workdir);

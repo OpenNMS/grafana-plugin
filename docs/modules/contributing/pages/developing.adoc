@@ -22,7 +22,7 @@ Follow these steps to prepare your development environment:
 app_mode = development
 ...
 [plugins]
-allow_loading_unsigned_plugins = opennms-app
+allow_loading_unsigned_plugins = opennms-opennms-app
 ----
 
 . Use Git to check out the repository:
@@ -48,7 +48,7 @@ npm run dev
 . Symlink your `dist` directory to Grafana's plugin path:
 +
 [source, shell]
-ln -s /path/to/opennms-grafana-plugin/dist /var/lib/grafana/plugins/opennms-app
+ln -s /path/to/opennms-grafana-plugin/dist /var/lib/grafana/plugins/opennms-opennms-app
 
 . Run a continuous build that watches for changes:
 +
