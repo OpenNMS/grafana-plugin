@@ -10,5 +10,5 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/opennms-app
+      - ./dist:/var/lib/grafana/plugins/opennms-opennms-app
       - ./provisioning:/etc/grafana/provisioning

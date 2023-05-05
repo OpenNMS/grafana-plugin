@@ -9,7 +9,7 @@
   "author": "Benjamin Reed",
   "license": "MIT",
   "bugs": {
-    "url": "https://issues.opennms.org/projects/GRAFANA-PLUGIN/summary"
+    "url": "https://opennms.atlassian.net/projects/OPG"
   },
   "homepage": "https://github.com/OpenNMS/grafana-plugin",
   "devDependencies": {
@@ -102,7 +102,7 @@
     "lint": "eslint --cache --ignore-path ./.gitignore --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "yarn lint --fix",
     "server": "docker-compose up --build",
-    "sign": "npx --yes @grafana/sign-plugin@latest --rootUrls=http://localhost:3000",
+    "sign": "npx --yes @grafana/sign-plugin@latest",
     "start": "npm run watch",
     "test": "jest",
     "test:ci": "jest --passWithNoTests --maxWorkers 4",

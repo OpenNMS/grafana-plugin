@@ -60,7 +60,7 @@ This plugin requires Grafana 9 or greater.
 
 ## Issue Tracking
 
-We use the OpenNMS Plugin for Grafana project in our [JIRA](https://issues.opennms.org/projects/OPG) instance to track bugs and enhancements related this to project.
+We use the OpenNMS Plugin for Grafana project in our [JIRA](https://opennms.atlassian.net/projects/OPG) instance to track bugs and enhancements related this to project.
 
 ## Changelog
 

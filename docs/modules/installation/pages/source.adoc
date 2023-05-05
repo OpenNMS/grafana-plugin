@@ -10,20 +10,20 @@ If you do not have an existing Grafana instance, see xref:package.adoc[].
 
 Follow these steps to build the plugin:
 
-. Download the source tree into a subfolder called `opennms-app` in Grafana's plugin directory:
+. Download the source tree into a subfolder called `opennms-opennms-app` in Grafana's plugin directory:
 +
 [source, shell]
 ----
 mkdir -p /var/lib/grafana/plugins
 cd /var/lib/grafana/plugins
-git clone https://github.com/OpenNMS/grafana-plugin.git opennms-app
+git clone https://github.com/OpenNMS/grafana-plugin.git opennms-opennms-app
 ----
 
 . Compile the plugin:
 +
 [source, shell]
 ----
-cd /var/lib/grafana/plugins/opennms-app
+cd /var/lib/grafana/plugins/opennms-opennms-app
 npm install
 npm run build
 ----
