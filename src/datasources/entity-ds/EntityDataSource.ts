@@ -1,5 +1,5 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
-import { capitalize } from 'lodash'
+import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
 import { API, Model } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import {
@@ -17,32 +17,32 @@ import {
     queryEntity
 } from './EntityHelper'
 import { ClientDelegate } from 'lib/client_delegate'
-import { SimpleOpenNMSRequest, getNodeFilterMap } from 'lib/utils'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
+import { capitalize, getNodeFilterMap } from 'lib/utils'
 import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
 import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
 import { loadFilterEditorData } from '../../lib/localStorageService'
-import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
     entity_metadata: any[]
 }
 
 export class EntityDataSource extends DataSourceApi<EntityQuery> {
-    type: string;
-    url?: string;
-    name: string;
-    client: ClientDelegate;
-    simpleRequest: SimpleOpenNMSRequest;
+    type: string
+    url?: string
+    name: string
+    client: ClientDelegate
+    simpleRequest: SimpleOpenNMSRequest
     templateSrv: TemplateSrv
 
     constructor(instanceSettings: DataSourceInstanceSettings<EntityDataSourceOptions>) {
-        super(instanceSettings);
-        this.type = instanceSettings.type;
-        this.url = instanceSettings.url;
-        this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
-        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
+        super(instanceSettings)
+        this.type = instanceSettings.type
+        this.url = instanceSettings.url
+        this.name = instanceSettings.name
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv())
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url)
         this.templateSrv = getTemplateSrv()
     }
 
@@ -136,7 +136,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
                     }
                 })
 
-            return items;
+            return items
         }
 
         const propertyValues = await searchProperty.findValues({ limit: 0 })

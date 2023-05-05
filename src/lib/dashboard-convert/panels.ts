@@ -49,6 +49,7 @@ const convertPanelDatasources = (panel: any, datasourceMap: Map<string, DsType>,
   // - a template variable like '$datasource' which points to an OpenNMS DS
   //    in which case we leave as-is
   // - an object like { type, uid }, which points to an OpenNMS DS, in which case we update it to version 9
+  // - an object like { uid }, which contains an OpenNMS DS type or template variable, in which case we leave it alone
   // - either of those which points to a non-OpenNMS DS, in which case leave as-is
   // - empty/null/undefined, in which case DS should be in the individual targets, leave as-is
   const panelDsInfo = getSourceDatasourceInfo(panel, datasourceMap)

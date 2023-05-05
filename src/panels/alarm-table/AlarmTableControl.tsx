@@ -23,8 +23,10 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
 
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
     const { filteredProps, page, setPage, totalPages } = useAlarmProperties(props?.data?.series[0], props?.options?.alarmTable)
-    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked)
-    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes, props?.data?.series?.[0].fields, () => setMenuOpen(false), client)
+    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked, filteredProps)
+    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes,
+      props?.data?.series?.[0].fields, () => setMenuOpen(false),
+      props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser || false, client)
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs()
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client)
 

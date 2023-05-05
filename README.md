@@ -1,54 +1,66 @@
-# OpenNMS Plugin for Grafana - PM/FM Console for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/grafana-plugin.svg?style=svg)](https://circleci.com/gh/OpenNMS/grafana-plugin)
+# OpenNMS Plugin for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/grafana-plugin.svg?style=svg)](https://circleci.com/gh/OpenNMS/grafana-plugin)
 
-OpenNMS Plugin for Grafana is a [Grafana](https://grafana.com/) application that allows users to create flexible dashboards using both fault management (FM) and performance management (PM) data from [OpenNMS® Horizon™](https://www.opennms.org) and/or [OpenNMS® Meridian™](https://www.opennms.com/).
+OpenNMS Plugin for Grafana (formerly known as Helm) is a Grafana application that allows users to create flexible monitoring dashboards using data from [OpenNMS® Horizon™](https://www.opennms.com/horizon/) and/or [OpenNMS® Meridian™](https://www.opennms.com/meridian/).
 
-Consult the [Plugin Documentation](https://docs.opennms.com/OpenNMS%20Plugin%20for%20Grafana/latest/index.html) for help on installing, configuring and using the application.
+Supported data:
+* Performance and response time (time series metrics)
+* Fault (alarms and outages)
+* Inventory (nodes, IP & SNMP interfaces, services)
+* NetFlow (NetFlow v5 & v9, IPFIX, sFlow)
+
+For help on installing, configuring, and using the application, read the [documentation](https://docs.opennms.com/grafana-plugin/latest/index.html).
 
 ## Features
 
-### Fault Management (FM)
+### Flexible data filtering
 
-#### Flexible alarm filtering
+Isolate the data you want to display using custom filters and conditions. The filter panel goes a step further—enabling global data filtering for your dashboard.
 
-Isolate the alarms you want displayed using custom filters and conditions that can match against over 150 different fields.
+### Configurable displays
 
-#### Configurable displays
+Present fields that are most relevant to you and your teams to improve tracking and triage.
 
-Present the fields that are most relevant to you and your teams for improved tracking and triage.
+### Alarm interactions
 
-#### Alarm interactions
+Acknowledge, escalate, create, and clear tickets for alarms directly from the dashboard.
 
-Acknowledge, escalate and create tickets for alarms directly from the dashboard.
+### Storage engine agnostic
 
-### Performance Management (PM)
+Retrieve time series metrics stored in persistence engines, including [OpenNMS Time Series DB](https://www.opennms.com/time-series-db/), [Newts](https://github.com/OpenNMS/newts), [Cortex](http://cortex.io/), [RRDtool](https://oss.oetiker.ch/rrdtool/), or [JRobin](https://github.com/OpenNMS/jrobin).
 
-#### Storage engine agnostic
+### Flows deep-dive dashboard
 
-Retrieve metrics stored in any of the available persistence engines i.e. rrdtool, JRobin and [Newts](https://github.com/OpenNMS/newts).
+This custom dashboard, included in the app, provides a powerful, flexible interface for exploring NetFlow data alongside performance metrics.
 
 ### Template support
 
-Populate template variables with all of the nodes belonging to a set of categories, or leverage the complete [filter grammar](https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html).
+Populate template variables with query results from any of the included OpenNMS data source plugins.
 
-### Trending and Forecasting
+### Trending and forecasting of time series data
 
-Remove outliers and perform trending or forecasting using the built-in series filters. Develop your own filters using Java or [R](https://www.r-project.org/).
-
-Derive new series using
-[JEXL](https://commons.apache.org/proper/commons-jexl/reference/syntax.html) expressions.
+Remove outliers and perform trending or forecasting using the built-in series filters or develop your own filters using Java or [R](https://www.r-project.org/). Derive new series using [JEXL](https://commons.apache.org/proper/commons-jexl/reference/syntax.html) expressions.
 
 ## Support Matrix
 
-* Performance Management Data Source
-  * OpenNMS Horizon v16.x or greater
-  * OpenNMS Meridian v2016.1.0 or greater
-* Fault Management Data Source
-  * OpenNMS Horizon v20.1.x or greater
-  * OpenNMS Meridian v2017.1.0 or greater
+* Performance data source
+  * OpenNMS Horizon 16 or greater
+  * OpenNMS Meridian 2016 or greater
+* Entities data source
+  * Alarms
+    * OpenNMS Horizon 20 or greater
+    * OpenNMS Meridian 2018 or greater
+  * IP and SNMP interfaces, outages, and services
+    * OpenNMS Horizon 26 or greater
+    * OpenNMS Meridian 2020 or greater
+* Flows data source
+  * OpenNMS Horizon 24 or greater
+  * OpenNMS Meridian 2019 or greater
+
+This plugin requires Grafana 9 or greater.
 
 ## Issue Tracking
 
-We use the OpenNMS Plugin for Grafana project in our [JIRA](https://issues.opennms.org/projects/HELM) instance to track bugs and enhancements related this to project.
+We use the OpenNMS Plugin for Grafana project in our [JIRA](https://issues.opennms.org/projects/OPG) instance to track bugs and enhancements related this to project.
 
 ## Changelog
 

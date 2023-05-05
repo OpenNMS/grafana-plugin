@@ -20,25 +20,24 @@ export const EntityClause = ({
 }: EntityClauseProps) => {
 
     const createComparatorOptions = () => {
-      return Object.keys(API.Comparators).map(key => API.Comparators[key])
+        return Object.keys(API.Comparators).map(key => API.Comparators[key])
     }
 
     const [comparatorOptions, setComparatorOptions] = useState<Array<SelectableValue<Comparator>>>(createComparatorOptions());
     const [comparedOptions, setComparedOptions] = useState<Array<SelectableValue<string>>>([]);
 
     useEffect(() => {
-      const { values, comparators } = getValuesAndComparatorsFromClause();
+        const { values, comparators } = getValuesAndComparatorsFromClause();
 
-      if (values) {
-          buildOptionsFromAttributeValues(values);
-      }
+        if (values) {
+            buildOptionsFromAttributeValues(values);
+        }
 
-      if (comparators) {
-          setComparatorOptions(comparators)
-          setComparator(index, comparators[0])
-      }
+        if (comparators) {
+            setComparatorOptions(comparators)
+        }
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clause.attribute])
 
     const buildOptionsFromAttributeValues = (values: string[]) => {
@@ -80,8 +79,9 @@ export const EntityClause = ({
             dispatchClauses({ type: ClauseActionType.delete, index: col })
         }
         else {
+            const comp = API.Comparators.EQ
             setAttribute(col, {})
-            setComparator(col, {})
+            setComparator(col, { label: comp.label, value: comp })
             setComparedString(col, '')
             setComparedValue(col, {})
         }
