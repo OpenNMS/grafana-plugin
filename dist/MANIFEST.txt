@@ -4,20 +4,17 @@ Hash: SHA512
 
 {
   "manifestVersion": "2.0.0",
-  "signatureType": "private",
+  "signatureType": "community",
   "signedByOrg": "opennms",
   "signedByOrgName": "The OpenNMS Group Inc.",
-  "rootUrls": [
-    "http://localhost:3000/"
-  ],
-  "plugin": "opennms-app",
+  "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1682715772925,
+  "time": 1683310586097,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "CHANGELOG.md": "77126f3b7f13847fbc507497cf0a96901e786c96e4e1e93b342153f6f8264b6e",
+    "CHANGELOG.md": "8324e2840fe0682014c517c029deda615905bfff69a0a21d4d7eac9d136ebb30",
     "LICENSE": "bc8d96831c4914a537bd291adcfccc5559934f7435900200dc9dee767afc5097",
-    "README.md": "f675a38bd3cd3be514abdf521f16f0b5e4ab73e3c8ddd9a1cb530a88089bd88d",
+    "README.md": "5c9ffce05533ff8b53b70a4139a381c4ebfb4001db46f801d4cf9ecb96266083",
     "dashboards/about.json": "ffb2b80e2f6ec9f99d45c8998095c13d96197778c5f19f96dd64be5bc76dec8f",
     "dashboards/cortex_flow_deep_dive.json": "1a9d7a90fe5e27248fe6183d46992f84074420dec4a7aa7692180c097ff26200",
     "dashboards/flow_deep_dive.json": "8dcba56b12a97189ce7cdd0f597fbce6c87999e0ea9ec4a54e891587c3057ead",
@@ -25,19 +22,19 @@ Hash: SHA512
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
     "datasources/entity-ds/module.js": "466b8e12625247cc99852e3bc5ef44f9418b008f199150a4ab4a9c47002eeed3",
     "datasources/entity-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/entity-ds/module.js.map": "5087d501a61c55e029eb609b62080922436ac304d41a01adb783a2f9e672db29",
+    "datasources/entity-ds/module.js.map": "bb360bc85ba348724c430e5c8dd0c225695960b3d9666868cf491920ac68943a",
     "datasources/entity-ds/plugin.json": "065c5c5ee1fe69e8b99ed5a203b2ff93fd4aab00433dcb4e970f6098e9760294",
     "datasources/flow-ds/README.md": "d174d946392f146eb7e843b6f4ab713a1e6c5972933febbdb2c66bcc241e4a66",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
     "datasources/flow-ds/module.js": "0935188b701b39024bb51d20f19ea21d93d05e7aa9aec45de36a6cdff5416427",
     "datasources/flow-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/flow-ds/module.js.map": "68f094966a4e0308fa9475dfe507846f9bcceab77c2c63cb766a3155730052e0",
+    "datasources/flow-ds/module.js.map": "470458f96a0145b2730072bf4be774c6ad8716911915eb8c6ceb22432b14e5cc",
     "datasources/flow-ds/plugin.json": "9c91bbbd3f2b8eb288ea10c8b7011740dd6df4e2051eb47d60673e2bba213a47",
     "datasources/perf-ds/README.md": "3ea1a62a3479f30e185d91dad12dfff5ff3085b7d32760f06d9226314b2c3381",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
     "datasources/perf-ds/module.js": "39b7dfa74d20370979bc4f8c08013f0a458de5b4fb74502893b46a29ee8fb9c1",
     "datasources/perf-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/perf-ds/module.js.map": "575381893373afffb23ab8ecc08d4ead23b5fd0cef23b0f940ab66bd97b02afc",
+    "datasources/perf-ds/module.js.map": "52ad383ab275b6d68258cff56ad49ede3876c2a35a99d7e363209f9bf04c6a71",
     "datasources/perf-ds/plugin.json": "59ab660793f7f3230948650d921677b8ea422939d47b0574bb2fc5a0c388355b",
     "img/Helm_Screenshot_Alarms.png": "c4be68860d9a71ea0a9d99df7e3f3e4db9858f4b378925bb3e9d16c0a23c2646",
     "img/Helm_Screenshot_Entities_Data_Source.png": "a5da3654cf6b09fdf3e4a95b9e722334e7a0eb1f2a667279cdac9b5db4be18d1",
@@ -62,7 +59,7 @@ Hash: SHA512
     "panels/dashboard-convert/img/dashboard-convert.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/dashboard-convert/module.js": "f186a452c83491e64ce6e07c5a9606977e82fa626a68b2706716e9b17573f857",
     "panels/dashboard-convert/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/dashboard-convert/module.js.map": "fdef3708ab2ecbb64522c69053e0c8db0f61c63994bd909d0a722eca0b6a7f77",
+    "panels/dashboard-convert/module.js.map": "5ef974a502b96c551a593f9a7554c1b4ebda226a61c37a0327779267f9439955",
     "panels/dashboard-convert/plugin.json": "577ca7d79b56db9c3596afd1a681521705b82544739bf4d01e6c811ae2906508",
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/filter-panel/module.js": "6158940942e8757dff41b7320bb240dcd61e769ef28ee8f223e5ddb9b699b4d8",
@@ -73,17 +70,17 @@ Hash: SHA512
     "panels/flow-histogram/module.js": "b3cac8a3fa5fb63eb4dfde4079efe2bf70c4e7629254a301e0b1a547de5f1cc4",
     "panels/flow-histogram/module.js.map": "52e8cb7b29ddde861b7a08da3cfa8ba191c000f97886d8f5a5d00c5a90779d8a",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
-    "plugin.json": "3f930491e349e0f42e875473445c217f4bfb3ddb349dd51084844e8a65415852"
+    "plugin.json": "b8a54d09408d15196b8f4843555a4183996152a34cec511cc79f96d2a1d823e6"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrcEARMKAAYFAmRMNH0AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm58kgAgirtsBjGe0u/1M4HjQdSzYZh51kVeCZLq2jQ3vckpfsTg11prwL
-Lcg0QNjuBkxM2U4RSSHOebJczb50RbA+3se35gIHTSM4SbmEVlROs2ZwdwXp
-/u+oraVbxjTvGKwxw3/0+fU7xNP7+Ywb/rtOpGueNdJ24951iZr8l/w1kbAJ
-EOuwT7Y=
-=6dRK
+wrgEARMKAAYFAmRVR/oAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5/yvAgj0iM7Nq07Jid7UeUHD3dUmDaHCfObl69TcpCblCE8hSg2Uq+QG
+ZhYEZ5EWf8jFRDgGGdHEgO8BmP5SA+yPWSc7bQIJAb9U2eHNzGDJgjvFBcSK
+22W6G00CnIeJ0gMxs6+0A/WH8qjCMcA86qdlMM6PYXzeeYNWiBoy18nZLQgk
+DPvQAgjR
+=B+HA
 -----END PGP SIGNATURE-----
