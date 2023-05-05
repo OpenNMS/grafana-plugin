@@ -1,3 +1,13 @@
+### v9.0.3
+
+Grafana Plugin for OpenNMS version 9.0.3 is a small release with one final breaking ID change based on Grafana's registry guidelines.
+
+It contains a number of dependency security updates, as well as a few small bugfixes:
+
+* [HELM-398](https://opennms.atlassian.net/browse/HELM-398): Alarm Table / Entity Datasource: Enable "Use Grafana User"
+* [HELM-406](https://opennms.atlassian.net/browse/HELM-406): Adding a perf filter query to a dashboard elicits "TypeError: l is undefined"
+* [HELM-411](https://opennms.atlassian.net/browse/HELM-411): Alarm datasource query not keeping proper equality
+
 ### v9.0.2
 
 Grafana Plugin for OpenNMS version 9.0.2 is a bugfix release.
