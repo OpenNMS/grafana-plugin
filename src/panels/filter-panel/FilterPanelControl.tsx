@@ -27,7 +27,8 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
     const [selectableValues, setSelectableValues] = useState<FilterSelectableValues[]>([])
 
     useEffect(() => {
-        const filterEditorData = loadFilterEditorData()
+        const dashboardUid = props.data.request?.dashboardUID || ''
+        const filterEditorData = dashboardUid ? loadFilterEditorData(dashboardUid) : null
 
         if (filterEditorData && filterEditorData.selectableValues) {
             setSelectableValues(filterEditorData.selectableValues)
@@ -195,8 +196,13 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
      */
     const saveFilterPanel = (filterSelectableValues: FilterSelectableValues[]) => {
         if (props.options.filterEditor) {
-            // TODO: May want to remove some data from datasource before saving
+            const dashboardUid = props.data.request?.dashboardUID || ''
+
+            // store this in options so FilterPanelOptions can retrieve it
+            props.options.dashboardUid = dashboardUid
+
             const filterData: FilterEditorData = {
+                dashboardUid,
                 ...props.options.filterEditor,
                 selectableValues: filterSelectableValues
             }

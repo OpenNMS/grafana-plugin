@@ -177,13 +177,20 @@ export interface FilterSelectableValues {
 }
 
 /**
- * FilterPanel data saved to localStorage for use by Entity Datasource.
+ * FilterPanel data for one dashboard saved to localStorage for use by Entity Datasource.
  */
 export interface FilterEditorData {
-  datasource: SelectableValue<GrafanaDatasource> | undefined,
+  dashboardUid: string
+  datasource: SelectableValue<GrafanaDatasource> | undefined
   activeFilters: ActiveFilter[]
   selectableValues: FilterSelectableValues[]
 }
+
+/**
+ * FilterPanel data for all dashboards, saved to localStorage for use by Entity Datasource.
+ * Record key is dashboard uid.
+ */
+export type FilterEditorDataCollection = Record<string, FilterEditorData>
 
 export type OnmsRow = Array<number | string | moment.Moment | boolean | undefined>
 
@@ -199,7 +206,6 @@ export type Action =
   { type: ClauseActionType.addNestedClause, index: number } |
   { type: ClauseActionType.delete, index: number }
 
-
 /**
  * Type of action allowed
  */
@@ -211,5 +217,3 @@ export enum ClauseActionType {
   delete,
   update
 }
-
-
