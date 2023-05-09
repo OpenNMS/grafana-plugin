@@ -49,6 +49,7 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, reques
         .map(q => {
             const nodeId = q.stringPropertyState.node.id || q.stringPropertyState.node.label
             const resourceId = q.stringPropertyState.resource.id || q.stringPropertyState.resource.label
+
             return {
                 //...q,
                 // DataQuery fields
@@ -59,7 +60,7 @@ export const getDefinedStringPropertyQueries = (templateSrv: TemplateSrv, reques
                 datasource: q.datasource,
 
                 // StringPropertyQuery fields
-                nodeId: trimChar(templateSrv.replace(nodeId, request.scopedVars), '{', '}'),
+                nodeId: trimChar(templateSrv.replace('' + nodeId, request.scopedVars), '{', '}'),
                 resourceId: trimChar(templateSrv.replace(getResourceId(resourceId), request.scopedVars), '{', '}'),
                 stringProperty: q.stringPropertyState.stringProperty.value
             } as DefinedStringPropertyQuery
