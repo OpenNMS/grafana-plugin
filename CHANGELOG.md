@@ -1,3 +1,9 @@
+### v9.0.4
+
+Grafana Plugin for OpenNMS version 9.0.4 is a small release with one bugfix.
+
+* [HELM-421](https://opennms.atlassian.net/browse/HELM-421): PerfDS: Explorer for string property gives error "N.replace is not a function"
+
 ### v9.0.3
 
 Grafana Plugin for OpenNMS version 9.0.3 is a small release with one final breaking ID change based on Grafana's registry guidelines.
