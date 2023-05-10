@@ -9,6 +9,10 @@ export const useAlarmProperties = (oldProperties, alarmTable) => {
     const [totalPages, setTotalPages] = useState(0)
 
     useEffect(() => {
+        if (!oldProperties || !oldProperties.fields || !oldProperties.fields.length) {
+          return
+        }
+
         const filteredProps = cloneDeep(oldProperties)
         const totalRows = filteredProps.fields[0].values.length
         const rowsPerPage = Number(alarmTable.alarmTablePaging?.rowsPerPage || 10)
