@@ -57,9 +57,11 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         //   localStorage. May be able to subscribe to EventBus
 
         // get data from any FilterPanels that may be active
-        const filterEditorData = loadFilterEditorData()
+        const dashboardUid = request.dashboardUID || ''
+        const filterEditorData = dashboardUid ? loadFilterEditorData(dashboardUid) : null
+
         const hasFilterEditorData = (filterEditorData &&
-            filterEditorData?.activeFilters.length > 0 && filterEditorData?.selectableValues.length > 0)
+            filterEditorData.activeFilters.length > 0 && filterEditorData.selectableValues.length > 0)
 
         for (let target of request.targets) {
             request.entityType = target?.selectType?.label || EntityTypes.Alarms
