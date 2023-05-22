@@ -60,8 +60,8 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
       const node = propertyValue as PerformanceAttributeItemState
 
       const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
-      const existingLabel = performanceState.resource.label
-      const resource = (existingLabel && resourceOptions.filter(r => r.label === existingLabel)?.[0]) || {}
+      const existingLabel = performanceState?.resource?.label
+      const resource = (existingLabel && resourceOptions && resourceOptions.filter(r => r.label === existingLabel)?.[0]) || {}
 
       const state = {
         ...performanceState,

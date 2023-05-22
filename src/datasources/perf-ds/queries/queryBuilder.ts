@@ -44,10 +44,10 @@ export const isValidMeasurementQuery = (query: OnmsMeasurementsQueryRequest) => 
 
 export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
-        !(target.attribute &&
-          (target.attribute.attribute.name || (target.attribute.attribute.label && OpenNMSGlob.hasGlob(target.attribute.attribute.label))) &&
-          (target.attribute.resource.id || target.attribute.resource.label) &&
-          (target.attribute.node.id || target.attribute.node.label))) {
+        !target.attribute ||
+        !((target.attribute.attribute?.name || (target.attribute.attribute?.label && OpenNMSGlob.hasGlob(target.attribute.attribute?.label))) &&
+          (target.attribute.resource?.id || target.attribute.resource?.label) &&
+          (target.attribute.node?.id || target.attribute.node?.label))) {
         return false
     }
 
@@ -119,7 +119,7 @@ export const buildAttributeQuerySource = (target: PerformanceQuery) => {
         attribute: attribute,
         ['fallback-attribute']: target.attribute.fallbackAttribute?.name || undefined,
         aggregation: target.attribute.aggregation?.label?.toUpperCase() || undefined,
-        transient: target.hide === null || target.hide === undefined ? false: true
+        transient: target.hide === true
     } as OnmsMeasurementsQuerySource
 
     return source;
@@ -129,7 +129,7 @@ export const buildExpressionQuery = (target: PerformanceQuery, index: number) =>
     const expression = {
         label: target.label || 'expression' + index,
         value: target.expression,
-        transient: target.hide === null || target.hide === undefined ? false: true
+        transient: target.hide === true
     } as OnmsMeasurementsQueryExpression
 
     return expression
