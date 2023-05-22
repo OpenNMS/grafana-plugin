@@ -44,10 +44,10 @@ export const isValidMeasurementQuery = (query: OnmsMeasurementsQueryRequest) => 
 
 export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
-        !(target.attribute &&
-          (target.attribute.attribute.name || (target.attribute.attribute.label && OpenNMSGlob.hasGlob(target.attribute.attribute.label))) &&
-          (target.attribute.resource.id || target.attribute.resource.label) &&
-          (target.attribute.node.id || target.attribute.node.label))) {
+        !target.attribute ||
+        !((target.attribute.attribute?.name || (target.attribute.attribute?.label && OpenNMSGlob.hasGlob(target.attribute.attribute?.label))) &&
+          (target.attribute.resource?.id || target.attribute.resource?.label) &&
+          (target.attribute.node?.id || target.attribute.node?.label))) {
         return false
     }
 
