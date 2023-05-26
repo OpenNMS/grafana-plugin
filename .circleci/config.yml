@@ -275,13 +275,15 @@ jobs:
               -t grafana-plugin:$(.circleci/get-version.sh) .
       - run:
           name: Export Docker Image as Artifact
-          command: docker image save grafana-plugin:$(.circleci/get-version.sh) -o opennms-grafana-plugin.oci
+          command: |
+            mkdir -p artifacts
+            docker image save grafana-plugin:$(.circleci/get-version.sh) -o artifacts/opennms-grafana-plugin.oci
       - store_artifacts:
-          path: ./opennms-grafana-plugin.oci
+          path: ./artifacts
       - persist_to_workspace:
           root: ~/
           paths:
-            - ./project/opennms-grafana-plugin.oci
+            - ./project/artifacts
   make-rpm:
     executor: build-executor-centos
     resource_class: small
@@ -340,6 +342,34 @@ jobs:
           paths:
             - ./project/artifacts
 
+  validate-packages:
+    executor: node-executor
+    resource_class: small
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Validate plugin ZIP file
+          command: npx -y '@grafana/plugin-validator@latest' -sourceCodeUri "file://$(pwd)" -strict artifacts/opennms-grafana-plugin-*.zip
+      - run:
+          name: Validate Docker image
+          command: |
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp/bin
+      - run:
+          name: Scan the local image with trivy
+          command: |
+            IMAGE_NAME="$(docker image load -q -i artifacts/*.oci | awk '{ print $NF }')"
+            # Table result includes only package filenames. Use '--format json' option to get the full path to the package file.
+            /tmp/bin/trivy image \
+              --ignorefile .circleci/trivy-config/trivyignore \
+              --timeout 30m \
+              --exit-code 0 \
+              --format json \
+              -o /tmp/report.json \
+              --no-progress \
+              "${IMAGE_NAME}"
+
   publish-docker-image-latest:
     executor: node-executor
     resource_class: small
@@ -351,7 +381,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
+            docker image load -q -i ./artifacts/opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -396,7 +426,7 @@ jobs:
       - run:
           name: Load Docker Container Image file
           command: |
-            docker image load -q -i ./opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
+            docker image load -q -i ./artifacts/opennms-grafana-plugin.oci | grep 'Loaded image:' | cut -d: -f2- | xargs > ./opennms-grafana-plugin-docker-image-name.txt
       - run:
           name: Set DockerHub organization and ensure lower case
           command: |
@@ -531,13 +561,23 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - validate-packages:
+          context:
+            - "gpg-signing"
+            - "grafana"
+          requires:
+            - make-deb
+            - make-docker-image
+            - make-rpm
+            - make-tarball
+            - make-zip
       - publish-docker-image-latest:
           context:
             - "cloudsmith-publish-account"
             - "docker-publish-account"
             - "Service Principal"
           requires:
-            - make-docker-image
+            - validate-packages
           filters:
             branches:
               ignore: /.*/
@@ -549,7 +589,7 @@ workflows:
             - "docker-publish-account"
             - "Service Principal"
           requires:
-            - make-docker-image
+            - validate-packages
           filters:
             branches:
               only: master
@@ -559,7 +599,7 @@ workflows:
           context:
             - "cloudsmith-publish-account"
           requires:
-            - make-deb
+            - validate-packages
           filters:
             branches:
               only:
@@ -570,7 +610,7 @@ workflows:
           context:
             - "cloudsmith-publish-account"
           requires:
-            - make-rpm
+            - validate-packages
           filters:
             branches:
               only:
