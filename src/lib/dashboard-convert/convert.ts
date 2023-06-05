@@ -13,6 +13,7 @@ interface ConvertResponse {
 
 interface ConvertOptions {
   unhideAllQueries: boolean
+  convertGraphToTimeSeries: boolean
 }
 
 export const dashboardConvert = (sourceJson: string, sourceVersion: string, targetVersion: string,
@@ -49,7 +50,7 @@ export const dashboardConvert = (sourceJson: string, sourceVersion: string, targ
   dashboard.templating = parsedTemplating
 
   const panels = source.panels || []
-  const convertedPanels = convertPanels(panels, datasourceMap, dsMetas, options.unhideAllQueries)
+  const convertedPanels = convertPanels(panels, datasourceMap, dsMetas, options.unhideAllQueries, options.convertGraphToTimeSeries)
   dashboard.panels = convertedPanels
 
   // remove uid, Grafana will create a new unique one
