@@ -1,6 +1,7 @@
 import { getDataSourceSrv } from '@grafana/runtime'
 import { getDatasourceMetadata } from './datasources'
 import { parseInputs } from './inputs'
+import { parseRequires } from './requires'
 import { convertPanels } from './panels'
 import { parseTemplating } from './templating'
 import { DsType } from './types'
@@ -41,9 +42,13 @@ export const dashboardConvert = (sourceJson: string, sourceVersion: string, targ
   // find all datasource aliases / template variables
   const datasourceMap = new Map<string,DsType>()
   const inputsArray = source['__inputs'] || []
+  const requiresArray = source['__requires'] || []
 
   const parsedInputs = parseInputs(inputsArray, datasourceMap, dsMetas)
   dashboard['__inputs'] = parsedInputs
+
+  const parsedRequires = parseRequires(requiresArray, datasourceMap, dsMetas)
+  dashboard['__requires'] = parsedRequires
 
   const templating = source['templating'] || {}
   const parsedTemplating = parseTemplating(templating, datasourceMap, dsMetas)
