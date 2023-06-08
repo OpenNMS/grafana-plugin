@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
-export const useAlarmTableMenu = (rowClicked, series) => {
-
+export const useAlarmTableMenu = (indexes: MutableRefObject<boolean[]>, rowClicked, series, setState) => {
     const [menu, setMenu] = useState({ x: 0, y: 0 })
     const [menuOpen, setMenuOpen] = useState(false)
 
-    const table = useRef<HTMLDivElement>(null);
+    const table = useRef<HTMLDivElement>(null)
 
     const contextMenu = (index: number, e: MouseEvent) => {
         e.preventDefault()
-        rowClicked(index, e, true)
+        if (index >= 0) {
+            rowClicked(index, e, true)
+        }
         setMenu({ x: e.x, y: e.y })
         setMenuOpen(() => true)
     }
@@ -45,6 +46,10 @@ export const useAlarmTableMenu = (rowClicked, series) => {
 
       if (rowIndex >= 0) {
         rowClicked(rowIndex, e as MouseEvent, false)
+      } else {
+        // user clicked on table background, clear all selections
+        const newIndexes = indexes.current.map(x => false)
+        setState({ indexes: newIndexes, lastClicked: -1 })
       }
     }
 
@@ -53,6 +58,8 @@ export const useAlarmTableMenu = (rowClicked, series) => {
 
       if (rowIndex >= 0) {
         contextMenu(rowIndex, e as MouseEvent)
+      } else if (indexes.current.length > 0 && indexes.current.some(x => x === true)) {
+        contextMenu(-1, e as MouseEvent)
       }
     }
 
