@@ -30,6 +30,7 @@
   "includes": [
     {"type": "panel", "name": "Alarm Table"},
     {"type": "panel", "name": "Alarm Histogram"},
+    {"type": "panel", "name": "Dashboard Convert Panel"},
     {"type": "panel", "name": "Filter Panel"},
     {"type": "panel", "name": "Flow Histogram"},
     {"type": "datasource", "name": "OpenNMS Entities"},
@@ -37,7 +38,8 @@
     {"type": "datasource", "name": "OpenNMS Flows"},
     {"type": "dashboard", "name": "About | OpenNMS Plugin for Grafana", "path": "dashboards/about.json"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Plugin for Grafana", "path": "dashboards/flow_deep_dive.json"},
-    {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Plugin for Grafana", "path": "dashboards/cortex_flow_deep_dive.json"}
+    {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Plugin for Grafana", "path": "dashboards/cortex_flow_deep_dive.json"},
+    {"type": "dashboard", "name": "Dashboard Converter | OpenNMS Plugin for Grafana", "path": "dashboards/dashboard_converter.json"}
   ],
   "dependencies": {
     "grafanaDependency": ">=9.0.0",
