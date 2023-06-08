@@ -1,0 +1,144 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Convert Grafana dashboards containing OpenNMS data sources and/or panels to the latest version.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "opennms-entity-datasource",
+        "uid": "UqoZi_f4z"
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "targets": [
+        {
+          "clauses": [
+            {
+              "attribute": {},
+              "comparator": {},
+              "comparedString": "",
+              "comparedValue": "",
+              "nestingType": 0,
+              "type": 2
+            }
+          ],
+          "datasource": {
+            "type": "opennms-entity-datasource",
+            "uid": "UqoZi_f4z"
+          },
+          "filter": {
+            "clauses": [],
+            "limit": 10,
+            "orderBy": []
+          },
+          "refId": "A",
+          "selectType": {
+            "label": "Alarms"
+          }
+        }
+      ],
+      "title": "Convert Dashboard",
+      "type": "opennms-dashboard-convert-panel"
+    },
+    {
+      "datasource": {
+        "type": "opennms-entity-datasource",
+        "uid": "UqoZi_f4z"
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Dashboard Converter Instructions\n\nThis conversion tool will convert dashboard in older HELM format to the new OpenNMS Plugin for Grafana format.\n\nCurrently, only conversion from HELM v8 to OpenNMS Plugin for Grafana v9 is supported.\n\n- You will need to get the Dashboard Json from any dashboards you wish to convert. Go into Settings > JSON Model and copy the Json to your clipboard.\n\n- Paste the Json into the text input box named \"Enter Source Dashboard Json\".\n\n- The dashboard title will appear above, you may edit it as needed before converting.\n\n- To unhide all queries, switch \"Unhide all queries\" on. This will \"unhide\" all queries for each panel.\n\n- To convert any Graph panels (these are deprecated in Grafana 9) to the new Grafana Timeseries panel, switch this option on. This feature may not convert every possible option. You may instead decide to leave this off. After converting the dashboard, you can go into each panel's options and click the \"Migrate\" button to use the Grafana migration tool to convert the panel to Timeseries.\n\n- Click \"Convert\". The converted Dashboard Json will appear in the Target textbox.\n\n- Copy the converted Json. Go into Dashboards > Browse, select New and Import Dashboard and copy the new Json into the \"Import via panel json\" box and select Load. You can ignore the \"Change uid\", Grafana will assign a new uid to the new dashboard. Click \"Import\" to create the new dashboard.\n- In some cases, you may need to choose an OpenNMS Data Source.\n- Go into Dashboards > Browse, find and load your dashboard and make sure it's working.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "clauses": [
+            {
+              "attribute": {},
+              "comparator": {},
+              "comparedString": "",
+              "comparedValue": "",
+              "nestingType": 0,
+              "type": 2
+            }
+          ],
+          "datasource": {
+            "type": "opennms-entity-datasource",
+            "uid": "UqoZi_f4z"
+          },
+          "filter": {
+            "clauses": [],
+            "limit": 10,
+            "orderBy": []
+          },
+          "refId": "A",
+          "selectType": {
+            "label": "Alarms"
+          }
+        }
+      ],
+      "title": "Instructions",
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Dashboard Converter | OpenNMS Plugin for Grafana",
+  "version": 3,
+  "weekStart": ""
+}
