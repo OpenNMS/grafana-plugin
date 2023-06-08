@@ -10,6 +10,7 @@ export const convertLegacyGraphToTimeSeriesPanel = (source: any) => {
     links: source.links,
     fieldConfig: convertFieldConfig(source),
     options: convertOptions(source),
+    pluginVersion: '9.4.7',
     type: 'timeseries'
   }
 
@@ -161,6 +162,14 @@ const convertFieldConfigOverrides = (source: any) => {
               }
             }
           ]
+        }
+
+        // e.g. 'negative-Y'
+        if (o.transform) {
+          item.properties.push({
+            id: 'custom.transform',
+            value: o.transform
+          })
         }
 
         overrides.push(item)
