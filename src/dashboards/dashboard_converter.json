@@ -35,7 +35,7 @@
         "uid": "UqoZi_f4z"
       },
       "gridPos": {
-        "h": 15,
+        "h": 20,
         "w": 12,
         "x": 0,
         "y": 0
@@ -77,7 +77,7 @@
         "uid": "UqoZi_f4z"
       },
       "gridPos": {
-        "h": 15,
+        "h": 20,
         "w": 12,
         "x": 12,
         "y": 0
@@ -89,7 +89,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Dashboard Converter Instructions\n\nThis conversion tool will convert dashboard in older HELM format to the new OpenNMS Plugin for Grafana format.\n\nCurrently, only conversion from HELM v8 to OpenNMS Plugin for Grafana v9 is supported.\n\n- You will need to get the Dashboard Json from any dashboards you wish to convert. Go into Settings > JSON Model and copy the Json to your clipboard.\n\n- Paste the Json into the text input box named \"Enter Source Dashboard Json\".\n\n- The dashboard title will appear above, you may edit it as needed before converting.\n\n- To unhide all queries, switch \"Unhide all queries\" on. This will \"unhide\" all queries for each panel.\n\n- To convert any Graph panels (these are deprecated in Grafana 9) to the new Grafana Timeseries panel, switch this option on. This feature may not convert every possible option. You may instead decide to leave this off. After converting the dashboard, you can go into each panel's options and click the \"Migrate\" button to use the Grafana migration tool to convert the panel to Timeseries.\n\n- Click \"Convert\". The converted Dashboard Json will appear in the Target textbox.\n\n- Copy the converted Json. Go into Dashboards > Browse, select New and Import Dashboard and copy the new Json into the \"Import via panel json\" box and select Load. You can ignore the \"Change uid\", Grafana will assign a new uid to the new dashboard. Click \"Import\" to create the new dashboard.\n- In some cases, you may need to choose an OpenNMS Data Source.\n- Go into Dashboards > Browse, find and load your dashboard and make sure it's working.",
+        "content": "# Dashboard Converter Instructions\n\nThis conversion tool will convert dashboards in the older HELM format to the new OpenNMS Plugin for Grafana format.\n\nCurrently, only conversion from HELM v8 to OpenNMS Plugin for Grafana v9 is supported.\n\n- You will need to get the Dashboard JSON from any dashboards you wish to convert.\n\n  - If you are migrating a dashboard from this Grafana instance:\n    - Go into dashboard's Settings > JSON Model and copy the JSON to your clipboard.\n  - If you are migrating a dashboard from a different Grafana instance:\n    - Click the dashboard Share button and select the Export tab.\n    - Toggle on the \"Export for sharing externally\" option and click the \"View JSON\" button.\n\n\n- Paste the JSON into the text input box named \"Enter Source Dashboard Json\".\n\n- The dashboard title will appear and you may edit it as needed before converting.\n\n- To unhide all queries, switch \"Unhide all queries\" on. This will \"unhide\" all queries for each panel.\n\n- To convert any Graph panels (these are deprecated in Grafana 9) to the new Grafana Timeseries panel, switch this option on.\n  - This only applies if your dashboard still contains legacy Graph panels that have not yet been migrated to Time Series panels.\n  - This feature may not convert every possible option. You may instead decide to leave this off. In this case, after converting the dashboard, you can go into each panel's options and click the \"Migrate\" button to use the Grafana migration tool to convert the panel to Timeseries.\n\n- Click \"Convert\". The converted Dashboard JSON will appear in the Target textbox.\n\n- Copy the converted JSON. Go into Dashboards > Browse, select New and Import Dashboard and copy the new JSON into the \"Import via panel json\" box and select Load. You can ignore the \"Change UID\", Grafana will assign a new uid to the new dashboard. Click \"Import\" to create the new dashboard.\n\n- In some cases, you may need to choose an OpenNMS Data Source.\n\n- Go into Dashboards > Browse, find and load your dashboard and make sure it's working.",
         "mode": "markdown"
       },
       "pluginVersion": "9.4.7",
