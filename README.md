@@ -1,7 +1,7 @@
 # This plugin is superseded by the OpenNMS Plugin for Grafana.
 
 Please use the [OpenNMS Plugin for Grafana](https://grafana.com/grafana/plugins/opennms-opennms-app/) instead.
-That plugin is compatible with current Grafana releases, and does not have a naming conflict with the package manager for Kubernetes.
+The OpenNMS Plugin for Grafana is compatible with current Grafana releases, and does not have a naming conflict with the package manager for Kubernetes. To migrate, please follow our [upgrade documentation](https://docs.opennms.com/grafana-plugin/9/installation/upgrading.html).
 
 # OpenNMS Helm - PM/FM Console for Grafana [![CircleCI](https://circleci.com/gh/OpenNMS/grafana-plugin.svg?style=svg)](https://circleci.com/gh/OpenNMS/grafana-plugin)
 
