@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Segment } from '@grafana/ui';
 import { getTemplateSrv } from '@grafana/runtime';
 import { API } from 'opennms';
@@ -24,7 +24,6 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             performanceType,
             attribute
         })
-        onRunQuery();
     }
 
     const updateExpressionQuery = (expression, label) => {
@@ -34,7 +33,6 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             expression,
             label
         })
-        onRunQuery();
     }
 
     const updateFilterQuery = (filter, filterState) => {
@@ -44,7 +42,6 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             filter,
             filterState
         })
-        onRunQuery();
     }
 
     const updateStringQuery = (stringPropertyState) => {
@@ -53,8 +50,12 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
             performanceType,
             stringPropertyState,
         })
-        onRunQuery();
     }
+
+    useEffect(() => {
+      onRunQuery()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query])
 
     const isPerformanceType = (value: number) => {
         if (performanceType && performanceType.value) {
@@ -74,7 +75,6 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
      * Node dropdown) or from a template variable that evaluates to a node id.
      */
     const loadResourcesByNode = async (value) => {
-
         let nodeId = value
 
         if (isTemplateVariable(value)) {
@@ -84,25 +84,40 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         }
 
         return loadResourcesByNodeId(nodeId)
-
     }
 
     const loadResourcesByNodeId = async (nodeId) => {
         const resourceData = await datasource.doResourcesForNodeRequest(nodeId)
+
         if (resourceData) {
             return resourceData.children.resource.map(r => {
                 const label = (r.label && r.name && r.label !== r.name) ?
                     `${r.label} | ${r.name}` :
                     (r.label || r.name || '')
 
+                const id = fixNodeResourceId(r.id)
+
                 return {
                     ...r,
-                    label
+                    label,
+                    id
                 } as OnmsResourceDto
             })
         } else {
             return []
         }
+    }
+
+    // get just the resource portion of a node/resource expression
+    const fixNodeResourceId = (id: string) => {
+      const re = /node(Source)?\[.*?]\.(.*)$/
+      const match = re.exec(id)
+      
+      if (match && match.length > 2) {
+        return match[2]
+      }
+
+      return id
     }
 
     const loadAttributesByResourceAndNode = async (node, resource) => {
@@ -128,25 +143,27 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         const filters = await datasource.simpleRequest.doOpenNMSRequest({
             url: '/rest/measurements/filters',
             method: 'GET'
-        });
+        })
 
         return filters.data.map((filter) => {
             return { ...filter, label: filter.name }
-        });
+        })
     }
 
     const loadResourcesForStringPropertyState = async (performanceState: PerformanceStringPropertyState) => {
-        //get all resources for the performanceState.node using select single node, multi nodes and template variables
-        const resources: OnmsResourceDto[]  = []
+        // get all resources for the performanceState.node using select single node, multi nodes and template variables
+        const resources: OnmsResourceDto[] = []
+
         if (performanceState?.node?.id || performanceState?.node?.label) {
             const nodeValues = getTemplateVariable(performanceState?.node)
-            for(const node of getMultiValues(nodeValues)){
+
+            for (const node of getMultiValues(nodeValues)) {
                 const result = await loadResourcesByNode(node)
                 resources.push(...result)
             }
         }
-        return resources
 
+        return resources
     }
 
     const loadStringPropertiesForState = async (performanceState: PerformanceStringPropertyState) => {
@@ -157,6 +174,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         } else if (isTemplateVariable(performanceState?.resource)) {
             const nodeValues = getTemplateVariable(performanceState?.node)
             const resourceIds = getTemplateVariable(performanceState?.resource)
+
             if (nodeValues && resourceIds) {
                 const resources = await datasource.simpleRequest.getResourcesFor(nodeValues, resourceIds)
                 resources.forEach(r => {
@@ -164,6 +182,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 })
             }
         }
+
         return stringProperties
     }
 

@@ -355,3 +355,11 @@ export const capitalize = (value: string) => {
 export const isString = (value) => {
   return value !== null && (typeof(value) === 'string' || value instanceof String)
 }
+
+export const isUndefined = (value) => {
+  return typeof value === 'undefined'
+}
+
+export const valueOrDefault = (value, def) => {
+  return isUndefined(value) ? def : value
+}

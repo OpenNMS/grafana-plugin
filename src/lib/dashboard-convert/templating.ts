@@ -57,13 +57,9 @@ export const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, 
       if (dsMeta) {
         addVariationsToMap(name, datasourceType as DsType, datasourceMap)
         target.query = dsMeta.type
-
-        if (s.current) {
-          target.current.text = dsMeta.name
-          target.current.value = dsMeta.name
-        }
-
+        target.current = getDatasourceCurrent(target.current || {}, dsMeta)
         result.list.push(target)
+
         continue
       }
     } else if (s.type === 'query') {
@@ -87,4 +83,31 @@ export const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, 
   }
 
   return result
+}
+
+const getDatasourceCurrent = (existingCurrent: any, dsMeta: DatasourceMetadata) => {
+  let currentName = dsMeta.name
+
+  if (!currentName) {
+    switch (dsMeta.datasourceType) {
+      case 'entity':
+        currentName = 'OpenNMS Entities'
+        break
+      case 'performance':
+        currentName = 'OpenNMS Performance'
+        break
+      case 'flow':
+        currentName = 'OpenNMS Flow'
+        break
+    }
+  }
+
+  if (currentName) {
+    return {
+      text: currentName,
+      value: currentName
+    }
+  }
+
+  return existingCurrent
 }

@@ -35,11 +35,20 @@ export const useAlarmTableSelection = (doubleClicked) => {
                     { start: previousState.lastClicked, end: index }
 
                 for (let i = start; i <= end; i++) {
-                    newClickedIndexes[i] = true;
+                    newClickedIndexes[i] = true
                 }
 
                 setSoloIndex(-1)
+            } else if (fromContext && index >= 0) {
+                const countSelected = previousState.indexes.filter(x => x === true).length
+
+                if (countSelected < 2) {
+                  newClickedIndexes = clearIndexes(newClickedIndexes)
+                  newClickedIndexes[index] = true
+                  setSoloIndex(index)
+                }
             }
+
             return { indexes: newClickedIndexes, lastClicked: index }
         })
     }

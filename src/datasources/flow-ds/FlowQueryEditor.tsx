@@ -9,11 +9,23 @@ import { FlowQueryFunction } from './FlowQueryFunction';
 
 type Props = QueryEditorProps<FlowDataSource, FlowQuery, FlowDataSourceOptions>;
 
+const initSegment = (segment: any) => {
+    let value = -1
+
+    if (typeof segment === 'number') {
+      value = segment
+    } else if (typeof segment?.value === 'number') {
+      value = segment.value
+    } else if (typeof segment?.id === 'number') {
+      value = segment.id
+    }
+
+    return (value >= FlowSegments.Applications && value <= FlowSegments.Dscps) ? segmentOptionValues[value] : { value: -1, label: '' }
+}
+
 export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, ...rest }) => {
     const [focusList, setFocusList] = useState<boolean[]>([]);
-    const [segmentValue, setSegmentValue] = useState<SelectableValue<number>>(
-        typeof query.segment === 'number' ? { value: query.segment, label: FlowSegments[query.segment] } : { value: -1 }
-    )
+    const [segmentValue, setSegmentValue] = useState<SelectableValue<number>>(initSegment(query.segment || {}))
     const [functionNameList, setFunctionNameList] = useState<Array<SelectableValue<string>>>(query.functions || [])
     const [activeParameterList, setActiveParameterList] = useState<Array<string | undefined>>(query.functionParameters || []);
     const [parameterOptionList, setParameterOptionList] = useState<Array<SelectableValue<string>>>(query.parameterOptions || []);
@@ -51,15 +63,16 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
     useEffect(() => {
         if (segmentValue?.label) {
             setTimeout(() => {
-
-                onChange({
+                const updatedQuery = {
                     ...query,
-                    segment: segmentValue.value,
+                    segment: segmentValue,
                     functions: functionNameList,
                     functionParameters: activeParameterList,
                     parameterOptions: parameterOptionList
-                });
-                onRunQuery();
+                }
+
+                onChange(updatedQuery)
+                onRunQuery()
             }, 1000)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,0 +1,107 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Convert Grafana dashboards containing OpenNMS data sources and/or panels to the latest version.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "opennms-dashboard-convert-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana",
+        "uid": "grafana"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 20,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Dashboard Converter Instructions\n\nThis conversion tool will convert dashboards in the older HELM format to the new OpenNMS Plugin for Grafana format.\n\nCurrently, only conversion from HELM v8 to OpenNMS Plugin for Grafana v9 is supported.\n\n- You will need to get the Dashboard JSON from any dashboards you wish to convert.\n  - If you are migrating a dashboard from this Grafana instance:\n    - Go into the dashboard's Settings > JSON Model and copy the JSON to your clipboard.\n  - If you are migrating a dashboard from a different Grafana instance:\n    - Click the dashboard Share button and select the Export tab.\n    - Toggle on the \"Export for sharing externally\" option and click the \"View JSON\" button.\n- Paste the JSON into the \"Enter Source Dashboard Json\" box.\n  - The dashboard title will appear and you may edit it as needed before converting.\n  - To unhide all queries, switch \"Unhide all queries\" on. This will \"unhide\" all queries for each panel.\n  - To convert any graph panels (these are deprecated in Grafana 9) to the new Grafana Timeseries panel, switch this option on.\n    - This applies only if your dashboard still contains legacy graph panels that have not yet been migrated to Time Series panels.\n    - This feature may not convert every possible option. You may instead decide to leave this off. In this case, after converting the dashboard, you can go into each panel's options and click the \"Migrate\" button to use the Grafana migration tool to convert the panel to Timeseries.\n  - Click \"Convert\". The converted Dashboard JSON will appear in the Target textbox.\n- Copy the converted JSON.\n- Go into Dashboards > Browse, select New > Import Dashboard and copy the new JSON into the \"Import via panel json\" box and select Load.\n  - You can ignore the \"Change UID\"; Grafana will assign a new UID to the new dashboard.\n  - In some cases, you may need to choose an OpenNMS data source.\n  - Click \"Import\" to create and save the new dashboard.\n- Your dashboard should now be displayed.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Dashboard Converter | OpenNMS Plugin for Grafana",
+  "version": 4,
+  "weekStart": ""
+}

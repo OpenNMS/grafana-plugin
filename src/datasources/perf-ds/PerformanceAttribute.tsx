@@ -7,13 +7,14 @@ import {
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
 import React, { useState, useEffect } from 'react'
 import { PerformanceAttributeItemState, PerformanceAttributeState } from './types'
+import { OnmsResourceDto } from '../../lib/api_types'
 
 export interface PerformanceAttributesProps {
-    performanceAttributeState: PerformanceAttributeState;
-    updateQuery: Function;
-    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<PerformanceAttributeItemState>>>;
-    loadResourcesByNode: Function;
-    loadAttributesByResourceAndNode: Function;
+    performanceAttributeState: PerformanceAttributeState
+    updateQuery: Function
+    loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<PerformanceAttributeItemState>>>
+    loadResourcesByNode: (value: any) => Promise<OnmsResourceDto[]>
+    loadAttributesByResourceAndNode: Function
 }
 
 export const defaultPerformanceState: PerformanceAttributeState = {
@@ -37,17 +38,38 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
     const [performanceState, setPerformanceState] = useState<PerformanceAttributeState>(performanceAttributeState)
 
     useEffect(() => {
-        if (performanceState &&
-            performanceState.attribute &&
-            (performanceState.node.id || performanceState.node.label) &&
-            (performanceState.resource.id || performanceState.resource.label)) {
-            updateQuery(performanceState);
+        // Note: this could result in invalid queries if not all parameters have been selected.
+        // However, not updating the query results in old parameters still being used. This way,
+        // query will always be in sync with UI
+        if (performanceState) {
+            updateQuery(performanceState)
         }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [performanceState])
 
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
         setPerformanceState({...performanceState, [propertyName]: propertyValue})
+    }
+
+    const setPerformanceStateNode = async (propertyValue: unknown) => {
+      // If node changed, need to repopulate the resource part of the query with resources
+      // for the newly selected node.
+      // Attempt to find the same resource label as existing; otherwise the new node
+      // doesn't have the same resources, so clear them
+      const node = propertyValue as PerformanceAttributeItemState
+
+      const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
+      const existingLabel = performanceState?.resource?.label
+      const resource = (existingLabel && resourceOptions && resourceOptions.filter(r => r.label === existingLabel)?.[0]) || {}
+
+      const state = {
+        ...performanceState,
+        node,
+        resource
+      } as PerformanceAttributeState
+
+      setPerformanceState(state)
     }
 
     return (
@@ -59,7 +81,9 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                     placeholder='Select Node'
                     loadOptions={loadNodes}
                     onChange={(value) => {
-                        setPerformanceStateProperty('node', value);
+                      (async () => {
+                        await setPerformanceStateNode(value)
+                      })()
                     }}
                 />
             </SegmentSectionWithIcon>
@@ -73,9 +97,7 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                         value={performanceState?.resource}
                         placeholder='Select Resource'
                         loadOptions={() => loadResourcesByNode(performanceState?.node?.id || performanceState?.node?.label)}
-                        onChange={(value) => {
-                            setPerformanceStateProperty('resource', value);
-                        }}
+                        onChange={(value) => { setPerformanceStateProperty('resource', value) }}
                     />
                 </SegmentSectionWithIcon>
             }
