@@ -24,7 +24,7 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "9.0.5-SNAPSHOT",
+    "version": "9.0.6-SNAPSHOT",
     "updated": "2023-05-10"
   },
   "includes": [
