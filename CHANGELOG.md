@@ -1,3 +1,17 @@
+### v9.0.5
+
+Grafana Plugin for OpenNMS version 9.0.5 is a small release with a number of small fixes and enhancements.
+
+* [HELM-432](https://opennms.atlassian.net/browse/HELM-432) Create a Converter Dashboard
+* [HELM-425](https://opennms.atlassian.net/browse/HELM-425) Fix logic for transient flag
+* [HELM-424](https://opennms.atlassian.net/browse/HELM-424) Unable to set node in Perf DS Query
+* [HELM-422](https://opennms.atlassian.net/browse/HELM-422) Default flow dashboards need updating for v9 plugin
+* [HELM-417](https://opennms.atlassian.net/browse/HELM-417) Resource field hard-coding node ID
+* [HELM-414](https://opennms.atlassian.net/browse/HELM-414) Converted dashboards that use expressions fail because attribute labels are misplaced after conversion
+* [HELM-400](https://opennms.atlassian.net/browse/HELM-400) Alarm Table details does not show Alarm ID
+* [HELM-396](https://opennms.atlassian.net/browse/HELM-396) Alarm Table - allow right-click anywhere in panel
+* [HELM-389](https://opennms.atlassian.net/browse/HELM-389) Filter Panel: Tie to Dashboard
+
 ### v9.0.4
 
 Grafana Plugin for OpenNMS version 9.0.4 is a small release with one bugfix.
