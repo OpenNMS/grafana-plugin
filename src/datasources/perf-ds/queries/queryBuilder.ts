@@ -7,6 +7,7 @@ import {
     PerformanceQuery,
     PerformanceQueryFilterStateItem
 } from '../types'
+import { OnmsNode } from 'opennms/src/model/OnmsNode'
 import { OpenNMSGlob, isString } from '../../../lib/utils'
 
 export const buildPerformanceMeasurementQuery = (start: number, end: number, step: number, maxRows: number) => {
@@ -43,10 +44,10 @@ export const isValidMeasurementQuery = (query: OnmsMeasurementsQueryRequest) => 
 
 export const isValidAttributeTarget = (target: PerformanceQuery) => {
     if (!target ||
-        !(target.attribute &&
-          (target.attribute.attribute.name || (target.attribute.attribute.label && OpenNMSGlob.hasGlob(target.attribute.attribute.label))) &&
-          (target.attribute.resource.id || target.attribute.resource.label) &&
-          (target.attribute.node.id || target.attribute.node.label))) {
+        !target.attribute ||
+        !((target.attribute.attribute?.name || (target.attribute.attribute?.label && OpenNMSGlob.hasGlob(target.attribute.attribute?.label))) &&
+          (target.attribute.resource?.id || target.attribute.resource?.label) &&
+          (target.attribute.node?.id || target.attribute.node?.label))) {
         return false
     }
 
@@ -99,7 +100,15 @@ const isValidFilterStateItemValue = (item: PerformanceQueryFilterStateItem) => {
 export const buildAttributeQuerySource = (target: PerformanceQuery) => {
     // Note: Have to add 'nodeId' here in case it gets added to 'resourceId' during interpolation,
     // even if the field is removed later after interpolation but before calling the Rest API
-    const nodeId = target.attribute.node.id || target.attribute.node.label || ''
+    let nodeId = target.attribute.node.id || target.attribute.node.label || ''
+
+    // if node is an OnmsNode and has valid foreign source and foreign id, use that instead
+    const onmsNode = target.attribute.node as any as OnmsNode
+
+    if (onmsNode?.foreignSource && onmsNode?.foreignId) {
+      nodeId = `${onmsNode.foreignSource}:${onmsNode.foreignId}`
+    }
+
     const resourceId = target.attribute.resource.id || target.attribute.resource.label || ''
     const attribute = target.attribute.attribute.name || target.attribute.attribute.label || ''
 
@@ -110,7 +119,7 @@ export const buildAttributeQuerySource = (target: PerformanceQuery) => {
         attribute: attribute,
         ['fallback-attribute']: target.attribute.fallbackAttribute?.name || undefined,
         aggregation: target.attribute.aggregation?.label?.toUpperCase() || undefined,
-        transient: target.hide === null || target.hide === undefined ? false: true
+        transient: target.hide === true
     } as OnmsMeasurementsQuerySource
 
     return source;
@@ -120,34 +129,11 @@ export const buildExpressionQuery = (target: PerformanceQuery, index: number) =>
     const expression = {
         label: target.label || 'expression' + index,
         value: target.expression,
-        transient: target.hide === null || target.hide === undefined ? false: true
+        transient: target.hide === true
     } as OnmsMeasurementsQueryExpression
 
     return expression
 }
-
-export const buildFilterQueryOLD = (target: PerformanceQuery) => {
-    const filter = [] as OnmsMeasurementsQueryFilterParam[]
-
-    // TODO: Interpolate the filter params
-
-    for (let [, item] of Object.entries(target.filterState)) {
-        const filterItem = item as { value: { value: string }, filter: { key: string } }
-        let value: any = filterItem.value
-        if (value.value) {
-            value = value.value
-        }
-        if (value) {
-            filter.push({ key: filterItem.filter.key, value })
-        }
-    }
-
-    return {
-        parameter: filter,
-        name: target.filter.name
-    } as OnmsMeasurementsQueryFilter
-}
-
 
 export const buildFilterQuery = (target: PerformanceQuery, interpolatedFilterParams: any[]) => {
     // Shape of interpolatedFilterParams is various entries such as:

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { PanelProps } from '@grafana/data'
 import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui'
 import { AlarmTableMenu } from './AlarmTableMenu'
@@ -17,13 +17,15 @@ import { useAlarm } from './hooks/useAlarm'
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
 
-    const { state, rowClicked, soloIndex } = useAlarmTableSelection(() => {
+    const alarmIndexes = useRef<boolean[]>([] as boolean[])
+
+    const { state, setState, rowClicked, soloIndex } = useAlarmTableSelection(() => {
         setDetailsModal(true)
     })
 
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
     const { filteredProps, page, setPage, totalPages } = useAlarmProperties(props?.data?.series[0], props?.options?.alarmTable)
-    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(rowClicked, filteredProps)
+    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(alarmIndexes, rowClicked, filteredProps, setState)
     const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes,
       props?.data?.series?.[0]?.fields || [], () => setMenuOpen(false),
       props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser || false, client)
@@ -32,6 +34,11 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
 
     useAlarmTableRowHighlighter(state, table)
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
+
+    useEffect(() => {
+      alarmIndexes.current = state.indexes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state])
 
     const getFontSize = () => {
         const fontSize = props.options?.alarmTable?.alarmTablePaging?.fontSize?.value

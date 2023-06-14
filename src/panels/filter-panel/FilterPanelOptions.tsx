@@ -31,13 +31,17 @@ export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOpt
     }
 
     useEffect(() => {
-        const data = loadFilterEditorData()
+        const dashboardUid = props.context.options?.dashboardUid || ''
 
-        if (data && data.datasource && data.activeFilters) {
-            setInternalOptions({
-                datasource: data.datasource,
-                activeFilters: data.activeFilters
-            })
+        if (dashboardUid) {
+          const data = loadFilterEditorData(dashboardUid)
+
+          if (data && data.datasource && data.activeFilters) {
+              setInternalOptions({
+                  datasource: data.datasource,
+                  activeFilters: data.activeFilters
+              })
+          }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

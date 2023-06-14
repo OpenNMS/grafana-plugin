@@ -63,11 +63,18 @@ export const FlowSegmentStrings = {
     Dscps: 'Dscps',
 }
 
+export const FlowSegmentStringsLowercase = {
+    Applications: 'applications',
+    Conversations: 'conversations',
+    Hosts: 'hosts',
+    Dscps: 'dscps',
+}
+
 export const segmentOptionValues = [
-    { value: FlowSegments.Applications, label: FlowSegments[FlowSegments.Applications].toLowerCase() },
-    { value: FlowSegments.Conversations, label: FlowSegments[FlowSegments.Conversations].toLowerCase() },
-    { value: FlowSegments.Hosts, label: FlowSegments[FlowSegments.Hosts].toLowerCase() },
-    { value: FlowSegments.Dscps, label: FlowSegments[FlowSegments.Dscps].toLowerCase() },
+    { value: FlowSegments.Applications, label: FlowSegmentStringsLowercase.Applications },
+    { value: FlowSegments.Conversations, label: FlowSegmentStringsLowercase.Conversations },
+    { value: FlowSegments.Hosts, label: FlowSegmentStringsLowercase.Hosts },
+    { value: FlowSegments.Dscps, label: FlowSegmentStringsLowercase.Dscps },
 ]
 
 export const includeOtherFunction: FlowFunction = {
@@ -249,6 +256,7 @@ export const segmentMapping = {
     [FlowSegmentStrings.Applications]: FlowFunctionStrings.withApplication,
     [FlowSegmentStrings.Conversations]: FlowFunctionStrings.withConversation,
     [FlowSegmentStrings.Hosts]: FlowFunctionStrings.withHost,
+    [FlowSegmentStrings.Dscps]: FlowFunctionStrings.withDscp
 }
 
 export const segmentFunctionMapping = {

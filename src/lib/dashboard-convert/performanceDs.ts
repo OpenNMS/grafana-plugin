@@ -26,6 +26,7 @@ export const updatePerformanceQuery = (source: any) => {
 //   "aggregation": "AVERAGE",
 //   "attribute": "loadavg5",
 //   "hide": true,
+//   "label": "label",
 //   "nodeId": "$node",
 //   "refId": "A",
 //   "resourceId": "nodeSnmp[]",
@@ -43,6 +44,7 @@ const convertAttributeQuery = (source: any): PerformanceQuery | any => {
     performanceType: PerformanceTypeOptions.Attribute,
     // PerformanceAttributeState
     attribute: {
+      label: source.label || '',
       node: {
         id: source.nodeId,
         label: source.nodeId
