@@ -1,6 +1,7 @@
 import { convertLegacyAlarmTablePanel, isLegacyAlarmTablePanel } from './alarmTablePanel'
 import { convertLegacyAlarmHistogramPanel, isLegacyAlarmHistogramPanel } from './alarmHistogramPanel'
 import { convertLegacyFlowHistogramPanel, isLegacyFlowHistogramPanel } from './flowHistogramPanel'
+import { convertLegacyGraphToTimeSeriesPanel, isLegacyGraphPanel } from './graphToTimeSeriesPanel'
 import { getSourceDatasourceInfo } from './datasources'
 import { updateEntityQuery } from './entityDs'
 import { convertLegacyFilterPanel, isLegacyFilterPanel } from './filterPanel'
@@ -12,7 +13,7 @@ import { DatasourceMetadata, DsType } from './types'
 // If panel has a legacy datasource, convert the query to use the new schema
 // Then convert any OpenNMS panels
 export const convertPanels = (panels: any[], datasourceMap: Map<string, DsType>, dsMetas: DatasourceMetadata[],
-  unhideAllQueries: boolean) => {
+  unhideAllQueries: boolean, convertGraphToTimeSeries?: boolean) => {
 
   const convertedPanels: any[] = []
 
@@ -29,6 +30,8 @@ export const convertPanels = (panels: any[], datasourceMap: Map<string, DsType>,
       panel = convertLegacyAlarmHistogramPanel(panel)
     } else if (isLegacyFlowHistogramPanel(panel)) {
       panel = convertLegacyFlowHistogramPanel(panel)
+    } else if (isLegacyGraphPanel(panel) && convertGraphToTimeSeries) {
+      panel = convertLegacyGraphToTimeSeriesPanel(panel)
     }
 
     // recursively process panel panels

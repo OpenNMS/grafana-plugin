@@ -5,7 +5,9 @@ import {
     swapColumns,
     getNodeFilterMap,
     getNumberOrDefault,
-    getNodeAsResourceQuery
+    getNodeAsResourceQuery,
+    isString,
+    valueOrDefault
 } from 'lib/utils'
 import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import {
@@ -29,11 +31,15 @@ import {
 } from './constants'
 
 import {
+    FlowCommonParams,
+    FlowFunctionOptions,
+    FlowFunctionParams,
     FlowParsedQueryData,
     FlowParsedQueryRow,
     FlowQuery,
     FlowQueryData,
     FlowQueryRequest,
+    FlowTimestampedData,
     FlowTemplateVariableClientService,
     FlowTemplateVariableQueryService,
     SegmentOption
@@ -47,7 +53,6 @@ import { OnmsMeasurementResource } from '../../lib/api_types'
  * @returns An object with all the query values, in easy to parse formats for later steps in the process.
  */
 export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any): FlowParsedQueryData => {
-
     // convert the template variables into their selected values for each query.
     // withDscp, withApplication, withConversation and withHost should allow an array of strings 
     // that are passed as parameter from template functions
@@ -55,7 +60,6 @@ export const buildFullQueryData = (queryItems: FlowQueryData[], templateSrv: any
 
     const fullData: FlowParsedQueryData = []
     for (let queryData of queryItems) {
-
         const data: FlowParsedQueryRow = { // Build default structure
             segment: {
                 id: queryData.segment,
@@ -99,7 +103,7 @@ export const extractDataFromQuery = (targets: FlowQuery[]): FlowQueryData[] => {
     for (let target of targets) {
         try {
             data.push({
-                segment: target.segment,
+                segment: target.segment.value ?? FlowSegments.Applications,
                 functionParameters: target.functionParameters,
                 functions: target.functions,
                 parameterOptions: target.parameterOptions,
@@ -188,25 +192,27 @@ export const filterOutExistingSingleUseFunctions = (newOptions: SegmentOption[],
  */
 export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: FlowQueryRequest<FlowQuery>, type: string, service: FlowTemplateVariableClientService) => {
     let responseData: any = []
-    const step = buildStepFromQuery(fullQueryData, options);
+    const step = buildStepFromQuery(fullQueryData, options)
 
     for (let query of fullQueryData) {
-        const segmentName = query.segment.label;
+        const segmentName = query.segment.label
+
         if (segmentName) {
-            const functionName = getFunctionNameAssociatedToSegment(segmentName);
-            const functionDefinition = getOpenNMSClientFunction(query, functionName, segmentName, type);
-            const functionParameters = await getFunctionParameters(query, functionName, type, options, step, service);
-            const dataFromOpenNMS = await queryOpenNMSClientWithFunctionAndParams(functionDefinition, functionParameters, service.client);
-            const processedData = processDataBasedOnType(type, query, options, dataFromOpenNMS);
+            const functionName = getFunctionNameAssociatedToSegment(segmentName)
+            const functionDefinition = getOpenNMSClientFunction(query, functionName, segmentName, type)
+            const functionParameters: FlowFunctionParams = await getFunctionParameters(query, functionName, type, options, step, service)
+            const dataFromOpenNMS = await queryOpenNMSClientWithFlowFunctionParams(functionDefinition, functionParameters, service.client)
+            const processedData = processDataBasedOnType(type, query, options, dataFromOpenNMS)
+
             for (let d of processedData) {
-                responseData.push(d);
+                responseData.push(d)
             }
         }
     }
 
     // possibly call toggleTableViewIfRelevant(type) here
 
-    return { data: responseData };
+    return { data: responseData }
 }
 
 /**
@@ -240,7 +246,7 @@ const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQue
                 funcIndex += 1;
             }
         } catch (e) {
-            console.error("error building active function list", e);
+            console.error('error building active function list', e)
         }
     }
     return data;
@@ -251,28 +257,39 @@ const buildActiveFunctionList = (oldData: FlowParsedQueryRow, queryData: FlowQue
  * @param type Series or Summary
  * @param query An individual query row from the full list of queries.
  * @param options The options a provided by Grafana
- * @returns The parameters for any default (non topN) function
+ * @returns The parameters for any default (non topN) function, a FlowSummaryParams object
  */
 const buildDefaultParams = async (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     const { start, end } = getTimeRange(options);
     const linkedFunctionName = segmentMapping[query.segment.label || '']
     const functionValue = query.queryFunctions.find((d) => d[linkedFunctionName]) || ''
-    const { includeOther, withExporterNode, withIfIndex, withDscp } = await getCommonParams(query, service)
-    const defaultSummaryParams = query.segment.label !== FlowSegmentStrings.Dscps ? [
-        [functionValue],
+    const params: FlowCommonParams = await getCommonParams(query, service)
+
+    const isDscp = query.segment.label === FlowSegmentStrings.Dscps
+
+    // dscp queries do not have the initial functionValue parameter or includeOther
+    const defaultSummaryParams = !isDscp ? {
+        functionValue: [functionValue],
+        topN: -1,
         start,
         end,
-        includeOther,
-        withExporterNode,
-        withIfIndex,
-        withDscp
-    ] : [start, end,
         step,
-        withExporterNode,
-        withIfIndex,
-        withDscp
-    ]
-    return defaultSummaryParams;
+        includeOther: params.includeOther,
+        withExporterNode: params.withExporterNode,
+        withIfIndex: params.withIfIndex,
+        withDscp: params.withDscp
+    } as FlowFunctionParams : {
+        topN: -1,
+        start,
+        end,
+        step,
+        includeOther: params.includeOther,
+        withExporterNode: params.withExporterNode,
+        withIfIndex: params.withIfIndex,
+        withDscp: params.withDscp
+    } as FlowFunctionParams
+
+    return defaultSummaryParams
 }
 
 /**
@@ -306,43 +323,43 @@ const buildStepFromQuery = (query: FlowParsedQueryData, options: FlowQueryReques
  * @param query An invdividual query from the full list of queries.
  * @param options The options as provided by Grafana
  * @param step The step value calculated in buildStepFromQuery
- * @returns 
+ * @returns a FlowSummaryParams object
  */
 const buildTopNParams = async (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     const { start, end } = getTimeRange(options);
-    const { topN, includeOther, withExporterNode, withIfIndex, withDscp } = await getCommonParams(query, service)
+    const params: FlowCommonParams = await getCommonParams(query, service)
 
-    return [
-        topN,
+    return {
+        topN: params.topN,
         start,
         end,
         step,
-        includeOther,
-        withExporterNode,
-        withIfIndex,
-        withDscp
-    ]
+        includeOther: params.includeOther,
+        withExporterNode: params.withExporterNode,
+        withIfIndex: params.withIfIndex,
+        withDscp: params.withDscp
+    } as FlowFunctionParams
 }
 
 /**
  * 
  * @param colIdx current column to evalueate
  * @param parsedData an object containing timestamps, columns and data
- * @param params an object with param functions to be used in the conversion (nanToZero, multiplier and sign)
+ * @param options a FlowFunctionOptions object with param function options to be used in the conversion (nanToZero, multiplier and sign)
  * @returns Datapoints ready for Grafana
  */
-const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, params: any) => {
-    return parsedData['timestamps'].map((timestamp, timestampIdx) => {
-        const v = Number(parsedData['values'][colIdx][timestampIdx]);
+const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: FlowTimestampedData, options: FlowFunctionOptions) => {
+    return parsedData.timestamps.map((timestamp, timestampIdx) => {
+        const v = Number(parsedData.values[colIdx][timestampIdx])
 
         let value: number | null = null
 
         if (isNaN(v)) {
-          if (params['nanToZero']) {
+          if (options.nanToZero) {
             value = 0
           }
         } else {
-          value = v * params['multiplier'] * params['sign']
+          value = v * options.multiplier * options.sign
         }
 
         return [value, timestamp]
@@ -357,16 +374,17 @@ const convertTimeStampedDataToDataFrame = (colIdx: number, parsedData: any, para
  */
 const convertDataHeaderstoTableColumns = (headers: string[], query: FlowParsedQueryRow) => {
     return headers ? headers.map((column) => {
-        const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
+        const toBits = isFunctionSet(query, FlowFunctionStrings.toBits)
+
         if (toBits) {
             if (column.includes('Bytes In')) {
-                column = 'Bits In';
+                column = 'Bits In'
             } else if (column.includes('Bytes Out')) {
-                column = 'Bits Out';
+                column = 'Bits Out'
             }
         }
         return { "text": column }
-    }) : [];
+    }) : []
 }
 
 /**
@@ -455,13 +473,14 @@ const getCommonParams = async (query: FlowParsedQueryRow, service: FlowTemplateV
     const exporterNode = getFunctionValue(query, FlowFunctionStrings.withExporterNode)
     const ifIndex = await lookupIfIndex(getNodeAsResourceQuery(exporterNode), getFunctionValue(query, FlowFunctionStrings.withIfIndex), service.simpleRequest)
     const dscp = getFunctionValue(query, FlowFunctionStrings.withDscp)
+
     return {
         topN: getFunctionValue(query, FlowFunctionStrings.topN) || 10,
         includeOther: isFunctionSet(query, FlowFunctionStrings.includeOther) ? true : false,
         withExporterNode: exporterNode || undefined,
         withIfIndex: ifIndex || undefined,
-        withDscp: dscp && dscp !== 'all' ? dscp : [],
-    }
+        withDscp: dscp && dscp !== 'all' ? dscp : []
+    } as FlowCommonParams
 }
 
 /**
@@ -474,6 +493,7 @@ const getFunctionNameAssociatedToSegment = (segmentName: string) => {
 
 /**
  * Depending on if the user has set the associated function with the segment type, either return the default or topN parameters.
+ * @returns a FlowSummaryParams object for either default or topN
  */
 const getFunctionParameters = async (query: FlowParsedQueryRow, functionName: string, type: string, options: FlowQueryRequest<FlowQuery>, step: number, service: FlowTemplateVariableClientService) => {
     return query.queryFunctions.find((d) => d[functionName]) || query.segment.label === FlowSegmentStrings.Dscps ?
@@ -527,13 +547,15 @@ const getMultiplier = (queryData: FlowParsedQueryRow, timestamps: number[]) => {
  * @param query An individual query row.
  * @param functionName The name of the associated function
  * @param segmentName The name of the active segment
- * @param type Series or Summary
- * @returns a function definition we can call to get some OpenNMS Data.
+ * @param type 'series' or 'summaries'
+ * @returns a function name we can call on ClientDelegate to get some OpenNMS Data.
  */
-const getOpenNMSClientFunction = (query: FlowParsedQueryRow, functionName: string, segmentName: string, type: string) => {
-    return !!query.queryFunctions.find((d) => d[functionName]) || segmentName === FlowSegmentStrings.Dscps ?
+const getOpenNMSClientFunction = (query: FlowParsedQueryRow, functionName: string, segmentName: string, type: string): string => {
+    const clientFunction = !!query.queryFunctions.find((d) => d[functionName]) || segmentName === FlowSegmentStrings.Dscps ?
         segmentFunctionMapping[type][segmentName]?.default :
-        segmentFunctionMapping[type][segmentName]?.topN;
+        segmentFunctionMapping[type][segmentName]?.topN
+
+    return clientFunction || ''
 }
 
 /**
@@ -558,19 +580,21 @@ const getTimeRange = (options: FlowQueryRequest<FlowQuery>) => {
  */
 const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number) => {
     const data = { ...oldData }
-    let inputParams: string | undefined = '';
+    let inputParams: string | undefined = ''
+
     if (func.label) {
-        const fullFunction = FlowFunctions.get(func.label);
+        const fullFunction = FlowFunctions.get(func.label)
 
         if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
-            inputParams = queryData.functionParameters[index];
+            inputParams = queryData.functionParameters[index]
         } else if (fullFunction?.parameterOptions && queryData?.parameterOptions) { //If there's an option set, get it.
             inputParams = queryData.parameterOptions?.[index]?.label
         }
 
         data.queryFunctions.push({ [func.label]: inputParams })
     }
-    return data;
+
+    return data
 }
 
 /**
@@ -592,7 +616,7 @@ export const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, 
  * @returns The function, If the provided function exists on the given row, otherwise undefined.
  */
 const isFunctionSet = (queryRow: FlowParsedQueryRow, name: string) => {
-    return queryRow.queryFunctions.find((d) => {
+    return !!queryRow.queryFunctions.find((d) => {
         return d[name] || d[name] === ''
     })
 }
@@ -651,7 +675,7 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
     const nanToZero = isFunctionSet(queryData, FlowFunctionStrings.nanToZero);
     const timestampsInRange = getInRangeTimestamps(data.timestamps, start, end);
     const columnsWithIndex: any[] = data.columns.map((column, colIdx) => { return { column, colIdx } });
-    const parsedData = { timestamps: timestampsInRange, columns: columnsWithIndex, values: data.values };
+    const parsedData: FlowTimestampedData = { timestamps: timestampsInRange, columns: columnsWithIndex, values: data.values };
 
     const multiplier = getMultiplier(queryData, data.timestamps)
     const combineIngressEgress = isFunctionSet(queryData, FlowFunctionStrings.combineIngressEgress);
@@ -659,13 +683,13 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
     const onlyEgress = isFunctionSet(queryData, FlowFunctionStrings.onlyEgress);
     const negativeIngress = isFunctionSet(queryData, FlowFunctionStrings.negativeIngress);
     const negativeEgress = isFunctionSet(queryData, FlowFunctionStrings.negativeEgress);
-    const functionsParam = { nanToZero: nanToZero, multiplier: multiplier };
+    const functionsOptions = { nanToZero: nanToZero, multiplier: multiplier, sign: 1 };
 
     let processedData = columnsWithIndex
         .filter(({ column }) => !(onlyIngress && !column.ingress || onlyEgress && column.ingress))
         .map(({ column, colIdx }) => {
             const sign = negativeIngress && column.ingress || negativeEgress && !column.ingress ? -1 : 1;
-            const datapoints = convertTimeStampedDataToDataFrame(colIdx, parsedData, { ...functionsParam, sign: sign });
+            const datapoints = convertTimeStampedDataToDataFrame(colIdx, parsedData, { ...functionsOptions, sign: sign });
             return {
                 target: convertLabel(column.label, column, queryData),
                 datapoints
@@ -675,12 +699,11 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
     if (combineIngressEgress) {
         const uniqueColumns = [...new Set(data.columns.map(col => col.label))]
 
-
         processedData = uniqueColumns
             .map((uniqueColumn) => {
+                const datapoints = sumValuesGroupedByColumn(uniqueColumn, parsedData, functionsOptions)
+                const columnIndexb = data.columns.findIndex((d) => d.label === uniqueColumn)
 
-                const datapoints = sumValuesGroupedByColumn(uniqueColumn, parsedData, functionsParam);
-                const columnIndexb = data.columns.findIndex((d) => d.label === uniqueColumn);
                 return {
                     target: convertLabel(uniqueColumn as string, data.columns[columnIndexb], queryData),
                     datapoints
@@ -729,15 +752,102 @@ const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequ
     return [dataFrame]
 }
 
+const buildTopNFlowQueryParams = (functionName: string, functionParams: FlowFunctionParams, withDscp: string | string[]) => {
+  const parameters: any[] = [
+    functionParams.topN,
+    functionParams.start,
+    functionParams.end,
+    functionParams.step,
+    functionParams.includeOther,
+    valueOrDefault(functionParams.withExporterNode, ''),
+    valueOrDefault(functionParams.withIfIndex, ''),
+    withDscp
+  ]
+
+  // series has 'step' but summaries does not
+  if (!functionName.includes('Series')) {
+    parameters.splice(3, 1)
+  }
+
+  return parameters
+}
+
+const buildSeriesFlowQueryParams = (functionName: string, functionParams: FlowFunctionParams, withDscp: string | string[]) => {
+  const parameters: any[] = []
+
+  const functionValues = functionParams.functionValue?.map(v =>  {
+    if (isString(v)) {
+      return v as string
+    }
+
+    // get 'withApplication', etc., these are keys of functionParams.functionValue
+    const item = v as any
+    const funcNames = Object.keys(FlowFunctionStrings).filter(k => k.startsWith('with'))
+
+    for (let key of funcNames) {
+      if (item[key]) {
+        return item[key]
+      }
+    }
+  }) || []
+
+  // parameters is something like this, but with some variations:
+  // [
+  //   functionValues,
+  //   functionParams.start,
+  //   functionParams.end,
+  //   functionParams.step,
+  //   functionParams.includeOther,
+  //   valueOrDefault(functionParams.withExporterNode, ''),
+  //   valueOrDefault(functionParams.withIfIndex, ''),
+  //   withDscp
+  // ]
+
+  if (!functionName.includes('Dscp')) {
+    parameters.push(functionValues)
+  }
+
+  parameters.push(functionParams.start)
+  parameters.push(functionParams.end)
+
+  // series has 'step' but summaries does not
+  if (functionName.includes('Series')) {
+    parameters.push(functionParams.step)
+  }
+
+  if (!functionName.includes('Dscp')) {
+    parameters.push(functionParams.includeOther)
+  }
+  parameters.push(valueOrDefault(functionParams.withExporterNode, ''))
+  parameters.push(valueOrDefault(functionParams.withIfIndex, ''))
+  parameters.push(withDscp)
+
+  return parameters
+}
+
 /**
  * 
  * @param functionName The function name we want to run
- * @param parameters The parameters we want to pass our function
+ * @param parameters FlowFunctionParams The parameters we want to pass our function
  * @param client The client that holds the function
  * @returns Data from OpenNMS (if all goes well)
  */
-const queryOpenNMSClientWithFunctionAndParams = async (functionName, parameters, client: ClientDelegate) => {
-    return client[functionName](...parameters)
+const queryOpenNMSClientWithFlowFunctionParams = async (functionName: string, functionParams: FlowFunctionParams, client: ClientDelegate) => {
+  // Construct parameters array for ClientDelegate Flows functions
+  // see ClientDelegate.getSeriesForTopNApplications, etc.
+  let parameters: any[] = []
+
+  // functionParams.withDscp can be string or string[]. ClientDelegate calls expect a string[]
+  const withDscp = isString(functionParams.withDscp) ? [functionParams.withDscp as string] : functionParams.withDscp
+
+  // all 'TopN' items have same pattern
+  if (functionName.includes('TopN')) {
+    parameters = buildTopNFlowQueryParams(functionName, functionParams, withDscp || [])
+  } else {
+    parameters = buildSeriesFlowQueryParams(functionName, functionParams, withDscp || [])
+  }
+
+  return client[functionName](...parameters)
 }
 
 /**
@@ -762,38 +872,37 @@ const shouldWeSwapIngressAndEgress = (inData: any, queryData: FlowParsedQueryRow
  * 
  * @param groupByColumn current column name
  * @param parsedData object with timestamps, columns and data values
- * @param params functions selected by the user if any (nanToZero, multiplier)
+ * @param options functions selected by the user if any (nanToZero, multiplier)
  * @returns 
  */
-const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: any, params: any) => {
-
-    return parsedData['timestamps']
+const sumValuesGroupedByColumn = (groupByColumn: any, parsedData: FlowTimestampedData, options: FlowFunctionOptions) => {
+    return parsedData.timestamps
         .map((timestamp, tindex) => {
-            const sum = parsedData['columns']
+            const sum = parsedData.columns
                 // determine the indexes of those columns that have the same label as the current column
                 .filter(({ column }) => column.label === groupByColumn)
                 // get the values of those columns ...
                 .map(({ colIdx }) => {
-                    const v = parsedData['values'][colIdx][tindex];
-                    return isNaN(Number(v)) && params['nanToZero'] ? 0 : v
+                    const v = parsedData.values[colIdx][tindex]
+                    return isNaN(Number(v)) && options.nanToZero ? 0 : v
                 })
                 // ... and sum them up
                 .reduce((prv, cur) => prv + (cur ? cur : 0), 0)
-            return [sum * params['multiplier'], timestamp]
+            return [sum * options.multiplier, timestamp]
         })
 }
 
 export const queryTemplateVariable = async (query: string, templateSrv: any, client: ClientDelegate, simpleRequest: SimpleOpenNMSRequest) => {
-
-
     const clients: FlowTemplateVariableClientService = { client, simpleRequest };
     const templateVariableQuery: FlowTemplateVariableQueryService = getTemplateVariableQuery(query, templateSrv);
+
     if (!templateVariableQuery.function || !templateVariableQuery.function.name) {
         return Promise.resolve([]);
     }
-    return await getTemplateVariableResultsFor(templateVariableQuery, clients);
 
+    return await getTemplateVariableResultsFor(templateVariableQuery, clients);
 }
+
 const getTemplateVariableQuery = (query: string, templateSrv: any) => {
     return {
         function: getTemplateVariableFunction(templateSrv.replace(query)),

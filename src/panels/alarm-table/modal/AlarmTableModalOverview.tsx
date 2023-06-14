@@ -31,6 +31,10 @@ export const AlarmTableModalOverview: React.FC<AlarmTableModalOverviewProps> = (
         </style>
         <table className='alarm-details-table'>
             <tr>
+                <th>Alarm ID</th>
+                <td>{alarm?.id}</td>
+            </tr>
+            <tr>
                 <th>UEI</th>
                 <td className="wrap">{alarm?.uei}</td>
             </tr>

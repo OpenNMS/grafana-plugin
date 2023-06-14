@@ -12,7 +12,7 @@ export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientD
     useEffect(() => {
         if (series?.[0]?.name === 'alarms') {
             setAlarmQuery(true)
-            const localAlarmId = getAlarmIdFromFields(series?.[0].fields,soloIndex)
+            const localAlarmId = getAlarmIdFromFields(series?.[0].fields, soloIndex)
             setAlarmId(localAlarmId ?? -1)
         } else {
             setAlarmId(-1)
@@ -24,7 +24,7 @@ export const useAlarm = (series: DataFrame[], soloIndex: number, client: ClientD
     useEffect(() => {
         const updateAlarm = async () => {
             if (alarmId !== undefined && alarmId >= 0) {
-              const returnedAlarm = await client?.getAlarm(alarmId);
+              const returnedAlarm = await client?.getAlarm(alarmId)
               setAlarm(returnedAlarm)
             }
         }

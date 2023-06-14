@@ -15,6 +15,7 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
   const [dashboardTitle, setDashboardTitle] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>()
   const [unhideAllQueries, setUnhideAllQueries] = useState<boolean>(false)
+  const [convertGraphToTimeSeries, setConvertGraphToTimeSeries] = useState<boolean>(false)
 
   const onSourceJsonUpdated = (text: string) => {
     if (!sourceDashboardJson) {
@@ -44,8 +45,10 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
       return
     }
 
+    const options = { unhideAllQueries, convertGraphToTimeSeries }
+
     const target = dashboardConvert(sourceDashboardJson, sourcePluginVersion.value, targetPluginVersion.value,
-      dashboardTitle, { unhideAllQueries })
+      dashboardTitle, options)
 
     if (target.isError) {
       setErrorMessage(`Error converting: ${target.errorMessage || ''}`)
@@ -89,6 +92,11 @@ export const DashboardConvertPanelControl: React.FC<PanelProps<DashboardConvertP
               <Switch
                   value={unhideAllQueries}
                   onChange={() => setUnhideAllQueries(!unhideAllQueries)}
+              />
+              <FieldDisplay>{'Convert Graph to Timeseries Panels:'}</FieldDisplay>
+              <Switch
+                  value={convertGraphToTimeSeries}
+                  onChange={() => setConvertGraphToTimeSeries(!convertGraphToTimeSeries)}
               />
             </HorizontalGroup>
         </div>
