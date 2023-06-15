@@ -22,7 +22,7 @@
     "@grafana/tsconfig": "^1.2.0-rc1",
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
     "@swc/core": "^1.2.144",
-    "@swc/helpers": "^0.4.12",
+    "@swc/helpers": "^0.5.1",
     "@swc/jest": "^0.2.23",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
