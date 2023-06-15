@@ -88,6 +88,14 @@ export const EntityClause = ({
     }
 
     return (
+        <>
+        <style>
+          {`
+            label.entity-attr-value-segment, label.entity-attr-value-segment-input {
+              min-width: 100px;
+            }
+          `}
+        </style>
         <InlineFieldRow>
             <EntityClauseLabel
                 type={clause.type}
@@ -127,6 +135,7 @@ export const EntityClause = ({
             />
             {clause.attribute?.value?.values && Object.keys(clause.attribute?.value.values).length > 0 ?
                 <Segment
+                    className='entity-attr-value-segment'
                     allowEmptyValue={false}
                     value={clause.comparedValue}
                     onChange={(text) => {
@@ -135,6 +144,7 @@ export const EntityClause = ({
                     options={comparedOptions}
                 /> :
                 <SegmentInput
+                    className='entity-attr-value-segment-input'
                     placeholder='select value'
                     type={getInputTypeFromAttributeType(clause.attribute)}
                     onChange={(text) => {
@@ -157,5 +167,6 @@ export const EntityClause = ({
             </>
             }
         </InlineFieldRow>
+      </>
     )
 }

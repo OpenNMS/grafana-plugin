@@ -37,6 +37,7 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
                 )
             }
         })
+        
         setFilter(updatedFilter);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clauses])

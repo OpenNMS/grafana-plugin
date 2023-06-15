@@ -1034,7 +1034,8 @@ const metricFindInterfacesOnExporterNode = async ({ client, simpleRequest }, ser
 }
 
 const metricFindDscpOnExporterNodeAndInterface = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
-    let dscpValues = await client.getDscpValues(service.nodeCriteria, service.iface, service.start, service.end);
+    let dscpValues = await client.getDscpValues(service.nodeCriteria, service.iface?.trim() || '', service.start, service.end);
+
     return dscpSelectOptions(dscpValues);
 }
 

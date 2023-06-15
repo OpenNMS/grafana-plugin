@@ -11,7 +11,7 @@ const isAllVariable = (templateVar, templateSrv) => {
 }
 
 const isMultiVariable = (templateVar) => {
-    return templateVar && templateVar.isMulti
+    return !!(templateVar?.multi || templateVar?.isMulti)
 }
 
 const isNumber = (num: any) => {
@@ -119,22 +119,26 @@ const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQue
                 continue
             }
 
+            let skipSimpleSubstitution = false
+
             if (isMultiVariable(templateVariable)) {
-                templateVariable.current.value = normalizeSingleArrayValue(templateVariable.current.value)
+                const normalizedValue = normalizeSingleArrayValue(templateVariable.current.value)
 
                 // now if it's *still* an array, we chop it up into nested restrictions
-                if (Array.isArray(templateVariable.current.value)) {
-                    const replacement = normalizeMultiArrayValue(templateVariable.current.value, restriction)
+                if (Array.isArray(normalizedValue)) {
+                    const replacement = normalizeMultiArrayValue(normalizedValue, restriction)
 
                     // we've turned a single restriction into a nested one, so re-process it as a
                     // collection and skip the simple replacement below
                     clause.restriction = replacement
                     substitute(clause.restriction.clauses, request, templateSrv)
-                    return
+                    skipSimpleSubstitution = true
                 }
             }
 
-            restriction.value = simpleVariableSubstitution(restriction.value, variableName, request, templateSrv)
+            if (!skipSimpleSubstitution) {
+                restriction.value = simpleVariableSubstitution(restriction.value, variableName, request, templateSrv)
+            }
 
             if (isEmptyNodeRestriction(clause)) {
                 remove.push(clause)
