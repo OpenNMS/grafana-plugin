@@ -64,4 +64,4 @@ We use the OpenNMS Plugin for Grafana project in our [JIRA](https://opennms.atla
 
 ## Changelog
 
-The changelog has moved to [CHANGELOG.md](https://github.com/OpenNMS/grafana-plugin/blob/master/CHANGELOG.md).
+The changelog has moved to [CHANGELOG.md](https://github.com/OpenNMS/grafana-plugin/blob/main-9/CHANGELOG.md).
