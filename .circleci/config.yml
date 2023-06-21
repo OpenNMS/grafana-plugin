@@ -571,6 +571,9 @@ workflows:
             - make-rpm
             - make-tarball
             - make-zip
+          filters:
+            tags:
+              only: /^v.*/
       - publish-docker-image-latest:
           context:
             - "cloudsmith-publish-account"
