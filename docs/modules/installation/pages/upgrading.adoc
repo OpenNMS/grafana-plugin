@@ -13,6 +13,7 @@ If you have only one Grafana instance running one {page-component-title} install
 Before proceeding, make sure that you have installed the latest version of the plugin.
 You should also have https://nodejs.org/[Node.js] installed.
 
+[[datasources-upgrade]]
 == Upgrade datasources
 
 Follow these steps to upgrade your datasources:
