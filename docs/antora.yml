@@ -1,5 +1,5 @@
 name: grafana-plugin
-version: '9-SNAPSHOT'
+version: '9'
 title: Plugin for Grafana
 asciidoc:
   attributes:
