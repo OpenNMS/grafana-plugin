@@ -18,7 +18,7 @@
     "@babel/core": "^7.16.7",
     "@grafana/e2e": "^9.4.7",
     "@grafana/e2e-selectors": "^9.4.7",
-    "@grafana/eslint-config": "^5.1.0",
+    "@grafana/eslint-config": "^6.0.0",
     "@grafana/tsconfig": "^1.2.0-rc1",
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
     "@swc/core": "^1.2.144",
