@@ -90,4 +90,5 @@ The converted JSON is displayed in the *Target Dashboard JSON* box.
 
 NOTE: The conversion tool may not handle all patterns in variables and resource names.
 After you convert your dashboards, test them to ensure that all of the associated data is correct.
-Note as well that you must define variables before using them in an expression; this behavior is different from versions prior to 9.0.
+Note as well that you must define variables before using them in an expression.
+The conversion tool does not reorder items for you, so make sure to check that you have done so.
