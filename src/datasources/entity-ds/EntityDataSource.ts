@@ -67,6 +67,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
             request.entityType = target?.selectType?.label || EntityTypes.Alarms
             // possibly should be an option in the panel editor
             request.enforceTimeRange = true
+
             const filter = buildQueryFilter(target?.filter || new API.Filter(), request, this.templateSrv)
 
             if (hasFilterEditorData) {

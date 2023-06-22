@@ -161,13 +161,16 @@ export const getTemplateVariable = (templateSrv: any, name: string) => {
     return undefined
 }
 
+const isValidClauseRestriction = (clause) => {
+    return clause?.restriction?.attribute && clause?.restriction?.comparator && clause?.restriction?.value
+}
+
 // Given a query filter, build a cloned one which does template variable substitution, etc.
 // Clone Filter to make substitution possible
 // (otherwise substitution would happen in original query,
 // and overwriting the $<variable> or [[variable]] in restrictions which may not be the intention)
 export const buildQueryFilter = (filter: API.Filter, request: EntityQueryRequest<EntityQuery>, templateSrv: TemplateSrv): API.Filter => {
-
-    filter.clauses = filter.clauses.filter((clause, idx) => clause.restriction?.attribute && clause.restriction?.comparator && clause.restriction?.value)
+    filter.clauses = filter.clauses.filter(clause => isValidClauseRestriction(clause))
     const clonedFilter = API.Filter.fromJson(filter)
 
     // Before replacing any variables, add a global time range restriction (which is hidden to the user)
@@ -182,6 +185,13 @@ export const buildQueryFilter = (filter: API.Filter, request: EntityQueryRequest
 
     // Substitute $<variable> or [[variable]] in the restriction value
     substitute(clonedFilter.clauses, request, templateSrv)
+
+    // Remove any empty clauses
+    // This could happen e.g. if there was a multi-value template variable that has no values selected
+    clonedFilter.clauses = clonedFilter.clauses.filter(clause =>
+      (clause.restriction?.clauses && clause.restriction?.clauses.length > 0) ||
+      isValidClauseRestriction(clause))
+
     return clonedFilter
 }
 
