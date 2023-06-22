@@ -34,5 +34,5 @@ NOTE: You must specify a xref:datasources:flow_datasource.adoc[flow] and xref:da
 The dashboard is displayed.
 To view a list of your dashboards, click menu:Dashboards[Manage].
 
-IMPORTANT: Predefined dashboards created before April 2023 (most of them) require conversion before you can use them with {product-name}.
+IMPORTANT: Predefined dashboards created before April 2023 require conversion before you can use them with {product-name}.
 You must export and <<upgrade-dashboards, convert these dashboards>> before using them.

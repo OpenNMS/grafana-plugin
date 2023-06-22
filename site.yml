@@ -23,6 +23,6 @@ asciidoc:
 output:
   clean: true
   dir: ./public
-  destinations
+  destinations:
   - provider: fs
   - provider: archive
