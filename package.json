@@ -17,7 +17,7 @@
     "@antora/site-generator-default": "^3.1.2",
     "@babel/core": "^7.16.7",
     "@grafana/e2e": "^9.4.7",
-    "@grafana/e2e-selectors": "^9.4.7",
+    "@grafana/e2e-selectors": "^10.0.1",
     "@grafana/eslint-config": "^6.0.0",
     "@grafana/tsconfig": "^1.2.0-rc1",
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
