@@ -76,8 +76,8 @@ export const updateEntityQuery = (source: any) => {
         value: c.restriction.comparator.id
       },
       comparedString: c.restriction.value,
-      // TODO: Not sure what this should be
-      comparedValue: "",
+      // Clearing this, using comparedString only for now
+      comparedValue: '',
       // TODO: figure out nestingType
       nestingType: OnmsEntityNestType.TOP,
       type: entityType
