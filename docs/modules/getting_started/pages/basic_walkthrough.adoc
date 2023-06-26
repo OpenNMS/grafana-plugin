@@ -153,3 +153,18 @@ For nodes, you can configure only a table graph.
 ** (Optional) Configure the settings in the bottom half of the panel to customize the graph.
 . Update the panel's *Name*.
 . Click *Save* at the top-right of the panel.
+
+== Use data links to provide alarm context
+
+Data links in Grafana let you create a user-defined operation (for example, a link to a node detail page or a knowledge base article, links based on alarm severity, and so on) that might help users diagnose an alarm.
+Once created, a link to the specified data will appear when you right-click an alarm in an alarms table:
+
+image::gf-data-link.png["Alarms table with three alarms. The context menu is displayed, listing three defined options."]
+
+For example, you can create a data link with a URL of `\http://localhost:8980/opennms/alarm/detail.htm?id=${__data.fields.ID}`.
+The fields in the alarm table rows will appear as links and when clicked will go to that alarm detail URL.
+
+Another example, `\http://localhost:8980/opennms/element/node.jsp?node=${__data.fields["Node ID"]}'` would go to the node detail for the alarm.
+
+For information on how to create a data link, see the https://grafana.com/docs/grafana/latest/panels-visualizations/configure-data-links/#add-a-data-link[Grafana documentation].
+
