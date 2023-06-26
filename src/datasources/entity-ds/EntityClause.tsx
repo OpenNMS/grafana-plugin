@@ -91,7 +91,7 @@ export const EntityClause = ({
         <>
         <style>
           {`
-            label.entity-attr-value-segment, label.entity-attr-value-segment-input {
+            .entity-attr-value label.entity-attr-value-segment, label.entity-attr-value-segment-input, input.gf-form-input {
               min-width: 100px;
             }
           `}
@@ -133,6 +133,7 @@ export const EntityClause = ({
                 }}
                 options={comparatorOptions}
             />
+            <div className='entity-attr-value'>
             {clause.attribute?.value?.values && Object.keys(clause.attribute?.value.values).length > 0 ?
                 <Segment
                     className='entity-attr-value-segment'
@@ -163,6 +164,7 @@ export const EntityClause = ({
                     value={clause.comparedString}
                 />
             }
+            </div>
             {loading && <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Spinner />
             </div>
