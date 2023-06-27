@@ -31,7 +31,7 @@
     "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/jest": "^29.2.2",
     "@types/jquery": "^3.5.13",
-    "@types/node": "^18.11.9",
+    "@types/node": "^20.3.2",
     "@types/react-router-dom": "^5.3.3",
     "commander": "^11.0.0",
     "copy-webpack-plugin": "^11.0.0",
