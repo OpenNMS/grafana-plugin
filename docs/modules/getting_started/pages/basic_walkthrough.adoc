@@ -15,7 +15,7 @@ If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrati
 
 == Set up the plugin
 
-First, you must enable the plugin in Grafana to help with alarm diagnosis:
+After the plugin is installed in your Grafana instance, you must enable it to allow access to the included datasource and panel options.
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, select menu:Administration[Plugins]:
@@ -28,7 +28,7 @@ image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins o
 . Click the *Enable* or *Enable plugin* button.
 +
 NOTE: The Disable option indicates that the plugin is already enabled.
-You can also choose *Update* to download the latest version of the plugin.
+You can also choose *Update* to download the latest version of the plugin via Grafana's plugin repository.
 
 [[bw-ds-setup]]
 == Create a datasource
@@ -45,7 +45,7 @@ See the https://grafana.com/docs/grafana/latest/datasources/[official Grafana do
 Follow these steps to set up a datasource:
 
 . Navigate to the home page of your Grafana instance.
-. In the left navigation menu, select menu:Administration[Data ources].
+. In the left navigation menu, select menu:Administration[Data Sources].
 . Select *Add Data Source*.
 . In the *Search* box, type *OpenNMS Entities*.
 . Select the *OpenNMS Entities* datasource.
