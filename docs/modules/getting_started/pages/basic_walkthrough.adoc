@@ -36,8 +36,8 @@ You can also choose *Update* to download the latest version of the plugin via Gr
 The type of data that you can display in a dashboard depends on the datasource that you select.
 
 Before you create a dashboard, you must set up the datasource (xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
-For this walk-through, we will configure an entity datasource.
-Note that you can follow the same process to configure a flow or performance datasource.
+For this walk-through, we will configure a performance datasource.
+Note that you can follow the same process to configure an entity or flow datasource.
 
 You need to configure only the *URL*, *Basic Auth*, and *Basic Auth Details* (username and password) fields.
 See the https://grafana.com/docs/grafana/latest/datasources/[official Grafana documentation] for information on configuring other fields.
@@ -46,12 +46,12 @@ Follow these steps to set up a datasource:
 
 . Navigate to the home page of your Grafana instance.
 . In the left navigation menu, select menu:Administration[Data Sources].
-. Select *Add Data Source*.
-. In the *Search* box, type *OpenNMS Entities*.
-. Select the *OpenNMS Entities* datasource.
+. Select *Add New Data Source*.
+. In the *Search* box, type *OpenNMS Performance*.
+. Select the *OpenNMS Performance* datasource.
 The settings dialog is displayed:
 +
-image::gf-data-config.png["OpenNMS Entities datasource settings dialog displaying sample settings.", 500]
+image::gf-data-config2.png["OpenNMS Performance datasource settings dialog displaying sample settings.", 500]
 
 . Type the *URL* that directs to your OpenNMS instance (for example, `\http://localhost:8980/opennms`).
 In most cases, this URL should end with `/opennms`.
@@ -157,9 +157,7 @@ For nodes, you can configure only a table graph.
 == Use data links to provide alarm context
 
 Data links in Grafana let you create a user-defined operation (for example, a link to a node detail page or a knowledge base article, links based on alarm severity, and so on) that might help users diagnose an alarm.
-Once created, a link to the specified data will appear when you right-click an alarm in an alarms table:
-
-image::gf-data-link.png["Alarms table with three alarms. The context menu is displayed, listing three defined options."]
+Once created, a link to the specified data will appear when you right-click an alarm in an alarms.
 
 For example, you can create a data link with a URL of `\http://localhost:8980/opennms/alarm/detail.htm?id=${__data.fields.ID}`.
 The fields in the alarm table rows will appear as links and when clicked will go to that alarm detail URL.
