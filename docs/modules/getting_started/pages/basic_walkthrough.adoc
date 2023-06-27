@@ -70,7 +70,7 @@ For information on displaying other data in a dashboard, see <<bw-panel-create, 
 . In the left navigation menu, click *Dashboards*.
 . Click menu:New[New Dashboard].
 . Click *Add Visualization*.
-. Choose your data source (for example, *OpenNMS Entities*).
+. Choose your data source (for example, *OpenNMS Performance*).
 . Configure its settings in the lower half of the page:
 +
 image::gf-panel-config.png["An example dashboard displaying its configuration settings. The settings are highlighted with a green box."]
