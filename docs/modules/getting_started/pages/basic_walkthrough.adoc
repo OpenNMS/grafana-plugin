@@ -15,52 +15,20 @@ If you already use the OpenNMS Data Source plugin with Grafana, see xref:migrati
 
 == Set up the plugin
 
-First, you must enable the plugin in Grafana and <<custom-actions, create custom actions>> to help with alarm diagnosis:
+After the plugin is installed in your Grafana instance, you must enable it to allow access to the included datasource and panel options.
 
 . Navigate to the home page of your Grafana instance.
-. In the left navigation menu, select menu:Configuration[Plugins]:
+. In the left navigation menu, select menu:Administration[Plugins]:
 +
 image::gf-plugins.png["Grafana menu displaying navigation options. The Plugins option is highlighted.", 250]
 
 . Select *OpenNMS Plugin for Grafana*.
 ** If the plugin is not listed, try restarting your Grafana server.
 ** If the issue persists, make sure the plugin's files are in the Grafana plugins directory (default: `var/lib/grafana/plugins`).
-. Click menu:Config[Enable].
+. Click the *Enable* or *Enable plugin* button.
 +
 NOTE: The Disable option indicates that the plugin is already enabled.
-You can also choose *Update* to download the latest version of the plugin.
-
-[[custom-actions]]
-=== Create custom actions
-
-A custom action is a user-defined operation (for example, a link to a node detail page or a knowledge base article) that might help users diagnose an alarm.
-Once created, custom actions are displayed when you right-click an alarm in an alarms table:
-
-image::gf-cust-action-context.png["Alarms table with three alarms. The context menu is displayed, listing three custom actions.", 500]
-
-You can create a custom action on the plugin's Config page.
-Each custom action includes a label and a URL; the URL may contain `$variables` that reference OpenNMS alarm properties.
-Note that variables are URL-encoded when injected into a URL.
-See the https://docs.opennms.com/opennms-js/latest/index.html[OpenNMS.js documentation] for a list of available properties.
-
-NOTE: As a special case, you can access an alarm's event parameters either by index (`$parameters[1]`) or by name (`$parameters[reason]`).
-
-If a variable cannot be matched against the appropriate row, the action does not appear in the context menu.
-
-.Sample custom action URLs with parameters
-image::gf-custom-actions.png["Two examples of custom action URLs with embedded variables.", 500]
-
-To create a custom action, follow these steps:
-
-. Navigate to the home page of your Grafana instance.
-. In the left navigation menu, select menu:Configuration[Plugins].
-. Select *OpenNMS Plugin for Grafana*.
-. On the Config tab, click *Add Custom Action*.
-. Specify a label and enter a URL.
-** In most cases, the URL should point to your OpenNMS instance (for example, `\http://localhost:8980/opennms/`, appended with a `$variable` that references an alarm property).
-. Click *Update*.
-
-The action should be displayed in the context menu when you right-click an entry in an alarms table.
+You can also choose *Update* to download the latest version of the plugin via Grafana's plugin repository.
 
 [[bw-ds-setup]]
 == Create a datasource
@@ -68,8 +36,8 @@ The action should be displayed in the context menu when you right-click an entry
 The type of data that you can display in a dashboard depends on the datasource that you select.
 
 Before you create a dashboard, you must set up the datasource (xref:datasources:performance_datasource.adoc[performance], xref:datasources:flow_datasource.adoc[flow], or xref:datasources:entity_datasource.adoc[entity]).
-For this walk-through, we will configure an entity datasource.
-Note that you can follow the same process to configure a flow or performance datasource.
+For this walk-through, we will configure a entity datasource.
+After completing these steps, repeat the same process to configure a performance datasource, and optionally a flow datasource if you are collecting flow data.
 
 You need to configure only the *URL*, *Basic Auth*, and *Basic Auth Details* (username and password) fields.
 See the https://grafana.com/docs/grafana/latest/datasources/[official Grafana documentation] for information on configuring other fields.
@@ -77,11 +45,8 @@ See the https://grafana.com/docs/grafana/latest/datasources/[official Grafana do
 Follow these steps to set up a datasource:
 
 . Navigate to the home page of your Grafana instance.
-. In the left navigation menu, select menu:Configuration[Data Sources]:
-+
-image::gf-data-sources.png["Grafana menu displaying navigation options. The Data Sources option is highlighted.", 250]
-
-. Select *Add Data Source*.
+. In the left navigation menu, select menu:Administration[Data Sources].
+. Select *Add New Data Source*.
 . In the *Search* box, type *OpenNMS Entities*.
 . Select the *OpenNMS Entities* datasource.
 The settings dialog is displayed:
@@ -102,8 +67,10 @@ A success message should be displayed.
 For this walk-through, we will create a dashboard with an alarms table.
 For information on displaying other data in a dashboard, see <<bw-panel-create, Create a panel>>.
 
-. In the left navigation menu, click the *plus* symbol (*+*), and choose *Dashboard*.
-. Click menu:Add Panel[Add an Empty Panel].
+. In the left navigation menu, click *Dashboards*.
+. Click menu:New[New Dashboard].
+. Click *Add Visualization*.
+. Choose your data source (for example, *OpenNMS Entities*).
 . Configure its settings in the lower half of the page:
 +
 image::gf-panel-config.png["An example dashboard displaying its configuration settings. The settings are highlighted with a green box."]
@@ -186,3 +153,17 @@ For nodes, you can configure only a table graph.
 ** (Optional) Configure the settings in the bottom half of the panel to customize the graph.
 . Update the panel's *Name*.
 . Click *Save* at the top-right of the panel.
+
+== Use data links to provide alarm context
+
+Data links in Grafana let you create a user-defined operation (for example, a link to a node detail page or a knowledge base article, links based on alarm severity, and so on) that might help users diagnose an alarm.
+Once created, links that you can left-click on appear in the alarm table data. 
+If you have configured more than one data link for the panel, left-clicking an item displays a context menu that lets you to choose which link to follow.
+
+For example, you can create a data link with a URL of `\http://localhost:8980/opennms/alarm/detail.htm?id=${__data.fields.ID}`.
+The fields in the alarm table rows will appear as links and when clicked will go to that alarm detail URL.
+
+Another example, `\http://localhost:8980/opennms/element/node.jsp?node=${__data.fields["Node ID"]}'` would go to the node detail for the alarm.
+
+For information on how to create a data link, see the https://grafana.com/docs/grafana/latest/panels-visualizations/configure-data-links/#add-a-data-link[Grafana documentation].
+
