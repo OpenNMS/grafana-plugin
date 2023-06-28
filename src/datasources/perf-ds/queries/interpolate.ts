@@ -46,7 +46,7 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
 
         // If this templateVar exists in scopedVars, we need to look at the scoped values
         if (scopedVars && scopedVars[variable.name] !== undefined && scopedVars[variable.name] !== null) {
-            variable.value = [scopedVars[variable.name].value.toString()];
+            variable.value = [scopedVars[variable.name]?.value?.toString()];
         } else {
             // TODO: templateSrv.getVariables() in Grafana 8.5 returns VariableModel[],
             // VariableModel does NOT contain 'current' or 'current.value'
