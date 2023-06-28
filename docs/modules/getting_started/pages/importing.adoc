@@ -1,7 +1,7 @@
 
 :imagesdir: ../assets/images
 
-= Predesigned Dashboards
+= Predefined Dashboards
 
 You can import a number of official and community-built https://grafana.com/grafana/dashboards?search=opennms&orderBy=name&direction=asc[{product-name} dashboards].
 They display the following data points, among others:
@@ -12,7 +12,7 @@ They display the following data points, among others:
 * Generic UPS statistics.
 * Network interfaces.
 
-You can edit predesigned dashboards to meet your needs, or to learn more about how to build your own dashboards.
+You can edit predefined dashboards to meet your needs, or to learn more about how to build your own dashboards.
 
 == Import a dashboard
 
@@ -22,7 +22,7 @@ Follow these steps to import a dashboard:
 . Select the dashboard that you want to import.
 . Copy the dashboard's ID:
 +
-image:gf-community-dash.png["Grafana's Dashboard page displaying a predesigned dashboard. The dashboard's ID is highlighted with a red box."]
+image:gf-community-dash.png["Grafana's Dashboard page displaying a predefined dashboard. The dashboard's ID is highlighted with a red box."]
 
 . Navigate to your Grafana home page and click the *plus* symbol (*+*) in the left navigation menu.
 . Select *Import*.
@@ -33,3 +33,6 @@ NOTE: You must specify a xref:datasources:flow_datasource.adoc[flow] and xref:da
 
 The dashboard is displayed.
 To view a list of your dashboards, click menu:Dashboards[Manage].
+
+IMPORTANT: Predefined dashboards created before April 2023 require conversion before you can use them with {product-name}.
+You must export and <<upgrade-dashboards, convert these dashboards>> before using them.

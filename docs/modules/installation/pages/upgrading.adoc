@@ -13,6 +13,7 @@ If you have only one Grafana instance running one {page-component-title} install
 Before proceeding, make sure that you have installed the latest version of the plugin.
 You should also have https://nodejs.org/[Node.js] installed.
 
+[[datasources-upgrade]]
 == Upgrade datasources
 
 Follow these steps to upgrade your datasources:
@@ -89,3 +90,5 @@ The converted JSON is displayed in the *Target Dashboard JSON* box.
 
 NOTE: The conversion tool may not handle all patterns in variables and resource names.
 After you convert your dashboards, test them to ensure that all of the associated data is correct.
+Note as well that you must define variables before using them in an expression.
+The conversion tool does not reorder items for you, so make sure to check that you have done so.
