@@ -716,28 +716,28 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
 
 /**
  * 
- * @param query An invidual query row
+ * @param queryRow An invidual query row
  * @param options the options as provided by Grafana to the query method in our data source.
  * @param rawData The data returned directly from OpenNMS.
  * @returns OpenNMS data in a table-ready format for Grafana.
  */
-const processRawSummaryData = (query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, rawData: any) => {
+const processRawSummaryData = (queryRow: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, rawData: any) => {
     if (!rawData.headers || !rawData.rows) {
         throw new Error('table response did not contain all necessary information')
     }
 
-    const columns = convertDataHeaderstoTableColumns(rawData.headers, query);
-    const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, query);
-    const toBits = isFunctionSet(query, FlowFunctionStrings.toBits)
+    const columns = convertDataHeaderstoTableColumns(rawData.headers, queryRow);
+    const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, queryRow);
+    const toBits = isFunctionSet(queryRow, FlowFunctionStrings.toBits)
     // new grafana versions converts TableData into DataFrame when passing data to a panel, 
     // so modifying here to understand what data should be received
-    const metric = query.segment ? query.segment.label : undefined;
+    const metric = queryRow.segment ? queryRow.segment.label : undefined;
     const fields: any[] = []
 
     const dataFrame = {
-        name: query.refId,
+        name: queryRow.refId,
         fields: fields,
-        meta: toBits ? { custom: { "metric": metric, "toBits": toBits } } : { custom: { "metric": metric } }
+        meta: toBits ? { custom: { metric, toBits: '' } } : { custom: { metric } }
     }
 
     columns.forEach((col, idx) => {
