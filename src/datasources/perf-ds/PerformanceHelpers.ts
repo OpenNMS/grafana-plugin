@@ -102,9 +102,9 @@ const measurementColumnToDataFrame = (
   if (column) {
     // Only use values within the timestamp window
     // Replace any literal 'NaN' values with null
-    let windowedValues = column.values.slice(startIndex, endIndex + 1).map(v => v === 'NaN' ? null : v)
+    const windowedValues = column.values.slice(startIndex, endIndex + 1).map(v => v === 'NaN' ? null : v)
 
-    let field = {
+    const field = {
       name: formattedLabel || 'Value',
       type: FieldType.number, // will be a number, a string representing a number or else null
       config: {},
