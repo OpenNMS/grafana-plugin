@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { MetricFindValue, PanelProps, SelectableValue } from '@grafana/data'
+import { PanelProps, SelectableValue } from '@grafana/data'
 import { getDataSourceSrv } from '@grafana/runtime'
-import { HorizontalGroup, Input, Select, VerticalGroup } from '@grafana/ui'
-import { FieldDisplay } from 'components/FieldDisplay'
-import { ALL_SELECTION_VALUE } from 'constants/constants'
+import { HorizontalGroup, VerticalGroup } from '@grafana/ui'
 import { loadFilterEditorData, saveFilterEditorData } from 'lib/localStorageService'
 import { FilterControlProps } from './FilterPanelTypes'
 import { useEntities } from '../../hooks/useEntities'
 import { useFilterData } from '../../hooks/useFilterData'
-import { ActiveFilter, FilterEditorData, FilterSelectableValues } from '../../datasources/entity-ds/types'
-
-// Values actually returned by OpenNMS metricFindQuery
-interface OnmsMetricFindValue extends MetricFindValue {
-    id?: string;
-    label?: string;
-}
+import { ActiveFilter, FilterEditorData, FilterSelectableValues, OnmsMetricFindValue } from '../../datasources/entity-ds/types'
+import { FilterPanelControlField } from './FilterPanelControlField'
 
 export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (props) => {
     const { getFuncNameFromEntityType } = useEntities()
@@ -105,58 +98,6 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
         return []
     }
 
-    const generateFilterSelectOptions = (filter: ActiveFilter) => {
-        const filterId = getFilterId(filter)
-        const isMulti = filter.selectionType?.label === 'Multi'
-        const [key, currentValues] = metricValues.find(([k,v]) => k === filterId) || []
-
-        if (key && currentValues) {
-            const values = currentValues.map(v => ({
-                label: v.text,
-                value: v.value || ''
-            } as SelectableValue<string | number>))
-
-            // Single select dropdown add 'All'
-            // For multi-select, user would just not select anything
-            if (!isMulti) {
-                const allValue = { label: 'All', value: ALL_SELECTION_VALUE}
-                return [allValue, ...values]
-            }
-
-            return values
-        }
-
-        return []
-    }
-
-    const filterDisplayLabel = (filter: ActiveFilter, index: number) => {
-        const altLabel = filter.altColumnLabel
-
-        if (altLabel) {
-            return altLabel
-        }
-
-        return `${filter.entity.label || ''}: ${filter.attribute.label || ''}`
-    }
-
-    const getInputSelectableValue = (filter: ActiveFilter) => {
-        const filterId = getFilterId(filter)
-        const selVals = selectableValues.find(v => v.filterId === filterId)
-
-        if (selVals && selVals.values?.length > 0) {
-            return selVals.values[0].value || ''
-        }
-
-        return ''
-    }
-
-    const getSelectSelectableValues = (filter: ActiveFilter) => {
-        const filterId = getFilterId(filter)
-        const selVals = selectableValues.find(v => v.filterId === filterId)
-
-        return (selVals && selVals.values) || []
-    }
-
     const inputChanged = (e, filter: ActiveFilter) => {
         const filterId = getFilterId(filter)
         const newValues = selectableValues.filter(v => v.filterId !== filterId)
@@ -204,6 +145,7 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
             const filterData: FilterEditorData = {
                 dashboardUid,
                 ...props.options.filterEditor,
+                isHorizontalLayout: props.options.filterEditor.isHorizontalLayout || false,
                 selectableValues: filterSelectableValues
             }
 
@@ -217,29 +159,49 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
     }, [props.options.filterEditor])
 
     return (
-        <div style={{ height: '100%', overflowY: 'auto' }}>
+      <>
+        { props.options.filterEditor.isHorizontalLayout ?
+          <div style={{ height: '100%', overflowX: 'auto' }}>
+            <HorizontalGroup align='flex-start'>
+                {props.options?.filterEditor?.activeFilters.map((filter, index) => {
+                  return (
+                    <FilterPanelControlField
+                      key={getFilterId(filter)}
+                      filter={filter}
+                      getFilterId={getFilterId}
+                      index={index}
+                      inputChanged={inputChanged}
+                      isHorizontal={true}
+                      metricValues={metricValues}
+                      selectChanged={selectChanged}
+                      selectableValues={selectableValues}
+                    />
+                  )
+                  })}
+                l
+            </HorizontalGroup>
+          </div>
+        :
+          <div style={{ height: '100%', overflowY: 'auto' }}>
             <VerticalGroup align='flex-start'>
-                {props.options?.filterEditor?.activeFilters?.map &&
-                 props.options?.filterEditor?.activeFilters.map((filter, index) => { 
-                    return (
-                        <HorizontalGroup key={getFilterId(filter)}>
-                            <FieldDisplay>{filterDisplayLabel(filter, index)}</FieldDisplay>
-                            {filter.selectionType?.label === 'Text' ?
-                                <Input
-                                   value={getInputSelectableValue(filter)} 
-                                   onChange={(e) => inputChanged(e, filter)}
-                                />
-                                : <Select
-                                    isMulti={filter.selectionType?.label === 'Multi'}
-                                    options={generateFilterSelectOptions(filter)}
-                                    value={getSelectSelectableValues(filter)}
-                                    menuShouldPortal={true}
-                                    onChange={(value) => selectChanged(value, filter)}></Select>
-                            }
-                        </HorizontalGroup>
-                    )
+                {props.options?.filterEditor?.activeFilters.map((filter, index) => {
+                  return (
+                    <FilterPanelControlField
+                      key={getFilterId(filter)}
+                      filter={filter}
+                      index={index}
+                      getFilterId={getFilterId}
+                      inputChanged={inputChanged}
+                      isHorizontal={false}
+                      metricValues={metricValues}
+                      selectChanged={selectChanged}
+                      selectableValues={selectableValues}
+                    />
+                  )
                 })}
             </VerticalGroup>
-        </div>
-    )
+          </div>
+        }
+      </>
+  )
 }
