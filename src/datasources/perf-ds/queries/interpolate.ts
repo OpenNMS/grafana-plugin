@@ -31,7 +31,7 @@ interface TemplateSrvVariable {
  *
  * Note, in latest Grafana, templateSrv.getVariables() items are VariableWithOptions
  * We don't use all the properties of these, and they may not be present in earlier Grafana versions,
- * so we use the above interface definitions to provide some typing information.
+ * so we use the above interface definitions (e.g. InterpolationVariable) to provide some typing information.
  * See: https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/types/templateVars.ts
  */
 export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVars?: ScopedVars): InterpolationVariable[] => {
@@ -46,11 +46,11 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
 
         // If this templateVar exists in scopedVars, we need to look at the scoped values
         if (scopedVars && scopedVars[variable.name] !== undefined && scopedVars[variable.name] !== null) {
-            variable.value = [scopedVars[variable.name].value.toString()];
+            variable.value = [scopedVars[variable.name]?.value?.toString()];
         } else {
-            // TODO: templateSrv.getVariables() in Grafana 8.5 returns VariableModel[],
+            // Note: templateSrv.getVariables() in Grafana 8.5 returns VariableModel[],
             // VariableModel does NOT contain 'current' or 'current.value'
-            // But latest Grafana, 9.4.0, returns TypedVariableModel[], which is actually
+            // But recent Grafana, 9.4.0+, returns TypedVariableModel[], which is actually
             // instances of DashboardVariableModel, which is SystemVariable<DashboardProps> which
             // DOES contain 'current' and 'current.value'
             const templateSrvVariable = (templateVariable as any) as TemplateSrvVariable
@@ -80,28 +80,81 @@ export const collectInterpolationVariables = (templateSrv: TemplateSrv, scopedVa
     return variables
 }
 
-const defaultContainsVariable = (value: any | undefined, variableName: string) => {
-    if (value === null || value === undefined || !isString(value)) {
+/**
+ * Returns whether the given value possibly contains a variable reference.
+ */
+const isVariableReferenceCandidate = (value: any): boolean => {
+  return value !== undefined && value !== null && value !== '' &&
+    isString(value) && (value as string).includes('$')
+}
+
+/**
+ * Get a regex pattern for the given variable name which includes braces and an optional format.
+ */
+const getVariableWithBracesReferencePattern = (name: string) => {
+  return '\\${' + name + '(?::[a-zA-Z0-9]+)?}'
+}
+
+/**
+ * Checks whether a query (e.g. Performance Attribute query string) contains a template variable reference
+ * such as $var, ${var}, ${var:fmt}.
+ * @param queryValue Value of the query string
+ * @param variableName Value of the template variable, without any decoration
+ * @returns boolean. Could (in future) return an object such as { found: boolean, format?: string } if we want to know whether
+ *   we need to check the brace format during variable interpolation replacement.
+ */
+const containsVariableReference = (queryValue: any, variableName: string) => {
+    if (!isVariableReferenceCandidate(queryValue)) {
         return false
     }
 
-    return (value as string).indexOf('$' + variableName) >= 0
-}
+    const strValue = queryValue as string || ''
 
-const defaultReplace = (value: any, variables: InterpolationVariable[]) => {
-    if (value === null || value === undefined || value === '') {
-        return value;
+    if (strValue.indexOf('$' + variableName) >= 0) {
+      return true
     }
 
-    let interpolatedValue = value;
+    if (strValue.includes('${' + variableName)) {
+      const pattern = getVariableWithBracesReferencePattern(variableName)
+      const r = new RegExp(pattern)
+
+      return r.test(strValue)
+    }
+
+    return false
+}
+
+/**
+ * Replaces any and all variable references in a query with their interpolated values.
+ */
+const replaceQueryValueWithVariables = (queryValue: any, variables: InterpolationVariable[]) => {
+    // simple check so we don't bother to run regexes on values that definitely do not
+    // contain interpolated variable references
+    if (!isVariableReferenceCandidate(queryValue)) {
+      return queryValue
+    }
+
+    let interpolatedValue: string = queryValue as string
 
     variables.forEach(variable => {
-        const regexVarName = "\\$" + variable.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        // Note: variable.value should be a string at this point, not an array, since it
+        // already went through cartesianProductOfVariables()
+        // Just making sure here :)
+        let variableValue: string = variable.value as string ?? ''
+        if (Array.isArray(variable.value) && variable.value.length > 0) {
+          variableValue = variable.value[0]
+        }
 
-        interpolatedValue = interpolatedValue.replace(new RegExp(regexVarName, 'g'), variable.value);
+        // check for '$variableName' syntax
+        const regexVarName = '\\$' + variable.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        interpolatedValue = interpolatedValue.replace(new RegExp(regexVarName, 'g'), variableValue)
+
+        // check for ${var} with optional {$var:format} where 'format' must be alphanumeric
+        const regexWithBracesAndFormat = getVariableWithBracesReferencePattern(variable.name)
+        interpolatedValue = interpolatedValue.replace(new RegExp(regexWithBracesAndFormat, 'g'), variableValue)
     })
 
-    return interpolatedValue;
+    return interpolatedValue
 }
 
 const cartesianProductOfArrays = <T>(arrays: T[][]): T[][] => {
@@ -127,6 +180,26 @@ const cartesianProductOfArrays = <T>(arrays: T[][]): T[][] => {
     return r;
 }
 
+/**
+ * Takes variables in the form:
+ * [
+ *   { name: 'node', value: ['1', '6'] },       // index == 0
+ *   { name: 'ifIndex', value: ['8', '9'] } .   // index == 1
+ * ]
+ * and converts them to the form:
+ * [
+ *   [                                          // index == 0
+ *     { name: 'node', value: '1' },
+ *     { name: 'node', value: '6' }
+ *   ],
+ *   [                                          // index == 1
+ *     { name: 'ifIndex', value: '8' },
+ *     { name: 'ifIndex', value: '9' }
+ *   ]
+ * ]
+ * 
+ * Note that the array index of the outer array points to the values for the same variable name
+ */
 const cartesianProductOfVariables = (variables: InterpolationVariable[]) => {
     // Collect the values from all of the variables
     const allValues: string[][] = variables.map(v => Array.isArray(v.value) ? v.value : [v.value])
@@ -141,7 +214,7 @@ const cartesianProductOfVariables = (variables: InterpolationVariable[]) => {
         const rowOfVariables = [] as InterpolationVariable[]
 
         for (let i = 0, l = variables.length; i < l; i++) {
-            const variable = cloneDeep(variables[i])
+            const variable: InterpolationVariable = cloneDeep(variables[i])
             variable.value = rowOfValues[i]
             rowOfVariables.push(variable)
         }
@@ -158,28 +231,26 @@ const cartesianProductOfVariables = (variables: InterpolationVariable[]) => {
  * If a referenced variable contains multiple values or if there are multiple referenced variables
  * then we generate copies of the source with all of the possible permutations.
  *
- * See interpolate_spec.js for examples.
+ * See perf_ds_interpolate_spec.ts for examples.
  *
  * T is actually going to be:
  * - OnmsMeasurementsQuerySource for Attribute queries
  * - OnmsMeasurementsQueryExpression for Expression queries
  * - PerformanceQuery.filterState (just an object) for Filter queries
- *
+ * 
  * @param object
- *    the object to interpolate
+ *    the query object of type T to interpolate, see above
  * @param attributes
- *    a list of attributes on a given object that should be checked for variables
- * @param variables
- *    a list of variables of the form [{name: 'varname', value: ['value1', 'value2']}, ...]
+ *    a list of attributes on a given object that should be checked for variable interpolation.
+ * @param interpolationVars
+ *    a list of variable names and values from Grafana templateSrv of the form [{ name: 'varname', value: ['value1', 'value2'] }, ...]
  * @param callback
  *    an optional callback made with the object after variable substitution has been performed
- * @param containsVariable
- *    optionally override the function used to determine if a string contains a reference to the named variable
- * @param replace
- *    optionally override the function used to substitute the variable reference in a string with the variables's value
- * @returns an array of objects, if no substitutions were performed, the array will contain the original object
+ * @returns an array of objects of type T (see above) containing variable substitutions;
+ *    if no substitutions were performed, the array will contain the original object
  */
-export const interpolate = <T extends any>(object: T, attributes: string[],
+export const interpolate = <T>(object: T,
+    attributes: string[],
     interpolationVars: InterpolationVariable[],
     callback: (src: T) => void = () => {}): T[] => {
 
@@ -190,8 +261,12 @@ export const interpolate = <T extends any>(object: T, attributes: string[],
     // Collect the list of variables that are referenced by one or more of the keys
     const referencedVariables = [] as InterpolationVariable[]
 
+    // Note: we could keep track of what variables are referenced by which attribute queries,
+    // and also whether variables may have been referenced using ${var} or ${var:fmt} format
+    // to not perform as many regexes, but keeping it simpler for now
+
     variablesWithIndex.forEach(variable => {
-        const isVariableReferenced = attributes.find(attribute => defaultContainsVariable(object[attribute], variable.name))
+        const isVariableReferenced = attributes.find(attribute => containsVariableReference(object[attribute], variable.name))
 
         if (isVariableReferenced) {
             referencedVariables.push(variable)
@@ -223,7 +298,7 @@ export const interpolate = <T extends any>(object: T, attributes: string[],
         const o = { ...(object as any) }
 
         attributes.forEach(attribute => {
-            o[attribute] = defaultReplace(o[attribute], rowOfReferencedVariables)
+            o[attribute] = replaceQueryValueWithVariables(o[attribute], rowOfReferencedVariables)
         })
 
         callback(o)

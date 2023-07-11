@@ -1,8 +1,8 @@
-import { ArrayVector, DataFrame, Field, FieldType } from "@grafana/data"
-import { getTemplateSrv } from "@grafana/runtime";
-import { FunctionFormatter } from "lib/function_formatter";
-import { trimChar, isString } from "lib/utils";
-import { OnmsMeasurementsQueryResponse } from "./types";
+import { ArrayVector, DataFrame, Field, FieldType } from '@grafana/data'
+import { getTemplateSrv } from '@grafana/runtime'
+import { FunctionFormatter } from 'lib/function_formatter'
+import { trimChar, isString } from 'lib/utils'
+import { OnmsMeasurementsQueryMetadata, OnmsMeasurementsQueryResponse, OnmsMeasurementsQueryResponseColumnItem } from './types'
 
 /**
  * Get 'windowed' timestamps that are between start/end range.
@@ -49,67 +49,79 @@ const getWindowedTimestamps = (timestamps: number[], start: number, end: number)
 /**
  * Convert QueryResponse data returned by OpenNMS Measurements Rest API to Grafana DataFrame format.
  */
-export const measurementResponseToDataFrame =
-    (measurementData: OnmsMeasurementsQueryResponse): DataFrame[] => {
+export const measurementResponseToDataFrame = (measurementData: OnmsMeasurementsQueryResponse): DataFrame[] => {
+  const { start, end, labels, columns, timestamps, metadata } = measurementData
+  const dataFrames: DataFrame[] = []
+  let dataFrame: DataFrame = getEmptyDataFrame()
 
-        const { start, end, labels, columns, timestamps, metadata } = measurementData
+  if (!timestamps || !timestamps.length) {
+    dataFrames.push(dataFrame)
+  } else {
+    const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
 
-        const dataFrames: DataFrame[] = []
+    // no data or no data within the start/end timespan, return an empty DataFrame
+    if (windowedTimestamps.length === 0) {
+      dataFrames.push(dataFrame)
+    } else {
+      for (let i = 0; i < labels?.length; i++) {
+        const column = columns?.length ? columns[i] : null
 
-        let dataFrame: DataFrame = getEmptyDataFrame()
-
-        if (!timestamps || !timestamps.length) {
-            dataFrames.push(dataFrame)
-        } else {
-            const { windowedTimestamps, startIndex, endIndex } = getWindowedTimestamps(timestamps, start, end)
-
-            // no data or no data within the start/end timespan, return an empty DataFrame
-            if (windowedTimestamps.length === 0) {
-                dataFrames.push(dataFrame)
-            } else {
-
-                for (let i = 0; i < labels?.length; i++) {
-                    dataFrame = getEmptyDataFrame()
-
-                    dataFrame.length = windowedTimestamps.length
-
-                    dataFrame.fields.push({
-                        name: 'Time',
-                        type: FieldType.time,
-                        config: {},
-                        values: new ArrayVector<number>(windowedTimestamps)
-                    } as Field)
-
-                    const label = metadata && metadata.resources ?
-                        FunctionFormatter.format(labels[i], metadata) :
-                        labels[i]
-
-                    if (columns && columns.length) {
-
-                        const column = columns[i]
-                        const windowedValues = column.values.slice(startIndex, endIndex + 1)
-
-                        let field = {
-                            name: label || 'Value',
-                            type: FieldType.number, // number but actual data may be a string representing a number or "NaN"
-                            config: {},
-                            values: new ArrayVector<string | number | null>(windowedValues)
-                        } as Field
-                        dataFrame.fields.push(field)
-                    }
-                    dataFrames.push(dataFrame)
-                }
-            }
-        }
-
-        return dataFrames
+        dataFrame = measurementColumnToDataFrame (windowedTimestamps, startIndex, endIndex, metadata, labels[i], column)
+        dataFrames.push(dataFrame)
+      }
     }
+  }
 
-const getEmptyDataFrame = () => {
+  return dataFrames
+}
+
+/**
+ * Convert QueryResponse data for one column returned by OpenNMS Measurements Rest API to Grafana DataFrame format.
+ */
+const measurementColumnToDataFrame = (
+    windowedTimestamps: number[],
+    startIndex: number,
+    endIndex: number,
+    metadata: OnmsMeasurementsQueryMetadata,
+    label: string,
+    column: OnmsMeasurementsQueryResponseColumnItem | null
+  ): DataFrame => {
+  const dataFrame = getEmptyDataFrame()
+
+  dataFrame.length = windowedTimestamps.length
+
+  dataFrame.fields.push({
+    name: 'Time',
+    type: FieldType.time,
+    config: {},
+    values: new ArrayVector<number>(windowedTimestamps)
+  } as Field)
+
+  const formattedLabel = metadata?.resources ? FunctionFormatter.format(label, metadata) : label
+
+  if (column) {
+    // Only use values within the timestamp window
+    // Replace any literal 'NaN' values with null
+    const windowedValues = column.values.slice(startIndex, endIndex + 1).map(v => v === 'NaN' ? null : v)
+
+    const field = {
+      name: formattedLabel || 'Value',
+      type: FieldType.number, // will be a number, a string representing a number or else null
+      config: {},
+      values: new ArrayVector<string | number | null>(windowedValues)
+    } as Field
+
+    dataFrame.fields.push(field)
+  }
+
+  return dataFrame
+}
+
+const getEmptyDataFrame = (): DataFrame => {
     return {
         name: '',
         length: 0,
-        fields: []
+        fields: [] as Field[]
     }
 }
 
@@ -122,6 +134,7 @@ export const isTemplateVariable = (property: { id?: string, label?: string }) =>
 export const getTemplateVariable = (property?: { label?: string } | string) => {
     const ts = getTemplateSrv()
     let result = '' 
+
     if (property) {
         if (property.hasOwnProperty('id')) {
             result = property['id']

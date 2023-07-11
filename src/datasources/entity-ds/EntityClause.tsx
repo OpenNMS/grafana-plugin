@@ -1,8 +1,8 @@
-import { SelectableValue } from '@grafana/data';
-import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui';
+import { SelectableValue } from '@grafana/data'
+import { Segment, SegmentInput, Spinner, Button, InlineFieldRow } from '@grafana/ui'
 import React, { useEffect, useState } from 'react'
-import { EntityClauseLabel } from './EntityClauseLabel';
-import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption, ClauseActionType } from './types';
+import { EntityClauseLabel } from './EntityClauseLabel'
+import { Comparator, EntityClauseProps, OnmsEntityType, OnmsEntityNestType, SearchOption, ClauseActionType } from './types'
 import { API } from 'opennms'
 
 export const EntityClause = ({
@@ -67,7 +67,7 @@ export const EntityClause = ({
     const getInputTypeFromAttributeType = (attribute: SearchOption | undefined) => {
         let type = 'text';
         if (attribute?.value?.type?.i === 'TIMESTAMP') {
-            type = 'date'
+            type = 'datetime-local'
         } else if (attribute?.value?.type?.i === 'INTEGER') {
             type = 'number'
         }
@@ -91,7 +91,7 @@ export const EntityClause = ({
         <>
         <style>
           {`
-            label.entity-attr-value-segment, label.entity-attr-value-segment-input {
+            .entity-attr-value label.entity-attr-value-segment, label.entity-attr-value-segment-input, input.gf-form-input {
               min-width: 100px;
             }
           `}
@@ -133,13 +133,16 @@ export const EntityClause = ({
                 }}
                 options={comparatorOptions}
             />
+            <div className='entity-attr-value'>
             {clause.attribute?.value?.values && Object.keys(clause.attribute?.value.values).length > 0 ?
                 <Segment
                     className='entity-attr-value-segment'
                     allowEmptyValue={false}
                     value={clause.comparedValue}
-                    onChange={(text) => {
-                        setComparedValue(index, text);
+                    onChange={(value) => {
+                        // clear any existing string value, set new SelectableValue
+                        setComparedString(index, '')
+                        setComparedValue(index, value)
                     }}
                     options={comparedOptions}
                 /> :
@@ -147,12 +150,21 @@ export const EntityClause = ({
                     className='entity-attr-value-segment-input'
                     placeholder='select value'
                     type={getInputTypeFromAttributeType(clause.attribute)}
-                    onChange={(text) => {
-                        setComparedString(index, text);
+                    onChange={(value) => {
+                        const inputType = getInputTypeFromAttributeType(clause.attribute)
+
+                        // clear any existing SelectableValue, set new string value
+                        // if this value is a date / timestamp, convert to ISO string so that
+                        // queries are sent correctly
+                        setComparedValue(index, {})
+
+                        const inputValue = (value && inputType.startsWith('date')) ? new Date(value).toISOString() : value
+                        setComparedString(index, inputValue || '')
                     }}
                     value={clause.comparedString}
                 />
             }
+            </div>
             {loading && <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Spinner />
             </div>

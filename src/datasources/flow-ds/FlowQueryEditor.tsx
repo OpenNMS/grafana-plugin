@@ -37,12 +37,14 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
             const newNameList = [...functionNameList]
             newNameList[index] = functionName;
             setFunctionNameList(newNameList);
-            const oldList = [...activeParameterList]
-            oldList[index] = FlowFunctions.get(functionName.label)?.parameter
-            setActiveParameterList(oldList)
-            const oldOptionList = [...parameterOptionList]            
-            oldOptionList[index] = { }
-            setParameterOptionList(oldOptionList)
+
+            const newParamList = [...activeParameterList]
+            newParamList[index] = FlowFunctions.get(functionName.label)?.parameter
+            setActiveParameterList(newParamList)
+
+            const newOptionList = [...parameterOptionList]
+            newOptionList[index] = { }
+            setParameterOptionList(newOptionList)
         }
     }
 
@@ -51,6 +53,7 @@ export const FlowQueryEditor: React.FC<Props> = ({ onChange, onRunQuery, query, 
             const newNameList = [...functionNameList]
             newNameList.push({})
             setFunctionNameList(newNameList);
+
             const newFocusList: boolean[] = [];
             newFocusList[newNameList.length - 1] = true;
             setFocusList(newFocusList);

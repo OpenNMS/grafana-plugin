@@ -5,8 +5,7 @@ site:
 content:
   sources:
   - url: https://github.com/OpenNMS/grafana-plugin
-    branches: HEAD
-    tags: v*
+    branches: develop
     start_path: docs
 ui:
   bundle:

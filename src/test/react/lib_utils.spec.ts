@@ -18,6 +18,5 @@ describe('Utils :: processSelectionVariables', () => {
 
     array = processSelectionVariables(['["Default",0,"0.0.0.0","0.0.0.0","app1"],["Default",0,"0.0.0.0","0.0.0.0","app2"],["Default",0,"0.0.0.0","0.0.0.1","app3"],["Default",0,"0.0.0.0","0.0.0.0","app4"]']);
     expect(array.length).toEqual(4);
-
   });
 });
