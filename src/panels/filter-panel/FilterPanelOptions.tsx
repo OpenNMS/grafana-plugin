@@ -4,6 +4,7 @@ import { GrafanaDatasource } from 'hooks/useDataSources'
 import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
 import { ActiveFilter } from '../../datasources/entity-ds/types'
 import { FilterPanelDataSource } from './FilterPanelDataSource'
+import { FilterPanelLayoutOptions } from './FilterPanelLayoutOptions'
 import { FilterPanelFilterSelector } from './FilterPanelFilterSelector'
 import { FilterPanelActiveFilters } from './FilterPanelActiveFilters'
 import { loadFilterEditorData } from 'lib/localStorageService'
@@ -12,13 +13,15 @@ import { ClearFilterData } from '../../components/ClearFilterData'
 interface FilterPanelOptionOptions {
     datasource: SelectableValue<GrafanaDatasource>
     activeFilters: ActiveFilter[]
+    isHorizontalLayout: boolean
 }
 
 export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOptionOptions>> = (props) => {
     const [internalOptions, setInternalOptions] = useState<FilterPanelOptionOptions>(
         {
             datasource: props.context.options?.datasource || {},
-            activeFilters: props.context.options?.activeFilters || []
+            activeFilters: props.context.options?.activeFilters || [],
+            isHorizontalLayout: props.context.options?.isHorizontalLayout || false
         })
     const { client } = useOpenNMSClient(internalOptions?.datasource?.value)
  
@@ -39,7 +42,8 @@ export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOpt
           if (data && data.datasource && data.activeFilters) {
               setInternalOptions({
                   datasource: data.datasource,
-                  activeFilters: data.activeFilters
+                  activeFilters: data.activeFilters,
+                  isHorizontalLayout: data.isHorizontalLayout
               })
           }
         }
@@ -65,6 +69,10 @@ export const FilterPanelOptions: React.FC<PanelOptionsEditorProps<FilterPanelOpt
               `
             }
             </style>
+            <FilterPanelLayoutOptions
+                isHorizontal={internalOptions.isHorizontalLayout}
+                onChange={(d) => onOptionChange(d, 'isHorizontalLayout')}
+            />
             <FilterPanelDataSource
                 onChange={(d) => onOptionChange(d, 'datasource')}
                 datasource={internalOptions.datasource}

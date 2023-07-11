@@ -1,3 +1,19 @@
+### v9.0.6
+
+Grafana Plugin for OpenNMS version 9.0.6 release contains a number of bug fixes and enhancements.
+
+* [HELM-446](https://opennms.atlassian.net/browse/HELM-446) Stat Panel "Last \*" Calculation doesn't ignore NaN values
+* [HELM-445](https://opennms.atlassian.net/browse/HELM-445) upgrade helm to latest grafana 9.x APIs
+* [HELM-443](https://opennms.atlassian.net/browse/HELM-443) Site documentation not building
+* [HELM-442](https://opennms.atlassian.net/browse/HELM-442) Regression: Unable to manually type in node value in Perf DS
+* [HELM-440](https://opennms.atlassian.net/browse/HELM-440) Dashboard converter does not update Entity Alarm queries properly
+* [HELM-439](https://opennms.atlassian.net/browse/HELM-439) Filter panel field order does not adapt to panel shape
+* [HELM-435](https://opennms.atlassian.net/browse/HELM-435) Entity DS Alarm query doesn't handle multi value variables properly
+* [HELM-430](https://opennms.atlassian.net/browse/HELM-430) Perf DS Query doesn't support $\{variable\} syntax
+* [HELM-418](https://opennms.atlassian.net/browse/HELM-418) Document that variables must now be defined prior to use in expressions
+* [HELM-416](https://opennms.atlassian.net/browse/HELM-416) Docs about Predefined Dashboards are misleading
+* [HELM-415](https://opennms.atlassian.net/browse/HELM-415) Docs direct user to create a Custom Action when creating a Dashboard but this feature no longer exists in Grafana v9
+
 ### v9.0.5
 
 Grafana Plugin for OpenNMS version 9.0.5 is a small release with a number of small fixes and enhancements.

@@ -4,11 +4,12 @@ import {
   DataQuery,
   DataQueryRequest,
   DataSourceJsonData,
+  MetricFindValue,
   SelectableValue,
   QueryEditorProps,
   TableData
-} from '@grafana/data';
-import { EntityDataSource } from './EntityDataSource';
+} from '@grafana/data'
+import { EntityDataSource } from './EntityDataSource'
 import { GrafanaDatasource } from '../../hooks/useDataSources'
 
 /**
@@ -149,6 +150,12 @@ export interface OnmsColumn extends Column {
   visible?: boolean
 }
 
+// Values actually returned by OpenNMS metricFindQuery
+export interface OnmsMetricFindValue extends MetricFindValue {
+  id?: string
+  label?: string
+}
+
 export interface OnmsTableData extends TableData {
   // override
   columns: OnmsColumn[]
@@ -181,6 +188,7 @@ export interface FilterSelectableValues {
  */
 export interface FilterEditorData {
   dashboardUid: string
+  isHorizontalLayout: boolean
   datasource: SelectableValue<GrafanaDatasource> | undefined
   activeFilters: ActiveFilter[]
   selectableValues: FilterSelectableValues[]

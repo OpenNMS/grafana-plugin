@@ -696,7 +696,7 @@ describe("OpenNMS_Flow_Datasource", function () {
         "meta": {
           "custom": {
             "metric": "",
-            "toBits": { 'toBits': '' },
+            "toBits": ""
           },
         },
       }];

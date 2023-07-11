@@ -140,16 +140,20 @@ export interface OnmsMeasurementsQueryMetadata {
   nodes: Array<{ node: OnmsMeasurementsQueryNode }>;
 }
 
+export interface OnmsMeasurementsQueryResponseColumnItem {
+  values: Array<string | number | null> // number, string representing a number, 'NaN' or null
+}
+
 // See features/measurements/api, package org.opennms.netmgt.measurements.model.QueryResponse
 export interface OnmsMeasurementsQueryResponse {
-  step: number;
-  start: number;
-  end: number;
-  timestamps: number[];
-  labels: string[];
-  columns: Array<{ values: Array<string | number | null> }>;  // TODO: Is this returned as string or number in Json???
-  constants: Array<{ key: string, value: string }>;
-  metadata: OnmsMeasurementsQueryMetadata;
+  step: number
+  start: number
+  end: number
+  timestamps: number[]
+  labels: string[]
+  columns: OnmsMeasurementsQueryResponseColumnItem[]
+  constants: Array<{ key: string, value: string }>
+  metadata: OnmsMeasurementsQueryMetadata
 }
 
 export interface QuickSelect {
