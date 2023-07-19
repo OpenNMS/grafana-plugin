@@ -1,4 +1,5 @@
-import { DsType } from './types'
+import { SourceDatasourceInfo } from './datasources';
+import { DatasourceMetadata, DsType } from './types'
 
 // add 'name', '$name' and '${name}' variations
 export const addVariationsToMap = (varName: string, dsType: DsType,  datasourceMap: Map<string,DsType>) => {
@@ -44,4 +45,25 @@ export const getDashboardTitle = (json: string) => {
   }
 
   return ''
+}
+
+// Checks if the datasource for a source (panel, panel target, etc.) is an OpenNMS one and if so,
+// updates the type and uid
+// Will retain the original uid if it's a template variable, e.g. pointing to a datasource in '__inputs'.
+// sourceDsInfo is from calling getSourceDatasourceInfo(source, datasourceMap)
+// source may be a panel, panel.target, etc. which contains a 'datasource' field
+export const updateTargetDatasource = (source: any, sourceDsInfo: SourceDatasourceInfo, dsMetas: DatasourceMetadata[]) => {
+  if (sourceDsInfo.isOpenNmsDatasource && sourceDsInfo.datasourceType) {
+    const dsMeta = dsMetas.find(d => d.datasourceType === sourceDsInfo.datasourceType && d.pluginVersion === 9)
+
+    if (dsMeta) {
+      // retain the uid if it's a template variable
+      const dsUid = sourceDsInfo.isTemplateVariable && !!source.datasource.uid ? source.datasource.uid : dsMeta.uid
+
+      source.datasource = {
+        type: dsMeta.type,
+        uid: dsUid
+      }
+    }
+  }
 }
