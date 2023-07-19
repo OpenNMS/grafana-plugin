@@ -9,7 +9,7 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1689778673043,
+  "time": 1689781646379,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "5861d63ad272bc5f5a8e2077f6c6a22c0c0d374755b06abd2e9285a230b51222",
@@ -58,9 +58,9 @@ Hash: SHA512
     "panels/alarm-table/module.js.map": "60ab1bd9fbbc58d734ad0390aaefa19cbaba78c09c4113e13befef4d2a073e1c",
     "panels/alarm-table/plugin.json": "c46ad64dcd9a50017bec9c81d832246fa54743b11a9adf3f713729ae057f3072",
     "panels/dashboard-convert/img/dashboard-convert.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
-    "panels/dashboard-convert/module.js": "eb5f46428db21970191d9d0015d104a4e14152afb5c9dae39e250819fe3a624d",
+    "panels/dashboard-convert/module.js": "96f03d75d5d7bfe82ca1fab0f72295688b89bfc5c45092edb03b8db67baed85f",
     "panels/dashboard-convert/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/dashboard-convert/module.js.map": "0cc1abb31829d9491abe230820f9213e30f4c5ab57ecfafc71b586b8f93b45dc",
+    "panels/dashboard-convert/module.js.map": "9f4e3ea3e0682c2f4763b1842ad74698fdec590c7363f8abec1433e95cf4809f",
     "panels/dashboard-convert/plugin.json": "577ca7d79b56db9c3596afd1a681521705b82544739bf4d01e6c811ae2906508",
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/filter-panel/module.js": "a339da36b0ece509fb39e4dbade38c2e7c7269916d369998664cc2d4b7a296a9",
@@ -78,10 +78,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrkEARMKAAYFAmS3+fEAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5yHTAgkBM/mHyEhvD2O4yJHlviZ+Kbzm8KzEvIaUJBwtNZuv+MISovkp
-tqdDOPQ2ks3HSgMAhG1rISoZm5DKYtSVvX+u07ICCQECBI8BBSNSM8OMgifk
-uxTGbmhacjo6Kp4KahTcQ54T6gV7DeU1GRSWZhMubDUr7rTQuJY4DFGAvyON
-GZjs56PxGw==
-=UyxP
+wrkEARMKAAYFAmS4BY4AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm522GAgkBTp2vMvHixAp5ckiuoqwhWac346w396lCWVdZc+66ozJ/TzVU
+Q4HBV7N49mnk6g3uxJrkhBoZbj1gK6to8JWefPUCCQGkmM7iQjoMSit+Jf1c
+66A89tFizXbnphRFWykT2MBPb/tm0dQvfOEKPLSHo/8ee2+AcDhrzXB0CWqh
+2fuo4iY4BQ==
+=/I7V
 -----END PGP SIGNATURE-----
