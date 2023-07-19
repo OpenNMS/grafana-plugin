@@ -4,7 +4,7 @@ import { getDatasourceTypeFromPluginId } from './utils'
 import { isString } from '../utils'
 
 // Datasource info found in panel or target/query
-interface SourceDatasourceInfo {
+export interface SourceDatasourceInfo {
   isOpenNmsDatasource: boolean
   isTemplateVariable: boolean
   datasourceType: string
@@ -52,13 +52,15 @@ export const getSourceDatasourceInfo = (source: any, datasourceMap: Map<string,D
         datasourceType: dsType
       }
     } else if (!isString(source.datasource) && source.datasource?.type) {
-      // 2. datasource is an object with type
+      // 2. datasource is an object with type, and may also have a template variable as uid
       const { datasourceType } = getDatasourceTypeFromPluginId(source.datasource.type)
 
       if (datasourceType) {
+        const uid: string = source.datasource.uid || ''
+
         return {
           isOpenNmsDatasource: true,
-          isTemplateVariable: false,
+          isTemplateVariable: uid.startsWith('$'),
           datasourceType
         }
       }

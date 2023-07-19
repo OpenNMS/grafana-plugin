@@ -1,6 +1,6 @@
 import { getSourceDatasourceInfo } from './datasources'
 import { DatasourceMetadata, DsType } from './types'
-import { addVariationsToMap, getDatasourceTypeFromPluginId } from './utils'
+import { addVariationsToMap, getDatasourceTypeFromPluginId, updateTargetDatasource } from './utils'
 
 // Parse the Dashboard 'templating' section, extracting any Datasource mappings and
 // updating those items to use Version 9 versions
@@ -64,17 +64,7 @@ export const parseTemplating = (source: any, datasourceMap: Map<string,DsType>, 
       }
     } else if (s.type === 'query') {
       const sourceDsInfo = getSourceDatasourceInfo(s, datasourceMap)
-
-      if (sourceDsInfo.isOpenNmsDatasource && !sourceDsInfo.isTemplateVariable && sourceDsInfo.datasourceType) {
-        const sourceDsMeta = dsMetas.find(d => d.datasourceType === sourceDsInfo.datasourceType && d.pluginVersion === 9)
-
-        if (sourceDsMeta) {
-          s.datasource = {
-            type: sourceDsMeta.type,
-            uid: sourceDsMeta.uid
-          }
-        }
-      }
+      updateTargetDatasource(s, sourceDsInfo, dsMetas)
     }
 
     // was not an OpenNms datasource query, or we couldn't find a substitute, so just pass it through
