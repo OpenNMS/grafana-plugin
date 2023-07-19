@@ -8,6 +8,7 @@ import { convertLegacyFilterPanel, isLegacyFilterPanel } from './filterPanel'
 import { updateFlowQuery } from './flowDs'
 import { updatePerformanceQuery } from './performanceDs'
 import { DatasourceMetadata, DsType } from './types'
+import { updateTargetDatasource } from './utils'
 
 // Convert Dashboard panels
 // If panel has a legacy datasource, convert the query to use the new schema
@@ -57,16 +58,7 @@ const convertPanelDatasources = (panel: any, datasourceMap: Map<string, DsType>,
   // - empty/null/undefined, in which case DS should be in the individual targets, leave as-is
   const panelDsInfo = getSourceDatasourceInfo(panel, datasourceMap)
 
-  if (panelDsInfo.isOpenNmsDatasource && !panelDsInfo.isTemplateVariable && panelDsInfo.datasourceType) {
-    const panelDsMeta = dsMetas.find(d => d.datasourceType === panelDsInfo.datasourceType && d.pluginVersion === 9)
-
-    if (panelDsMeta) {
-      panel.datasource = {
-        type: panelDsMeta.type,
-        uid: panelDsMeta.uid
-      }
-    }
-  }
+  updateTargetDatasource(panel, panelDsInfo, dsMetas)
 
   if (panel.targets) {
     const targets: any[] = []
@@ -96,16 +88,7 @@ const convertPanelDatasources = (panel: any, datasourceMap: Map<string, DsType>,
           updatedTarget.hide = false
         }
 
-        if (targetDsInfo.isOpenNmsDatasource && !targetDsInfo.isTemplateVariable && targetDsInfo.datasourceType) {
-          const targetDsMeta = dsMetas.find(d => d.datasourceType === targetDsInfo.datasourceType && d.pluginVersion === 9)
-
-          if (targetDsMeta) {
-            updatedTarget.datasource = {
-              type: targetDsMeta.type,
-              uid: targetDsMeta.uid
-            }
-          }
-        }
+        updateTargetDatasource(updatedTarget, targetDsInfo, dsMetas)
       }
 
       targets.push(updatedTarget)

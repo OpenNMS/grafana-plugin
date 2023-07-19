@@ -39,7 +39,9 @@ export const parseInputs = (source: any[], datasourceMap: Map<string,DsType>, ds
 
         if (dsMeta) {
           addVariationsToMap(name, datasourceType as DsType, datasourceMap)
-          target.label = dsMeta.name
+
+          // keep existing name and label if possible, they may distinguish between multiple datasource instances of the same type
+          target.label = target.label || dsMeta.name
           target.pluginId = dsMeta.type
           target.pluginName = dsMeta.name
 
