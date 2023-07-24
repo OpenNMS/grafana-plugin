@@ -94,7 +94,6 @@ commands:
           name: Run Build, Tests, and Sign
           command: |
             export PATH="./node_modules/.bin:${PATH}"
-            export NODE_OPTIONS=--openssl-legacy-provider
             npm run build
             npm run sign
 
