@@ -12,7 +12,7 @@ executors:
 
   node-executor:
     docker:
-      - image: cimg/node:lts
+      - image: cimg/node:16
 
   docs-executor:
     docker:
