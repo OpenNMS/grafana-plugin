@@ -33,7 +33,7 @@ export const UnitInfo = (options: { flowHistogramOptions: FlowHistogramOptionsPr
     let divisor = 1
     let units = 'Bytes'
     
-    if (!validateFlowHistogramPanelData(dataSeries)){
+    if (!validateFlowHistogramPanelData(dataSeries)) {
         return { units, divisor }
     }
     
