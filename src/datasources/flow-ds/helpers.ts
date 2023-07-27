@@ -1,4 +1,5 @@
-import { rangeUtil, SelectableValue } from '@grafana/data'
+import { ArrayVector, DataFrame, Field, FieldType, rangeUtil, SelectableValue } from '@grafana/data'
+import { Model } from 'opennms'
 import { ClientDelegate } from 'lib/client_delegate'
 import { dscpLabel, dscpSelectOptions } from '../../lib/tos_helper'
 import {
@@ -201,7 +202,7 @@ export const queryOpenNMS = async (fullQueryData: FlowParsedQueryData, options: 
             const functionName = getFunctionNameAssociatedToSegment(segmentName)
             const functionDefinition = getOpenNMSClientFunction(query, functionName, segmentName, type)
             const functionParameters: FlowFunctionParams = await getFunctionParameters(query, functionName, type, options, step, service)
-            const dataFromOpenNMS = await queryOpenNMSClientWithFlowFunctionParams(functionDefinition, functionParameters, service.client)
+            const dataFromOpenNMS: Model.OnmsFlowTable = await queryOpenNMSClientWithFlowFunctionParams(functionDefinition, functionParameters, service.client)
             const processedData = processDataBasedOnType(type, query, options, dataFromOpenNMS)
 
             for (let d of processedData) {
@@ -395,7 +396,6 @@ const convertDataHeaderstoTableColumns = (headers: string[], query: FlowParsedQu
  * @returns array of converted rows
  */
 const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowParsedQueryRow) => {
-
     const toBits = isFunctionSet(query, FlowFunctionStrings.toBits);
     const swapIngressEgress = isFunctionSet(query, FlowFunctionStrings.swapIngressEgress);
     const inIndex = headers.indexOf('Bytes In');
@@ -436,19 +436,38 @@ const convertDataRowsToTableRows = (rows: any[], headers: string[], query: FlowP
 }
 
 /**
+ * Creata a Grafana DataFrame for use with Summary data.
+ */
+const createSummaryDataFrame = (queryRow: FlowParsedQueryRow, rowLength: number): DataFrame => {
+    const metric = queryRow.segment ? queryRow.segment.label : undefined
+    const toBits = isFunctionSet(queryRow, FlowFunctionStrings.toBits)
+    const fields: Field[] = []
+
+    return {
+        refId: queryRow.refId,
+        name: queryRow.refId,
+        fields: fields,
+        length: rowLength,
+        meta: toBits ? { custom: { metric, toBits: '' } } : { custom: { metric } }
+    } as DataFrame
+}
+
+/**
  * @param parsedData All of the parsed data from buildFullQueryData
  * @param flowFunctionName the name of the function we want to count
  * @returns a boolean array, true means the function was found in a single query, false it was not.
  */
 const collectInstancesOfFlowFunction = (parsedData: FlowParsedQueryData, flowFunctionName: string) => {
-    let functionInstances: boolean[] = []
+    const functionInstances: boolean[] = []
+
     for (let data of parsedData) {
         functionInstances.push(
             !!data.queryFunctions.find((queryFunction) =>
                 typeof queryFunction[flowFunctionName] !== 'undefined')
-        );
+        )
     }
-    return functionInstances;
+
+    return functionInstances
 }
 
 /**
@@ -462,7 +481,7 @@ const getAllValuesByFunctionName = (query: FlowParsedQueryData, functionName: st
         return !!d[functionName]
     }).map((e) => {
         return e?.[functionName]
-    })?.[0]);
+    })?.[0])
 }
 
 /**
@@ -549,6 +568,7 @@ const getMultiplier = (queryData: FlowParsedQueryRow, timestamps: number[]) => {
  * @param segmentName The name of the active segment
  * @param type 'series' or 'summaries'
  * @returns a function name we can call on ClientDelegate to get some OpenNMS Data.
+ *  These map to methods in opennms-js FlowDAO.
  */
 const getOpenNMSClientFunction = (query: FlowParsedQueryRow, functionName: string, segmentName: string, type: string): string => {
     const clientFunction = !!query.queryFunctions.find((d) => d[functionName]) || segmentName === FlowSegmentStrings.Dscps ?
@@ -605,7 +625,7 @@ const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData:
  * @param dataFromOpenNMS The data returned by OpenNMS by our query
  * @returns Based on the provided type (summary or series) transform the OpenNMS data into Grafana Data Frames
  */
-export const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: any) => {
+export const processDataBasedOnType = (type: string, query: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, dataFromOpenNMS: Model.OnmsFlowTable) => {
     return type === 'series' ? processRawSeriesData(query, options, dataFromOpenNMS) : processRawSummaryData(query, options, dataFromOpenNMS)
 }
 
@@ -662,7 +682,7 @@ const convertLabel = (label: string, column: any, queryRow: FlowParsedQueryRow) 
  * @param responseData The data directly from OpenNMS
  * @returns The OpenNMS data, in a Grafana ready package.
  */
-const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, responseData: any) => {
+const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, responseData: Model.OnmsFlowTable) => {
     let data = { ...responseData }
     const { start, end } = getTimeRange(options);
 
@@ -716,36 +736,29 @@ const processRawSeriesData = (queryData: FlowParsedQueryRow, options: FlowQueryR
 
 /**
  * 
- * @param queryRow An invidual query row
+ * @param queryRow An individual query row
  * @param options the options as provided by Grafana to the query method in our data source.
  * @param rawData The data returned directly from OpenNMS.
  * @returns OpenNMS data in a table-ready format for Grafana.
  */
-const processRawSummaryData = (queryRow: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, rawData: any) => {
+const processRawSummaryData = (queryRow: FlowParsedQueryRow, options: FlowQueryRequest<FlowQuery>, rawData: Model.OnmsFlowTable): DataFrame[] => {
     if (!rawData.headers || !rawData.rows) {
         throw new Error('table response did not contain all necessary information')
     }
 
     const columns = convertDataHeaderstoTableColumns(rawData.headers, queryRow);
     const rows = convertDataRowsToTableRows(rawData.rows, rawData.headers, queryRow);
-    const toBits = isFunctionSet(queryRow, FlowFunctionStrings.toBits)
-    // new grafana versions converts TableData into DataFrame when passing data to a panel, 
-    // so modifying here to understand what data should be received
-    const metric = queryRow.segment ? queryRow.segment.label : undefined;
-    const fields: any[] = []
-
-    const dataFrame = {
-        name: queryRow.refId,
-        fields: fields,
-        meta: toBits ? { custom: { metric, toBits: '' } } : { custom: { metric } }
-    }
+    const dataFrame = createSummaryDataFrame(queryRow, rows.length)
 
     columns.forEach((col, idx) => {
         const values = rows.map((row) => { return row[idx] })
+
         const field = {
             name: col.text,
-            values: values
-        }
+            type: FieldType.number, // will be a number, a string representing a number or else null
+            config: {},
+            values: new ArrayVector<string | number | null>(values)
+        } as Field
         dataFrame.fields.push(field)
     })
 
@@ -832,7 +845,7 @@ const buildSeriesFlowQueryParams = (functionName: string, functionParams: FlowFu
  * @param client The client that holds the function
  * @returns Data from OpenNMS (if all goes well)
  */
-const queryOpenNMSClientWithFlowFunctionParams = async (functionName: string, functionParams: FlowFunctionParams, client: ClientDelegate) => {
+const queryOpenNMSClientWithFlowFunctionParams = async (functionName: string, functionParams: FlowFunctionParams, client: ClientDelegate): Model.OnmsFlowTable => {
   // Construct parameters array for ClientDelegate Flows functions
   // see ClientDelegate.getSeriesForTopNApplications, etc.
   let parameters: any[] = []

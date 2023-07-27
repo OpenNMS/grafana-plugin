@@ -49,10 +49,9 @@ export class FlowDataSource extends DataSourceApi<FlowQuery> {
 
     async metricFindQuery(query) {
         if (query === null || query === undefined || query === "") {
-            return Promise.resolve([]);
+            return Promise.resolve([])
         }
-        let response = await queryTemplateVariable(query, this.templateSrv, this.client, this.simpleRequest);
-        return response;
-    }
 
+        return await queryTemplateVariable(query, this.templateSrv, this.client, this.simpleRequest)
+    }
 }

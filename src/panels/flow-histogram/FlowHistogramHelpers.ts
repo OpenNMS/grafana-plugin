@@ -1,44 +1,52 @@
-/* eslint-disable no-restricted-imports */
 import { CSSProperties } from 'react'
-import { DataFrame } from '@grafana/data'
-import moment from 'moment'
+import { DataFrame, PanelData } from '@grafana/data'
 import { FlowHistogramOptionsProps, FlowPanelDataProcessed, FlowPanelUnitInfo } from './FlowHistogramTypes'
 import { DataPosition, FlowDataDirection, UnitInfo } from './FlowHistogramConstants'
 
-export const getFlowHistogramPlotData = (processedData: FlowPanelDataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }): any[] => {
+type LabelFunction = (s: string, idx: number) => string
 
-    switch (options.flowHistogramOptions.mode.label) {
-        case 'Separate': {
-            let inSeriesData: any = {
-                label: 'In',
-                bars: {
-                    show: true,
-                    barWidth: 0.2,
-                    align: options.flowHistogramOptions.direction.label === 'Horizontal' ? 'left' : 'right'
-                },
-                data: processedData.separateData?.inByLabel
-            }
+export const getFlowHistogramPlotData = (
+  processedData: FlowPanelDataProcessed,
+  options: { flowHistogramOptions: FlowHistogramOptionsProps }): jquery.flot.dataSeries[] => {
 
-            let outSeriesData: any = {
-                label: 'Out',
-                bars: {
-                    show: true,
-                    barWidth: 0.2,
-                    align: options.flowHistogramOptions.direction.label === 'Horizontal' ? 'right' : 'left'
-                },
-                data: processedData.separateData?.outByLabel,
-            }
+  const mode = options.flowHistogramOptions.mode.label
 
-            return [outSeriesData, inSeriesData]
-        }
-        case 'Stacked': {
-            return processedData.stackedData?.metricsByLabel ? processedData.stackedData.metricsByLabel : []
-        }
-        default: return []
-    }
+  if (mode === 'Separate') {
+    return createSeparateFlotDataSeries(processedData, options.flowHistogramOptions.direction.label)
+  } else if (mode === 'Stacked') {
+    return processedData.stackedData?.metricsByLabel || []
+  }
+
+  return []
 }
 
-export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed, options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
+const createSeparateFlotDataSeries = (processedData: FlowPanelDataProcessed, direction?: string): jquery.flot.dataSeries[] => {
+  const inSeriesData: jquery.flot.dataSeries = {
+    label: 'In',
+    bars: {
+      show: true,
+      barWidth: 0.2,
+      align: direction === 'Horizontal' ? 'left' : 'right'
+    },
+    data: processedData.separateData?.inByLabel || []
+  }
+
+  const outSeriesData: jquery.flot.dataSeries = {
+    label: 'Out',
+    bars: {
+      show: true,
+      barWidth: 0.2,
+      align: direction === 'Horizontal' ? 'right' : 'left'
+    },
+    data: processedData.separateData?.outByLabel || []
+  }
+
+  return [outSeriesData, inSeriesData]
+}
+
+export const getFlowHistogramPlotConfig = (
+  processedData: FlowPanelDataProcessed,
+  options: { flowHistogramOptions: FlowHistogramOptionsProps }): jquery.flot.plotOptions => {
 
     const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
     const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
@@ -52,12 +60,12 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
         tickLength: 0,
         ticks: stacked ? processedData.stackedData?.ticks : processedData.separateData?.ticks,
         autoscaleMargin: 0.02,
-    }
+    } as jquery.flot.axisOptions
 
-    const configOptions: any = {
+    const configOptions = {
         legend: {
             show: showLegend,
-            container: container,
+            container: container || undefined,
             position: legendPosition,
             backgroundOpacity: 0,
             noColumns: noColumns,
@@ -79,110 +87,109 @@ export const getFlowHistogramPlotConfig = (processedData: FlowPanelDataProcessed
         },
         xaxis: horizontal ? {} : yaxis,
         yaxis: horizontal ? yaxis : {}
-    }
+    } as jquery.flot.plotOptions
 
     return configOptions
 }
 
-export const getLabeledValues = (data, options: { flowHistogramOptions: FlowHistogramOptionsProps }): FlowPanelDataProcessed => {
+export const getLabeledValues = (data: PanelData, options: { flowHistogramOptions: FlowHistogramOptionsProps }): FlowPanelDataProcessed => {
+  // There should be just one data series in this case, since this works together with the asTableSummary function
+  if (data?.series?.length !== 1) {
+    throw new Error('Only one query is permitted in this panel')
+  }
 
-    let labeledValues: FlowPanelDataProcessed = {}
-    const unitInfo: FlowPanelUnitInfo = UnitInfo(options, data?.series)
+  const sd: DataFrame = data.series[0]
+  const metric = sd && sd.meta && sd.meta.custom ? sd.meta.custom['metric'] : undefined
 
-    // I believe should be just one data series in this case since this work together with asTableSummary function
-    if (data && data.series && data.series.length === 1) {
-        const sd = data.series[0]
-        const metric = sd && sd.meta && sd.meta.custom ? sd.meta.custom['metric'] : undefined;
-        const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
-        const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
-        const rate = options.flowHistogramOptions.display.label === 'Rate'
-        const toBits = sd.meta.custom['toBits'] ? true : false
-        const inLabel = toBits ? 'Bits In' : 'Bytes In'
-        const outLabel = toBits ? 'Bits Out' : 'Bytes Out'
-        const inByData: any[] = getSeriesMetricValues(sd.fields, inLabel)
-        const outByData: any[] = getSeriesMetricValues(sd.fields, outLabel)
+  if (!metric) {
+    return {} as FlowPanelDataProcessed
+  }
 
-        let inResult: any[] = []// [bytes, metric]
-        let outResult: any[] = [] // [bytes, metric]
-        let stackedResult: any[] = []
-        let metricLabels: any[] = []
+  const stacked = options.flowHistogramOptions.mode.label === 'Stacked'
+  const horizontal = options.flowHistogramOptions.direction.label === 'Horizontal'
+  const rate = options.flowHistogramOptions.display.label === 'Rate'
+  const toBits = sd.meta?.custom?.['toBits'] ? true : false
+  const inLabel = toBits ? 'Bits In' : 'Bytes In'
+  const outLabel = toBits ? 'Bits Out' : 'Bytes Out'
+  const inByData: any[] = getSeriesMetricValues(sd.fields, inLabel)
+  const outByData: any[] = getSeriesMetricValues(sd.fields, outLabel)
 
-        if (!metric) {
-            return labeledValues;
-        }
+  let inResult: any[] = []  // [bytes, metric]
+  let outResult: any[] = [] // [bytes, metric]
+  let stackedResult: any[] = []
 
-        let labelFunction
-        switch (metric) {
-            case 'Applications':
-                metricLabels = getSeriesMetricValues(sd.fields, 'Application')
-                labelFunction = name => name
-                break
-            case 'Hosts':
-                metricLabels = getSeriesMetricValues(sd.fields, 'Host')
-                labelFunction = name => name
-                break
-            case 'Conversations':
-                metricLabels = getSeriesMetricValues(sd.fields, 'Application')
-                const sourceLabels = getSeriesMetricValues(sd.fields, 'Source')
-                const destLabels = getSeriesMetricValues(sd.fields, 'Dest.')
-                labelFunction = (name: string, idx: number): string => {
-                    return sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + (name ? name : 'Unknown') + ']'
-                }
-                break
-        }
+  const { metricLabels, labelFunction } = getMetricLabelsAndLabelFunction(metric, sd)
+  const indexedMetricLabels = getIndexedMetricLabels(metricLabels, labelFunction, stacked)
+  const timeRangeInSeconds = data.timeRange.to.diff(data.timeRange.from, 'seconds')
+  const unitInfo: FlowPanelUnitInfo = UnitInfo(options, data?.series)
 
-        const indexedMetricLabels = getIndexedMetricLabels(metricLabels, labelFunction, stacked)
-        const timeRangeInSeconds = moment.duration(data.timeRange.to.diff(data.timeRange.from)).asSeconds();
+  // reformat the data based on whether the plot is in Separated or Stacked mode, and
+  // whether the histogram bar orientation is vertical or horizontal
+  if (!stacked) {
+    inResult = getSeparatedResultData(inByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
+    outResult = getSeparatedResultData(outByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
+  } else {
+    stackedResult = getStackedResultData(indexedMetricLabels, inByData, outByData, horizontal, unitInfo, rate, timeRangeInSeconds)
+  }
 
-        if (!stacked) {
-            inResult = getSeparatedResultData(inByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
-            outResult = getSeparatedResultData(outByData, indexedMetricLabels, horizontal, unitInfo, rate, timeRangeInSeconds)
-
-        } else {
-            stackedResult = getStackedResultData(indexedMetricLabels, inByData, outByData, horizontal, unitInfo, rate, timeRangeInSeconds)
-        }
-
-        labeledValues = {
-            separateData: {
-                inByLabel: inResult,
-                outByLabel: outResult,
-                ticks: indexedMetricLabels
-            },
-            stackedData: {
-                metricsByLabel: stackedResult,
-                ticks: [[FlowDataDirection.dataIn.value, FlowDataDirection.dataIn.label], [FlowDataDirection.dataOut.value, FlowDataDirection.dataOut.label]]
-            }
-        }
-    } else {
-        throw new Error('Only one query is permitted in this panel');
+  const labeledValues = {
+    separateData: {
+      inByLabel: inResult,
+      outByLabel: outResult,
+      ticks: indexedMetricLabels
+    },
+    stackedData: {
+      metricsByLabel: stackedResult,
+      ticks: [[FlowDataDirection.dataIn.value, FlowDataDirection.dataIn.label], [FlowDataDirection.dataOut.value, FlowDataDirection.dataOut.label]]
     }
+  }
 
-    return labeledValues
+  return labeledValues
+}
+
+const getMetricLabelsAndLabelFunction = (metric: string, frame: DataFrame) => {
+  let metricLabels: any[] = []
+  let labelFunction: LabelFunction = name => name
+
+  switch (metric) {
+    case 'Applications':
+      metricLabels = getSeriesMetricValues(frame.fields, 'Application')
+      break
+    case 'Hosts':
+      metricLabels = getSeriesMetricValues(frame.fields, 'Host')
+      break
+    case 'Conversations':
+      metricLabels = getSeriesMetricValues(frame.fields, 'Application')
+      const sourceLabels = getSeriesMetricValues(frame.fields, 'Source')
+      const destLabels = getSeriesMetricValues(frame.fields, 'Dest.')
+
+      labelFunction = (name: string, idx: number) => {
+        return sourceLabels[idx] + ' <-> ' + destLabels[idx] + ' [' + (name ? name : 'Unknown') + ']'
+      }
+      break
+  }
+
+  return {
+    metricLabels,
+    labelFunction
+  }
 }
 
 /**
  * Returns and array of [index, label] 
  * where index is the record position in the original data and the label to be displayed in the graph
- * @param metricLabels 
- * @param labelFunction 
- * @param stacked 
- * @returns 
  */
-export const getIndexedMetricLabels = (metricLabels: any[], labelFunction, stacked: boolean) => {
+export const getIndexedMetricLabels = (metricLabels: any[], labelFunction: LabelFunction, stacked: boolean) => {
     return metricLabels.map((label, idx) => [idx, labelFunction(label, idx)])
 }
 
 /**
- * Gets the final data formatted to be passed into the plot function 
- * based in graph direction (vertical, horizontal) and mode (separated or stacked)
- * @param data 
- * @param indexedLabels 
- * @param horizontal 
- * @param stacked 
- * @returns 
+ * Gets the final data formatted (in 'Separated' mode) to be passed into the plot function
+ * based on graph direction (vertical, horizontal)
  */
 export const getSeparatedResultData = (data: any[], indexedLabels: any[], horizontal: boolean, unitInfo: FlowPanelUnitInfo, rate: boolean, timeRangeInSeconds: number) => {
     const divisor = rate ? unitInfo.divisor * timeRangeInSeconds : unitInfo.divisor
+
     return indexedLabels.map((il) => {
         const index = il[DataPosition.indexLabel.index]
         const value = data[index] / divisor
@@ -190,13 +197,19 @@ export const getSeparatedResultData = (data: any[], indexedLabels: any[], horizo
     })
 }
 
+/**
+ * Gets the final data formatted (in 'Stacked' mode) to be passed into the plot function
+ * based on graph direction (vertical, horizontal)
+ */
 export const getStackedResultData = (indexedMetricLabels: any[], inByData: any[], outByData: any[], horizontal: boolean, unitInfo: FlowPanelUnitInfo, rate: boolean, timeRangeInSeconds: number): any[] => {
     const divisor = rate ? unitInfo.divisor * timeRangeInSeconds : unitInfo.divisor
+
     return indexedMetricLabels.map((imLabel) => {
         const index = imLabel[DataPosition.indexLabel.index]
         const label = imLabel[DataPosition.indexLabel.label]
         const inData = inByData[index] / divisor
         const outData = outByData[index] / divisor
+
         return horizontal ?
             { label: label, data: [[inData, FlowDataDirection.dataIn.value], [outData, FlowDataDirection.dataOut.value]] } :
             { label: label, data: [[FlowDataDirection.dataIn.value, inData], [FlowDataDirection.dataOut.value, outData]] }
@@ -204,17 +217,16 @@ export const getStackedResultData = (indexedMetricLabels: any[], inByData: any[]
 }
 
 export const getSeriesMetricValues = (fields: any[], name: string) => {
-    let match = fields.find(f => f.name === name)
-    if (match && match.values) {
-        return match.values.toArray()
-    }
-    else { return [] }
+    const match = fields.find(f => f.name === name)
+
+    return match?.values?.toArray() || []
 }
 
 export const setLegend = (options: { flowHistogramOptions: FlowHistogramOptionsProps }) => {
     if (options.flowHistogramOptions.showLegend) {
         const className = options.flowHistogramOptions.position.label === 'Under Graph' ? '.flow-histogram-legend-bottom' : '.flow-histogram-legend-right'
         const legend = $('.legend')
+
         if (legend && legend.html()) {
             $(className).html('')
             $(className).append(legend.html())
