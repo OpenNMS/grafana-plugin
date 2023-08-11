@@ -259,6 +259,9 @@ export const segmentMapping = {
     [FlowSegmentStrings.Dscps]: FlowFunctionStrings.withDscp
 }
 
+/**
+ * These map to methods in opennms-js FlowDAO.
+ */
 export const segmentFunctionMapping = {
     summaries: {
         [FlowSegmentStrings.Conversations]: {
