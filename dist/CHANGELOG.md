@@ -1,3 +1,19 @@
+### v9.0.8
+
+Grafana Plugin for OpenNMS version 9.0.8 is a re-release of version 9.0.7 which contains a number of bug fixes and enhancements.
+
+* [OPG-369](https://opennms.atlassian.net/browse/OPG-369) React Flow Panel and Datasource improvements
+* [OPG-427](https://opennms.atlassian.net/browse/OPG-427) Node metadata not always returned
+* [OPG-438](https://opennms.atlassian.net/browse/OPG-438) v9 Dashboard Converter tool is resetting query datasources to default names
+
+### v9.0.7
+
+Grafana Plugin for OpenNMS version 9.0.7 release contains a number of bug fixes and enhancements.
+
+* [OPG-369](https://opennms.atlassian.net/browse/OPG-369) React Flow Panel and Datasource improvements
+* [OPG-427](https://opennms.atlassian.net/browse/OPG-427) Node metadata not always returned
+* [OPG-438](https://opennms.atlassian.net/browse/OPG-438) v9 Dashboard Converter tool is resetting query datasources to default names
+
 ### v9.0.6
 
 Grafana Plugin for OpenNMS version 9.0.6 release contains a number of bug fixes and enhancements.
