@@ -63,6 +63,7 @@ const clausesReducer = (clauses: OnmsEntityClause[], action: Action): OnmsEntity
         default:
             throw new Error("shouldn't get here")
     }
+
     return newClauses
 }
 
