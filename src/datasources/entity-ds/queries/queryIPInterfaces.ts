@@ -18,6 +18,7 @@ const columns = Object.freeze([
     { text: 'SNMP ifDescr', resource: 'snmpInterface.ifDescr' },
     { text: 'SNMP ifIndex', resource: 'snmpInterface.ifIndex' },
     { text: 'SNMP PhysAddr', resource: 'snmpInterface.physAddr' },
+    { text: 'Node ID', resource: 'node.id' }
 ] as OnmsColumn[]);
 
 export const getIPInterfaceColumns = () => columns
@@ -47,6 +48,7 @@ export const queryIPInterfaces = async (client: ClientDelegate, filter: API.Filt
             iface.snmpInterface?.ifDescr,
             iface.snmpInterface?.ifIndex,
             iface.snmpInterface?.physAddr?.toString(),
+            iface.node?.id
         ];
     });
 
