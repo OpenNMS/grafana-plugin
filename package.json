@@ -24,7 +24,7 @@
     "@swc/core": "^1.2.144",
     "@swc/helpers": "^0.5.1",
     "@swc/jest": "^0.2.23",
-    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^12.1.4",
     "@types/flot": "0.0.32",
     "@types/glob": "^8.0.0",
