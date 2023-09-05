@@ -349,6 +349,10 @@ export const capitalize = (value: string) => {
   return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : ''
 }
 
+export const isInteger = (num: any) => {
+    return !isUndefined(num) && num !== null && ((parseInt(num, 10) + '') === (num + ''))
+}
+
 /**
  * Returns true if value is non-null and is a primitive string or a String object
  */
