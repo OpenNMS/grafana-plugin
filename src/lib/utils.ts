@@ -337,12 +337,24 @@ export const trimChar = (str: string, sStart: string, sEnd?: string) => {
   return result
 }
 
-export const getMultiValues = (values: string): string[]  => {
-  if (!isString(values)) {
-    values = String(values)
+export const isMultiValueString = (value: any): boolean => {
+  if (isString(value)) {
+    const s = value as string
+
+    return s.startsWith('{') && s.endsWith('}')
   }
 
-  return trimChar(values, '{', '}').split(',')
+  return false
+}
+
+export const getMultiValues = (values: string | undefined): string[] => {
+  if (isUndefined(values)) {
+    return []
+  }
+
+  const valuesStr = !isString(values) ? String(values) : values as string
+
+  return trimChar(valuesStr, '{', '}').split(',')
 }
 
 export const capitalize = (value: string) => {
