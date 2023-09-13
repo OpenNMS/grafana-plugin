@@ -1,3 +1,13 @@
+### v9.0.9
+
+Grafana Plugin for OpenNMS version 9.0.9 release contains a number of bug fixes and enhancements.
+
+* [OPG-448](https://opennms.atlassian.net/browse/OPG-448) Converter outputs extra characters in resource name
+* [OPG-454](https://opennms.atlassian.net/browse/OPG-454) Flow query with multi-value withHost does not return data
+* [OPG-460](https://opennms.atlassian.net/browse/OPG-460) Entities DS - Nodes Table - Category Values showing under Primary SNMP ifIndex
+* [OPG-461](https://opennms.atlassian.net/browse/OPG-461) Entity datasource no longer includes node ID / node label in IP interface query results
+* [OPG-463](https://opennms.atlassian.net/browse/OPG-463) Entitles DS Tables Limit does not allow a value of zero
+
 ### v9.0.8
 
 Grafana Plugin for OpenNMS version 9.0.8 is a re-release of version 9.0.7 which contains a number of bug fixes and enhancements.

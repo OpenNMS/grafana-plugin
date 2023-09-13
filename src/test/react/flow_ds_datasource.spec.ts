@@ -1,4 +1,4 @@
-import { dateTimeAsMoment } from '@grafana/data'
+import { dateTimeAsMoment, ArrayVector } from '@grafana/data'
 import { OnmsFlowSeries } from 'opennms/src/model'
 import *  as helpers from '../../datasources/flow-ds/helpers'
 import {
@@ -633,25 +633,25 @@ describe("OpenNMS_Flow_Datasource", function () {
       done();
     });
 
-    it("should Swap Ingress/Egress and convert toBits, labels in response to Grafana series", function (done) {
+    it('should Swap Ingress/Egress and convert toBits, labels in response to Grafana series', function (done) {
       dataFromOpenNMS = {
-        "start": null,
-        "end": null,
-        "headers": [
-          "Application",
-          "Bytes In",
-          "Bytes Out",
-          "ECN"
+        start: null,
+        end: null,
+        headers: [
+          'Application',
+          'Bytes In',
+          'Bytes Out',
+          'ECN'
         ],
-        "rows": [
+        rows: [
           [
-            "app0",
+            'app0',
             1,
             2,
             3
           ],
           [
-            "app1",
+            'app1',
             5,
             null,
             3
@@ -671,42 +671,52 @@ describe("OpenNMS_Flow_Datasource", function () {
           ],
           refId: ''
         }
-      ] as FlowParsedQueryData;
+      ] as FlowParsedQueryData
 
-      let expectedResponse = [{
+      const expectedResponse = [{
         name: '',
-        "fields": [
+        refId: '',
+        fields: [
           {
-            "name": "Application",
-            "values": ["app0", "app1"]
+            name: 'Application',
+            values: new ArrayVector(['app0', 'app1']),
+            config: {},
+            type: 'number'
           },
           {
-            "name": "Bits In",
-            "values": [16, 0]
+            name: 'Bits In',
+            values: new ArrayVector([16, 0]),
+            config: {},
+            type: 'number'
           },
           {
-            "name": "Bits Out",
-            "values": [8, 40]
+            name: 'Bits Out',
+            values: new ArrayVector([8, 40]),
+            config: {},
+            type: 'number'
           },
           {
-            "name": "ECN",
-            "values": ["non-ect / ce", "non-ect / ce"]
+            name: 'ECN',
+            values: new ArrayVector(['non-ect / ce', 'non-ect / ce']),
+            config: {},
+            type: 'number'
           }
         ],
-        "meta": {
-          "custom": {
-            "metric": "",
-            "toBits": ""
+        length: 2,
+        meta: {
+          custom: {
+            metric: '',
+            toBits: ''
           },
         },
-      }];
-      let actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS);
-      expect(expectedResponse).toEqual(actualResponse);
-      done();
-    });
+      }]
+
+      const actualResponse = helpers.processDataBasedOnType(FlowStrings.summaries, fullQueryData[0], options, dataFromOpenNMS)
+      expect(expectedResponse).toEqual(actualResponse)
+      done()
+    })
 
     it("should combine multiple with uneven qty of ingress and egress when set", function (done) {
-
       fullQueryData = [
         {
           segment: {

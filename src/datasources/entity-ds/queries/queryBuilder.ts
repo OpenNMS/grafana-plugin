@@ -1,8 +1,9 @@
 import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
 import { EntityQuery, EntityQueryRequest, FilterEditorData } from './../types'
-import { getAttributeMapping } from './attributeMappings'
 import { ALL_SELECTION_VALUE, EntityTypes } from '../../../constants/constants'
+import { isInteger } from '../../../lib/utils'
+import { getAttributeMapping } from './attributeMappings'
 import { getFilterId } from '../EntityHelper'
 
 const isAllVariable = (templateVar, templateSrv) => {
@@ -12,10 +13,6 @@ const isAllVariable = (templateVar, templateSrv) => {
 
 const isMultiVariable = (templateVar) => {
     return !!(templateVar?.multi || templateVar?.isMulti)
-}
-
-const isNumber = (num: any) => {
-    return ((parseInt(num, 10) + '') === (num + ''))
 }
 
 const isEmptyNodeRestriction = (clause: API.Clause) => {
@@ -86,7 +83,7 @@ const subtituteNodeRestriction = (clause: API.Clause) => {
                 new API.Clause(new API.Restriction('node.foreignId', restriction.comparator, nodeCriteria[1]), API.Operators.AND),
             )
             clause.restriction = replacement
-        } else if (isNumber(restriction.value)) {
+        } else if (isInteger(restriction.value)) {
             clause.restriction = new API.Restriction('node.id', restriction.comparator, restriction.value)
         } else {
             console.warn('Found a "node" criteria but it does not appear to be a node ID nor a foreignSource:foreignId tuple.', restriction)

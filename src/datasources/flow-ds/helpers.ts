@@ -3,11 +3,13 @@ import { Model } from 'opennms'
 import { ClientDelegate } from 'lib/client_delegate'
 import { dscpLabel, dscpSelectOptions } from '../../lib/tos_helper'
 import {
-    swapColumns,
+    getMultiValues,
     getNodeFilterMap,
     getNumberOrDefault,
     getNodeAsResourceQuery,
+    isMultiValueString,
     isString,
+    swapColumns,
     valueOrDefault
 } from 'lib/utils'
 import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
@@ -600,16 +602,19 @@ const getTimeRange = (options: FlowQueryRequest<FlowQuery>) => {
  */
 const parseActiveFunctionsAndValues = (func: SelectableValue<string>, queryData: FlowQueryData, oldData: FlowParsedQueryRow, index: number) => {
     const data = { ...oldData }
-    let inputParams: string | undefined = ''
+    let inputParams: string | string[] | undefined = ''
 
     if (func.label) {
         const fullFunction = FlowFunctions.get(func.label)
 
-        if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { //If there's a parameter, get it.
+        if ((fullFunction?.parameter || fullFunction?.parameter === '') && queryData.functionParameters) { // if there's a parameter, get it
             inputParams = queryData.functionParameters[index]
-        } else if (fullFunction?.parameterOptions && queryData?.parameterOptions) { //If there's an option set, get it.
+        } else if (fullFunction?.parameterOptions && queryData?.parameterOptions) { // if there's an option set, get it
             inputParams = queryData.parameterOptions?.[index]?.label
         }
+
+        // Note, at this point, the parameter or option could be a multi-valued value like '{0.0.0.0,0.0.0.1}'
+        // In some (all?) cases the parameter needs to be changed to a string[] before passing on to opennms-js dao
 
         data.queryFunctions.push({ [func.label]: inputParams })
     }
@@ -799,6 +804,16 @@ const buildSeriesFlowQueryParams = (functionName: string, functionParams: FlowFu
 
     for (let key of funcNames) {
       if (item[key]) {
+        // opennms-js dao expects 'withHost' value to be a string[].
+        // If the value was a multi-valued template variable like '{0.0.0.0,0.0.0.1}',
+        // it needs to be turned into a string[].
+        // Could be the case with others as well
+        if (key === 'withHost') {
+          if (isMultiValueString(item[key])) {
+            return getMultiValues(item[key])
+          }
+        }
+
         return item[key]
       }
     }
@@ -1037,13 +1052,18 @@ const metricFindExporterNodes = async ({ client, simpleRequest }, service: FlowT
 }
 
 const metricFindInterfacesOnExporterNode = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
-    const node = await simpleRequest.getNodeByIdOrFsFsId(service.nodeId);
-    const exporter = await client.getExporter(node.id);
-    let results = [] as any[];
-    exporter.interfaces.forEach(iff => {
-        results.push({ text: iff.name + "(" + iff.index + ")", value: iff.index, expandable: true });
-    });
-    return results;
+    let results = [] as any[]
+    const nodeIds = isMultiValueString(service.nodeId) ? getMultiValues(service.nodeId) : [service.nodeId]
+
+    for (let nodeId of nodeIds) {
+      const node = await simpleRequest.getNodeByIdOrFsFsId(nodeId)
+      const exporter = await client.getExporter(node.id)
+      exporter.interfaces.forEach(iff => {
+          results.push({ text: `${iff.name}(${iff.index})`, value: iff.index, expandable: true })
+      })
+    }
+
+    return results
 }
 
 const metricFindDscpOnExporterNodeAndInterface = async ({ client, simpleRequest }, service: FlowTemplateVariableQueryService) => {
