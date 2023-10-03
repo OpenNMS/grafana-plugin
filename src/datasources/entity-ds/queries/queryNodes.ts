@@ -1,5 +1,5 @@
-import { ClientDelegate } from "lib/client_delegate";
-import { OnmsNode } from "opennms/src/model/OnmsNode";
+import { ClientDelegate } from 'lib/client_delegate'
+import { OnmsNode } from 'opennms/src/model/OnmsNode'
 import { API } from 'opennms'
 import { OnmsColumn, OnmsTableData } from '../types'
 
@@ -34,15 +34,31 @@ const columns = Object.freeze([
 
 export const getNodeColumns = () => columns
 
+const getSnmpPrimaryInterface = (node: OnmsNode) => {
+  if (node.ipInterfaces) {
+    const primary = node.ipInterfaces.filter(iface => {
+        return !!iface.snmpPrimary?.isPrimary()
+    })?.[0]
+
+    return primary
+  }
+
+  return undefined
+}
+
 export const queryNodes = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
-    let nodes: OnmsNode[] = [];
+    let nodes: OnmsNode[] = []
 
     try {
         nodes = await client.findNodes(filter, true)
     } catch (e) {
-        console.error(e);
+        console.error(e)
     }
     const rows = nodes?.map((node) => {
+        const primaryIpInterface = getSnmpPrimaryInterface(node)
+        const ifIndex = primaryIpInterface?.snmpInterfaceId
+        const ipAddress = primaryIpInterface?.ipAddress?.correctForm() || ''
+
         return [
             node.id,
             node.label,
@@ -51,10 +67,10 @@ export const queryNodes = async (client: ClientDelegate, filter: API.Filter): Pr
             node.foreignId,
             node.location,
             node.createTime,
-            node.parent ? node.parent.id : undefined,
-            node.parent ? node.parent.foreignSource : undefined,
-            node.parent ? node.parent.foreignId : undefined,
-            node.type ? node.type.toDisplayString() : undefined,
+            node.parent ? node.parent.id : '',
+            node.parent ? node.parent.foreignSource : '',
+            node.parent ? node.parent.foreignId : '',
+            node.type ? node.type.toDisplayString() : '',
             node.sysObjectId,
             node.sysName,
             node.sysDescription,
@@ -64,7 +80,9 @@ export const queryNodes = async (client: ClientDelegate, filter: API.Filter): Pr
             node.netBiosDomain,
             node.operatingSystem,
             node.lastCapsdPoll,
-            node.categories ? node.categories.map(cat => cat.name) : undefined,
+            ifIndex || '',
+            ipAddress,
+            node.categories ? node.categories.map(cat => cat.name) : ''
         ]
     })
   

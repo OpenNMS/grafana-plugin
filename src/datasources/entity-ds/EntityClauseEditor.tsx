@@ -19,26 +19,38 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
 
         // Build the filter. This could be extracted to a helper function.
         clauses.forEach((d, i) => {
-            if ((d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST) && clauses[i].comparator?.value) {
+            // comparator could be: '{ id, label }' or else '{ value: { i, l } }'
+            let comparatorValue = clauses[i].comparator?.value
+
+            if (!comparatorValue && clauses[i].comparator?.id) {
+              comparatorValue = {
+                id: clauses[i].comparator.id,
+                label: clauses[i].comparator.label,
+                l: clauses[i].comparator.label,
+                i: clauses[i].comparator.id
+              }
+            }
+
+            if ((d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST) && comparatorValue) {
                 updatedFilter.withAndRestriction(
                     new API.Restriction(
                         clauses[i].attribute?.value?.id,
-                        clauses[i].comparator?.value,
+                        comparatorValue,
                         clauses[i].comparedString || clauses[i].comparedValue.value
                     )
                 )
-            } else if (d.type === OnmsEntityType.OR && clauses[i].comparator?.value) {
+            } else if (d.type === OnmsEntityType.OR && comparatorValue) {
                 updatedFilter.withOrRestriction(
                     new API.Restriction(
                         clauses[i].attribute?.value?.id,
-                        clauses[i].comparator?.value,
+                        comparatorValue,
                         clauses[i].comparedString || clauses[i].comparedValue.value
                     )
                 )
             }
         })
         
-        setFilter(updatedFilter);
+        setFilter(updatedFilter)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clauses])
 
