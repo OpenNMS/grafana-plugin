@@ -10,6 +10,7 @@ import {
 } from '@grafana/ui'
 import { SelectableValue } from '@grafana/data';
 import { useEntityProperties } from '../../hooks/useEntityProperties';
+import { isInteger } from '../../lib/utils'
 import { EntityClauseEditor } from './EntityClauseEditor';
 import { EntityOrderByEditor } from './EntityOrderByEditor';
 import { defaultClause } from './constants';
@@ -63,6 +64,7 @@ const clausesReducer = (clauses: OnmsEntityClause[], action: Action): OnmsEntity
         default:
             throw new Error("shouldn't get here")
     }
+
     return newClauses
 }
 
@@ -78,7 +80,7 @@ export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, 
     const [clauses, dispatchClauses] = useReducer(clausesReducer, query.clauses || [{ ...defaultClause }])
     const [loading, setLoading] = useState(false)
     const [filter, setFilter] = useState(query?.filter || getSmallerAPIFilter())
-    const [limit, setLimit] = useState(query?.filter?.limit || 99)
+    const [limit, setLimit] = useState(isInteger(query?.filter?.limit) ? query.filter.limit : 99)
     const [featuredAttributes, setFeaturedAttributes] = useState(true)
     const { propertiesLoading, propertiesAsArray } = useEntityProperties(value.label || '', featuredAttributes, client)
 

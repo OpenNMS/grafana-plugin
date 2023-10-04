@@ -69,7 +69,8 @@ export const EntityClause = ({
         if (attribute?.value?.type?.i === 'TIMESTAMP') {
             type = 'datetime-local'
         } else if (attribute?.value?.type?.i === 'INTEGER') {
-            type = 'number'
+            // leaving this as 'text' for now, otherwise user cannot input template variable
+            // type = 'number'
         }
         return type;
     }
@@ -128,8 +129,8 @@ export const EntityClause = ({
             <Segment
                 allowEmptyValue={false}
                 value={clause.comparator}
-                onChange={(text) => {
-                    setComparator(index, text);
+                onChange={val => {
+                    setComparator(index, val)
                 }}
                 options={comparatorOptions}
             />

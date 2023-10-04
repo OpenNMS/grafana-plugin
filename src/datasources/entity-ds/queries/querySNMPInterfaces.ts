@@ -1,11 +1,12 @@
-import { OnmsColumn, OnmsTableData } from '../types'
-import { OnmsSnmpInterface } from "opennms/src/model/OnmsSnmpInterface";
-import { ClientDelegate } from "lib/client_delegate";
 import { API } from 'opennms'
+import { OnmsSnmpInterface } from "opennms/src/model/OnmsSnmpInterface"
+import { OnmsColumn, OnmsTableData } from '../types'
+import { ClientDelegate } from "lib/client_delegate"
 
 const columns = Object.freeze([
     { text: 'ID', resource: 'id' },
     { text: 'Index', resource: 'ifIndex' },
+    { text: 'Node ID', resource: 'nodeId' },
     { text: 'Description', resource: 'ifDescr', featured: true },
     { text: 'Type', resource: 'ifType' },
     { text: 'Name', resource: 'ifName', featured: true },
@@ -18,23 +19,24 @@ const columns = Object.freeze([
     { text: 'Polled?', resource: 'poll' },
     { text: 'Last SNMP Poll', resource: 'lastSnmpPoll' },
     { text: 'Physical Address', resource: 'physAddr' }
-] as OnmsColumn[]);
+] as OnmsColumn[])
 
 export const getSNMPInterfaceColumns = () => columns
 
 export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Filter): Promise<OnmsTableData> => {
-    let ifaces: OnmsSnmpInterface[] = [];
+    let ifaces: OnmsSnmpInterface[] = []
 
     try {
-        ifaces = await client.findSnmpInterfaces(filter);
+        ifaces = await client.findSnmpInterfaces(filter)
     } catch (e) {
-        console.error(e);
+        console.error(e)
     }
 
     const rows = ifaces?.map((iface: OnmsSnmpInterface) => {
         return [
             iface.id,
             iface.ifIndex,
+            iface.nodeId,
             iface.ifDescr,
             iface.ifType,
             iface.ifName,
@@ -46,9 +48,9 @@ export const querySNMPInterfaces = async (client: ClientDelegate, filter: API.Fi
             iface.collect?.toDisplayString(),
             iface.poll,
             iface.lastSnmpPoll,
-            iface.physAddr?.toString(),
-        ];
-    });
+            iface.physAddr?.toString()
+        ]
+    })
 
     return {
         name: 'snmpInterfaces',

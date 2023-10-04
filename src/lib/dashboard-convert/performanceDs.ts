@@ -272,7 +272,7 @@ const convertStringPropertyQuery = (source: any) => {
 
   // 'label' and 'name' will be filled in at runtime
   const resourceState = {
-    id: `node[${legacyNodeId}].${legacyResourceId}]`,
+    id: `node[${legacyNodeId}].${legacyResourceId}`,
     label: legacyResourceId,
     parentId: `node[${legacyNodeId}]`
   }
