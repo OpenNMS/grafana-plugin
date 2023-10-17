@@ -1,3 +1,10 @@
+### v9.0.10
+
+Grafana Plugin for OpenNMS version 9.0.10 release contains a bug fix and an enhancement.
+
+* [OPG-464](https://opennms.atlassian.net/browse/OPG-464) Node ID field missing from some Entity DS results
+* [OPG-410](https://opennms.atlassian.net/browse/OPG-410) Add up/down status to Monitored Services entity
+
 ### v9.0.9
 
 Grafana Plugin for OpenNMS version 9.0.9 release contains a number of bug fixes and enhancements.
