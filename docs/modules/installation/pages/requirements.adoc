@@ -1,5 +1,6 @@
 
 = Requirements
+:description: Learn the prerequisites to install the {product-name}, which lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
 
 This section describes the requirements to install the {product-name}.
 

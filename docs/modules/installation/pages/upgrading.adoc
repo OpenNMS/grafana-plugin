@@ -2,6 +2,7 @@
 :imagesdir: ../assets/images
 
 = Upgrade the {page-component-title}
+:description: Learn how to upgrade the {product-name}, which lets you create flexible dashboards to visualize and interact with data stored by OpenNMS.
 
 This section describes how to upgrade your {page-component-title} installation.
 Usually, upgrading simply involves installing the new package.
