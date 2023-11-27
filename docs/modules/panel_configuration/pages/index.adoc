@@ -2,6 +2,7 @@
 :imagesdir: ../assets/images
 
 = Panel Configuration
+:description: Learn how to customize dashboards in {product-name}: alarm histogram and table, filter panel, and flow histogram.
 
 The {page-component-name} enables robust customization of dashboard panels, from updating their appearance and general information to configuring complex filters.
 You can configure a panel by interacting with its options in editing mode:
