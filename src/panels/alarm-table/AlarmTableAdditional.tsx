@@ -69,6 +69,6 @@ export const AlarmTableAdditional: React.FC<AlarmTableAdditionalProps> = ({ onCh
             </div>
           </InlineField>
         </InlineFieldRow>
-       </div>
+      </div>
   )
 }
