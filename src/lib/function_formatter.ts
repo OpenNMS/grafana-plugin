@@ -1,57 +1,60 @@
-const ARGUMENT_MATCH = /\s*,\s*/;
+const ARGUMENT_MATCH = /\s*,\s*/
 
-import parse from 'parenthesis';
+import parse from 'parenthesis'
 
 const isString = (value) => {
-    return typeof value === 'string' || value instanceof String;
-};
+  return typeof value === 'string' || value instanceof String
+}
 
 const getLast = (arr) => {
-    if (arr) {
-        if (Array.isArray(arr) && arr.length > 0) {
-            return arr[arr.length - 1];
-        }
+  if (arr) {
+    if (Array.isArray(arr) && arr.length > 0) {
+      return arr[arr.length - 1]
     }
-    return undefined;
-};
+  }
+
+  return undefined
+}
 
 export class FunctionFormatter {
     /**
      * Convert the provided label into an array containing a mix of string values
      * and function definitions for replacement.
      */
-    static parenthesize(label) {
-        return FunctionFormatter._process(parse(label, {
-            brackets: ['()']
-        }));
+    static parenthesize(label: string) {
+      return FunctionFormatter._process(parse(label, {
+        brackets: ['()']
+      }))
     }
 
     /**
      * Preprocess the parenthesized output so that format object arguments are parameterized
      */
-    static parenthesizeWithArguments(label) {
-        try {
-        const parenthesized = FunctionFormatter.parenthesize(label);
+    static parenthesizeWithArguments(label: string) {
+      try {
+        const parenthesized = FunctionFormatter.parenthesize(label)
+
         return parenthesized.map(entry => {
-            if (entry && entry.arguments) {
-                if (entry.arguments.length < 2) {
-                    entry.arguments = FunctionFormatter.getArguments(entry.arguments[0]);
-                } else {
-                    console.warn('unexpected arguments, expected a single string:', entry);
-                }
+          if (entry && entry.arguments) {
+            if (entry.arguments.length < 2) {
+              entry.arguments = FunctionFormatter.getArguments(entry.arguments[0])
+            } else {
+              console.warn('unexpected arguments, expected a single string:', entry)
             }
-            return entry;
-        });
-        } catch (e) {
-            return []
-        }
+          }
+
+          return entry
+        })
+      } catch (e) {
+        return []
+      }
     }
 
     /**
      * Given a label, return the list of potential functions found in it.
      */
-    static findFunctions(label) {
-        return FunctionFormatter.parenthesizeWithArguments(label).filter(entry => entry && entry.name !== undefined);
+    static findFunctions(label: string) {
+      return FunctionFormatter.parenthesizeWithArguments(label).filter(entry => entry && entry.name !== undefined)
     }
 
     /**
@@ -71,31 +74,34 @@ export class FunctionFormatter {
      * @param {string} label - the label string
      * @param {*} replacements - an object of function names and their callbacks
      */
-    static replace(label, replacements) {
-        const parenthesized = FunctionFormatter.parenthesizeWithArguments(label);
+    static replace(label: string, replacements: any) {
+      const parenthesized = FunctionFormatter.parenthesizeWithArguments(label)
 
-        let ret = '';
-        parenthesized.forEach(token => {
-            if (isString(token)) {
-                // just a regular scalar
-                ret += token;
-            } else if (token.name) {
-                // potential function, check against replacements
-                if (replacements && replacements.hasOwnProperty(token.name)) {
-                    ret += replacements[token.name].apply(replacements[token.name], token.arguments);
-                } else {
-                    // not a matching function, just put it back
-                    ret += token.name + '(';
-                    if (token.arguments) {
-                        ret += token.arguments.join(', ');
-                    }
-                    ret += ')';
-                }
-            } else {
-                console.warn('this should not happen... token=', token);
-            }
-        });
-        return ret;
+      let ret = ''
+
+      parenthesized.forEach(token => {
+        if (isString(token)) {
+          // just a regular scalar
+          ret += token
+        } else if (token.name) {
+          // potential function, check against replacements
+          if (replacements && replacements.hasOwnProperty(token.name)) {
+              ret += replacements[token.name].apply(replacements[token.name], token.arguments)
+          } else {
+              // not a matching function, just put it back
+              ret += token.name + '('
+
+              if (token.arguments) {
+                  ret += token.arguments.join(', ')
+              }
+              ret += ')'
+          }
+        } else {
+            console.warn('this should not happen... token=', token)
+        }
+      })
+
+      return ret
     }
 
     /**
@@ -238,29 +244,35 @@ export class FunctionFormatter {
         return ret;
     }
 
-    static _getNodeFromCriteria(metadata, nodeCriteria) {
-        let nodeId, foreignSource, foreignId;
-        if (nodeCriteria && nodeCriteria.indexOf(':') > 0) {
-            [foreignSource, foreignId] = nodeCriteria.split(':');
-        } else {
-            nodeId = parseInt(nodeCriteria, 10);
-        }
-        return FunctionFormatter._getNodeFromMetadata(metadata, nodeId, foreignSource, foreignId);
+    static _getNodeFromCriteria(metadata: any, nodeCriteria: string) {
+      let nodeId, foreignSource, foreignId
+
+      if (nodeCriteria && nodeCriteria.indexOf(':') > 0) {
+        [foreignSource, foreignId] = nodeCriteria.split(':')
+      } else {
+        nodeId = parseInt(nodeCriteria, 10)
+      }
+
+      return FunctionFormatter._getNodeFromMetadata(metadata, nodeId, foreignSource, foreignId)
     }
 
-    static _getNodeFromMetadata(metadata, nodeId, foreignSource, foreignId) {
-        if (metadata && metadata.nodes) {
-            const ret = metadata.nodes.filter((node) => {
-                return (nodeId !== undefined && node.id === nodeId) ||
-                (foreignSource !== undefined && foreignId !== undefined &&
-                    node['foreign-source'] === foreignSource && node['foreign-id'] === foreignId);
-            })[0];
-            if (ret !== undefined) {
-                return ret;
-            }
+    static _getNodeFromMetadata(metadata: any, nodeId: number | undefined, foreignSource: string | undefined, foreignId: string | undefined) {
+      if (metadata && metadata.nodes) {
+        const filtered = metadata.nodes.filter((node) => {
+          return (nodeId !== undefined && node.id === nodeId) ||
+          (foreignSource !== undefined && foreignId !== undefined &&
+            node['foreign-source'] === foreignSource && node['foreign-id'] === foreignId)
+        })
+
+        const ret = filtered.length > 0 ? filtered[0] : undefined
+
+        if (ret !== undefined) {
+          return ret
         }
-        //console.warn('Unable to locate node ' + [nodeId, foreignSource, foreignId].join(',') + ' in metadata.', metadata);
-        return null;
+      }
+
+      // console.warn('Unable to locate node ' + [nodeId, foreignSource, foreignId].join(',') + ' in metadata.', metadata);
+      return null
     }
 
     static _getResource(metadata, criteriaOrResourceId, partialResourceId) {
@@ -284,23 +296,28 @@ export class FunctionFormatter {
     }
 
     static _getResourceFromCriteria(metadata, resourceCriteria, ...nodeCriterias) {
-        if (metadata && metadata.resources) {
-            const ret = metadata.resources.filter((resource) => {
-                if (resource.id === resourceCriteria) {
-                    return true;
-                }
-                for (const criteria of nodeCriterias.map(c => c + '.' + resourceCriteria)) {
-                    if (resource.id === criteria) {
-                        return true;
-                    }
-                }
-                return false;
-            })[0];
-            if (ret !== undefined) {
-                return ret;
+      if (metadata && metadata.resources) {
+        const filtered = metadata.resources.filter((resource) => {
+          if (resource.id === resourceCriteria) {
+            return true
+          }
+
+          for (const criteria of nodeCriterias.map(c => c + '.' + resourceCriteria)) {
+            if (resource.id === criteria) {
+              return true
             }
+          }
+          return false
+        })
+
+        const ret = filtered.length > 0 ? filtered[0] : undefined
+
+        if (ret !== undefined) {
+          return ret
         }
-        //console.warn('Unable to locate resource ' + resourceCriteria + ' in metadata.', metadata);
-        return null;
+      }
+
+      //console.warn('Unable to locate resource ' + resourceCriteria + ' in metadata.', metadata)
+      return null
     }
 }

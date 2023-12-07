@@ -8,6 +8,7 @@ import {
     MonitoredServiceProperties,
     NodeProperties,
     OnmsColumn,
+    OnmsEntityFunctionInfo,
     OnmsTableData,
     OutagesProperties,
     Properties,
@@ -361,25 +362,53 @@ export const isSituationAttribute = (attribute) => {
 }
 
 export const getTemplateVariable = (templateSrv, name) => {
-    if (templateSrv.getVariables() && templateSrv.getVariables().length > 0) {
-        return templateSrv.getVariables().filter((v) => {
-            return v.name === name
-        })[0]
+  const variables = templateSrv.getVariables()
+
+  if (variables && variables.length > 0) {
+    const filtered = variables.filter(v => v.name === name)
+
+    if (filtered.length > 0) {
+      return filtered[0]
     }
-    return undefined
+  }
+
+  return undefined
 }
 
-/** Parse some relevant function info out of an attribute or query. */
-export const parseFunctionInfo = (attribute: string) => {
+/**
+ * Parse some relevant function info out of an attribute or query.
+ */
+export const parseFunctionInfo = (query: string): OnmsEntityFunctionInfo => {
     let entityType = ''
     let funcName = ''
-    let attr = attribute
+    let attr = ''
+    let labelFormat = ''
+    let valueFormat = ''
+    const labelFormatArg = 'labelFormat='
+    const valueFormatArg = 'valueFormat='
 
-    const functions = FunctionFormatter.findFunctions(attribute)
+    const functions = FunctionFormatter.findFunctions(query)
 
     for (const func of functions) {
         funcName = func.name
-        attr = func.arguments[0] || 'id'
+
+        let foundFirstArg = false
+
+        for (const arg of func.arguments) {
+          const trimmed = (arg || '').trim()
+
+          if (trimmed) {
+            if (trimmed.startsWith(labelFormatArg)) {
+              labelFormat = trimmed.substring(labelFormatArg.length)
+            } else if (trimmed.startsWith(valueFormatArg)) {
+              valueFormat = trimmed.substring(valueFormatArg.length)
+            } else if (!foundFirstArg) {
+              attr = trimmed
+              foundFirstArg = true
+            }
+          }
+        }
+
         const e = getEntityTypeFromFuncName(func.name)
 
         if (e) {
@@ -391,6 +420,8 @@ export const parseFunctionInfo = (attribute: string) => {
     return {
         entityType,
         funcName,
-        attribute: attr
-    }
+        attribute: attr,
+        labelFormat,
+        valueFormat
+    } as OnmsEntityFunctionInfo
 }
