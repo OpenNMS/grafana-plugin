@@ -156,6 +156,14 @@ export interface OnmsMetricFindValue extends MetricFindValue {
   label?: string
 }
 
+export interface OnmsEntityFunctionInfo {
+  entityType: string
+  funcName: string
+  attribute: string
+  labelFormat: string
+  valueFormat: string
+}
+
 export interface OnmsTableData extends TableData {
   // override
   columns: OnmsColumn[]
