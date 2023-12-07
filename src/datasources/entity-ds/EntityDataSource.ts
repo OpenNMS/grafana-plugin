@@ -6,9 +6,9 @@ import { capitalize, extractRawVariableName, getNodeFilterMap, isTemplateVariabl
 import { API, Model } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import { loadFilterEditorData } from '../../lib/localStorageService'
+import { getEntityTypeFromFuncName, parseFunctionInfo, OnmsEntityFunctionInfo } from 'lib/function_formatter'
 import {
   getColumns,
-  getEntityTypeFromFuncName,
   getPropertyComparators,
   getQueryEntityType,
   getSearchProperties,
@@ -17,7 +17,6 @@ import {
   isMetricMetadataQuery,
   isSituationAttribute,
   metricFindLocations,
-  parseFunctionInfo,
   queryEntity
 } from './EntityHelper'
 import { getAttributeMapping } from './queries/attributeMappings'
@@ -26,7 +25,6 @@ import {
   EntityDataSourceOptions,
   EntityQuery,
   EntityQueryRequest,
-  OnmsEntityFunctionInfo,
   OnmsTableData
 } from './types'
 
@@ -197,9 +195,9 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
      * @returns An object with { id, label, text, value } which is a superset of Grafana MetricFindValue.
      */
     formatNodeFilterResult(node: Model.OnmsNode, labelFormat = 'id', valueFormat = 'id') {
-      const { nodeId, nodeLabel, fsFid } = this.parseNodeFields(node)
-      const label = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, labelFormat || 'id')
-      const value = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, valueFormat || 'id')
+      const { nodeId, nodeLabel, fsFid, fsLabel } = this.parseNodeFields(node)
+      const label = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, labelFormat || 'id')
+      const value = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, valueFormat || 'id')
 
       return { id: node.id, label, text: label, value }
     }
@@ -210,13 +208,14 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
       const foreignSource = node.foreignSource || ''
       const foreignId = node.foreignId || ''
       const fsFid = `${foreignSource}:${foreignId}`
+      const fsLabel = `${foreignSource}:${nodeLabel}`
 
       return {
-        nodeId, nodeLabel, fsFid
+        nodeId, nodeLabel, fsFid, fsLabel
       }
     }
 
-    formatLabelOrValue(nodeId: string, nodeLabel: string, fsFid: string, format: string) {
+    formatLabelOrValue(nodeId: string, nodeLabel: string, fsFid: string, fsLabel: string, format: string) {
       if (format === 'id') {
         return nodeId
       } else if (format === 'label') {
@@ -227,6 +226,8 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         return `${nodeLabel}:${nodeId}`
       } else if (format === 'fs:fid') {
         return fsFid
+      } else if (format === 'fs:label') {
+        return fsLabel
       }
 
       return nodeId
