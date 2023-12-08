@@ -27,7 +27,7 @@ import {
     isValidFilterTarget,
     isValidMeasurementQuery
 } from './queries/queryBuilder'
-import { FunctionFormatter } from '../../lib/function_formatter'
+import { findFunctions } from '../../lib/function_formatter'
 import { queryStringProperties } from './queries/queryStringProperties'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
@@ -196,25 +196,27 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async metricFindQuery(query, options) {
-        if (!query) {
-            return []
-        }
-
-        const functions = FunctionFormatter.findFunctions(query);
-
-        for (const func of functions) {
-            func.arguments = this.replaceTemplateVariablesInArguments(func.arguments)
-            if (func.name === 'locations') {
-                return this.metricFindLocations.apply(this, func.arguments);
-            } else if (func.name === 'nodeFilter') {
-                return this.metricFindNodeFilterQuery.apply(this, func.arguments);
-            } else if (func.name === 'nodeResources') {
-                return this.metricFindNodeResourceQuery.apply(this, func.arguments);
-            } else {
-                console.warn('Unknown function in query: ' + query, func);
-            }
-        }
+      if (!query) {
         return []
+      }
+
+      const functions = findFunctions(query)
+
+      for (const func of functions) {
+        func.arguments = this.replaceTemplateVariablesInArguments(func.arguments)
+
+        if (func.name === 'locations') {
+          return this.metricFindLocations()
+        } else if (func.name === 'nodeFilter') {
+          return this.metricFindNodeFilterQuery(func.arguments)
+        } else if (func.name === 'nodeResources') {
+          return this.metricFindNodeResourceQuery(func.arguments)
+        } else {
+          console.warn('Unknown function in query: ' + query, func)
+        }
+      }
+
+      return []
     }
 
     async testDatasource(): Promise<any> {
@@ -263,16 +265,20 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     }
 
     async metricFindNodeFilterQuery(query) {
-        const nodes = await this.simpleRequest.getNodesByFilter(query);
-        const results: MetricFindValue[] = []
-        nodes.forEach(node => {
-            let nodeCriteria = node.id.toString();
-            if (node.foreignId !== null && node.foreignSource !== null) {
-                nodeCriteria = node.foreignSource + ":" + node.foreignId;
-            }
-            results.push({ text: node.label, value: nodeCriteria, expandable: true });
-        });
-        return results;
+      const nodes = await this.simpleRequest.getNodesByFilter(query)
+      const results: MetricFindValue[] = []
+
+      nodes.forEach(node => {
+        let nodeCriteria = node.id.toString()
+
+        if (node.foreignId !== null && node.foreignSource !== null) {
+          nodeCriteria = node.foreignSource + ":" + node.foreignId
+        }
+
+        results.push({ text: node.label, value: nodeCriteria, expandable: true })
+      })
+
+      return results
     }
 
     async metricFindNodeResourceQuery(query, ...options) {

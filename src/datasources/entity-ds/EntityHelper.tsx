@@ -8,7 +8,6 @@ import {
     MonitoredServiceProperties,
     NodeProperties,
     OnmsColumn,
-    OnmsEntityFunctionInfo,
     OnmsTableData,
     OutagesProperties,
     Properties,
@@ -16,7 +15,7 @@ import {
     SNMPInterfaceProperties
 } from './types'
 import { ClientDelegate } from 'lib/client_delegate'
-import { FunctionFormatter } from '../../lib/function_formatter'
+import { findFunctions, getEntityTypeFromFuncName } from '../../lib/function_formatter'
 import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import {
     getAlarmColumns,
@@ -133,43 +132,6 @@ export const filterProperties = (entityName: string, fullProperties: API.SearchO
     return properties
 }
 
-const entityQueries = [
-    [ 'alarms', EntityTypes.Alarms ],
-    [ 'ipInterface', EntityTypes.IPInterfaces ],
-    [ 'monitoredService', EntityTypes.MonitoredServices ],
-    [ 'nodes', EntityTypes.Nodes ],
-    [ 'nodeFilter', EntityTypes.Nodes ],
-    [ 'outage', EntityTypes.Outages ],
-    [ 'snmpInterface', EntityTypes.SNMPInterfaces ]
-]
-
-export const getEntityTypeFromFuncName = (funcName: string) => {
-    // key is start of function name, this will also match e.g. 'outage()' and 'outages()'
-    if (funcName) {
-        const item = entityQueries.find(d => funcName.startsWith(d[0]))
-        if (item) {
-            return item[1]
-        }
-    }
-
-    return null
-}
-
-/**
- * Given an EntityType, return the entity datasource function name for it. 
- */
-export const getFuncNameFromEntityType = (entityType: string) => {
-    if (entityType) {
-        const item = entityQueries.find(d => entityType === d[1])
-
-        if (item) {
-            return item[0]
-        }
-    }
-
-    return ''
-}
-
 export const getFilterIdFromParts = (entity: SelectableValue<string | number>, attribute: SelectableValue) => {
     const entityName = (entity.label || entity.value || '').toString()
     const attrName = attribute.id || attribute.label || ''
@@ -192,7 +154,7 @@ export const getQueryEntityType = (query) => {
         return EntityTypes.Alarms
     }
 
-    let functionName = FunctionFormatter.findFunctions(q).filter(x => !!x && !!x.name).map(x => x.name)?.at(0)
+    let functionName = findFunctions(q).filter(x => !!x && !!x.name).map(x => x.name)?.at(0)
 
     return getEntityTypeFromFuncName(functionName)
 }
@@ -373,55 +335,4 @@ export const getTemplateVariable = (templateSrv, name) => {
   }
 
   return undefined
-}
-
-/**
- * Parse some relevant function info out of an attribute or query.
- */
-export const parseFunctionInfo = (query: string): OnmsEntityFunctionInfo => {
-    let entityType = ''
-    let funcName = ''
-    let attr = ''
-    let labelFormat = ''
-    let valueFormat = ''
-    const labelFormatArg = 'labelFormat='
-    const valueFormatArg = 'valueFormat='
-
-    const functions = FunctionFormatter.findFunctions(query)
-
-    for (const func of functions) {
-        funcName = func.name
-
-        let foundFirstArg = false
-
-        for (const arg of func.arguments) {
-          const trimmed = (arg || '').trim()
-
-          if (trimmed) {
-            if (trimmed.startsWith(labelFormatArg)) {
-              labelFormat = trimmed.substring(labelFormatArg.length)
-            } else if (trimmed.startsWith(valueFormatArg)) {
-              valueFormat = trimmed.substring(valueFormatArg.length)
-            } else if (!foundFirstArg) {
-              attr = trimmed
-              foundFirstArg = true
-            }
-          }
-        }
-
-        const e = getEntityTypeFromFuncName(func.name)
-
-        if (e) {
-            entityType = e
-            break
-        }
-    }
-
-    return {
-        entityType,
-        funcName,
-        attribute: attr,
-        labelFormat,
-        valueFormat
-    } as OnmsEntityFunctionInfo
 }
