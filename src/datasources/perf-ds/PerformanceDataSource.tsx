@@ -1,11 +1,12 @@
 import { DataFrame, DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, MetricFindValue } from '@grafana/data'
 import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
 import cloneDeep from 'lodash/cloneDeep'
-import { ClientDelegate } from 'lib/client_delegate'
-import { getNodeIdFromResourceId, OpenNMSGlob, getResourceId, trimChar } from 'lib/utils'
-import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 import { PerformanceTypeOptions } from './constants'
 import { measurementResponseToDataFrame } from './PerformanceHelpers'
+import { ClientDelegate } from 'lib/client_delegate'
+import { findFunctions, formatNodeToMetricFindValue, parseFunctionAttributes } from 'lib/function_formatter'
+import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
+import { getNodeIdFromResourceId, OpenNMSGlob, getResourceId, trimChar } from 'lib/utils'
 import {
     OnmsMeasurementsQueryRequest,
     OnmsMeasurementsQueryResponse,
@@ -27,7 +28,6 @@ import {
     isValidFilterTarget,
     isValidMeasurementQuery
 } from './queries/queryBuilder'
-import { findFunctions } from '../../lib/function_formatter'
 import { queryStringProperties } from './queries/queryStringProperties'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
@@ -180,7 +180,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         }
 
         if (isValidMeasurementQuery(query)) {
-            const responseData = await this.doMeasuremmentQuery(query)
+            const responseData = await this.doMeasurementQuery(query)
 
             if (responseData) {
                 try {
@@ -208,7 +208,8 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         if (func.name === 'locations') {
           return this.metricFindLocations()
         } else if (func.name === 'nodeFilter') {
-          return this.metricFindNodeFilterQuery(func.arguments)
+          const { labelFormat, valueFormat, attributes } = parseFunctionAttributes(func.arguments)
+          return this.metricFindNodeFilterQuery(attributes, labelFormat, valueFormat)
         } else if (func.name === 'nodeResources') {
           return this.metricFindNodeResourceQuery(func.arguments)
         } else {
@@ -223,7 +224,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return await this.client.testConnection()
     }
 
-    async doMeasuremmentQuery(query: OnmsMeasurementsQueryRequest) {
+    async doMeasurementQuery(query: OnmsMeasurementsQueryRequest) {
         const response = await this.simpleRequest.doOpenNMSRequest({
             url: '/rest/measurements',
             data: query,
@@ -264,18 +265,17 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return await this.simpleRequest.getLocations();
     }
 
-    async metricFindNodeFilterQuery(query) {
+    async metricFindNodeFilterQuery(query: string, labelFormat: string, valueFormat: string) {
       const nodes = await this.simpleRequest.getNodesByFilter(query)
       const results: MetricFindValue[] = []
 
       nodes.forEach(node => {
-        let nodeCriteria = node.id.toString()
+        const hasFsFid = node.foreignSource !== null && node.foreignId !== null
+        const fallbackValueFormat = hasFsFid ? 'fs:fid' : 'id'
 
-        if (node.foreignId !== null && node.foreignSource !== null) {
-          nodeCriteria = node.foreignSource + ":" + node.foreignId
-        }
+        const { text, value } = formatNodeToMetricFindValue(node, labelFormat || 'label', valueFormat || fallbackValueFormat)
 
-        results.push({ text: node.label, value: nodeCriteria, expandable: true })
+        results.push({ text, value, expandable: true })
       })
 
       return results
@@ -347,9 +347,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         return additionalSources
     }
 
-
     async getSourcesFor(source: OnmsMeasurementsQuerySource) {
-
         const result: OnmsMeasurementsQuerySource[] = []
 
         const resourceId = this.templateSrv.replace(source.resourceId)
@@ -390,12 +388,13 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     flattenResourcesWithAttributes = (resources: OnmsResourceDto[], resourcesWithAttributes: OnmsResourceDto[]) => {
         resources.forEach(resource => {
             if (resource.rrdGraphAttributes !== undefined && Object.keys(resource.rrdGraphAttributes).length > 0) {
-                resourcesWithAttributes.push(resource);
+                resourcesWithAttributes.push(resource)
             }
             if (resource.children !== undefined && resource.children.resource.length > 0) {
-                this.flattenResourcesWithAttributes(resource.children.resource, resourcesWithAttributes);
+                this.flattenResourcesWithAttributes(resource.children.resource, resourcesWithAttributes)
             }
-        });
+        })
+
         return resourcesWithAttributes
     }
 
@@ -410,5 +409,4 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         }
         return args
     }
-
 }
