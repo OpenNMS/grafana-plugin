@@ -6,7 +6,7 @@ import { capitalize, extractRawVariableName, getNodeFilterMap, isTemplateVariabl
 import { API, Model } from 'opennms'
 import { EntityTypes } from '../../constants/constants'
 import { loadFilterEditorData } from '../../lib/localStorageService'
-import { getEntityTypeFromFuncName, parseFunctionInfo, OnmsEntityFunctionInfo } from 'lib/function_formatter'
+import { formatNodeToMetricFindValue, getEntityTypeFromFuncName, parseFunctionInfo, OnmsEntityFunctionInfo } from 'lib/function_formatter'
 import {
   getColumns,
   getPropertyComparators,
@@ -180,57 +180,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         filter.limit = 0
         const nodes = await this.client.getNodeByFilter(filter)
 
-        return nodes.map(node => this.formatNodeFilterResult(node, labelFormat, valueFormat))
-    }
-
-    /**
-     * Format the results of a 'nodeFilter()' call into an enhanced MetricFindValue object,
-     * taking into account any 'labelFormat' or 'valueFormat'.
-     * By default, label and value will be the node id.
-     * See constants/validNodeValueFormats.ts for format options.
-     *
-     * @param node The OnmsNode from the Rest API call.
-     * @param labelFormat The format for the returned MetricFindValue.text and label (what is displayed to user in template variable dropdown, etc.)
-     * @param valueFormat The format for the returned MetricFindValue.value (numeric or string value)
-     * @returns An object with { id, label, text, value } which is a superset of Grafana MetricFindValue.
-     */
-    formatNodeFilterResult(node: Model.OnmsNode, labelFormat = 'id', valueFormat = 'id') {
-      const { nodeId, nodeLabel, fsFid, fsLabel } = this.parseNodeFields(node)
-      const label = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, labelFormat || 'id')
-      const value = this.formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, valueFormat || 'id')
-
-      return { id: node.id, label, text: label, value }
-    }
-
-    parseNodeFields(node: Model.OnmsNode) {
-      const nodeId = String(node.id || '')
-      const nodeLabel = node.label || ''
-      const foreignSource = node.foreignSource || ''
-      const foreignId = node.foreignId || ''
-      const fsFid = `${foreignSource}:${foreignId}`
-      const fsLabel = `${foreignSource}:${nodeLabel}`
-
-      return {
-        nodeId, nodeLabel, fsFid, fsLabel
-      }
-    }
-
-    formatLabelOrValue(nodeId: string, nodeLabel: string, fsFid: string, fsLabel: string, format: string) {
-      if (format === 'id') {
-        return nodeId
-      } else if (format === 'label') {
-        return nodeLabel
-      } else if (format === 'id:label') {
-        return `${nodeId}:${nodeLabel}`
-      } else if (format === 'label:id') {
-        return `${nodeLabel}:${nodeId}`
-      } else if (format === 'fs:fid') {
-        return fsFid
-      } else if (format === 'fs:label') {
-        return fsLabel
-      }
-
-      return nodeId
+        return nodes.map(node => formatNodeToMetricFindValue(node, labelFormat, valueFormat))
     }
 
     async handleMetricMetadataQuery(entityType: string, queryType: string, attribute: string, strategy?: string) {

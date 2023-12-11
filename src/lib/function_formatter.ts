@@ -1,7 +1,10 @@
+import { Model } from 'opennms'
 import parse from 'parenthesis'
 import { EntityQueries } from '../constants/constants'
 
 const ARGUMENT_MATCH = /\s*,\s*/
+const LabelFormatArg = 'labelFormat='
+const ValueFormatArg = 'valueFormat='
 
 interface OnmsEntityFunctionInfo {
   entityType: string
@@ -389,6 +392,32 @@ const getFuncNameFromEntityType = (entityType: string) => {
   return ''
 }
 
+const parseFunctionAttributes = (args: string[]) => {
+  let attributes: string[] = []
+  let labelFormat = ''
+  let valueFormat = ''
+
+  for (const arg of args) {
+    const trimmed = (arg || '').trim()
+
+    if (trimmed) {
+      if (trimmed.startsWith(LabelFormatArg)) {
+        labelFormat = trimmed.substring(LabelFormatArg.length)
+      } else if (trimmed.startsWith(ValueFormatArg)) {
+        valueFormat = trimmed.substring(ValueFormatArg.length)
+      } else {
+        attributes.push(trimmed)
+      }
+    }
+  }
+
+  return {
+    labelFormat,
+    valueFormat,
+    attributes: attributes.length > 0 ? attributes.join(',') : ''
+  }
+}
+
 /**
  * Parse some relevant function info out of an attribute or query.
  */
@@ -398,9 +427,6 @@ const parseFunctionInfo = (query: string): OnmsEntityFunctionInfo => {
   let attr = ''
   let labelFormat = ''
   let valueFormat = ''
-  const labelFormatArg = 'labelFormat='
-  const valueFormatArg = 'valueFormat='
-
   const functions = findFunctions(query)
 
   for (const func of functions) {
@@ -412,10 +438,10 @@ const parseFunctionInfo = (query: string): OnmsEntityFunctionInfo => {
       const trimmed = (arg || '').trim()
 
       if (trimmed) {
-        if (trimmed.startsWith(labelFormatArg)) {
-          labelFormat = trimmed.substring(labelFormatArg.length)
-        } else if (trimmed.startsWith(valueFormatArg)) {
-          valueFormat = trimmed.substring(valueFormatArg.length)
+        if (trimmed.startsWith(LabelFormatArg)) {
+          labelFormat = trimmed.substring(LabelFormatArg.length)
+        } else if (trimmed.startsWith(ValueFormatArg)) {
+          valueFormat = trimmed.substring(ValueFormatArg.length)
         } else if (!foundFirstArg) {
           attr = trimmed
           foundFirstArg = true
@@ -440,13 +466,66 @@ const parseFunctionInfo = (query: string): OnmsEntityFunctionInfo => {
   } as OnmsEntityFunctionInfo
 }
 
+const parseNodeFields = (node: Model.OnmsNode) => {
+  const nodeId = String(node.id || '')
+  const nodeLabel = node.label || ''
+  const foreignSource = node.foreignSource || ''
+  const foreignId = node.foreignId || ''
+  const fsFid = `${foreignSource}:${foreignId}`
+  const fsLabel = `${foreignSource}:${nodeLabel}`
+
+  return {
+    nodeId, nodeLabel, fsFid, fsLabel
+  }
+}
+
+const formatLabelOrValue = (nodeId: string, nodeLabel: string, fsFid: string, fsLabel: string, format: string) => {
+  if (format === 'id') {
+    return nodeId
+  } else if (format === 'label') {
+    return nodeLabel
+  } else if (format === 'id:label') {
+    return `${nodeId}:${nodeLabel}`
+  } else if (format === 'label:id') {
+    return `${nodeLabel}:${nodeId}`
+  } else if (format === 'fs:fid') {
+    return fsFid
+  } else if (format === 'fs:label') {
+    return fsLabel
+  }
+
+  return nodeId
+}
+
+/**
+ * Format an OnmsNode into an enhanced MetricFindValue object,
+ * taking into account any 'labelFormat' or 'valueFormat'.
+ * This is used for formatting the results of a 'nodeFilter()' call.
+ * By default, label and value will be the node id.
+ * See constants/validNodeValueFormats.ts for format options.
+ *
+ * @param node The OnmsNode from the Rest API call.
+ * @param labelFormat The format for the returned MetricFindValue.text and label (what is displayed to user in template variable dropdown, etc.)
+ * @param valueFormat The format for the returned MetricFindValue.value (numeric or string value)
+ * @returns An object with { id, label, text, value } which is a superset of Grafana MetricFindValue.
+ */
+const formatNodeToMetricFindValue = (node: Model.OnmsNode, labelFormat = 'id', valueFormat = 'id') => {
+  const { nodeId, nodeLabel, fsFid, fsLabel } = parseNodeFields(node)
+  const label = formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, labelFormat || 'id')
+  const value = formatLabelOrValue(nodeId, nodeLabel, fsFid, fsLabel, valueFormat || 'id')
+
+  return { id: node.id, label, text: label, value }
+}
+
 export {
   findFunctions,
   formatFunctions,
+  formatNodeToMetricFindValue,
   getEntityTypeFromFuncName,
   getFuncNameFromEntityType,
   parenthesize,
   parenthesizeWithArguments,
+  parseFunctionAttributes,
   parseFunctionInfo,
   replaceFunctions,
   OnmsEntityFunctionInfo
