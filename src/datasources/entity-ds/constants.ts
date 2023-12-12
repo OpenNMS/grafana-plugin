@@ -15,4 +15,4 @@ export const defaultOrder = { label: 'DESC' }
  * Valid formats for the 'text' or 'value' part of a Node metricFindQuery.
  * Default is 'id'.
  */
-export const validNodeValueFormats = ['id', 'label', 'id:label', 'label:id', 'fs:fid']
+export const validNodeValueFormats = ['id', 'label', 'id:label', 'label:id', 'fs:fid', 'fs:label']

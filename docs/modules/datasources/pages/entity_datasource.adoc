@@ -46,8 +46,8 @@ Separate multiple filter expressions with an ampersand (`&`) (for example, `<att
 The node's value can be a constant or a variable.
 
 [[ds-nodefilter-label-value-formats]]
-In addition, `labelFormat` and `valueFormat` attributes can be added to format the `label` (what is displayed for example in a variable dropdown list) and the `value` (the value that is used to send to the OpenNMS Rest API).
-By default, both of these use the Node `id`, however any of the following may be specified:
+`labelFormat` and `valueFormat` attributes can optionally be added to format the `label` (what is displayed with the variable selection dropdown boxes) and the `value` (the value that is used when referenced within Grafana).
+By default, Entity Datasource variables default to the node `id` for both of these values, however any of the following may be specified:
 
 [caption=]
 .`nodeFilter()` label and value formats
@@ -56,21 +56,24 @@ By default, both of these use the Node `id`, however any of the following may be
 | Format | Description
 
 | id
-| The node database id (a numeric value), e.g. `1`.
+| The node database id (a numeric value)
 
 | label
-| The node label, e.g. `localhost`.
+| The node label
 
 | id:label
-| The node id and label, e.g. `1:localhost`.
+| The node id and label
 
 | label:id
-| The node label and id, e.g. `localhost:1`.
+| The node label and id
 
 | fs:fid
-| The node foreign source and foreign id, e.g. `My_Source:Id123`.
-|===
+| The node foreign source and foreign id
 
+| fs:label
+| The node foreign source and label
+
+|===
 
 .Example expressions using `nodeFilter()`
 [source,]

@@ -205,9 +205,9 @@ Only one argument is available for the `nodeFilter()` query:
 If omitted, all nodes are returned.
 |===
 
-In addition, `labelFormat` and `valueFormat` attributes can be specified.
-Please refer to the <<datasources:entity_datasource.adoc#ds-nodefilter-label-value-formats, Entity Datasource documentation>> for more information.
-If not specified, the default for `labelFormat` is `label` and the default for `value` is `fs:fid` if available, otherwise the Node `id.`
+`labelFormat` and `valueFormat` attributes can be specified.
+Please refer to the <<datasources:entity_datasource.adoc#ds-nodefilter-label-value-formats, Entity Datasource documentation>> for more information on these options.
+By default, Performance Datasource variables default the `labelFormat` to `label` and the `value` to `fs:fid` if the node is part of a requisition, otherwise the `value` will be the node `id.`
 
 
 === nodeResources(<nodeId>[,textProperty[,resourceType[,regexFilter]]])
