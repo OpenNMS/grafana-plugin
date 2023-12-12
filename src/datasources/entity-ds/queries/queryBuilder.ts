@@ -1,14 +1,15 @@
+import { TypedVariableModel, VariableOption } from '@grafana/data'
 import { TemplateSrv } from '@grafana/runtime'
 import { API } from 'opennms'
 import { EntityQuery, EntityQueryRequest, FilterEditorData } from './../types'
 import { ALL_SELECTION_VALUE, EntityTypes } from '../../../constants/constants'
-import { isInteger } from '../../../lib/utils'
+import { isInteger, trimChar } from '../../../lib/utils'
 import { getAttributeMapping } from './attributeMappings'
 import { getFilterId } from '../EntityHelper'
 
 const isAllVariable = (templateVar, templateSrv) => {
-    return templateVar.current.value &&
-        templateSrv.isAllValue(templateVar.current.value)
+    return templateVar?.current.value &&
+        templateSrv.isAllValue(templateVar?.current.value)
 }
 
 const isMultiVariable = (templateVar) => {
@@ -23,11 +24,12 @@ const isEmptyNodeRestriction = (clause: API.Clause) => {
 // annoyingly, depending on how you interact with the UI, if one value is selected it will
 // *either* be an array with 1 entry, or just the raw value >:|
 // so we normalize it back to just the raw value here if necessary
-const normalizeSingleArrayValue = (value: any) => {
+const normalizeSingleArrayValue = (value: any): string | string[] => {
     if (Array.isArray(value) && value.length === 1) {
         return value[0]
     }
 
+    // could be a string, or multi-valued string[]
     return value
 }
 
@@ -91,11 +93,16 @@ const subtituteNodeRestriction = (clause: API.Clause) => {
     }
 }
 
-// Perform variable substitution for clauses.
-// This will be called recursively if clause.restriction is actually a NestedRestriction.
-// Note: templateSrv is derived from '@grafana/runtime' TemplateSrv but is actually a class having
-// quite a few more methods, etc., so we use 'any' instead. See:
-// https://github.com/grafana/grafana/blob/main/public/app/features/templating/template_srv.ts
+/**
+ * Perform variable substitution for clauses.
+ *
+ * This will be called recursively if clause.restriction is actually a NestedRestriction OR
+ * if the clause has a multi-valued template variable in which case we call recursively to create clauses from the resulting values.
+ *
+ * Note: templateSrv is derived from '@grafana/runtime' TemplateSrv but is actually a class having
+ * quite a few more methods, etc., so we use 'any' instead. See:
+ * https://github.com/grafana/grafana/blob/main/public/app/features/templating/template_srv.ts
+ */
 const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQuery>, templateSrv: any) => {
     const remove: API.Clause[] = []
     const clausesWithRestrictions = clauses.filter(c => c.restriction)
@@ -105,11 +112,15 @@ const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQue
             // this is actually a NestedRestriction, recurse through subclauses
             substitute(clause.restriction.clauses, request, templateSrv)
         } else if (clause.restriction.value) {
+            // clause.restriction.value may be:
+            // - a template variable (in $var or ${var} or ${var:text} format)
+            // - an actual value (e.g. a node id or label), for example for multi-valued template variables and we
+            //   broke it up into nested restrictions below
             const restriction = clause.restriction as API.Restriction
-            const variableName = templateSrv.getVariableName(restriction.value)
-            const templateVariable = getTemplateVariable(templateSrv, variableName)
+            const variableName: string = templateSrv.getVariableName(restriction.value) || ''
+            const templateVariable: TypedVariableModel | undefined = getTemplateVariable(templateSrv, variableName)
 
-            // Process multi-selects
+            // Process template variables set to "all"
             if (isMultiVariable(templateVariable) && isAllVariable(templateVariable, templateSrv)) {
                 // if we're querying "all" we just dump the clause altogether
                 remove.push(clause)
@@ -118,8 +129,11 @@ const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQue
 
             let skipSimpleSubstitution = false
 
+            // Process multiple selection template variables
             if (isMultiVariable(templateVariable)) {
-                const normalizedValue = normalizeSingleArrayValue(templateVariable.current.value)
+                const currentValues: string | string[] = getCurrentValuesFromMultiValuedTemplateVariables(templateVariable, variableName, restriction.value)
+
+                const normalizedValue = normalizeSingleArrayValue(currentValues)
 
                 // now if it's *still* an array, we chop it up into nested restrictions
                 if (Array.isArray(normalizedValue)) {
@@ -148,10 +162,33 @@ const substitute = (clauses: API.Clause[], request: EntityQueryRequest<EntityQue
     removeEmptyClauses(clauses, remove)
 }
 
-export const getTemplateVariable = (templateSrv: any, name: string) => {
-    const variables = templateSrv.getVariables()
+/**
+ * Get the current values from a resolved template variable, accounting for a ':text' specifier on the template variable declaration.
+ * @param templateVariable a Grafana template variable object, TypedVariableModel. Should contain a VariableOption 'current' property
+ * @param variableName The template variable name, without any decoration
+ * @param restrictionValue The value from the restriction clause, should be a template variable reference like '$node', '${node}' or '${node:text}'
+ * @returns The current values of the multi-valued template variable
+ */
+const getCurrentValuesFromMultiValuedTemplateVariables = (templateVariable: TypedVariableModel | undefined, variableName: string, restrictionValue: string) => {
+  // OPG-466. If restrictionValue has a format attribute, e.g. '${node:text}', use the 'text'
+  // part of the templateVariable.current values, instead of the 'value' part
+  const originalValueTrimmed = trimChar(trimChar(restrictionValue, '$'), '{', '}')
+  const hasTextFormat = originalValueTrimmed === `${variableName}:text`
+  const currentObj = (templateVariable as any)?.current ? (templateVariable as any)?.current as VariableOption : undefined
 
-    if (variables && variables.length) {
+  let currentValues: string | string[] = []
+
+  if (currentObj) {
+    currentValues = hasTextFormat ? currentObj.text : currentObj.value
+  }
+
+  return currentValues
+}
+
+export const getTemplateVariable = (templateSrv: any, name: string) => {
+    const variables: TypedVariableModel[] = templateSrv.getVariables()
+
+    if (name && variables && variables.length) {
         return variables.find(v => v.name === name)
     }
 

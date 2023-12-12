@@ -1,6 +1,6 @@
 
-import { DataQuery, DataQueryRequest, DataSourceJsonData, QueryEditorProps, QueryResultMeta, SelectableValue } from "@grafana/data";
-import { PerformanceDataSource } from "./PerformanceDataSource";
+import { DataQuery, DataQueryRequest, DataSourceJsonData, QueryEditorProps, QueryResultMeta, SelectableValue } from '@grafana/data'
+import { PerformanceDataSource } from './PerformanceDataSource'
 
 /**
  * These are options configured for each DataSource instance
