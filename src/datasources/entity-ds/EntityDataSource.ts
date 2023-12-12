@@ -1,31 +1,35 @@
 import { DataQueryResponse, DataSourceApi, DataSourceInstanceSettings, QueryResultMeta } from '@grafana/data'
-import { TemplateSrv, getTemplateSrv, getBackendSrv } from '@grafana/runtime'
-import { API, Model } from 'opennms'
-import { EntityTypes } from '../../constants/constants'
-import {
-    getColumns,
-    getEntityTypeFromFuncName,
-    getPropertyComparators,
-    getQueryEntityType,
-    getSearchProperties,
-    getTemplateVariable,
-    isLocationQuery,
-    isMetricMetadataQuery,
-    isSituationAttribute,
-    metricFindLocations,
-    parseFunctionInfo,
-    queryEntity
-} from './EntityHelper'
+import { TemplateSrv, getBackendSrv, getTemplateSrv } from '@grafana/runtime'
 import { ClientDelegate } from 'lib/client_delegate'
 import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
-import { capitalize, getNodeFilterMap } from 'lib/utils'
+import { capitalize, extractRawVariableName, getNodeFilterMap, isTemplateVariableCandidate } from 'lib/utils'
+import { API, Model } from 'opennms'
+import { EntityTypes } from '../../constants/constants'
+import { loadFilterEditorData } from '../../lib/localStorageService'
+import { formatNodeToMetricFindValue, getEntityTypeFromFuncName, parseFunctionInfo, OnmsEntityFunctionInfo } from 'lib/function_formatter'
+import {
+  getColumns,
+  getPropertyComparators,
+  getQueryEntityType,
+  getSearchProperties,
+  getTemplateVariable,
+  isLocationQuery,
+  isMetricMetadataQuery,
+  isSituationAttribute,
+  metricFindLocations,
+  queryEntity
+} from './EntityHelper'
 import { getAttributeMapping } from './queries/attributeMappings'
 import { buildQueryFilter, mergeFilterPanelFilters } from './queries/queryBuilder'
-import { EntityDataSourceOptions, EntityQuery, EntityQueryRequest, OnmsTableData } from './types'
-import { loadFilterEditorData } from '../../lib/localStorageService'
+import {
+  EntityDataSourceOptions,
+  EntityQuery,
+  EntityQueryRequest,
+  OnmsTableData
+} from './types'
 
 export interface OnmsQueryResultMeta extends QueryResultMeta {
-    entity_metadata: any[]
+  entity_metadata: any[]
 }
 
 export class EntityDataSource extends DataSourceApi<EntityQuery> {
@@ -87,31 +91,31 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
 
     async metricFindQuery(query, options) {
         if (isLocationQuery(query)) {
-            return metricFindLocations(this.simpleRequest)
+          return metricFindLocations(this.simpleRequest)
         }
 
         let entityType = getEntityTypeFromFuncName(options.entityType) || getQueryEntityType(query) || ''
+
         // this may be an attribute, a mapped attribute, or just the original query
-        let attribute = getAttributeMapping(entityType, query)
+        let queryOrAttribute = getAttributeMapping(entityType, query)
 
         if (isMetricMetadataQuery(options.queryType)) {
-            return this.handleMetricMetadataQuery(entityType, options.queryType, attribute, options.strategy)
+          return this.handleMetricMetadataQuery(entityType, options.queryType, queryOrAttribute, options.strategy)
         }
 
-        if (!attribute) {
-            console.warn('entity-ds: metricFindQuery: no attribute specified')
-            return []
+        if (!queryOrAttribute) {
+          console.warn('entity-ds: metricFindQuery: no attribute specified')
+          return []
         }
 
-        const info = parseFunctionInfo(attribute)
+        const info: OnmsEntityFunctionInfo = parseFunctionInfo(queryOrAttribute)
         entityType = info.entityType || entityType
-        attribute = info.attribute
 
         if (info.funcName === 'nodeFilter') {
-            return this.metricFindNodeFilterQuery(entityType, attribute)
+          return this.metricFindNodeFilterQuery(entityType, info.attribute, info.labelFormat, info.valueFormat)
         }
 
-        if (isSituationAttribute(attribute)) {
+        if (isSituationAttribute(info.attribute || queryOrAttribute)) {
             return [
                 { id: 'false', label: 'false', text: 'false' },
                 { id: 'true', label: 'true', text: 'true' }
@@ -119,7 +123,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         }
 
         const searchProperties: API.SearchProperty[] = await getSearchProperties(entityType, this.client)
-        const searchProperty: API.SearchProperty = searchProperties.filter(p => p.id === attribute)?.at(0)
+        const searchProperty: API.SearchProperty = searchProperties.filter(p => p.id === info.attribute)?.at(0)
 
         if (!searchProperty) {
             return []
@@ -154,17 +158,16 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         return await this.client.testConnection()
     }
 
-    async metricFindNodeFilterQuery(entityType, attribute) {
-        const filtermap = getNodeFilterMap(attribute)
+    async metricFindNodeFilterQuery(entityType: string, attribute: string, labelFormat = '', valueFormat = '') {
+        const filterMap = getNodeFilterMap(attribute)
         let filter = new API.Filter()
 
-        for (const pair of filtermap) {
+        for (const pair of filterMap) {
             const propertyKey = getAttributeMapping(entityType, pair[0])
             const propertyValue = pair[1]
 
-            if (propertyValue.startsWith('$')) {
-
-                const templateVariable = getTemplateVariable(this.templateSrv, propertyValue)
+            if (isTemplateVariableCandidate(propertyValue)) {
+                const templateVariable = getTemplateVariable(this.templateSrv, extractRawVariableName(propertyValue))
 
                 if (templateVariable && templateVariable.current.value) {
                     filter.withAndRestriction(new API.Restriction(propertyKey, API.Comparators.EQ, templateVariable.current.value))
@@ -177,9 +180,7 @@ export class EntityDataSource extends DataSourceApi<EntityQuery> {
         filter.limit = 0
         const nodes = await this.client.getNodeByFilter(filter)
 
-        return nodes.map(node => {
-            return { id: node.id, label: node.id, text: node.id ? String(node.id) : node.id, value: node.id }
-        })
+        return nodes.map(node => formatNodeToMetricFindValue(node, labelFormat, valueFormat))
     }
 
     async handleMetricMetadataQuery(entityType: string, queryType: string, attribute: string, strategy?: string) {

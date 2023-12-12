@@ -26,14 +26,36 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
     const { filteredProps, page, setPage, totalPages } = useAlarmProperties(props?.data?.series[0], props?.options?.alarmTable)
     const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(alarmIndexes, rowClicked, filteredProps, setState)
-    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(state.indexes,
-      props?.data?.series?.[0]?.fields || [], () => setMenuOpen(false),
-      props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser || false, client)
+
+    const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(
+      state.indexes,
+      props?.data?.series?.[0]?.fields || [],
+      () => setMenuOpen(false),
+      (actionName: string) => refreshPanel(actionName),
+      props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser || false,
+      client)    
+
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs()
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client)
 
     useAlarmTableRowHighlighter(state, table)
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
+
+    /**
+     * Callback when an action menu item is clicked to resend the datasource query and refresh the panel.
+     * Grafana does not seem to offer a clear way to do this programmatically, so we "click"
+     * the "Refresh dashboard" button.
+     */
+    const refreshPanel = (actionName: string) => {
+      if (props?.options?.alarmTable.alarmTableAdditional.autoRefresh) {
+        const refreshButton = document.body.querySelector('div.refresh-picker button') as HTMLElement
+        const testId = refreshButton?.dataset.testid
+
+        if (refreshButton && testId && testId.includes('RefreshPicker')) {
+          refreshButton.click()
+        }
+      }
+    }
 
     useEffect(() => {
       alarmIndexes.current = state.indexes

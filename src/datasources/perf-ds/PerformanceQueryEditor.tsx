@@ -131,9 +131,10 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
         const resourceData = await datasource.doResourcesRequest(remoteResourceId)
 
         if (resourceData) {
-            return Object.entries(resourceData.rrdGraphAttributes).map(([key, item]: [string, OnmsRrdGraphAttribute]) => {
+            return Object.entries(resourceData.rrdGraphAttributes).map(([key, item]: [string, OnmsRrdGraphAttribute | any]) => {
                 return { ...(item as {}), label: key }
             })
+
         } else {
             return []
         }

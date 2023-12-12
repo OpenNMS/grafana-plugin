@@ -1,3 +1,12 @@
+### v9.0.11
+
+Grafana Plugin for OpenNMS version 9.0.11 release contains a bug fix and enhancements.
+
+* [OPG-468](https://opennms.atlassian.net/browse/OPG-468) Add \`nodeId\(\)\` query to datasources
+* [OPG-469](https://opennms.atlassian.net/browse/OPG-469) Alarm Panel Columns Resizing
+* [OPG-470](https://opennms.atlassian.net/browse/OPG-470) Alarm Panel User Feedback
+* [OPG-472](https://opennms.atlassian.net/browse/OPG-472) Documentation for OPG nodeFilter labelFormat and valueFormat
+
 ### v9.0.10
 
 Grafana Plugin for OpenNMS version 9.0.10 release contains a bug fix and an enhancement.

@@ -1,279 +1,244 @@
-import { FunctionFormatter } from '../../lib/function_formatter';
+import {
+  findFunctions,
+  formatFunctions,
+  parenthesize,
+  replaceFunctions
+} from '../../lib/function_formatter'
 
 const FUNCS = {
-    exclamationer: (arg) => {
-        return arg + '!!!';
-    },
-    insulter: (person, insult) => {
-        return person + ' is a total ' + insult + '!';
-    }
-};
+  exclamationer: (arg) => {
+    return arg + '!!!'
+  },
+  insulter: (person, insult) => {
+    return person + ' is a total ' + insult + '!'
+  }
+}
 
 describe('OpenNMSPMDatasource :: LabelFormatter', () => {
-    describe('parenthesize', () => {
-        it('no parentheses', () => {
-            const parsed = FunctionFormatter.parenthesize('this is just a string');
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(1);
-            expect(parsed).toStrictEqual([
-                'this is just a string'
-            ]);
-        });
-        it('simple()', () => {
-            const parsed = FunctionFormatter.parenthesize('simple()');
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(1);
-            expect(parsed).toStrictEqual([
-                {
-                    name: 'simple',
-                    arguments: []
-                }
-            ]);
-        });
-        it('nestedParens((foo) or (bar))', () => {
-            const parsed = FunctionFormatter.parenthesize('nestedParens((foo) or (bar))');
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(1);
-            expect(parsed).toStrictEqual([
-                {
-                    name: 'nestedParens',
-                    arguments: ['(foo) or (bar)']
-                }
-            ]);
-        });
-        it('prefix nestedParens((yah)) and anotherNested((foo) or (bar)) or something', () => {
-            const parsed = FunctionFormatter.parenthesize('prefix nestedParens((yah)) and anotherNested((foo) or (bar), baz) or something');
-            expect(parsed).toBeDefined();
-            expect(parsed.length).toEqual(5);
-            expect(parsed).toStrictEqual([
-                'prefix ',
-                {
-                    name: 'nestedParens',
-                    arguments: ['(yah)']
-                },
-                ' and ',
-                {
-                    name: 'anotherNested',
-                    arguments: ['(foo) or (bar), baz']
-                },
-                ' or something'
-            ]);
-        });
-    });
-
-    describe('findFunctions()', () => {
-        it('find a simple function with no arguments', () => {
-            const found = FunctionFormatter.findFunctions('simpleFunction()');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(1);
-            expect(found).toStrictEqual([
-                {
-                    name: 'simpleFunction',
-                    arguments: []
-                }
-            ]);
-        });
-        it('find a simple function with one argument', () => {
-            const found = FunctionFormatter.findFunctions('simpleFunction(foo)');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(1);
-            expect(found).toStrictEqual([
-                {
-                    name: 'simpleFunction',
-                    arguments: ['foo']
-                }
-            ]);
-        });
-        it('find a simple function with many arguments', () => {
-            const found = FunctionFormatter.findFunctions('simpleFunction(foo, bar, baz)');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(1);
-            expect(found).toStrictEqual([
-                {
-                    name: 'simpleFunction',
-                    arguments: ['foo', 'bar', 'baz']
-                }
-            ]);
-        });
-        it('find multiple functions with arguments', () => {
-            const found = FunctionFormatter.findFunctions('simpleFunction(foo, bar, baz), anotherThing($nodes)');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(2);
-            expect(found).toStrictEqual([
-                {
-                    name: 'simpleFunction',
-                    arguments: ['foo', 'bar', 'baz']
-                },
-                {
-                    name: 'anotherThing',
-                    arguments: ['$nodes']
-                }
-            ]);
-        });
-        it('find multiple functions with parens inside them', () => {
-            const found = FunctionFormatter.findFunctions('foo((bar) or (baz), uh-huh) yo(something)');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(2);
-            expect(found).toStrictEqual([
-                {
-                    name: 'foo',
-                    arguments: ['(bar) or (baz)', 'uh-huh'],
-                },
-                {
-                    name: 'yo',
-                    arguments: ['something'],
-                },
-            ]);
-        });
-        it('GRAFANA-PLUGIN-131', () => {
-            const found = FunctionFormatter.findFunctions('nodeFilter((nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’))');
-            expect(found).toBeDefined();
-            expect(found.length).toEqual(1);
-            expect(found).toStrictEqual([
-                {
-                    name: 'nodeFilter',
-                    arguments: ['(nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’)'],
-                },
-            ]);
-        });
-        
-    });
-
-    describe('replace()', () => {
-        it('do not replace an unmatched function', () => {
-            const res = FunctionFormatter.replace('unmatchedFunction()', {
-                simpleFunction: () => {
-                    return 'foo';
-                }
-            });
-            expect(res).toEqual('unmatchedFunction()');
-        });
-        it('replace a simple function without arguments', () => {
-            const res = FunctionFormatter.replace('simpleFunction()', {
-                simpleFunction: () => {
-                    return 'foo';
-                }
-            });
-            expect(res).toEqual('foo');
-        });
-        it('replace a simple function with an argument', () => {
-            const res = FunctionFormatter.replace('exclamationer(foo)', FUNCS);
-            expect(res).toEqual('foo!!!');
-        });
-        it('replace a simple function with multiple arguments', () => {
-            const res = FunctionFormatter.replace('insulter(Bob, jerk)', FUNCS);
-            expect(res).toEqual('Bob is a total jerk!');
-        });
-        it('replace multiple functions', () => {
-            const res = FunctionFormatter.replace('exclamationer(Hey)  insulter(Bob, jerk)', FUNCS);
-            expect(res).toEqual('Hey!!!  Bob is a total jerk!');
-        });
-        
-    });
-
-    const metadata = {
-        "resources": [
-            {
-                "id": "node[situation-test:nodea].responseTime[127.0.0.1]",
-                "label": "127.0.0.1",
-                "name": "localhost",
-                "parent-id": "node[situation-test:nodea]",
-                "node-id": 1
-            },
-            {
-                "id": "node[situation-test:nodeb].responseTime[127.0.0.1]",
-                "label": "127.0.0.1",
-                "name": "localhost",
-                "parent-id": "node[situation-test:nodeb]",
-                "node-id": 2
-            },
-            {
-                "id": "node[situation-test:nodeb].interfaceSnmp[en0-000123456789]",
-                "label": "en0 (127.0.0.1, 304.2 Mbps)",
-                "name": "en0-000123456789",
-                "parent-id": "node[situation-test:nodeb]",
-                "node-id": 2
-            }
-        ],
-        "nodes": [
-            {
-                "id": 1,
-                "label": "ThisIsAVeryLongNodeLabel1",
-                "foreign-source": "situation-test",
-                "foreign-id": "nodea"
-            },
-            {
-                "id": 2,
-                "label": "ThisIsAVeryLongNodeLabel2",
-                "foreign-source": "situation-test",
-                "foreign-id": "nodeb"
-            }
+  describe('parenthesize', () => {
+    test.each([
+      ['no parentheses', 'this is just a string', 1, ['this is just a string']],
+      ['simple()', 'simple()', 1,
+        [
+          {
+            name: 'simple',
+            arguments: []
+          }
         ]
-    };
+      ],
+      ['nestedParens((foo) or (bar))', 'nestedParens((foo) or (bar))', 1,
+        [
+          {
+            name: 'nestedParens',
+            arguments: ['(foo) or (bar)']
+          }
+        ]
+      ],
+      [
+        'prefix nestedParens((yah)) and anotherNested((foo) or (bar)) or something',
+        'prefix nestedParens((yah)) and anotherNested((foo) or (bar), baz) or something',
+        5,
+        [
+          'prefix ',
+          {
+            name: 'nestedParens',
+            arguments: ['(yah)']
+          },
+          ' and ',
+          {
+            name: 'anotherNested',
+            arguments: ['(foo) or (bar), baz']
+          },
+          ' or something'
+        ]
+      ]
+    ]) (
+      '%s',
+      (title, query, length, expected) => {
+        const parsed = parenthesize(query)
 
-    describe('format()', () => {
-        it('nodeToLabel(foreignSource:foreignId)', () => {
-            const res = FunctionFormatter.format('nodeToLabel(situation-test:nodea)', metadata);
-            expect(res).toEqual('ThisIsAVeryLongNodeLabel1');
-        });
-        it('nodeToLabel(nodeId)', () => {
-            const res = FunctionFormatter.format('nodeToLabel(1)', metadata);
-            expect(res).toEqual('ThisIsAVeryLongNodeLabel1');
-        });
-        it('nodeToLabel(invalid)', () => {
-            const res = FunctionFormatter.format('nodeToLabel(3)', metadata);
-            expect(res).toEqual('3');
-        });
+        expect(parsed).toBeDefined()
+        expect(parsed.length).toEqual(length)
+        expect(parsed).toStrictEqual(expected)
+      }
+    )
+  })
 
-        it('resourceToLabel(resourceId)', () => {
-            const res = FunctionFormatter.format('resourceToLabel(node[situation-test:nodea].responseTime[127.0.0.1])', metadata);
-            expect(res).toEqual('127.0.0.1');
-        });
-        it('resourceToLabel(situation-test:nodea, responseTime[127.0.0.1])', () => {
-            const res = FunctionFormatter.format('resourceToLabel(situation-test:nodea, responseTime[127.0.0.1])', metadata);
-            expect(res).toEqual('127.0.0.1');
-        });
-        it('resourceToLabel(invalid)', () => {
-            const res = FunctionFormatter.format('resourceToLabel(foo)', metadata);
-            expect(res).toEqual('foo');
-        });
-        it('resourceToLabel(invalid, invalid)', () => {
-            const res = FunctionFormatter.format('resourceToLabel(foo, bar)', metadata);
-            expect(res).toEqual('foo.bar');
-        });
+  describe('findFunctions()', () => {
+    test.each([
+      ['find a simple function with no arguments', 'simpleFunction()', 1,
+        [
+          {
+            name: 'simpleFunction',
+            arguments: []
+          }
+        ]
+      ],
+      ['find a simple function with no arguments', 'simpleFunction()', 1,
+        [
+          {
+            name: 'simpleFunction',
+            arguments: []
+          }
+        ]
+      ],
+      ['find a simple function with one argument', 'simpleFunction(foo)', 1,
+        [
+          {
+            name: 'simpleFunction',
+            arguments: ['foo']
+          }
+        ]
+      ],
+      ['find a simple function with many arguments', 'simpleFunction(foo, bar, baz)', 1,
+        [
+          {
+            name: 'simpleFunction',
+            arguments: ['foo', 'bar', 'baz']
+          }
+        ]
+      ],
+      ['find multiple functions with arguments', 'simpleFunction(foo, bar, baz), anotherThing($nodes)', 2,
+        [
+          {
+            name: 'simpleFunction',
+            arguments: ['foo', 'bar', 'baz']
+          },
+          {
+            name: 'anotherThing',
+            arguments: ['$nodes']
+          }
+        ]
+      ],
+      ['find multiple functions with parens inside them', 'foo((bar) or (baz), uh-huh) yo(something)', 2,
+        [
+          {
+            name: 'foo',
+            arguments: ['(bar) or (baz)', 'uh-huh'],
+          },
+          {
+            name: 'yo',
+            arguments: ['something'],
+          }
+        ]
+      ],
+      ['GRAFANA-PLUGIN-131', 'nodeFilter((nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’))', 1,
+        [
+          {
+            name: 'nodeFilter',
+            arguments: ['(nodeLabel like ‘This%’) or (nodeLabel like ‘Down%’)'],
+          }
+        ]
+      ]
+    ]) (
+      'findFunctions: %s',
+      (title, query, length, expected) => {
+        const found = findFunctions(query)
 
-        it('resourceToName(resourceId)', () => {
-            const res = FunctionFormatter.format('resourceToName(node[situation-test:nodea].responseTime[127.0.0.1])', metadata);
-            expect(res).toEqual('localhost');
-        });
-        it('resourceToName(situation-test:nodea, responseTime[127.0.0.1])', () => {
-            const res = FunctionFormatter.format('resourceToName(situation-test:nodea, responseTime[127.0.0.1])', metadata);
-            expect(res).toEqual('localhost');
-        });
-        it('resourceToName(invalid)', () => {
-            const res = FunctionFormatter.format('resourceToName(foo)', metadata);
-            expect(res).toEqual('foo');
-        });
-        it('resourceToName(invalid, invalid)', () => {
-            const res = FunctionFormatter.format('resourceToName(foo, bar)', metadata);
-            expect(res).toEqual('foo.bar');
-        });
+        expect(found).toBeDefined()
+        expect(found.length).toEqual(length)
+        expect(found).toStrictEqual(expected)
+      }
+    )
+  })
 
-        it('resourceToInterface(resourceId)', () => {
-            const res = FunctionFormatter.format('resourceToInterface(node[situation-test:nodeb].interfaceSnmp[en0-000123456789])', metadata);
-            expect(res).toEqual('en0');
-        });
-        it('resourceToInterface(situation-test:nodeb, interfaceSnmp[en0-000123456789])', () => {
-            const res = FunctionFormatter.format('resourceToInterface(situation-test:nodeb, interfaceSnmp[en0-000123456789])', metadata);
-            expect(res).toEqual('en0');
-        });
-        it('resourceToInterface(invalid)', () => {
-            const res = FunctionFormatter.format('resourceToInterface(foo)', metadata);
-            expect(res).toEqual('foo');
-        });
-        it('resourceToInterface(invalid, invalid)', () => {
-            const res = FunctionFormatter.format('resourceToInterface(foo, bar)', metadata);
-            expect(res).toEqual('foo.bar');
-        });
-    });
-});
+  describe('replace()', () => {
+    it('do not replace an unmatched function', () => {
+      const res = replaceFunctions('unmatchedFunction()', {
+          simpleFunction: () => {
+              return 'foo';
+          }
+      })
+
+      expect(res).toEqual('unmatchedFunction()')
+    })
+
+    it('replace a simple function without arguments', () => {
+      const res = replaceFunctions('simpleFunction()', {
+          simpleFunction: () => {
+              return 'foo';
+          }
+      })
+
+      expect(res).toEqual('foo')
+    })
+
+    test.each([
+        ['replace a simple function with an argument', 'exclamationer(foo)', 'foo!!!'],
+        ['replace a simple function with multiple arguments', 'insulter(Bob, jerk)', 'Bob is a total jerk!'],
+        ['replace multiple functions', 'exclamationer(Hey)  insulter(Bob, jerk)', 'Hey!!!  Bob is a total jerk!']
+      ]) (
+        '%s',
+        (title, query, expected) => {
+          const res = replaceFunctions(query, FUNCS)
+          expect(res).toEqual(expected)
+        }
+      )
+  })
+
+  const metadata = {
+    "resources": [
+      {
+        "id": "node[situation-test:nodea].responseTime[127.0.0.1]",
+        "label": "127.0.0.1",
+        "name": "localhost",
+        "parent-id": "node[situation-test:nodea]",
+        "node-id": 1
+      },
+      {
+        "id": "node[situation-test:nodeb].responseTime[127.0.0.1]",
+        "label": "127.0.0.1",
+        "name": "localhost",
+        "parent-id": "node[situation-test:nodeb]",
+        "node-id": 2
+      },
+      {
+        "id": "node[situation-test:nodeb].interfaceSnmp[en0-000123456789]",
+        "label": "en0 (127.0.0.1, 304.2 Mbps)",
+        "name": "en0-000123456789",
+        "parent-id": "node[situation-test:nodeb]",
+        "node-id": 2
+      }
+    ],
+    "nodes": [
+      {
+        "id": 1,
+        "label": "ThisIsAVeryLongNodeLabel1",
+        "foreign-source": "situation-test",
+        "foreign-id": "nodea"
+      },
+      {
+        "id": 2,
+        "label": "ThisIsAVeryLongNodeLabel2",
+        "foreign-source": "situation-test",
+        "foreign-id": "nodeb"
+      }
+    ]
+  }
+
+  describe('formatFunctions()', () => {
+    test.each([
+      ['nodeToLabel(foreignSource:foreignId)', 'nodeToLabel(situation-test:nodea)', 'ThisIsAVeryLongNodeLabel1'],
+      ['nodeToLabel(nodeId)', 'nodeToLabel(1)', 'ThisIsAVeryLongNodeLabel1'],
+      ['nodeToLabel(invalid)', 'nodeToLabel(3)', '3'],
+      ['resourceToLabel(resourceId)', 'resourceToLabel(node[situation-test:nodea].responseTime[127.0.0.1])', '127.0.0.1'],
+      ['resourceToLabel(situation-test:nodea, responseTime[127.0.0.1])', 'resourceToLabel(situation-test:nodea, responseTime[127.0.0.1])', '127.0.0.1'],
+      ['resourceToLabel(invalid)', 'resourceToLabel(foo)', 'foo'],
+      ['resourceToLabel(invalid, invalid)', 'resourceToLabel(foo, bar)', 'foo.bar'],
+      ['resourceToName(resourceId)', 'resourceToName(node[situation-test:nodea].responseTime[127.0.0.1])', 'localhost'],
+      ['resourceToName(situation-test:nodea, responseTime[127.0.0.1])', 'resourceToName(situation-test:nodea, responseTime[127.0.0.1])', 'localhost'],
+      ['resourceToName(invalid)', 'resourceToName(foo)', 'foo'],
+      ['resourceToName(invalid, invalid)', 'resourceToName(foo, bar)', 'foo.bar'],
+      ['resourceToInterface(resourceId)', 'resourceToInterface(node[situation-test:nodeb].interfaceSnmp[en0-000123456789])', 'en0'],
+      ['resourceToInterface(situation-test:nodeb, interfaceSnmp[en0-000123456789])', 'resourceToInterface(situation-test:nodeb, interfaceSnmp[en0-000123456789])', 'en0'],
+      ['resourceToInterface(invalid)', 'resourceToInterface(foo)', 'foo'],
+      ['resourceToInterface(invalid, invalid)', 'resourceToInterface(foo, bar)', 'foo.bar']
+    ]) (
+      'formatFunctions: %s',
+      (title, query, expected) => {
+        const res = formatFunctions(query, metadata)
+        expect(res).toEqual(expected)
+      }
+    )
+  })
+})
