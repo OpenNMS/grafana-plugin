@@ -169,7 +169,7 @@ For an example of a variable query, see <<panel_configuration:dynamic-dashboard.
 The `locations()` query returns a list of all available node locations.
 You can create a variable with a `locations()` query and use that variable inside a `nodeFilter()` query to filter the number of nodes displayed by location.
 
-.Example expressions using `nodeFilter()`
+.Example `locations()` expressions using `nodeFilter()`
 [source,]
 ----
 nodeFilter(location='Default')
@@ -177,7 +177,7 @@ nodeFilter(location='$location') <1>
 ----
 <1> This example assumes you have a `location` variable with a `locations()` query.
 
-=== nodeFilter(<filterQuery>)
+=== nodeFilter(<filterQuery>[,labelFormat[,valueFormat]])
 
 The `nodeFilter()` query returns a list of nodes which match the given filter expression.
 
@@ -187,10 +187,12 @@ The `nodeFilter()` query returns a list of nodes which match the given filter ex
 nodeFilter(catincProduction & catincLinux) <1>
 nodeFilter(location='Default' & catincProduction & catincSNMP) <2>
 nodeFilter() <3>
+nodeFilter(labelFormat=id:label,valueFormat=id) <4>
 ----
 <1> Returns the set of nodes that are in the `Production` and `Linux` categories.
 <2> Returns the set of nodes that are in the `SNMP` and `Production` categories and the `Default` location.
 <3> Returns all nodes in inventory.
+<4> Returns all nodes in inventory, with label and value formatting applied.
 
 Only one argument is available for the `nodeFilter()` query:
 
@@ -202,6 +204,11 @@ Only one argument is available for the `nodeFilter()` query:
 | Any valid node query syntax as used by core OpenNMS services (see https://docs.opennms.com/horizon/latest/reference/configuration/filters/filters.html[Filters] in the main OpenNMS documentation).
 If omitted, all nodes are returned.
 |===
+
+`labelFormat` and `valueFormat` attributes can be specified.
+Please refer to the <<datasources:entity_datasource.adoc#ds-nodefilter-label-value-formats, Entity Datasource documentation>> for more information on these options.
+By default, Performance Datasource variables default the `labelFormat` to `label` and the `value` to `fs:fid` if the node is part of a requisition, otherwise the `value` will be the node `id.`
+
 
 === nodeResources(<nodeId>[,textProperty[,resourceType[,regexFilter]]])
 
