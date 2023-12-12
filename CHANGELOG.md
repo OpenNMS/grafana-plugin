@@ -1,3 +1,29 @@
+### v9.0.11
+
+Grafana Plugin for OpenNMS version 9.0.11 release contains a bug fix and enhancements.
+
+* [OPG-468](https://opennms.atlassian.net/browse/OPG-468) Add \`nodeId\(\)\` query to datasources
+* [OPG-469](https://opennms.atlassian.net/browse/OPG-469) Alarm Panel Columns Resizing
+* [OPG-470](https://opennms.atlassian.net/browse/OPG-470) Alarm Panel User Feedback
+* [OPG-472](https://opennms.atlassian.net/browse/OPG-472) Documentation for OPG nodeFilter labelFormat and valueFormat
+
+### v9.0.10
+
+Grafana Plugin for OpenNMS version 9.0.10 release contains a bug fix and an enhancement.
+
+* [OPG-464](https://opennms.atlassian.net/browse/OPG-464) Node ID field missing from some Entity DS results
+* [OPG-410](https://opennms.atlassian.net/browse/OPG-410) Add up/down status to Monitored Services entity
+
+### v9.0.9
+
+Grafana Plugin for OpenNMS version 9.0.9 release contains a number of bug fixes and enhancements.
+
+* [OPG-448](https://opennms.atlassian.net/browse/OPG-448) Converter outputs extra characters in resource name
+* [OPG-454](https://opennms.atlassian.net/browse/OPG-454) Flow query with multi-value withHost does not return data
+* [OPG-460](https://opennms.atlassian.net/browse/OPG-460) Entities DS - Nodes Table - Category Values showing under Primary SNMP ifIndex
+* [OPG-461](https://opennms.atlassian.net/browse/OPG-461) Entity datasource no longer includes node ID / node label in IP interface query results
+* [OPG-463](https://opennms.atlassian.net/browse/OPG-463) Entitles DS Tables Limit does not allow a value of zero
+
 ### v9.0.8
 
 Grafana Plugin for OpenNMS version 9.0.8 is a re-release of version 9.0.7 which contains a number of bug fixes and enhancements.
