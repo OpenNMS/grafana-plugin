@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { PanelOptionsEditorProps } from '@grafana/data'
 import { AlarmTableAdditional } from './AlarmTableAdditional'
 import { AlarmTableAlarms } from './AlarmTableAlarms'
+import { AlarmTableColumnSizes } from './AlarmTableColumnSizes'
 import { AlarmTableData } from './AlarmTableData'
 import { AlarmTablePaging } from './AlarmTablePaging'
 
@@ -27,6 +28,7 @@ export const AlarmTableOptions: React.FC<PanelOptionsEditorProps<{}>> = ({ conte
       <AlarmTableData context={context} onChange={(v) => onOptionChange(v, 'alarmTableData')} />
       <AlarmTablePaging context={context} onChange={(v) => onOptionChange(v, 'alarmTablePaging')} />
       <AlarmTableAlarms onChange={(v) => onOptionChange(v, 'alarmTableAlarms')} alarmTable={context.options?.alarmTable} />
+      <AlarmTableColumnSizes context={context} onChange={(v) => onOptionChange(v, 'alarmTableColumnSizes')} columnState={context.options?.alarmTable?.alarmTableColumnSizes} />
     </>
   )
 }

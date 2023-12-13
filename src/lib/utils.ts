@@ -318,20 +318,54 @@ export const getResourceId = (resource): string => {
 }
 
 /**
- * Modify a string by trimming the starting and ending character(s) in a string passed in the arguments
- * If no ending character is defined will use start character as estart and end character(s).
- * @param str string to modify 
- * @param sStart character/string to trim at start of the string
- * @param sEnd character/string to trim at the end of a string
- * @returns the string without the start and end characters passed as argument (if they exist)
+ * Returns true if 'variable' appears to be a Grafana template variable, i.e. in the form '${var}' or '$var'.
  */
-export const trimChar = (str: string, sStart: string, sEnd?: string) => {
-  str = str.trim()
-  let result: string = str
-  sEnd ??= sStart
+export const isTemplateVariableCandidate = (variable: string) => {
+  variable = (variable || '').trim()
 
-  if (str.startsWith(sStart) && str.endsWith(sEnd)) {
-    result = str.substring(str.indexOf(sStart) + 1, str.lastIndexOf(sEnd))
+  return !!variable &&
+    (
+      (variable.startsWith('${') && variable.endsWith('}')) ||
+      (variable.startsWith('$') && !variable.includes('{') && !variable.includes('}'))
+    )
+}
+
+/**
+ * Given a Grafana template variable name in the form '$var' or '${var}', return 'var', i.e. the "raw" variable name.
+ */
+export const extractRawVariableName = (templateVar: string) => {
+  const trimmed = (templateVar || '').trim()
+
+  if (trimmed && trimmed.startsWith('$')) {
+    return trimChar(trimChar(trimmed, '$'), '{', '}')
+  }
+
+  return trimmed
+}
+
+/**
+ * Modify a string by trimming the starting and ending character(s) in a string passed in the arguments.
+ * Ending character is optional.
+ * @param str string to modify 
+ * @param start character/string to trim at start of the string
+ * @param end If specified, character/string to trim at the end of a string
+ * @returns the string without the start and end characters passed as arguments (if they exist)
+ */
+export const trimChar = (str: string, start: string, end?: string) => {
+  str = (str || '').trim()
+
+  if (!str || !start) {
+    return str
+  }
+
+  let result: string = str
+
+  if (str.startsWith(start) && (!end || str.endsWith(end))) {
+    if (end && end.length > 0) {
+      result = str.substring(str.indexOf(start) + 1, str.lastIndexOf(end))
+    } else {
+      result = str.substring(str.indexOf(start) + 1)
+    }
   }
 
   return result

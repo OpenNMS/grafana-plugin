@@ -6,6 +6,7 @@ export interface AlarmTableControlState {
 }
 
 export interface AlarmTableAdditionalState {
+  autoRefresh: boolean
   useGrafanaUser: boolean
 }
 
@@ -26,12 +27,23 @@ export interface AlarmTablePaginationState {
   fontSize?: SelectableValue<string | number>
 }
 
+export interface AlarmTableColumnSizeItem {
+  fieldName: string
+  width: number
+}
+
+export interface AlarmTableColumnSizeState {
+  active: boolean
+  columnSizes: AlarmTableColumnSizeItem[]
+}
+
 export interface AlarmTableControlProps {
   alarmTable: {
-    alarmTableAdditional: AlarmTableAdditionalState,
-    alarmTableAlarms: AlarmTableAlarmDataState,
-    alarmTableData: AlarmTableAlarmDataState,
+    alarmTableAdditional: AlarmTableAdditionalState
+    alarmTableAlarms: AlarmTableAlarmDataState
+    alarmTableData: AlarmTableAlarmDataState
     alarmTablePaging: AlarmTablePaginationState
+    alarmTableColumnSizes?: AlarmTableColumnSizeState
   }
 }
 
