@@ -1,6 +1,6 @@
 import { ArrayVector, DataFrame, Field, FieldType } from '@grafana/data'
 import { getTemplateSrv } from '@grafana/runtime'
-import { FunctionFormatter } from 'lib/function_formatter'
+import { formatFunctions } from 'lib/function_formatter'
 import { trimChar, isString } from 'lib/utils'
 import { OnmsMeasurementsQueryMetadata, OnmsMeasurementsQueryResponse, OnmsMeasurementsQueryResponseColumnItem } from './types'
 
@@ -97,7 +97,7 @@ const measurementColumnToDataFrame = (
     values: new ArrayVector<number>(windowedTimestamps)
   } as Field)
 
-  const formattedLabel = metadata?.resources ? FunctionFormatter.format(label, metadata) : label
+  const formattedLabel = metadata?.resources ? formatFunctions(label, metadata) : label
 
   if (column) {
     // Only use values within the timestamp window
