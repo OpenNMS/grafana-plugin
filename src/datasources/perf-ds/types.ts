@@ -6,7 +6,8 @@ import { PerformanceDataSource } from './PerformanceDataSource'
  * These are options configured for each DataSource instance
  */
 export interface PerformanceDataSourceOptions extends DataSourceJsonData {
-  path?: string;
+  path?: string
+  allowManualOverrideExtensions?: boolean
 }
 
 // TODO: check which of these are required
