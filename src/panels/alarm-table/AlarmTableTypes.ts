@@ -6,7 +6,7 @@ export interface AlarmTableControlState {
 }
 
 export interface AlarmTableAdditionalState {
-  autoRefresh: boolean
+  displayActionNotice: boolean
   useGrafanaUser: boolean
 }
 

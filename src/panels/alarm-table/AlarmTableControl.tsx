@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import { PanelProps } from '@grafana/data'
+import { AppEvents, PanelProps } from '@grafana/data'
+import { getAppEvents } from '@grafana/runtime'
 import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui'
 import { AlarmTableMenu } from './AlarmTableMenu'
 import { AlarmTableModalContent } from './modal/AlarmTableModalContent'
@@ -14,9 +15,9 @@ import { useAlarmTableSelection } from './hooks/useAlarmTableSelection'
 import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs'
 import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
 import { useAlarm } from './hooks/useAlarm'
+import { capitalize } from 'lib/utils'
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
-
     const alarmIndexes = useRef<boolean[]>([] as boolean[])
 
     const { state, setState, rowClicked, soloIndex } = useAlarmTableSelection(() => {
@@ -31,8 +32,8 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
       state.indexes,
       props?.data?.series?.[0]?.fields || [],
       () => setMenuOpen(false),
-      (actionName: string) => refreshPanel(actionName),
-      props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser || false,
+      (actionName: string, results: any[]) => displayActionNotice(actionName, results),
+      props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser ?? false,
       client)    
 
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs()
@@ -42,17 +43,29 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
 
     /**
-     * Callback when an action menu item is clicked to resend the datasource query and refresh the panel.
-     * Grafana does not seem to offer a clear way to do this programmatically, so we "click"
-     * the "Refresh dashboard" button.
+     * Callback when an action menu item is clicked to display a message.
+     * Grafana does not offer a clear way to refresh the panel programmatically, so we inform the user
+     * they must do so.
      */
-    const refreshPanel = (actionName: string) => {
-      if (props?.options?.alarmTable.alarmTableAdditional.autoRefresh) {
-        const refreshButton = document.body.querySelector('div.refresh-picker button') as HTMLElement
-        const testId = refreshButton?.dataset.testid
+    const displayActionNotice = (actionName: string, results: any[]) => {
+      if (props?.options?.alarmTable.alarmTableAdditional.displayActionNotice) {
+        const numErrors = results.filter(r => r?.status === 'error').reduce((acc: number, result) => acc + 1, 0)
 
-        if (refreshButton && testId && testId.includes('RefreshPicker')) {
-          refreshButton.click()
+        const appEvents = getAppEvents()
+        const capitalAction = capitalize(actionName)
+
+        if (!numErrors) {
+          appEvents.publish({
+            type: AppEvents.alertSuccess.name,
+            payload: [`Alarm ${capitalAction} was successful. You may need to refresh the panel for the updated status to display.`]
+          })
+        } else {
+          const message = numErrors === 1 ? `Error processing alarm ${capitalAction}` : `There were ${numErrors} errors processing alarm ${capitalAction}`
+
+          appEvents.publish({
+            type: AppEvents.alertError.name,
+            payload: [message]
+          })
         }
       }
     }
