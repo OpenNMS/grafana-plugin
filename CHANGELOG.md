@@ -1,3 +1,10 @@
+### v9.0.12
+
+Grafana Plugin for OpenNMS version 9.0.12 release is a re-release of 9.0.11 with minor fixes.
+
+* [OPG-466](https://opennms.atlassian.net/browse/OPG-466) Unable to filter Alarm query by a multi-value node variable
+* [OPG-474](https://opennms.atlassian.net/browse/OPG-474) Display notice after Alarm Panel action instead of refreshing panel
+
 ### v9.0.11
 
 Grafana Plugin for OpenNMS version 9.0.11 release contains a bug fix and enhancements.
