@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrayVector, DataFrame } from '@grafana/data'
+import { ArrayVector, DataFrame, Field } from '@grafana/data'
 import cloneDeep from 'lodash/cloneDeep'
 import { AlarmTableColumnSizeItem } from '../AlarmTableTypes'
 
@@ -73,12 +73,16 @@ export const useAlarmProperties = (oldProperties: DataFrame, alarmTable) => {
             if (rowsPerPage > 0 && totalRows > rowsPerPage) {
                 const myPage = page
 
-                filteredProps.fields = filteredProps.fields.map((field) => {
-                    const oldValues = [...field.values.buffer]
+                filteredProps.fields = filteredProps.fields.map((field: Field) => {
+                    // field.values is a Vector<any>, safest to call 'toArray()'
+                    // rather than assume it's an ArrayVector with a 'buffer' field
+                    const values = field.values.toArray()
                     const start = (myPage - 1) * rowsPerPage
                     const end = start + rowsPerPage
-                    const spliced = oldValues.splice(start, end)
-                    field.values = new ArrayVector(spliced) 
+
+                    const sliced = values.length > start ? values.slice(start, end) : []
+                    field.values = new ArrayVector(sliced)
+
                     return field
                 })
 

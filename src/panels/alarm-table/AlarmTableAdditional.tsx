@@ -11,16 +11,16 @@ interface AlarmTableAdditionalProps {
     context: any;
 }
 
-/** Build the default AlarmTableAdditionalState, enabling autoRefresh by default. */
+/** Build the default AlarmTableAdditionalState, enabling displayActionNotice by default. */
 const buildDefaultState = (state: AlarmTableAdditionalState | undefined) => {
   if (state) {
     return {
       ...state,
-      autoRefresh: state.autoRefresh === undefined ? true : state.autoRefresh
+      displayActionNotice: state.displayActionNotice === undefined ? true : state.displayActionNotice
     }
   }
 
-  return { autoRefresh: true, useGrafanaUser: false }
+  return { displayActionNotice: true, useGrafanaUser: false }
 }
 
 export const AlarmTableAdditional: React.FC<AlarmTableAdditionalProps> = ({ onChange, context }) => {
@@ -35,8 +35,8 @@ export const AlarmTableAdditional: React.FC<AlarmTableAdditionalProps> = ({ onCh
       'NOTE: The data source must be configured using an user with the \'admin\' role ' +
       'in order to perform actions as other users.'
 
-    const autoRefreshTooltipText = 'Enables auto-refresh after performing an action such as acknowledge, clear or escalate. ' +
-      'NOTE: This will refresh the entire dashboard.'
+    const actionNoticeTooltipText = 'Enables a notice to be displayed after performing an action such as acknowledge, clear or escalate ' +
+      'which will notify the user whether the action succeeded and prompt them to refresh the panel.'
 
     useEffect(() => {
         onChange(alarmTableAdditional);
@@ -61,11 +61,11 @@ export const AlarmTableAdditional: React.FC<AlarmTableAdditionalProps> = ({ onCh
           </InlineField>
         </InlineFieldRow>
         <InlineFieldRow>
-          <InlineField label='Auto refresh' tooltip={autoRefreshTooltipText}>
+          <InlineField label='Display action notice' tooltip={actionNoticeTooltipText}>
             <div style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
               <Switch
-                value={alarmTableAdditional.autoRefresh}
-                onChange={() => setAlarmTableState('autoRefresh', !alarmTableAdditional.autoRefresh)} />
+                value={alarmTableAdditional.displayActionNotice}
+                onChange={() => setAlarmTableState('displayActionNotice', !alarmTableAdditional.displayActionNotice)} />
             </div>
           </InlineField>
         </InlineFieldRow>

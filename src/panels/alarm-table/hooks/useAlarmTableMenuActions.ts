@@ -10,8 +10,7 @@ import { getAlarmIdFromFields } from '../AlarmTableHelper'
  * @param indexes Selection state of alarms in the table (0-based, by row).
  * @param fields Alarm Field data, from DataFrame API response.
  * @param closeMenu Function from the calling component to close the action menu.
- * @param actionCallback A callback to perform after an action; currently used to refresh the alarm panel (actually, the dashboard)
- *   after an 'acknowledge', 'clear' or 'escalate'. Pass 'null' to disable.
+ * @param actionCallback A callback to perform after an action; currently used to display a notice to the user.
  * @param useGrafanaUser If true, use the current Grafana user for the API call; this username will be saved in the 
  *   OpenNMS database as the user who performed the action.
  *   Otherwise uses the user configured in the Entity datasource.
@@ -22,7 +21,7 @@ export const useAlarmTableMenuActions = (
   indexes: boolean[],
   fields: Field[],
   closeMenu: () => void,
-  actionCallback: (actionName: string) => void | null,
+  actionCallback: (actionName: string, results: any[]) => void | null,
   useGrafanaUser: boolean,
   client: ClientDelegate | undefined) => {
 
@@ -47,21 +46,33 @@ export const useAlarmTableMenuActions = (
   }, [useGrafanaUser])
 
   const loopAction = async (action) => {
+    // result will be undefined for success, a GrafanaError object on failure
+    const results: any[] = []
+
     for (let i = 0; i < indexes.length; i++) {
       if (indexes[i]) {
         const alarmId = getAlarmIdFromFields(fields, i)
-        await action(alarmId, user?.login)
+
+        try {
+          const res = await action(alarmId, user?.login)
+          results.push(res)
+        } catch (e) {
+          // e is a GrafanaError, see opennms-js
+          results.push(e)
+        }
       }
     }
+
+    return results
   }
 
   const clear = async () => {
-    await loopAction(async (alarmId, userId) => {
-      await client?.doClear(alarmId, user?.login)
+    const results = await loopAction(async (alarmId, userId) => {
+      return await client?.doClear(alarmId, user?.login)
     })
 
     if (actionCallback) {
-      actionCallback('clear')
+      actionCallback('clear', results)
     }
 
     closeMenu()
@@ -73,24 +84,24 @@ export const useAlarmTableMenuActions = (
   }
 
   const escalate = async () => {
-    await loopAction(async (alarmId, userId) => {
-      await client?.doEscalate(alarmId, user?.login)
+    const results = await loopAction(async (alarmId, userId) => {
+      return await client?.doEscalate(alarmId, user?.login)
     })
     
     if (actionCallback) {
-      actionCallback('escalate')
+      actionCallback('escalate', results)
     }
 
     closeMenu()
   }
 
   const acknowledge = async () => {
-    await loopAction(async (alarmId, userId) => {
-      await client?.doAck(alarmId, user?.login)
+    const results = await loopAction(async (alarmId, userId) => {
+      return await client?.doAck(alarmId, user?.login)
     })
 
     if (actionCallback) {
-      actionCallback('acknowledge')
+      actionCallback('acknowledge', results)
     }
 
     closeMenu()
