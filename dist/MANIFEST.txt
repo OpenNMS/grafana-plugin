@@ -9,10 +9,10 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1702481107240,
+  "time": 1704475436157,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "CHANGELOG.md": "54f2362dca81c3574f8dfa72872dd6570bd7659c5c29eb478ffd1edee11c166f",
+    "CHANGELOG.md": "ea721ae316d21543c7b89c86e965d59035ed48f5ffc9b05c45b3892bb24b8cfd",
     "LICENSE": "bc8d96831c4914a537bd291adcfccc5559934f7435900200dc9dee767afc5097",
     "README.md": "1a34c1202a570cce1bf01ba0059672c12cefad7baca7f93b56a467ef35ae3d6c",
     "dashboards/about.json": "ffb2b80e2f6ec9f99d45c8998095c13d96197778c5f19f96dd64be5bc76dec8f",
@@ -21,9 +21,9 @@ Hash: SHA512
     "dashboards/flow_deep_dive.json": "91007eb32dc2f9cd4debc0fc365ce6c3baa13ece0cf219ad5c670c6172b8b42e",
     "datasources/entity-ds/README.md": "1defafff3b5a2f01cefb58312a02b2346a54c7e4ff50692919c6c565e04e7421",
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
-    "datasources/entity-ds/module.js": "fc4d25473ca9ffa9cc87272c07477970139fd1b5596af4010b896ce9ea856b5e",
+    "datasources/entity-ds/module.js": "3f2a7f5ac9b96f27c298a1bd9ed50fe637e95795322ad79c72dab0627ac55976",
     "datasources/entity-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/entity-ds/module.js.map": "c07aef6577ed9d1c31c724fa67d79509c09252e306c0e6a9d068cb54660e9f04",
+    "datasources/entity-ds/module.js.map": "2e406aa49fc01ad91f9fdb5fcf3b7e081897bcdb7315413a5f8b9f56a09e3666",
     "datasources/entity-ds/plugin.json": "065c5c5ee1fe69e8b99ed5a203b2ff93fd4aab00433dcb4e970f6098e9760294",
     "datasources/flow-ds/README.md": "d174d946392f146eb7e843b6f4ab713a1e6c5972933febbdb2c66bcc241e4a66",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
@@ -33,9 +33,9 @@ Hash: SHA512
     "datasources/flow-ds/plugin.json": "9c91bbbd3f2b8eb288ea10c8b7011740dd6df4e2051eb47d60673e2bba213a47",
     "datasources/perf-ds/README.md": "3ea1a62a3479f30e185d91dad12dfff5ff3085b7d32760f06d9226314b2c3381",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
-    "datasources/perf-ds/module.js": "ad5380d841e2ac4ca444c3372b4319c9868abe3ba520e6e84b4280070c091655",
+    "datasources/perf-ds/module.js": "57935ce1d26028420c45293b2a1e3d6d51930d294dad16a8d097cb2c87acafe8",
     "datasources/perf-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/perf-ds/module.js.map": "7f8a4f50f0bf6630a351605755ca9fea1d6619853b7ccd5edd630bc367b71467",
+    "datasources/perf-ds/module.js.map": "4754527cea8e3b53a6a8b58a94bda6e4c97bafa6690666b246b15d4c53e522a7",
     "datasources/perf-ds/plugin.json": "59ab660793f7f3230948650d921677b8ea422939d47b0574bb2fc5a0c388355b",
     "img/Helm_Screenshot_Alarms.png": "c4be68860d9a71ea0a9d99df7e3f3e4db9858f4b378925bb3e9d16c0a23c2646",
     "img/Helm_Screenshot_Entities_Data_Source.png": "a5da3654cf6b09fdf3e4a95b9e722334e7a0eb1f2a667279cdac9b5db4be18d1",
@@ -54,8 +54,8 @@ Hash: SHA512
     "panels/alarm-histogram/module.js.map": "555006b39eee7e5df91367d1a1769f20d51a03380c4a7d9a6d729b1ec6d100ee",
     "panels/alarm-histogram/plugin.json": "4ebbb72587909457d1167ca0b470606a8f585cc761c1b3a81a89be1be6ae1254",
     "panels/alarm-table/img/alarm-table.svg": "ab33624041ca4cec42e4e3a216234c98a13a7a15d2aea4b8cc1753eea67f0576",
-    "panels/alarm-table/module.js": "a74e37feebea72a236146950ff493bee7f4279a45297c120134f615a5151aedb",
-    "panels/alarm-table/module.js.map": "e8d2af8f884db9976056c8326bdcfab0eb05009b2fcf4c46640861de57eeb8a0",
+    "panels/alarm-table/module.js": "ef2235864bf3cc83fee45912ccb4bbd942b8b8a88e3e40608064eb4338509f60",
+    "panels/alarm-table/module.js.map": "5d8db6eb4437e1351ba6ec158c0f47b40af0fa8469705789a8c01d519137fbce",
     "panels/alarm-table/plugin.json": "c46ad64dcd9a50017bec9c81d832246fa54743b11a9adf3f713729ae057f3072",
     "panels/dashboard-convert/img/dashboard-convert.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/dashboard-convert/module.js": "428855c63c1736d2e5779c7d1e3ef5b81df4906928a87018a8833e520b579711",
@@ -71,17 +71,17 @@ Hash: SHA512
     "panels/flow-histogram/module.js": "260816b620e5fef1d6b877da77866e6a434b675e474f4de320edd9abeca16026",
     "panels/flow-histogram/module.js.map": "2024aca343017579c6cb687ff7bb5bf3dea295baa46aebebb165a4e8c1243fc9",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
-    "plugin.json": "cba3798db9029f5fedec7701a074e9384810f683459fd620d17e04df0d13c413"
+    "plugin.json": "9680c5d912cc9e65bb34e0d5e4e9988c0eb1ba87c99683a14aee26c49121f9f9"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrcEARMKAAYFAmV5zNMAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm50jHAgj0vg58GVaAE1jjHBC3jiMPZeI+MM5bzRPjBVOChvJpj5A4oFa7
-Ha2sBVnPxKUeVgceKUE3BJpQooWk+t7Y5mww3wII8BYdfwLML6DKyJchpa7u
-iSPuzMQ0mVofabGAsgE7BVkDMR2rXchvCZakksGx3LRmXItj4kfueaXIsWDr
-MixAfgs=
-=mwXc
+wrgEARMKAAYFAmWYOywAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5/ORAgdm8Zu2PPqTqX3KWa2DRwP2ZgjPwyS3PyFjwc0hL3pP1F9A64Bd
+AL7Y1QLLI9ey/tn2g2gYxXqdpxI2C+bp3uEgbwIJAWDYMr6Hwk0p9Gf1IGYK
+SwC+gPl3mwhTekCal+H1Vtya56ulYpQN+QrL69InPuxfLu/T0qArkKvwZCa3
+LtP4BbZZ
+=hYw7
 -----END PGP SIGNATURE-----
