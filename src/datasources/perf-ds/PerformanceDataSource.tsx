@@ -253,16 +253,16 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
      * @returns 
      */
     async doResourcesForNodeRequest(nodeId: string) {
-        const response = await this.simpleRequest.doOpenNMSRequest({
-            url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
-            method: 'GET'
-        })
+      const response = await this.simpleRequest.doOpenNMSRequest({
+        url: '/rest/resources/fornode/' + encodeURIComponent(nodeId),
+        method: 'GET'
+      })
 
-        return response && response.data ? response.data as OnmsResourceDto : null
+      return response && response.data ? response.data as OnmsResourceDto : null
     }
 
     async metricFindLocations() {
-        return await this.simpleRequest.getLocations();
+      return await this.simpleRequest.getLocations()
     }
 
     async metricFindNodeFilterQuery(query: string, labelFormat: string, valueFormat: string) {
@@ -278,22 +278,26 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         results.push({ text, value, expandable: true })
       })
 
+      // ensure template variable value displays (e.g. dropdowns) are in alphabetical order based on text label
+      results.sort((a, b) => a.text.localeCompare(b.text))
+
       return results
     }
 
     async metricFindNodeResourceQuery(query, ...options) {
-        let textProperty = "id", resourceType = '*', regex = null;
-        if (options.length > 0) {
-            textProperty = options[0];
-        }
-        if (options.length > 1) {
-            resourceType = options[1];
-        }
-        if (options.length > 2) {
-            regex = options[2];
-        }
+      let textProperty = 'id', resourceType = '*', regex = null
 
-        return await this.getNodeResources(query, textProperty, resourceType, regex)
+      if (options.length > 0) {
+        textProperty = options[0]
+      }
+      if (options.length > 1) {
+        resourceType = options[1]
+      }
+      if (options.length > 2) {
+        regex = options[2]
+      }
+
+      return await this.getNodeResources(query, textProperty, resourceType, regex)
     }
 
     async getNodeResources(nodes: string, textProperty: string, resourceType: string, regex?: string | null) {
