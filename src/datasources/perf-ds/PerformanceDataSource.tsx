@@ -31,21 +31,24 @@ import {
 import { queryStringProperties } from './queries/queryStringProperties'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
-    type: string;
-    url?: string;
-    name: string;
-    client: ClientDelegate;
-    simpleRequest: SimpleOpenNMSRequest;
-    templateSrv: TemplateSrv;
+    type: string
+    url?: string
+    name: string
+    allowManualOverrideExtensions: boolean
+    client: ClientDelegate
+    simpleRequest: SimpleOpenNMSRequest
+    templateSrv: TemplateSrv
 
     constructor(instanceSettings: DataSourceInstanceSettings<PerformanceDataSourceOptions>) {
-        super(instanceSettings);
-        this.type = instanceSettings.type;
-        this.url = instanceSettings.url;
-        this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
-        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
-        this.templateSrv = getTemplateSrv();
+        super(instanceSettings)
+        this.type = instanceSettings.type
+        this.url = instanceSettings.url
+        this.name = instanceSettings.name
+        this.allowManualOverrideExtensions = instanceSettings.jsonData.allowManualOverrideExtensions || false
+
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv())
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url)
+        this.templateSrv = getTemplateSrv()
     }
 
     isQueryValidStringPropertySearch = (targets: PerformanceQuery[]) => {
