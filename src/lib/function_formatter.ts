@@ -89,7 +89,7 @@ const _flatten = (args) => {
 /**
  * Process the raw output of `parenthesis.parse` to detect functions.
  */
-const _process = (args) => {
+const _process = (args: any[]) => {
   const ret = [] as any[]
   const matcher = /^(.*?)(\w+?)\($/          // NOSONAR: typescript:S5852
   let skip = false
