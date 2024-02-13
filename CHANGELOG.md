@@ -1,3 +1,9 @@
+### v9.0.13
+
+Grafana Plugin for OpenNMS version 9.0.13 release contains a bug fix.
+
+* [OPG-475](https://opennms.atlassian.net/browse/OPG-475) nodeResources query not working properly
+
 ### v9.0.12
 
 Grafana Plugin for OpenNMS version 9.0.12 release is a re-release of 9.0.11 with minor fixes.
