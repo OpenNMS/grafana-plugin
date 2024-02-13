@@ -9,10 +9,10 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1704475436157,
+  "time": 1707851507735,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "CHANGELOG.md": "ea721ae316d21543c7b89c86e965d59035ed48f5ffc9b05c45b3892bb24b8cfd",
+    "CHANGELOG.md": "d1a6fa83c6cd2c19e2fd54c16455d27cb152d380e206aa3bb868c103dd9dab0a",
     "LICENSE": "bc8d96831c4914a537bd291adcfccc5559934f7435900200dc9dee767afc5097",
     "README.md": "1a34c1202a570cce1bf01ba0059672c12cefad7baca7f93b56a467ef35ae3d6c",
     "dashboards/about.json": "ffb2b80e2f6ec9f99d45c8998095c13d96197778c5f19f96dd64be5bc76dec8f",
@@ -23,7 +23,7 @@ Hash: SHA512
     "datasources/entity-ds/img/entity-ds.svg": "4aba3d8942473e2f7c604cc14562b343a719d93372132f75217f35369ddc8794",
     "datasources/entity-ds/module.js": "3f2a7f5ac9b96f27c298a1bd9ed50fe637e95795322ad79c72dab0627ac55976",
     "datasources/entity-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/entity-ds/module.js.map": "2e406aa49fc01ad91f9fdb5fcf3b7e081897bcdb7315413a5f8b9f56a09e3666",
+    "datasources/entity-ds/module.js.map": "6a27aca2a471d69021a1ad2c6004756279fc3eea9097f2dd31cb69462287e51c",
     "datasources/entity-ds/plugin.json": "065c5c5ee1fe69e8b99ed5a203b2ff93fd4aab00433dcb4e970f6098e9760294",
     "datasources/flow-ds/README.md": "d174d946392f146eb7e843b6f4ab713a1e6c5972933febbdb2c66bcc241e4a66",
     "datasources/flow-ds/img/flow-ds.svg": "ecb20e263fc053942af9868358d59dd635f80e02838b19b5e9a07af8aa54e513",
@@ -33,9 +33,9 @@ Hash: SHA512
     "datasources/flow-ds/plugin.json": "9c91bbbd3f2b8eb288ea10c8b7011740dd6df4e2051eb47d60673e2bba213a47",
     "datasources/perf-ds/README.md": "3ea1a62a3479f30e185d91dad12dfff5ff3085b7d32760f06d9226314b2c3381",
     "datasources/perf-ds/img/pm-ds.svg": "a31313b54ab75f13f7e7daf03c9ba03161f03346c0f20c4587b11786ec0903d3",
-    "datasources/perf-ds/module.js": "57935ce1d26028420c45293b2a1e3d6d51930d294dad16a8d097cb2c87acafe8",
+    "datasources/perf-ds/module.js": "adc515f8ef0425ff64048820df74f2dc96332b0a2e97e9c2af053d1b9cc1ee0a",
     "datasources/perf-ds/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "datasources/perf-ds/module.js.map": "4754527cea8e3b53a6a8b58a94bda6e4c97bafa6690666b246b15d4c53e522a7",
+    "datasources/perf-ds/module.js.map": "6cfe242bbb89835b19c754b0b692e54cbb5cac3b30052747b3a7e20837c5b54f",
     "datasources/perf-ds/plugin.json": "59ab660793f7f3230948650d921677b8ea422939d47b0574bb2fc5a0c388355b",
     "img/Helm_Screenshot_Alarms.png": "c4be68860d9a71ea0a9d99df7e3f3e4db9858f4b378925bb3e9d16c0a23c2646",
     "img/Helm_Screenshot_Entities_Data_Source.png": "a5da3654cf6b09fdf3e4a95b9e722334e7a0eb1f2a667279cdac9b5db4be18d1",
@@ -65,23 +65,23 @@ Hash: SHA512
     "panels/filter-panel/img/filter.svg": "9a56db6577aa7ea280969920e3eccac5f9809ef6e6b67928843280ededaa8aeb",
     "panels/filter-panel/module.js": "60fda38e6bba3cf838a11d366d06d3417e06014085b54ef87e90136593cb525c",
     "panels/filter-panel/module.js.LICENSE.txt": "8ba60c4671cead1b78b125f7ed6d1fa6cee88a01ec98d1cc6dc880b851248f35",
-    "panels/filter-panel/module.js.map": "d02c3130a1a6f30c40ac2b7991e12ecd090ea2db3477af8b276308a2d815412b",
+    "panels/filter-panel/module.js.map": "8d6b3707c1c0b8c45c3e0258017f105dcfb1ebfceaf829b16debec3ab180bad4",
     "panels/filter-panel/plugin.json": "5c1729da3b4bf6e640ea070fe3a26a949f295cc172f891e987c416ab3856fba6",
     "panels/flow-histogram/img/flow-histogram.svg": "d96cd2b128992c77616cd2275023f6b5ba38deec128e42734896933d547cced1",
     "panels/flow-histogram/module.js": "260816b620e5fef1d6b877da77866e6a434b675e474f4de320edd9abeca16026",
     "panels/flow-histogram/module.js.map": "2024aca343017579c6cb687ff7bb5bf3dea295baa46aebebb165a4e8c1243fc9",
     "panels/flow-histogram/plugin.json": "f02b3307db5b9c8f534dcd1d085916ce16288c461385d068fa74582a470948fd",
-    "plugin.json": "9680c5d912cc9e65bb34e0d5e4e9988c0eb1ba87c99683a14aee26c49121f9f9"
+    "plugin.json": "6ec39339b35d486f4f82a9a4a03bad3cc3230df0180f847acf27991738e509df"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.10
 Comment: https://openpgpjs.org
 
-wrgEARMKAAYFAmWYOywAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5/ORAgdm8Zu2PPqTqX3KWa2DRwP2ZgjPwyS3PyFjwc0hL3pP1F9A64Bd
-AL7Y1QLLI9ey/tn2g2gYxXqdpxI2C+bp3uEgbwIJAWDYMr6Hwk0p9Gf1IGYK
-SwC+gPl3mwhTekCal+H1Vtya56ulYpQN+QrL69InPuxfLu/T0qArkKvwZCa3
-LtP4BbZZ
-=hYw7
+wrgEARMKAAYFAmXLvvMAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm51pkAgdW9dla3SdIz6dDis5q0eVLwWmAzAqktr0UVLmXLtl4jApzdq63
+zF0M6aGh416Gxr9YfdJZ3UV999Ee9nIfkZnOvwIJAUFfSldB6vr1aTxD2KeN
+2350E8kLVBzMMlnevmIy3ZZ1RqewDCY95xgdvHkyz3u+h77wv2WW5dm7WAAh
+u5I7ZKni
+=59nJ
 -----END PGP SIGNATURE-----
