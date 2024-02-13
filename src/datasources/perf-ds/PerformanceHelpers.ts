@@ -1,7 +1,5 @@
 import { ArrayVector, DataFrame, Field, FieldType } from '@grafana/data'
-import { getTemplateSrv } from '@grafana/runtime'
 import { formatFunctions } from 'lib/function_formatter'
-import { trimChar, isString } from 'lib/utils'
 import { OnmsMeasurementsQueryMetadata, OnmsMeasurementsQueryResponse, OnmsMeasurementsQueryResponseColumnItem } from './types'
 
 /**
@@ -123,28 +121,6 @@ const getEmptyDataFrame = (): DataFrame => {
         length: 0,
         fields: [] as Field[]
     }
-}
-
-export const isTemplateVariable = (property: { id?: string, label?: string }) => {
-    const ts = getTemplateSrv()
-    return (property?.label && ts.containsTemplate(property.label)) ||
-        (isString(property) && ts.containsTemplate(String(property)))
-}
-
-export const getTemplateVariable = (property?: { label?: string } | string) => {
-    const ts = getTemplateSrv()
-    let result = '' 
-
-    if (property) {
-        if (property.hasOwnProperty('id')) {
-            result = property['id']
-        } else if (property.hasOwnProperty('label')) {
-            result = trimChar(ts.replace(property['label']), '{', '}')
-        } else if (isString(property) && ts.containsTemplate(String(property))) {
-            result = trimChar(ts.replace(String(property)), '{', '}')
-        }
-    }
-    return result
 }
 
 export const getStringProperties = (resource: { id?: string, label?: string, stringPropertyAttributes?: Record<string, string> }) => {
