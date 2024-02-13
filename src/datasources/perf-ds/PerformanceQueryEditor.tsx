@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { Segment } from '@grafana/ui';
-import { getTemplateSrv } from '@grafana/runtime';
-import { API } from 'opennms';
-import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import { PerformanceTypeOptions } from './constants';
-import { PerformanceAttribute } from './PerformanceAttribute';
-import { PerformanceExpression } from './PerformanceExpression';
-import { PerformanceFilter } from './PerformanceFilter';
-import { PerformanceStringProperty } from './PerformanceStringProperty';
-import { PerformanceQueryEditorProps, QuickSelect, PerformanceStringPropertyState } from './types';
+import { Segment } from '@grafana/ui'
+import { getTemplateSrv } from '@grafana/runtime'
+import { API } from 'opennms'
+import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon'
+import { PerformanceTypeOptions } from './constants'
+import { PerformanceAttribute } from './PerformanceAttribute'
+import { PerformanceExpression } from './PerformanceExpression'
+import { PerformanceFilter } from './PerformanceFilter'
+import { PerformanceStringProperty } from './PerformanceStringProperty'
+import { PerformanceQueryEditorProps, QuickSelect, PerformanceStringPropertyState } from './types'
 import { collectInterpolationVariables, interpolate } from './queries/interpolate'
 import { getRemoteResourceId } from './queries/queryBuilder'
-import { getTemplateVariable, isTemplateVariable, getStringProperties } from './PerformanceHelpers';
+import { getStringProperties } from './PerformanceHelpers'
+import { getTemplateVariable, isTemplateVariable } from '../../lib/variableHelpers'
 import { OnmsResourceDto, OnmsRrdGraphAttribute } from '../../lib/api_types'
-import { getMultiValues } from 'lib/utils';
+import { getMultiValues, isInteger } from 'lib/utils'
 
 export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
-    const [performanceType, setPerformanceType] = useState<QuickSelect>(query.performanceType);
+    const [performanceType, setPerformanceType] = useState<QuickSelect>(query.performanceType)
 
     const updateAttributeQuery = (attribute) => {
         onChange({
@@ -66,8 +67,8 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
     }
 
     const loadNodes = async () => {
-        const nodes = await datasource.client.findNodes(new API.Filter(), true)
-        return nodes;
+      const nodes = await datasource.client.findNodes(new API.Filter(), true)
+      return nodes
     }
 
     /**
@@ -75,15 +76,19 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
      * Node dropdown) or from a template variable that evaluates to a node id.
      */
     const loadResourcesByNode = async (value) => {
-        let nodeId = value
+      let nodeId = value
 
-        if (isTemplateVariable(value)) {
-            nodeId = getTemplateVariable(value)
-        } else if (value instanceof Object && value.id) {
-            nodeId = value.id
-        }
+      if (isTemplateVariable(value)) {
+        nodeId = getTemplateVariable(value)
+      } else if (value instanceof Object && value.id) {
+        nodeId = value.id
+      }
 
+      if (isInteger(nodeId)) {
         return loadResourcesByNodeId(nodeId)
+      }
+
+      return []
     }
 
     const loadResourcesByNodeId = async (nodeId) => {
@@ -204,6 +209,10 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                     min-width: 230px;
                     width: auto;
                 }
+                .pf-query-editor .pf-query-editor-attr-switch-field label {
+                    min-width: 120px;
+                    width: auto;
+                }
                 .pf-query-editor label.segment-with-icon {
                     min-width: 160px;
                     width: auto;
@@ -232,6 +241,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 isPerformanceType(PerformanceTypeOptions.Attribute.value) &&
 
                 <PerformanceAttribute
+                    allowManualOverrideExtensions={datasource.allowManualOverrideExtensions}
                     performanceAttributeState={query.attribute}
                     updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}
