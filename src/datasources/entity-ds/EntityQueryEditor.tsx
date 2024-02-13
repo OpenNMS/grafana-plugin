@@ -75,7 +75,7 @@ const addClause = (clauses: OnmsEntityClause[], clause: OnmsEntityClause, index:
 }
 
 export const EntityQueryEditor: React.FC<EntityQueryEditorProps> = ({ onChange, query, onRunQuery, datasource, ...rest }) => {
-    const client = datasource.client;
+    const client = datasource.client
     const [value, setValue] = useState<SelectableValue<string>>(query.selectType || { label: 'Alarms' })
     const [clauses, dispatchClauses] = useReducer(clausesReducer, query.clauses || [{ ...defaultClause }])
     const [loading, setLoading] = useState(false)

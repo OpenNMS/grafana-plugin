@@ -1,15 +1,14 @@
-import { SelectableValue } from '@grafana/data';
-import {
-    Segment,
-    SegmentAsync,
-    SegmentInput
-} from '@grafana/ui'
-import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import React, { useState, useEffect } from 'react'
-import { PerformanceAttributeItemState, PerformanceAttributeState } from './types'
+import React, { useEffect, useState } from 'react'
+import { SelectableValue } from '@grafana/data'
+import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui'
+import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon'
+import { ValueOverrideSwitch } from 'components/ValueOverrideSwitch'
+import { getTemplateVariables } from 'lib/variableHelpers'
 import { OnmsResourceDto } from '../../lib/api_types'
+import { PerformanceAttributeItemState, PerformanceAttributeState } from './types'
 
 export interface PerformanceAttributesProps {
+    allowManualOverrideExtensions: boolean
     performanceAttributeState: PerformanceAttributeState
     updateQuery: Function
     loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<PerformanceAttributeItemState>>>
@@ -28,14 +27,18 @@ export const defaultPerformanceState: PerformanceAttributeState = {
 }
 
 export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
+    allowManualOverrideExtensions,
     performanceAttributeState,
     updateQuery,
     loadNodes,
     loadResourcesByNode,
     loadAttributesByResourceAndNode
 }) => {
-
     const [performanceState, setPerformanceState] = useState<PerformanceAttributeState>(performanceAttributeState)
+    const [isNodeOverride, setIsNodeOverride] = useState<boolean>(false)
+    const [nodeOverrideValue, setNodeOverrideValue] = useState<string>('')
+    const [isResourceOverride, setIsResourceOverride] = useState<boolean>(false)
+    const [resourceOverrideValue, setResourceOverrideValue] = useState<string>('')
 
     useEffect(() => {
         // Note: this could result in invalid queries if not all parameters have been selected.
@@ -48,16 +51,61 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [performanceState])
 
+    useEffect(() => {
+      if (isNodeOverride) {
+        const propertyValue = { id: nodeOverrideValue, label: nodeOverrideValue }
+        setPerformanceStateNode(propertyValue)
+      } else {
+        setPerformanceStateNode(performanceState?.node)
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isNodeOverride, nodeOverrideValue])
+
+    useEffect(() => {
+      if (isResourceOverride) {
+        const propertyValue = { id: resourceOverrideValue, label: resourceOverrideValue }
+        setPerformanceStateProperty('resource', propertyValue)
+      } else {
+        setPerformanceStateProperty('resource', performanceState?.resource)
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isResourceOverride, resourceOverrideValue])
+
+    const loadNodesAndVariables = async () => {
+      const nodeItems = await loadNodes()
+      const variables = getTemplateVariables()
+      const result = variables.map(x => { return { id: `$${x.name}`, label: `$${x.name}` }})
+      nodeItems.forEach(x => result.push(x as any))
+
+      return result
+    }
+
+    const loadResourcesByNodeAndVariables = async (value?: string | number) => {
+      const resources = await loadResourcesByNode(value)
+
+      const variables = getTemplateVariables()
+      const result = variables.map(x => { return { id: `$${x.name}`, label: `$${x.name}` }})
+      resources.forEach(x => result.push(x as any))
+
+      return result
+    }
+
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
         setPerformanceState({...performanceState, [propertyName]: propertyValue})
     }
 
+    /**
+     * If node changed, need to repopulate the resource part of the query with resources
+     * for the newly selected node.
+     * Attempt to find the same resource label as existing; otherwise the new node
+     * doesn't have the same resources, so clear them
+     */
     const setPerformanceStateNode = async (propertyValue: unknown) => {
-      // If node changed, need to repopulate the resource part of the query with resources
-      // for the newly selected node.
-      // Attempt to find the same resource label as existing; otherwise the new node
-      // doesn't have the same resources, so clear them
       const node = propertyValue as PerformanceAttributeItemState
+
+      if (!node) {
+        return
+      }
 
       const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
       const existingLabel = performanceState?.resource?.label
@@ -74,31 +122,60 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
 
     return (
         <>
+            <style>
+                {`
+                .pf-query-editor .pf-query-editor-attr-switch-field .pf-query-editor-switch-wrapper {
+                    display: flex;
+                    align-items: center;
+                    height: 32px;
+                    width: 32px;
+                }
+                .pf-query-editor .pf-query-editor-attr-switch-field .pf-query-editor-switch-wrapper label {
+                    min-width: 32px;
+                    width: 32px;
+                }
+            `}
+            </style>
             <div className='spacer' />
             <SegmentSectionWithIcon label='Node' icon='tree'>
                 <SegmentAsync
                     value={performanceState?.node}
                     placeholder='Select Node'
-                    loadOptions={loadNodes}
+                    loadOptions={loadNodesAndVariables}
                     onChange={(value) => {
                       (async () => {
                         await setPerformanceStateNode(value)
                       })()
                     }}
                 />
+                { allowManualOverrideExtensions &&
+                  <ValueOverrideSwitch
+                    override={isNodeOverride}
+                    value={nodeOverrideValue}
+                    setOverride={setIsNodeOverride}
+                    setValue={setNodeOverrideValue}
+                  />
+                }
             </SegmentSectionWithIcon>
 
             <div className='spacer' />
             {
                 (performanceState?.node?.id || performanceState?.node?.label) &&
-
                 <SegmentSectionWithIcon label='Resource' icon='leaf'>
                     <SegmentAsync
                         value={performanceState?.resource}
                         placeholder='Select Resource'
-                        loadOptions={() => loadResourcesByNode(performanceState?.node?.id || performanceState?.node?.label)}
+                        loadOptions={() => loadResourcesByNodeAndVariables(performanceState?.node?.id || performanceState?.node?.label)}
                         onChange={(value) => { setPerformanceStateProperty('resource', value) }}
                     />
+                    { allowManualOverrideExtensions &&
+                      <ValueOverrideSwitch
+                        override={isResourceOverride}
+                        value={resourceOverrideValue}
+                        setOverride={setIsResourceOverride}
+                        setValue={setResourceOverrideValue}
+                      />
+                    }
                 </SegmentSectionWithIcon>
             }
             <div className='spacer' />

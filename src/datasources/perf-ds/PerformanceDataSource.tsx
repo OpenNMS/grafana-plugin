@@ -31,21 +31,24 @@ import {
 import { queryStringProperties } from './queries/queryStringProperties'
 
 export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
-    type: string;
-    url?: string;
-    name: string;
-    client: ClientDelegate;
-    simpleRequest: SimpleOpenNMSRequest;
-    templateSrv: TemplateSrv;
+    type: string
+    url?: string
+    name: string
+    allowManualOverrideExtensions: boolean
+    client: ClientDelegate
+    simpleRequest: SimpleOpenNMSRequest
+    templateSrv: TemplateSrv
 
     constructor(instanceSettings: DataSourceInstanceSettings<PerformanceDataSourceOptions>) {
-        super(instanceSettings);
-        this.type = instanceSettings.type;
-        this.url = instanceSettings.url;
-        this.name = instanceSettings.name;
-        this.client = new ClientDelegate(instanceSettings, getBackendSrv());
-        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url);
-        this.templateSrv = getTemplateSrv();
+        super(instanceSettings)
+        this.type = instanceSettings.type
+        this.url = instanceSettings.url
+        this.name = instanceSettings.name
+        this.allowManualOverrideExtensions = instanceSettings.jsonData.allowManualOverrideExtensions || false
+
+        this.client = new ClientDelegate(instanceSettings, getBackendSrv())
+        this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url)
+        this.templateSrv = getTemplateSrv()
     }
 
     isQueryValidStringPropertySearch = (targets: PerformanceQuery[]) => {
@@ -284,53 +287,67 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
       return results
     }
 
-    async metricFindNodeResourceQuery(query, ...options) {
-      let textProperty = 'id', resourceType = '*', regex = null
+    async metricFindNodeResourceQuery(options: any[]) {
+      let query = ''
+      let textProperty = 'id'
+      let resourceType = '*'
+      let regex = null
 
       if (options.length > 0) {
-        textProperty = options[0]
+        query = options[0]
       }
       if (options.length > 1) {
-        resourceType = options[1]
+        textProperty = options[1]
       }
       if (options.length > 2) {
-        regex = options[2]
+        resourceType = options[2]
+      }
+      if (options.length > 3) {
+        regex = options[3]
+      }
+
+      if (!query) {
+        return []
       }
 
       return await this.getNodeResources(query, textProperty, resourceType, regex)
     }
 
     async getNodeResources(nodes: string, textProperty: string, resourceType: string, regex?: string | null) {
-
         const nodeResources = await this.simpleRequest.getResourcesFor(nodes)
         const results: MetricFindValue[] = []
 
         nodeResources.forEach((resource) => {
-            const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/);
+            const resourceWithoutNodePrefix = resource.id.match(/node(Source)?\[.*?\]\.(.*)/)
+
             if (!resourceWithoutNodePrefix) {
                 throw new Error(`No resources found for node: ${resource.id}`)
             }
-            let textValue;
+
+            let textValue
+
             switch (textProperty) {
-                case "id":
+                case 'id':
                     textValue = resourceWithoutNodePrefix[2]
                     break;
-                case "label":
+                case 'label':
                     textValue = resource.label
                     break;
-                case "name":
+                case 'name':
                     textValue = resource.name
                     break;
                 default:
                     textValue = resourceWithoutNodePrefix[2]
                     console.warn(`Unknown resource property '${textProperty}' specified. Using 'id' instead.`);
             }
+
             if (((resourceType === '*' && resourceWithoutNodePrefix) ||
                 (resourceWithoutNodePrefix[2].indexOf(resourceType + '[') === 0)) &&
                 (!regex || new RegExp(regex).test(textValue))) {
                 results.push({ text: textValue, value: resourceWithoutNodePrefix[2], expandable: true });
             }
         })
+
         return results
     }
 
@@ -340,6 +357,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         for (const source of sources) {
             const resourceId = this.templateSrv.replace(source.resourceId)
             const attribute = this.templateSrv.replace(source.attribute)
+
             if (OpenNMSGlob.hasGlob(attribute) || OpenNMSGlob.hasGlob(resourceId)) {
                 const extraQueries = await this.getSourcesFor(source)
                 if (extraQueries) {

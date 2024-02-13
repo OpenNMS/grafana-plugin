@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { SegmentAsync } from '@grafana/ui';
-import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon';
-import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types';
-import { isTemplateVariable } from './PerformanceHelpers'
+import { SegmentAsync } from '@grafana/ui'
+import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon'
+import { PerformanceStringPropertyProps, PerformanceStringPropertyState } from './types'
+import { isTemplateVariable } from '../../lib/variableHelpers'
 
 export const defaultPerformanceStringState = {
     node: { id: '' },
     resource: { id: '', stringPropertyAttributes: {} },
-    stringProperty: { label: '', value: '' },
+    stringProperty: { label: '', value: '' }
 }
 
 export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps> = ({
@@ -18,7 +18,6 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     loadResourcesForStringPropertyState,
     loadStringPropertiesForState
 }) => {
-
     const [performanceState, setPerformanceState] = useState<PerformanceStringPropertyState>(query.stringPropertyState || defaultPerformanceStringState)
 
     const setPerformanceStateProperty = (propertyName: string, propertyValue: unknown) => {
@@ -32,7 +31,6 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [performanceState])
 
-
     return (
         <>
             <div className='spacer' />
@@ -42,7 +40,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
                     placeholder='Select Node'
                     loadOptions={loadNodes}
                     onChange={(value) => {
-                        setPerformanceStateProperty('node', value);
+                        setPerformanceStateProperty('node', value)
                     }}
                 />
             </SegmentSectionWithIcon>
@@ -57,7 +55,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
                         placeholder='Select Resource'
                         loadOptions={() => loadResourcesForStringPropertyState(performanceState)}
                         onChange={(value) => {
-                            setPerformanceStateProperty('resource', value);
+                            setPerformanceStateProperty('resource', value)
                         }}
                     />
                 </SegmentSectionWithIcon>
@@ -73,7 +71,7 @@ export const PerformanceStringProperty: React.FC<PerformanceStringPropertyProps>
                         placeholder='Select String Property'
                         loadOptions={() => loadStringPropertiesForState(performanceState)}
                         onChange={(value) => {
-                            setPerformanceStateProperty('stringProperty', value);
+                            setPerformanceStateProperty('stringProperty', value)
                         }}
                     />
                 </SegmentSectionWithIcon>
