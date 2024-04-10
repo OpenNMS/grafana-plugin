@@ -5,8 +5,7 @@ updates:
     target-branch: "release-9.x"
     versioning-strategy: "increase-if-necessary"
     reviewers:
-      - "rangerrick"
-      - "j-white"
+      - "opennms/dependabot-reviewers-node"
     labels:
       - "dependabot"
     commit-message:
@@ -14,4 +13,30 @@ updates:
       include: "scope"
     schedule:
       interval: "daily"
-
+    groups:
+      babel-and-eslint:
+        patterns:
+          - "*babel*"
+          - "*eslint*"
+        update-types:
+          - "minor"
+          - "patch"
+      grafana:
+        patterns:
+          - "*grafana*"
+        update-types:
+          - "minor"
+          - "patch"
+      jest:
+        patterns:
+          - "*jest*"
+        update-types:
+          - "minor"
+          - "patch"
+      webpack:
+        patterns:
+          - "*webpack*"
+          - "*-loader"
+        update-types:
+          - "minor"
+          - "patch"
