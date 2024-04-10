@@ -5,7 +5,7 @@ updates:
     target-branch: "release-9.x"
     versioning-strategy: "increase-if-necessary"
     reviewers:
-      - "opennms/dependabot-reviewers-node"
+      - "OpenNMS/dependabot-reviewers-node"
     labels:
       - "dependabot"
     commit-message:
