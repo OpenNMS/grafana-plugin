@@ -5,8 +5,7 @@ updates:
     target-branch: "release-9.x"
     versioning-strategy: "increase-if-necessary"
     reviewers:
-      - "rangerrick"
-      - "j-white"
+      - "opennms/dependabot-reviewers-node"
     labels:
       - "dependabot"
     commit-message:
