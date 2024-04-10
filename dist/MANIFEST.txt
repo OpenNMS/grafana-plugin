@@ -9,7 +9,7 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1712761194470,
+  "time": 1712761373113,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "d1a6fa83c6cd2c19e2fd54c16455d27cb152d380e206aa3bb868c103dd9dab0a",
@@ -78,10 +78,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.11
 Comment: https://openpgpjs.org
 
-wrkEARMKAAYFAmYWqWoAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm5xbaAgkBIlwxl0U/u4SLuRPdKqTUuBNsg/Jeth8ia9FXQOPPNvwEr+y3
-WvHop1BrrBVWtRmnxRpSxV4f0SM6Uxi3hFvF+GwCCQEYyuCaMmlrQ0QviZ6g
-eY3k5+SegwSD29vSlBcwH0q6DrhxPOdbo/mULkJp1lw0+TFUn4aS2yQy1Sqi
-4fRsZddAlg==
-=hxdT
+wrkEARMKAAYFAmYWqh0AIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm54++AgkAWQQ7FZ4mvLvEN6knQZsNH9qfsVbhYFOTL6BJlrkCkw7L49Tn
+nORzppdIgxABLv7cazE4fH90NTYer8/2QyW8CHACCQB41nxMpUpIBfxxExBX
+XOXpA+3jFXqsVJK8kGLHXtb9p22FSE+sqHC+AeswKlZxdQei+AdUfCTH+ugl
+omaa/IbNIQ==
+=Ig8x
 -----END PGP SIGNATURE-----
