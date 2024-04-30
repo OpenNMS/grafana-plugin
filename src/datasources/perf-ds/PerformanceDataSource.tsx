@@ -34,7 +34,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
     type: string
     url?: string
     name: string
-    allowManualOverrideExtensions: boolean
+    enableInputValueOverrideComponents: boolean
     client: ClientDelegate
     simpleRequest: SimpleOpenNMSRequest
     templateSrv: TemplateSrv
@@ -44,7 +44,7 @@ export class PerformanceDataSource extends DataSourceApi<PerformanceQuery> {
         this.type = instanceSettings.type
         this.url = instanceSettings.url
         this.name = instanceSettings.name
-        this.allowManualOverrideExtensions = instanceSettings.jsonData.allowManualOverrideExtensions || false
+        this.enableInputValueOverrideComponents = instanceSettings.jsonData.enableInputValueOverrideComponents || false
 
         this.client = new ClientDelegate(instanceSettings, getBackendSrv())
         this.simpleRequest = new SimpleOpenNMSRequest(getBackendSrv(), this.url)

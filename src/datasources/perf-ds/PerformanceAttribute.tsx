@@ -8,7 +8,7 @@ import { OnmsResourceDto } from '../../lib/api_types'
 import { PerformanceAttributeItemState, PerformanceAttributeState } from './types'
 
 export interface PerformanceAttributesProps {
-    allowManualOverrideExtensions: boolean
+    enableInputValueOverrideComponents: boolean
     performanceAttributeState: PerformanceAttributeState
     updateQuery: Function
     loadNodes: (query?: string | undefined) => Promise<Array<SelectableValue<PerformanceAttributeItemState>>>
@@ -27,7 +27,7 @@ export const defaultPerformanceState: PerformanceAttributeState = {
 }
 
 export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
-    allowManualOverrideExtensions,
+    enableInputValueOverrideComponents,
     performanceAttributeState,
     updateQuery,
     loadNodes,
@@ -148,7 +148,7 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                       })()
                     }}
                 />
-                { allowManualOverrideExtensions &&
+                { enableInputValueOverrideComponents &&
                   <ValueOverrideSwitch
                     override={isNodeOverride}
                     value={nodeOverrideValue}
@@ -168,7 +168,7 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                         loadOptions={() => loadResourcesByNodeAndVariables(performanceState?.node?.id || performanceState?.node?.label)}
                         onChange={(value) => { setPerformanceStateProperty('resource', value) }}
                     />
-                    { allowManualOverrideExtensions &&
+                    { enableInputValueOverrideComponents &&
                       <ValueOverrideSwitch
                         override={isResourceOverride}
                         value={resourceOverrideValue}
