@@ -323,3 +323,16 @@ resourceToName($node, $interface) <1>
 
 The `resourceToInterface()` function transforms a resource ID, or a combination of node criteria and a partial resource ID, into another value.
 It is a special case of the other, more general methods; it takes the label of the resource (assumed to be an `interface-MAC` formatted string) and returns the interface portion of the label.
+
+== Datasource configuration options
+
+=== Enable Input Value Override Components
+
+When configuring a Performance Query, you provide values for types, nodes, resources, attributes, etc.
+Generally these are dropdown inputs with specific values, and may include template variables.
+In some cases, the dropdowns have validation that will only accept the displayed predefined values or text entered in a particular format.
+In these cases, it may be necessary or desirable to bypass these restrictions and enter a free-form text value or expression.
+
+If "Enable Input Override Components" is enabled in the Performance Datasource configuration page, then some inputs will display a switch, which if enabled will display a text input box to allow you to manually enter any text for that value. 
+
+This is disabled by default as it is generally not needed.
