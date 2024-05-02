@@ -56,6 +56,16 @@ export const AlarmTableSelectionStyles = () => {
                             align-items:center;
                             justify-content:center;
                         }
+                        .alarm-table-wrapper {
+                            height: 90%;
+                        }
+                        .alarm-table-top-wrapper {
+                            height: 90%;
+                        }
+                        .alarm-table-pagination-wrapper {
+                            width: 100%;
+                            height: 10%;
+                        }
                         div[role="row"] {
                             border:1px solid transparent;
                             padding-bottom:1px;

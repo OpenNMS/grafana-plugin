@@ -39,6 +39,8 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs()
     const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client)
 
+    const paginationRef = useRef<HTMLDivElement>(null)
+
     useAlarmTableRowHighlighter(state, table)
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
 
@@ -70,55 +72,75 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
       }
     }
 
+    const getFontSize = () => {
+      const fontSize = props.options?.alarmTable?.alarmTablePaging?.fontSize?.value
+      return fontSize ? `font-size-${fontSize}` : ''
+    }
+
+    // this is subtracted from the Table height to ensure there's enough room for the Pagination control
+    const calcPaginationHeight = () => {
+      const paginationHeight = paginationRef.current?.firstElementChild?.clientHeight || 0
+      const scrollHeight = props.options?.alarmTable?.alarmTablePaging?.scroll ? 8 : 0
+
+      return paginationHeight + scrollHeight
+    }
+
     useEffect(() => {
       alarmIndexes.current = state.indexes
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state])
 
-    const getFontSize = () => {
-        const fontSize = props.options?.alarmTable?.alarmTablePaging?.fontSize?.value
-        return fontSize ? `font-size-${fontSize}` : ''
-    }
-
     return (
-        <div ref={table} className={
+        <div className={
             `
+            alarm-table-control-wrapper
             ${alarmQuery ? 'alarm-query' : 'non-alarm-query'}
-            ${props.options?.alarmTable?.alarmTablePaging?.scroll ? 'scroll' : 'no-scroll'}
-            ${getFontSize()}
             `
         }>
-            <AlarmTableSelectionStyles />
-            <div style={{ height: '90%' }}>
-                {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height} /> :
-                    <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
-                }
-            </div>
-            <div style={{ width: '100%', height: '10%' }}>
-                <div>
-                    <Pagination numberOfPages={totalPages === Infinity ? 0 : totalPages} currentPage={page} onNavigate={(b) => { setPage(b) }} hideWhenSinglePage={true} />
-                </div>
-            </div>
-            {menuOpen && <ContextMenu
-                x={menu.x}
-                y={menu.y}
-                onClose={() => {
-                    resetTabs();
-                    setMenuOpen(false);
-                }}
-                renderMenuItems={() => <AlarmTableMenu state={state} actions={actions} />}
-            />}
-            <Modal isOpen={detailsModal} title='Alarm Detail' onDismiss={() => setDetailsModal(false)}>
-                <Button style={{ marginBottom: 12 }} onClick={goToAlarm}><i className='fa fa-external-link'></i>&nbsp;Full Details</Button>
-                <TabsBar>
-                    <Tab label='Overview' active={tabActive === 0} onChangeTab={() => tabClick(0)} />
-                    <Tab label='Memos' active={tabActive === 1} onChangeTab={() => tabClick(1)} />
-                    <Tab label='JSON' active={tabActive === 2} onChangeTab={() => tabClick(2)} />
-                </TabsBar>
-                <TabContent>
-                    <AlarmTableModalContent tab={tabActive} alarm={alarm} client={client} />
-                </TabContent>
-            </Modal>
+          <div ref={table} className={
+              `
+              alarm-table-top-wrapper
+              ${props.options?.alarmTable?.alarmTablePaging?.scroll ? 'scroll' : 'no-scroll'}
+              ${getFontSize()}
+              `
+          }>
+              <AlarmTableSelectionStyles />
+              <div className='alarm-table-wrapper'>
+                  {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height - calcPaginationHeight()} /> :
+                      <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
+                  }
+              </div>
+              {menuOpen && <ContextMenu
+                  x={menu.x}
+                  y={menu.y}
+                  onClose={() => {
+                      resetTabs();
+                      setMenuOpen(false);
+                  }}
+                  renderMenuItems={() => <AlarmTableMenu state={state} actions={actions} />}
+              />}
+              <Modal isOpen={detailsModal} title='Alarm Detail' onDismiss={() => setDetailsModal(false)}>
+                  <Button style={{ marginBottom: 12 }} onClick={goToAlarm}><i className='fa fa-external-link'></i>&nbsp;Full Details</Button>
+                  <TabsBar>
+                      <Tab label='Overview' active={tabActive === 0} onChangeTab={() => tabClick(0)} />
+                      <Tab label='Memos' active={tabActive === 1} onChangeTab={() => tabClick(1)} />
+                      <Tab label='JSON' active={tabActive === 2} onChangeTab={() => tabClick(2)} />
+                  </TabsBar>
+                  <TabContent>
+                      <AlarmTableModalContent tab={tabActive} alarm={alarm} client={client} />
+                  </TabContent>
+              </Modal>
+          </div>
+          <div className='alarm-table-pagination-wrapper'>
+              <div ref={paginationRef}>
+                  <Pagination
+                      numberOfPages={totalPages === Infinity ? 0 : totalPages}
+                      currentPage={page}
+                      onNavigate={(b) => { setPage(b) }}
+                      hideWhenSinglePage={true}
+                  />
+              </div>
+          </div>
         </div>
     )
 }
