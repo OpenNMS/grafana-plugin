@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Field } from '@grafana/data'
 import { getBackendSrv } from '@grafana/runtime'
 import { ClientDelegate } from 'lib/client_delegate'
-import { getAlarmIdFromFields } from '../AlarmTableHelper'
 
 /**
  * Hooks for the Alarm Table Panel action menu.
  *
  * @param indexes Selection state of alarms in the table (0-based, by row).
- * @param fields Alarm Field data, from DataFrame API response.
+ * @param selectedAlarmIds Selection state of alarms, based on alarm ids
  * @param closeMenu Function from the calling component to close the action menu.
  * @param actionCallback A callback to perform after an action; currently used to display a notice to the user.
  * @param useGrafanaUser If true, use the current Grafana user for the API call; this username will be saved in the 
@@ -19,7 +17,7 @@ import { getAlarmIdFromFields } from '../AlarmTableHelper'
  */
 export const useAlarmTableMenuActions = (
   indexes: boolean[],
-  fields: Field[],
+  selectedAlarmIds: Set<number>,
   closeMenu: () => void,
   actionCallback: (actionName: string, results: any[]) => void | null,
   useGrafanaUser: boolean,
@@ -48,18 +46,17 @@ export const useAlarmTableMenuActions = (
   const loopAction = async (action) => {
     // result will be undefined for success, a GrafanaError object on failure
     const results: any[] = []
+    const alarmIds = Array.from(selectedAlarmIds)
 
-    for (let i = 0; i < indexes.length; i++) {
-      if (indexes[i]) {
-        const alarmId = getAlarmIdFromFields(fields, i)
+    for (let i = 0; i < alarmIds.length; i++) {
+      const alarmId = alarmIds[i]
 
-        try {
-          const res = await action(alarmId, user?.login)
-          results.push(res)
-        } catch (e) {
-          // e is a GrafanaError, see opennms-js
-          results.push(e)
-        }
+      try {
+        const res = await action(alarmId, user?.login)
+        results.push(res)
+      } catch (e) {
+        // e is a GrafanaError, see opennms-js
+        results.push(e)
       }
     }
 
