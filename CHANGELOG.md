@@ -1,3 +1,13 @@
+### v9.0.14
+
+Grafana Plugin for OpenNMS version 9.0.14 release contains a number of bug fixes and enhancements.
+
+* [OPG-384](https://opennms.atlassian.net/browse/OPG-384) Add variables to node/resource drop down
+* [OPG-471](https://opennms.atlassian.net/browse/OPG-471) Ensure that template variables are allowed in query editor fields
+* [OPG-475](https://opennms.atlassian.net/browse/OPG-475) nodeResources query not working properly
+* [OPG-477](https://opennms.atlassian.net/browse/OPG-477) Allow manual override UI and Docs updates after Grafana review
+* [OPG-478](https://opennms.atlassian.net/browse/OPG-478) Alarm Table Panel Pagination not working correctly
+
 ### v9.0.13
 
 Grafana Plugin for OpenNMS version 9.0.13 release contains a bug fix.

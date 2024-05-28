@@ -241,7 +241,7 @@ export const PerformanceQueryEditor: React.FC<PerformanceQueryEditorProps> = ({ 
                 isPerformanceType(PerformanceTypeOptions.Attribute.value) &&
 
                 <PerformanceAttribute
-                    allowManualOverrideExtensions={datasource.allowManualOverrideExtensions}
+                    enableInputValueOverrideComponents={datasource.enableInputValueOverrideComponents}
                     performanceAttributeState={query.attribute}
                     updateQuery={updateAttributeQuery}
                     loadNodes={loadNodes}

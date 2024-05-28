@@ -1,5 +1,5 @@
 import React from 'react'
-import { InlineField, SegmentInput, Switch } from '@grafana/ui'
+import { InlineField, SegmentInput, InlineSwitch } from '@grafana/ui'
 
 export interface ValueOverrideSwitchProps {
   override: boolean
@@ -24,17 +24,16 @@ export const ValueOverrideSwitch = (props: ValueOverrideSwitchProps) => {
             display: flex;
             align-items: center;
             height: 32px;
-            width: 32px;
+            min-width: 32px;
         }
         .value-override-switch-field .value-override-switch-wrapper label {
             min-width: 32px;
-            width: 32px;
         }
       `}
     </style>
     <InlineField className='value-override-switch-field' label={props.label || defaultLabel} tooltip={props.tooltip || defaultTooltip}>
       <div className='value-override-switch-wrapper'>
-        <Switch
+        <InlineSwitch
           value={props.override}
           onChange={() => props.setOverride(!props.override)} />
       </div>
