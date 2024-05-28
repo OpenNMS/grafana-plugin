@@ -1,6 +1,6 @@
 import React  from 'react'
 import { DataSourceSettings } from '@grafana/data'
-import { InlineField, Switch } from '@grafana/ui'
+import { InlineField, InlineSwitch } from '@grafana/ui'
 import { PerformanceDataSourceOptions } from './types'
 
 interface Props {
@@ -8,9 +8,9 @@ interface Props {
   options: DataSourceSettings<PerformanceDataSourceOptions>
 }
 
-export const ManualOverrideExtensionConfig: React.FC<Props> = ({ onOptionsChange, options}) => {
-  const tooltipText = 'Enable manual override UI components for some fields, e.g. Performance Attribute Node, ' +
-    'where you can enter a template variable or other value manually. ' +
+export const InputValueOverrideConfig: React.FC<Props> = ({ onOptionsChange, options}) => {
+  const tooltipText = 'Enable input value override UI components for some input fields, e.g. Performance Node or Attribute, ' +
+    'where you can enter a template variable, expression or other value manually, if it isn\'t allowed due to validation in the Select controls. ' +
     'Generally should not be needed.'
 
   const onChange = (value: boolean) => {
@@ -18,7 +18,7 @@ export const ManualOverrideExtensionConfig: React.FC<Props> = ({ onOptionsChange
       ...options,
       jsonData: {
         ...options.jsonData,
-       allowManualOverrideExtensions: value
+       enableInputValueOverrideComponents: value
       }
     }
 
@@ -48,12 +48,12 @@ export const ManualOverrideExtensionConfig: React.FC<Props> = ({ onOptionsChange
       }
       </style>
       <h3 className='spacer'>Additional Options</h3>
-      
-      <InlineField className='perf-config-editor-switch-field' label='Allow manual override extensions:' tooltip={tooltipText}>
+
+      <InlineField className='perf-config-editor-switch-field' label='Enable input value override components:' tooltip={tooltipText}>
         <div className='perf-config-editor-switch'>
-          <Switch
-            value={options.jsonData.allowManualOverrideExtensions}
-            onChange={() => onChange(!options.jsonData.allowManualOverrideExtensions)} />
+          <InlineSwitch
+            value={options.jsonData.enableInputValueOverrideComponents}
+            onChange={() => onChange(!options.jsonData.enableInputValueOverrideComponents)} />
         </div>
       </InlineField>
     </>
