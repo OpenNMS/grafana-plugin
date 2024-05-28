@@ -63,15 +63,17 @@ export const useAlarmTableMenu = (indexes: MutableRefObject<boolean[]>, rowClick
       }
     }
 
+    // apply click handlers to the table, but make sure they aren't applied to the Pagination component
     useEffect(() => {
         const currentTable = table.current
+        const tableWrapper = currentTable?.querySelector('div.alarm-table-wrapper')
 
-        table.current?.addEventListener('click', onTableClicked)
-        table.current?.addEventListener('contextmenu', onTableContextMenu)
+        tableWrapper?.addEventListener('click', onTableClicked)
+        tableWrapper?.addEventListener('contextmenu', onTableContextMenu)
 
         return () => {
-          currentTable?.removeEventListener('click', onTableClicked)
-          currentTable?.removeEventListener('contextmenu', onTableContextMenu)
+          tableWrapper?.removeEventListener('click', onTableClicked)
+          tableWrapper?.removeEventListener('contextmenu', onTableContextMenu)
         }
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
