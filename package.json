@@ -21,7 +21,7 @@
     "@grafana/eslint-config": "^7.0.0",
     "@grafana/tsconfig": "^1.3.0-rc1",
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
-    "@swc/core": "1.5.3",
+    "@swc/core": "1.6.5",
     "@swc/helpers": "^0.5.11",
     "@swc/jest": "^0.2.32",
     "@testing-library/jest-dom": "^6.1.2",
