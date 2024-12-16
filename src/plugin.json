@@ -28,11 +28,11 @@
     "updated": "2024-05-28"
   },
   "includes": [
-    {"type": "panel", "name": "Alarm Table","path":"alarm-table"},
-    {"type": "panel", "name": "Alarm Histogram","path":"alarm-histogram"},
-    {"type": "panel", "name": "Dashboard Convert Panel","path":"dashboard-convert"},
-    {"type": "panel", "name": "Filter Panel","path":"filter-panel"},
-    {"type": "panel", "name": "Flow Histogram","path":"flow-histogram"},
+    {"type": "panel", "name": "Alarm Table","path":"panels/alarm-table"},
+    {"type": "panel", "name": "Alarm Histogram","path":"panels/alarm-histogram"},
+    {"type": "panel", "name": "Dashboard Convert Panel","path":"panels/dashboard-convert"},
+    {"type": "panel", "name": "Filter Panel","path":"panels/filter-panel"},
+    {"type": "panel", "name": "Flow Histogram","path":"panels/flow-histogram"},
     {"type": "datasource", "name": "OpenNMS Entities"},
     {"type": "datasource", "name": "OpenNMS Performance"},
     {"type": "datasource", "name": "OpenNMS Flows"},
