@@ -28,7 +28,7 @@
     "updated": "2024-05-28"
   },
   "includes": [
-    {"type": "panel", "name": "Alarm Table","path":"panels/alarm-table"},
+    {"type": "panel", "name": "Alarm Table","path":"panels/alarm-table/plugin.json"},
     {"type": "panel", "name": "Alarm Histogram","path":"panels/alarm-histogram"},
     {"type": "panel", "name": "Dashboard Convert Panel","path":"panels/dashboard-convert"},
     {"type": "panel", "name": "Filter Panel","path":"panels/filter-panel"},
