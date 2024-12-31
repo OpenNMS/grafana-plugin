@@ -10,7 +10,7 @@ interface AlarmTableMenuProps {
 }
 
 export const AlarmTableMenu: React.FC<AlarmTableMenuProps> = ({ state,actions }) => {
-  const selectedCount = state.indexes.filter(d => d === true).length
+  const selectedCount = state.selectedAlarmIds.size
   const suffix = selectedCount > 1 ? ` (${selectedCount})` : ''
 
   let items = [
@@ -42,7 +42,7 @@ export const AlarmTableMenu: React.FC<AlarmTableMenuProps> = ({ state,actions })
   return (
     <Menu>
       {items.map((item, index) => {
-        let elem = <MenuItem label={item.label} key={index} onClick={item.action} />
+        let elem = <MenuItem label={item.label} key={item.label} onClick={item.action} />
 
         if (item.type === 'divider') {
           elem = <div className={styles.divider}></div>
