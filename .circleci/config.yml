@@ -87,7 +87,8 @@ commands:
             sudo apt-get update
             sudo apt-get -y --no-install-recommends install python3-pip
             pip3 install check-jsonschema
-            check-jsonschema --schemafile /tmp/plugin.schema.json src/plugin.json
+            # the plugin.schema.json uses 'python' regex format, including backslashes before '-' and '%'
+            check-jsonschema --regex-variant python --schemafile /tmp/plugin.schema.json src/plugin.json
   build-and-sign:
     steps:
       - run:
