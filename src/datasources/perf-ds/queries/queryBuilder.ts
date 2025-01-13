@@ -111,12 +111,14 @@ export const buildAttributeQuerySource = (target: PerformanceQuery) => {
 
     const resourceId = target.attribute.resource.id || target.attribute.resource.label || ''
     const attribute = target.attribute.attribute.name || target.attribute.attribute.label || ''
+    const datasource = target.attribute.subAttribute !== undefined ? String(target.attribute.subAttribute) : ''
 
     const source = {
         label: target.attribute.label || target.attribute.attribute.name || target.attribute.attribute.label,
         nodeId: nodeId,
         resourceId: resourceId.replace('node[', 'nodeSource['),
         attribute: attribute,
+        datasource: datasource !== '' ? datasource : undefined,
         ['fallback-attribute']: target.attribute.fallbackAttribute?.name || undefined,
         aggregation: target.attribute.aggregation?.label?.toUpperCase() || undefined,
         transient: target.hide === true
