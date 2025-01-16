@@ -7,10 +7,10 @@ const columns = Object.freeze([
     { text: 'ID', resource: 'id' },
     { text: 'Label', resource: 'label', featured: true, },
     { text: 'Label Source', resource: 'labelSource' },
-    { text: 'Foreign Source', resource: 'foreignSource', featured: true, },
-    { text: 'Foreign ID', resource: 'foreignId', featured: true, },
+    { text: 'Foreign Source', resource: 'foreignSource', featured: true },
+    { text: 'Foreign ID', resource: 'foreignId', featured: true },
     { text: 'Location', resource: 'location.locationName' },
-    { text: 'Creation Time', resource: 'createTime', featured: true, },
+    { text: 'Creation Time', resource: 'createTime', featured: true },
     { text: 'Parent ID', resource: 'parent.id' },
     { text: 'Parent Foreign Source', resource: 'parent.foreignSource' },
     { text: 'Parent Foreign ID', resource: 'parent.foreignId' },
@@ -28,7 +28,8 @@ const columns = Object.freeze([
     { text: 'Primary SNMP ifIndex', resource: 'snmpInterface.ifIndex' },
     { text: 'Primary IP Interface', resource: 'ipInterface.ipAddress' },
     /* { text: 'Primary IP Hostname', resource: 'ipInterface.ipHostname' }, */
-    { text: 'Categories', resource: 'category.name', featured: true, },
+    { text: 'Categories', resource: 'category.name', featured: true },
+    { text: 'Node Parent ID', resource: 'nodeParentId' },
     { text: 'Data Source' }
 ] as OnmsColumn[])
 
@@ -80,9 +81,10 @@ export const queryNodes = async (client: ClientDelegate, filter: API.Filter): Pr
             node.netBiosDomain,
             node.operatingSystem,
             node.lastCapsdPoll,
-            ifIndex || '',
+            ifIndex ?? '',
             ipAddress,
-            node.categories ? node.categories.map(cat => cat.name) : ''
+            node.categories ? node.categories.map(cat => cat.name) : '',
+            node.nodeParentId ?? ''
         ]
     })
   

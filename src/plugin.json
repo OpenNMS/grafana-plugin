@@ -24,18 +24,18 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "9.0.14",
-    "updated": "2024-05-28"
+    "version": "9.0.15",
+    "updated": "2025-01-16"
   },
   "includes": [
-    {"type": "panel", "name": "Alarm Table"},
-    {"type": "panel", "name": "Alarm Histogram"},
-    {"type": "panel", "name": "Dashboard Convert Panel"},
-    {"type": "panel", "name": "Filter Panel"},
-    {"type": "panel", "name": "Flow Histogram"},
-    {"type": "datasource", "name": "OpenNMS Entities"},
-    {"type": "datasource", "name": "OpenNMS Performance"},
-    {"type": "datasource", "name": "OpenNMS Flows"},
+    {"type": "panel", "name": "Alarm Table","path":"panels/alarm-table/plugin.json"},
+    {"type": "panel", "name": "Alarm Histogram","path":"panels/alarm-histogram/plugin.json"},
+    {"type": "panel", "name": "Dashboard Convert Panel","path":"panels/dashboard-convert/plugin.json"},
+    {"type": "panel", "name": "Filter Panel","path":"panels/filter-panel/plugin.json"},
+    {"type": "panel", "name": "Flow Histogram","path":"panels/flow-histogram/plugin.json"},
+    {"type": "datasource", "name": "OpenNMS Entities","path":"datasources/entity-ds/plugin.json"},
+    {"type": "datasource", "name": "OpenNMS Performance","path":"datasources/perf-ds/plugin.json"},
+    {"type": "datasource", "name": "OpenNMS Flows","path":"datasources/flow-ds/plugin.json"},
     {"type": "dashboard", "name": "About | OpenNMS Plugin for Grafana", "path": "dashboards/about.json"},
     {"type": "dashboard", "name": "Flow Deep Dive | OpenNMS Plugin for Grafana", "path": "dashboards/flow_deep_dive.json"},
     {"type": "dashboard", "name": "Cortex Flow Deep Dive | OpenNMS Plugin for Grafana", "path": "dashboards/cortex_flow_deep_dive.json"},

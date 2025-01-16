@@ -1,3 +1,12 @@
+### v9.0.15
+
+Grafana Plugin for OpenNMS version 9.0.15 release contains a number of bug fixes.
+
+* [OPG-465](https://opennms.atlassian.net/browse/OPG-465) Entity Node query does not display Parent or OS fields
+* [OPG-483](https://opennms.atlassian.net/browse/OPG-483) Values are not retained if using variables in dropdown in Performance queries
+* [OPG-488](https://opennms.atlassian.net/browse/OPG-488) Incorrect variable interpolation for Performance queries when multiple variables have similar names
+* [OPG-493](https://opennms.atlassian.net/browse/OPG-493) Fix Perf DS mapping of subAttribute/datasource
+
 ### v9.0.14
 
 Grafana Plugin for OpenNMS version 9.0.14 release contains a number of bug fixes and enhancements.

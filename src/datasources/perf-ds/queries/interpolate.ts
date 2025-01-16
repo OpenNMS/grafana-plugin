@@ -146,10 +146,14 @@ const replaceQueryValueWithVariables = (queryValue: any, variables: Interpolatio
         }
 
         // check for '$variableName' syntax
-        const regexVarName = '\\$' + variable.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // we add word boundary at the end so we don't have spurious partial matches on variables
+        // having same beginning portion of name
+        let regexVarName = '\\$' + variable.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        regexVarName = regexVarName + '\\b'
+
         interpolatedValue = interpolatedValue.replace(new RegExp(regexVarName, 'g'), variableValue)
 
-        // check for ${var} with optional {$var:format} where 'format' must be alphanumeric
+        // check for ${var} with optional ${var:format} where 'format' must be alphanumeric
         const regexWithBracesAndFormat = getVariableWithBracesReferencePattern(variable.name)
         interpolatedValue = interpolatedValue.replace(new RegExp(regexWithBracesAndFormat, 'g'), variableValue)
     })
