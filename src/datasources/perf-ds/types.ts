@@ -83,8 +83,9 @@ export interface OnmsMeasurementsQuerySource {
   label: string;
   resourceId: string;
   attribute: string;
-  ['fallback-attribute']: string;
-  aggregation: string;  // should be 'AVERAGE', 'MIN', 'MAX' or 'LAST'
+  datasource?: string;   // mapped from subAttribute
+  ['fallback-attribute']?: string;
+  aggregation?: string;  // should be 'AVERAGE', 'MIN', 'MAX' or 'LAST'
   transient: boolean;
   nodeId?: string; // this may be added or removed dynamically
 }

@@ -87,7 +87,8 @@ commands:
             sudo apt-get update
             sudo apt-get -y --no-install-recommends install python3-pip
             pip3 install check-jsonschema
-            check-jsonschema --schemafile /tmp/plugin.schema.json src/plugin.json
+            # the plugin.schema.json uses 'python' regex format, including backslashes before '-' and '%'
+            check-jsonschema --regex-variant python --schemafile /tmp/plugin.schema.json src/plugin.json
   build-and-sign:
     steps:
       - run:
@@ -290,6 +291,12 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run:
+          name: Update Repo list
+          command: |
+            sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/CentOS-*.repo
+            sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/CentOS-*.repo
+            sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/CentOS-*.repo
       - sign-packages/install-rpm-dependencies:
           skip_if_forked_pr: true
       - sign-packages/setup-env:

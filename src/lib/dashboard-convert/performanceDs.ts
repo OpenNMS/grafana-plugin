@@ -57,7 +57,7 @@ const convertAttributeQuery = (source: any): PerformanceQuery | any => {
         name: source.attribute || '',
         label: source.attribute || ''
       },
-      subAttribute: source.subAttribute || undefined,
+      subAttribute: source.subattribute || undefined,
       fallbackAttribute: {},
       aggregation: {
         label: source.aggregation || ''

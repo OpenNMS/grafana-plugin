@@ -3,7 +3,7 @@ import { SelectableValue } from '@grafana/data'
 import { Segment, SegmentAsync, SegmentInput } from '@grafana/ui'
 import { SegmentSectionWithIcon } from 'components/SegmentSectionWithIcon'
 import { ValueOverrideSwitch } from 'components/ValueOverrideSwitch'
-import { getTemplateVariables } from 'lib/variableHelpers'
+import { getTemplateVariables, isTemplateVariable } from 'lib/variableHelpers'
 import { OnmsResourceDto } from '../../lib/api_types'
 import { PerformanceAttributeItemState, PerformanceAttributeState } from './types'
 
@@ -109,7 +109,19 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
 
       const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
       const existingLabel = performanceState?.resource?.label
-      const resource = (existingLabel && resourceOptions && resourceOptions.filter(r => r.label === existingLabel)?.[0]) || {}
+
+      let resource = performanceState?.resource ?? {}
+
+      if (!isTemplateVariable(resource)) {
+          const resourceOption = (existingLabel && resourceOptions && resourceOptions.filter(r => r.label === existingLabel)?.[0]) || null
+
+          if (resourceOption?.id && resourceOption?.label) {
+            resource = {
+              id: resourceOption.id ?? '',
+              label: resourceOption.label ?? ''
+            }
+          }
+      }
 
       const state = {
         ...performanceState,
