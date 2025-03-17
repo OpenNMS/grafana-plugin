@@ -9,12 +9,12 @@ Hash: SHA512
   "signedByOrgName": "The OpenNMS Group Inc.",
   "plugin": "opennms-opennms-app",
   "version": "10.0.0-SNAPSHOT",
-  "time": 1737047094877,
+  "time": 1742237354253,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "65fa5f4b82e027f1248ceb8f8116d19e495ad3b63c1cdb6d901999ea20d6f6d4",
     "LICENSE": "bc8d96831c4914a537bd291adcfccc5559934f7435900200dc9dee767afc5097",
-    "README.md": "1a34c1202a570cce1bf01ba0059672c12cefad7baca7f93b56a467ef35ae3d6c",
+    "README.md": "cd55ea10fb60eef43eaa624867b056de8d5abebfa1187c1b065d3de78734ca93",
     "dashboards/about.json": "ffb2b80e2f6ec9f99d45c8998095c13d96197778c5f19f96dd64be5bc76dec8f",
     "dashboards/cortex_flow_deep_dive.json": "25522b16652ccfeaa445f9e9e38ce6cb819cb0e44fc831509983cadf8dd487e7",
     "dashboards/dashboard_converter.json": "9b22507de4f34b509e497f285c80cc0d3899d586632245cd1d1af0b95ff53d98",
@@ -78,10 +78,10 @@ Hash: SHA512
 Version: OpenPGP.js v4.10.11
 Comment: https://openpgpjs.org
 
-wrkEARMKAAYFAmeJPDcAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
-cIhm528RAgkBEUc7aR8pN84A5gRAeYHsYG7stZd9zfCGRG+as84qu6/kAX3B
-nsCOLlmez/IvL3UZ2QjwfJ1XCzzkgD//Oba9QwoCCQHkPrpezqGA7K7Y2759
-921qxcCawBsrUvQCrK5R3BbVx2hFX2IKYgmjls2Zy0aOY9Pn+zhTmX770bbd
-+zu2vcyJyQ==
-=RACV
+wrkEARMKAAYFAmfYbqoAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5+cGAgkBuTzd8rsYy7DbNw8EvjcayPvcHR6t3dM3igf3FIcuwSGjWVKo
+4QOBg+9+g/w207leDayzhYPxVmam6+lOhadbc3sCCQDCDOYEGFxYfC0+vL4h
+k6s/AEmfkpYmgaqq42CByY4jUxxjjtTV70sPLpiCdWOaKtvDaHeTd/7AjdJs
+97hufdvEUA==
+=aemt
 -----END PGP SIGNATURE-----
