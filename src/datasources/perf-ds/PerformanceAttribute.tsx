@@ -102,7 +102,6 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
      */
 
 
-//BEGINNING OF NEW CODE
     const setPerformanceStateNode = async (propertyValue: unknown) => {
         // Crucial check: Exit early if the value is not valid.
         if (!propertyValue) {
@@ -113,7 +112,6 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
       if (!node) {
         return
       }
-//END OF NEW CODE
 
 
       const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
