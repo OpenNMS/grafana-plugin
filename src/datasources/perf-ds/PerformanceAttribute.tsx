@@ -101,12 +101,11 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
      * doesn't have the same resources, so clear them
      */
     const setPerformanceStateNode = async (propertyValue: unknown) => {
-      const node = propertyValue as PerformanceAttributeItemState
-
-      if (!node) {
-        return
-      }
-
+    if (!propertyValue) {
+        return;
+    }
+    const node = JSON.parse(JSON.stringify(propertyValue)) as PerformanceAttributeItemState
+    
       const resourceOptions: OnmsResourceDto[] = await loadResourcesByNode(node.id || node.label)
       const existingLabel = performanceState?.resource?.label
 
