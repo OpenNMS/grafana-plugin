@@ -17,34 +17,34 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
         const updatedFilter = new API.Filter();
         updatedFilter.limit = 10;
 
-        // Build the filter. This could be extracted to a helper function.
+        // Build the filter
         clauses.forEach((d, i) => {
-            // comparator could be: '{ id, label }' or else '{ value: { i, l } }'
+            // Handle comparator structure - could be { id, label } or { value: { i, l } }
             let comparatorValue = clauses[i].comparator?.value
 
             if (!comparatorValue && clauses[i].comparator?.id) {
-              comparatorValue = {
-                id: clauses[i].comparator.id,
-                label: clauses[i].comparator.label,
-                l: clauses[i].comparator.label,
-                i: clauses[i].comparator.id
-              }
+                comparatorValue = {
+                    id: clauses[i].comparator.id,
+                    label: clauses[i].comparator.label,
+                    l: clauses[i].comparator.label,
+                    i: clauses[i].comparator.id
+                }
             }
 
             if ((d.type === OnmsEntityType.AND || d.type === OnmsEntityType.FIRST) && comparatorValue) {
                 updatedFilter.withAndRestriction(
                     new API.Restriction(
-                        clauses[i].attribute?.value?.id,
+                        clauses[i].attribute?.id || clauses[i].attribute?.value?.id,
                         comparatorValue,
-                        clauses[i].comparedString || clauses[i].comparedValue.value
+                        clauses[i].comparedString || clauses[i].comparedValue?.value
                     )
                 )
             } else if (d.type === OnmsEntityType.OR && comparatorValue) {
                 updatedFilter.withOrRestriction(
                     new API.Restriction(
-                        clauses[i].attribute?.value?.id,
+                        clauses[i].attribute?.id || clauses[i].attribute?.value?.id,
                         comparatorValue,
-                        clauses[i].comparedString || clauses[i].comparedValue.value
+                        clauses[i].comparedString || clauses[i].comparedValue?.value
                     )
                 )
             }
@@ -56,27 +56,60 @@ export const EntityClauseEditor = ({ setFilter, loading, propertiesAsArray, clau
 
     return (
         <>
-            {clauses.map((clause, index) => {
-                return (
-                    <>
-                        <EntityClause
-                            key={index}
-                            clause={clauses[index]}
-                            setAttribute={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'attribute', value: val })}
-                            setComparator={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparator', value: val })}
-                            setComparedValue={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedValue', value: val })}
-                            setComparedString={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'comparedString', value: val })}
-                            setClauseType={(col, val) => dispatchClauses({ type: ClauseActionType.update, index: col, property: 'type', value: val })}
-                            dispatchClauses={dispatchClauses}
-                            loading={loading}
-                            index={index}
-                            propertiesAsArray={propertiesAsArray}
-                            hasMultipleClauses={clauses.length > 1}
-                        />
-
-                        <div className='spacer' />
-                    </>
-                )
-            })}
-        </>)
+            {clauses.map((clause, index) => (
+                <React.Fragment key={index}>
+                    <EntityClause
+                        clause={clause}
+                        setAttribute={(col, val) => dispatchClauses({ 
+                            type: ClauseActionType.update, 
+                            index: col, 
+                            property: 'attribute', 
+                            value: {
+                                id: (val.value as any)?.id,
+                                label: val.label,
+                                value: val.value  // Preserve full metadata
+                            }
+                        })}
+                        setComparator={(col, val) => dispatchClauses({ 
+                            type: ClauseActionType.update, 
+                            index: col, 
+                            property: 'comparator', 
+                            value: { 
+                                id: (val.value as any)?.id || (val.value as any)?.i, 
+                                label: val.label || (val.value as any)?.l 
+                            } 
+                        })}
+                        setComparedValue={(col, val) => dispatchClauses({ 
+                            type: ClauseActionType.update, 
+                            index: col, 
+                            property: 'comparedValue', 
+                            value: { 
+                                value: typeof val.value === 'object' && val.value !== null 
+                                    ? (val.value as any).id || val.value 
+                                    : val.value 
+                            } 
+                        })} 
+                        setComparedString={(col, val) => dispatchClauses({ 
+                            type: ClauseActionType.update, 
+                            index: col, 
+                            property: 'comparedString', 
+                            value: val 
+                        })}
+                        setClauseType={(col, val) => dispatchClauses({ 
+                            type: ClauseActionType.update, 
+                            index: col, 
+                            property: 'type', 
+                            value: val 
+                        })}
+                        dispatchClauses={dispatchClauses}
+                        loading={loading}
+                        index={index}
+                        propertiesAsArray={propertiesAsArray}
+                        hasMultipleClauses={clauses.length > 1}
+                    />
+                    <div className='spacer' />
+                </React.Fragment>
+            ))}
+        </>
+    )
 };
