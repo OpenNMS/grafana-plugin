@@ -71,8 +71,8 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isResourceOverride, resourceOverrideValue])
 
-    const loadNodesAndVariables = async () => {
-      const nodeItems = await loadNodes()
+    const loadNodesAndVariables = async (query?: string) => {
+      const nodeItems = await loadNodes(query)
       const variables = getTemplateVariables()
       const result = variables.map(x => { return { id: `$${x.name}`, label: `$${x.name}` }})
       nodeItems.forEach(x => result.push(x as any))
@@ -160,6 +160,7 @@ export const PerformanceAttribute: React.FC<PerformanceAttributesProps> = ({
                     value={performanceState?.node}
                     placeholder='Select Node'
                     loadOptions={loadNodesAndVariables}
+                    reloadOptionsOnChange={true}
                     onChange={(value) => {
                       (async () => {
                         await setPerformanceStateNode(value)
