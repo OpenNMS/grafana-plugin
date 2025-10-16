@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react'
-import { AppEvents, PanelProps } from '@grafana/data'
+import { AppEvents, DataFrame, PanelProps } from '@grafana/data'
 import { getAppEvents } from '@grafana/runtime'
 import { Button, ContextMenu, Modal, Pagination, Tab, TabContent, Table, TabsBar } from '@grafana/ui'
 import { AlarmTableMenu } from './AlarmTableMenu'
-import { AlarmTableModalContent } from './modal/AlarmTableModalContent'
 import { AlarmTableSelectionStyles } from './AlarmTableSelectionStyles'
 import { AlarmTableControlProps } from './AlarmTableTypes'
+import { useAlarm } from './hooks/useAlarm'
 import { useAlarmProperties } from './hooks/useAlarmProperties'
 import { useAlarmTableMenuActions } from './hooks/useAlarmTableMenuActions'
 import { useAlarmTableConfigDefaults } from './hooks/useAlarmTableConfigDefaults'
@@ -14,34 +14,36 @@ import { useAlarmTableRowHighlighter } from './hooks/useAlarmTableRowHighlighter
 import { useAlarmTableSelection } from './hooks/useAlarmTableSelection'
 import { useAlarmTableModalTabs } from './hooks/useAlarmTableModalTabs'
 import { useOpenNMSClient } from '../../hooks/useOpenNMSClient'
-import { useAlarm } from './hooks/useAlarm'
+import { AlarmTableModalContent } from './modal/AlarmTableModalContent'
 import { capitalize } from 'lib/utils'
 
 export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (props) => {
     const alarmIndexes = useRef<boolean[]>([] as boolean[])
-
-    const { state, setState, rowClicked, soloIndex } = useAlarmTableSelection(() => {
-        setDetailsModal(true)
-    })
+    const selectedAlarmIds = useRef<Set<number>>(new Set<number>())
+    const filteredData = useRef<DataFrame>(props?.data?.series[0])
+    const table = useRef<HTMLDivElement>(null)
 
     const { client } = useOpenNMSClient(props.data?.request?.targets?.[0]?.datasource)
-    const { filteredProps, page, setPage, totalPages } = useAlarmProperties(props?.data?.series[0], props?.options?.alarmTable)
-    const { table, menu, menuOpen, setMenuOpen } = useAlarmTableMenu(alarmIndexes, rowClicked, filteredProps, setState)
+    const { page, setPage, totalPages } = useAlarmProperties(filteredData, props?.data?.series[0], props?.options?.alarmTable)
+    
+    const { alarmControlState, setAlarmControlState, rowClicked, soloAlarmId } = useAlarmTableSelection(() => { setDetailsModal(true) })
+
+    const { menu, menuOpen, setMenuOpen } = useAlarmTableMenu(table, alarmIndexes, selectedAlarmIds, rowClicked, filteredData, setAlarmControlState)
 
     const { actions, detailsModal, setDetailsModal } = useAlarmTableMenuActions(
-      state.indexes,
-      props?.data?.series?.[0]?.fields || [],
+      alarmControlState.selectedIndexes,
+      alarmControlState.selectedAlarmIds,
       () => setMenuOpen(false),
       (actionName: string, results: any[]) => displayActionNotice(actionName, results),
       props?.options?.alarmTable?.alarmTableAdditional?.useGrafanaUser ?? false,
       client)    
 
     const { tabActive, tabClick, resetTabs } = useAlarmTableModalTabs()
-    const { alarm, goToAlarm, alarmQuery } = useAlarm(props?.data?.series, soloIndex, client)
+    const { alarm, goToAlarm, alarmQuery } = useAlarm(filteredData, soloAlarmId, client)
 
     const paginationRef = useRef<HTMLDivElement>(null)
 
-    useAlarmTableRowHighlighter(state, table)
+    useAlarmTableRowHighlighter(alarmControlState, table, filteredData)
     useAlarmTableConfigDefaults(props.fieldConfig, props.onFieldConfigChange, props.options)
 
     /**
@@ -86,9 +88,10 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
     }
 
     useEffect(() => {
-      alarmIndexes.current = state.indexes
+      alarmIndexes.current = [...alarmControlState.selectedIndexes]
+      selectedAlarmIds.current = new Set(alarmControlState.selectedAlarmIds)
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state])
+    }, [alarmControlState])
 
     return (
         <div className={
@@ -106,18 +109,19 @@ export const AlarmTableControl: React.FC<PanelProps<AlarmTableControlProps>> = (
           }>
               <AlarmTableSelectionStyles />
               <div className='alarm-table-wrapper'>
-                  {alarmQuery ? <Table data={filteredProps} width={props.width} height={props.height - calcPaginationHeight()} /> :
-                      <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
+                  {alarmQuery ?
+                    <Table data={filteredData.current} width={props.width} height={props.height - calcPaginationHeight()} /> :
+                    <div>Select the Entity Datasource below, and choose an Alarm query to see results.</div>
                   }
               </div>
               {menuOpen && <ContextMenu
                   x={menu.x}
                   y={menu.y}
                   onClose={() => {
-                      resetTabs();
-                      setMenuOpen(false);
+                    resetTabs();
+                    setMenuOpen(false);
                   }}
-                  renderMenuItems={() => <AlarmTableMenu state={state} actions={actions} />}
+                  renderMenuItems={() => <AlarmTableMenu state={alarmControlState} actions={actions} />}
               />}
               <Modal isOpen={detailsModal} title='Alarm Detail' onDismiss={() => setDetailsModal(false)}>
                   <Button style={{ marginBottom: 12 }} onClick={goToAlarm}><i className='fa fa-external-link'></i>&nbsp;Full Details</Button>
