@@ -72,7 +72,12 @@ export const FilterPanelControl: React.FC<PanelProps<FilterControlProps>> = (pro
                 const attr = filter.attribute.id
 
                 if (entity && attr) {
-                    const opts = { entityType: entity }
+                    // TODO: opts changed from 
+                    // const opts = { entityType: entity }
+                    // to a LegacyMetricFindQueryOptions which has a:
+                    // scopedVars?: ScopedVars;
+                    // May need to make additional changes for this to work correctly
+                    const opts = { scopedVars: { entityType: { value: entity } } }
                     const query = `${entityFunc}(${attr})`
 
                     const metricFindValues = await qualifiedDatasource.metricFindQuery(query, opts)

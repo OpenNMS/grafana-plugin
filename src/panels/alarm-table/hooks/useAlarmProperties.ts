@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { ArrayVector, DataFrame, Field } from '@grafana/data'
+import { DataFrame, Field } from '@grafana/data'
 import cloneDeep from 'lodash/cloneDeep'
 import { AlarmTableColumnSizeItem } from '../AlarmTableTypes'
+import { OnmsQueryResultMeta } from 'datasources/types'
 
 /**
  * Adds customizations to the series data before handing it to the Table display component.
@@ -33,7 +34,7 @@ export const useAlarmProperties = (oldProperties: DataFrame, alarmTable) => {
           })
         }
 
-        if (filteredProps && filteredProps.meta?.entity_metadata && filteredProps.name && filteredProps.name === 'alarms') {
+        if (filteredProps && (filteredProps.meta as OnmsQueryResultMeta)?.entity_metadata && filteredProps.name && filteredProps.name === 'alarms') {
             // Allow background color for severity column.
             if (alarmTable?.alarmTableAlarms?.styleWithSeverity?.value === 1) {
                 filteredProps.fields.forEach((field) => {
@@ -74,14 +75,12 @@ export const useAlarmProperties = (oldProperties: DataFrame, alarmTable) => {
                 const myPage = page
 
                 filteredProps.fields = filteredProps.fields.map((field: Field) => {
-                    // field.values is a Vector<any>, safest to call 'toArray()'
-                    // rather than assume it's an ArrayVector with a 'buffer' field
-                    const values = field.values.toArray()
+                    const values = field.values
                     const start = (myPage - 1) * rowsPerPage
                     const end = start + rowsPerPage
 
                     const sliced = values.length > start ? values.slice(start, end) : []
-                    field.values = new ArrayVector(sliced)
+                    field.values = sliced
 
                     return field
                 })
