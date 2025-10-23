@@ -4,4 +4,4 @@ global:
 
 analyzers:
   osv-scanner:
-    enabled: false
+    enabled: true

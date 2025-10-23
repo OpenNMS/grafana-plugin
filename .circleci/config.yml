@@ -16,7 +16,7 @@ executors:
 
   docs-executor:
     docker:
-      - image: opennms/antora:3.1.4-b10433 
+      - image: opennms/antora:3.1.4-b10433
 
 orbs:
   cloudsmith: cloudsmith/cloudsmith@1.0.4
@@ -357,7 +357,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Validate plugin ZIP file - TEMPORARILY disabling osv-scanner
+          name: Validate plugin ZIP file
           command: npx -y '@grafana/plugin-validator@latest' -sourceCodeUri "file://$(pwd)" -strict -config .circleci/grafana-plugin-validator-config.yaml artifacts/opennms-grafana-plugin-*.zip
       - run:
           name: Validate Docker image
