@@ -2,13 +2,15 @@ import { DataQuery, DataQueryRequest, DataSourceJsonData, SelectableValue } from
 import { ClientDelegate } from 'lib/client_delegate'
 import { SimpleOpenNMSRequest } from 'lib/simpleRequest'
 
-// Workaround for this not being available in all browsers.
-// We check for its use and fall back to a random number if it's not present.
-declare global {
-  interface Crypto {
-    randomUUID: () => string
-  }
-}
+// TODO: Leaving this commented-out until we confirm it is not necessary.
+// // Workaround for this not being available in all browsers.
+// // We check for its use and fall back to a random number if it's not present.
+// declare global {
+//   interface Crypto {
+//     randomUUID: () => string | any
+//     // randomUUID: () => `${string}-${string}-${string}-${string}-${string}`
+//   }
+// }
 
 /**
  * These are options configured for each DataSource instance

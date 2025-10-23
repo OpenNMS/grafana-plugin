@@ -1,0 +1,7 @@
+global:
+  enabled: true
+  strict: true
+
+analyzers:
+  osv-scanner:
+    enabled: false

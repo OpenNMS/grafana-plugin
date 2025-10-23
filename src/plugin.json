@@ -24,8 +24,8 @@
       {"name": "Metrics", "path": "img/Helm_Screenshot_Metrics.png"},
       {"name": "Performance Data Source", "path": "img/Helm_Screenshot_Performance_Data_Source.png"}
     ],
-    "version": "10.0.0-SNAPSHOT",
-    "updated": "2024-02-13"
+    "version": "12.0.0-SNAPSHOT",
+    "updated": "2025-10-21"
   },
   "includes": [
     {"type": "panel", "name": "Alarm Table","path":"panels/alarm-table/plugin.json"},
@@ -42,8 +42,8 @@
     {"type": "dashboard", "name": "Dashboard Converter | OpenNMS Plugin for Grafana", "path": "dashboards/dashboard_converter.json"}
   ],
   "dependencies": {
-    "grafanaDependency": ">=9.0.0",
-    "grafanaVersion": "9.0.0",
+    "grafanaDependency": ">=12.0.0",
+    "grafanaVersion": "12.1.2",
     "plugins": []
   },
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json"
