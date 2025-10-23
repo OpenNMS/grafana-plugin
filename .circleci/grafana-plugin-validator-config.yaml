@@ -3,4 +3,5 @@ global:
   strict: true
 
 analyzers:
-  osv-scanner: false
+  osv-scanner:
+    enabled: false
