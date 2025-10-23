@@ -84,7 +84,7 @@
     "flot-axislabels": "https://github.com/j-white/flot-axislabels#master",
     "lodash.clonedeep": "^4.5.0",
     "lodash.escaperegexp": "^4.1.2",
-    "opennms": "^2.5.11",
+    "opennms": "^2.6.0",
     "parenthesis": "^3.1.7",
     "perfect-scrollbar": "^1.5.5",
     "q": "^1.5.1",
