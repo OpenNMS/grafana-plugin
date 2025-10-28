@@ -92,8 +92,92 @@ Use the `npm overrides` mechanism in the `package.json`. Delete the `package-loc
 }
 ```
 
+## Issue with Grafana, json-source-map and our opennms-js OnmsEnum / toJSON representation
 ## opennms-js and json-source-map isJSON issue
 
 This is described more fully here: https://github.com/OpenNMS/opennms-js/pull/1118
 
 Just note that if `opennms-js` has any model data classes which have a `toJSON` method (which returns a somewhat more human-readable version of the object), it will also have this fix, meaning the object will also have a fake `.replace()` method on it. Should not cause any issues, but just noting it here.
+
+More details...
+
+This is a bit long-winded, but it was tricky to debug.
+
+There is an issue with how Grafana saves and serializes panel data and our `opennms-js` implementation of `OnmsEnum` 
+and derived classes.
+
+In cases where we are using the Grafana `SegmentAsync` dropdown, which has a `loadOptions` function to
+load nodes (ultimately via `opennms-js` and to our Rest API), we need to make sure that the `loadNodes` prop receives a
+`SelectableValue<T>[]`, e.g. `SelectableValue<PerformanceAttributeItemState>[]`, and
+*not* an `OnmsNode[]`.
+
+While `OnmsNode` has an `id` and `label` which `SelectableValue<T>` might be expecting, there's another issue.
+
+When you make a change in a query editor, Grafana saves off the panel state.
+Grafana does a `jsonDiff` by serializing the old and new state.
+They use the `json-source-map` npm library to stringify objects (recursively) before diffing.
+
+`json-source-map` has a line where if an object has a `toJSON()` function, it uses
+it to stringify the object. It expects `toJSON()` to return a `String`.
+
+Our `OnmsEnum`, and derived classes (for example `OnmsManagedType`, used in `OnmsIpInterface.isManaged`,
+used in `OnmsNode.ipInterfaces`), has a `toJSON()` function defined, but it returns
+an object `{ id: this.i, label: this.l }` instead of a `String`.
+
+The Grafana code then calls `getDashboardChanges`, `getPanelChanges`:
+
+```
+  const diff = jsonDiff(originalSaveModel, saveModel);
+```
+
+`jsonDiff` calls `jsonMap.stringify()` (`jsonMap` is from `json-source-map`) which calls `_stringify`.
+
+`_stringify` does a check if the item is an object and has a `toJSON` function and calls it.
+
+Then also inside json-source-map:
+
+```
+function quoted(str) {
+  str = str.replace(ESC_QUOTE, '\\$&')
+  ...
+```
+
+This throws a `TypeError` since `str` is actually an `OnmsNode`, not a `String`, and does not have a
+`replace` function.
+
+```
+  case 'object':
+    if (_data === null) {
+      out('null');
+    } else if (typeof _data.toJSON == 'function') {
+      out(quoted(_data.toJSON()));
+    }
+```
+
+See: https://github.com/epoberezkin/json-source-map/blob/master/index.js, `_stringify`.
+
+See: https://github.com/grafana/grafana/blob/main/public/app/features/dashboard-scene/panel-edit/PanelEditor.tsx where `getPanelChanges` is called.
+
+See: https://github.com/grafana/grafana/blob/main/public/app/features/dashboard-scene/saving/getDashboardChanges.ts where the `jsonDiff` occurs.
+
+If we do the conversion from `OnmsNode` to a `SelectableValue<T>`, `json-source-map` will call their `stringifyObject` since
+the object does not have a `toJSON`, and it should work correctly.
+
+Example, in `PerformanceQueryEditor.tsx`:
+
+```
+const nodes = await datasource.client.findNodes(filter, true)
+
+const selectableValues: SelectableValue<PerformanceAttributeItemState>[] = nodes.map(n => {
+  return {
+      id: n.id,
+      label: n.label,
+      value: {
+          id: n.id,
+          label: n.label
+      }
+  }
+})
+
+return selectableValues
+```
