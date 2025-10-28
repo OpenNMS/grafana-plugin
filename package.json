@@ -44,7 +44,7 @@
     "@opennms/style": "github:OpenNMS/opennms-style#v0.4.0",
     "@playwright/test": "^1.56.1",
     "@stylistic/eslint-plugin-ts": "^2.13.0",
-    "@swc/core": "^1.13.5",
+    "@swc/core": "~1.3.75",
     "@swc/helpers": "^0.5.17",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.9.1",
@@ -78,7 +78,7 @@
     "rimraf": "^6.0.1",
     "sass": "^1.93.0",
     "sass-loader": "^16.0.5",
-    "specit": "^1.4.4",
+    "speculate": "^6.0.1",
     "style-loader": "^4.0.0",
     "swc-loader": "^0.2.6",
     "ts-node": "^10.9.2",
@@ -116,10 +116,19 @@
   "engines": {
     "node": ">=20 <23"
   },
-  "resolutions": {
-    "dot-prop": "^4.2.1",
-    "got": "^11.8.5",
-    "striptags": "^3.2.0"
+  "overrides": {
+    "@antora/cli": {
+      "pino": "^10.1.0"
+    },
+    "@antora/logger": {
+      "pino": "^10.1.0"
+    },
+    "opennms": {
+      "striptags": "^3.2.0"
+    },
+    "html-to-formatted-text": {
+      "striptags": "^3.2.0"
+    }
   },
   "spec": {
     "specTemplate": "src/rpm/spec.mustache",
