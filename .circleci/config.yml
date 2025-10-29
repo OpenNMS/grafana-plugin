@@ -358,7 +358,7 @@ jobs:
           at: ~/
       - run:
           name: Validate plugin ZIP file
-          command: npx -y '@grafana/plugin-validator@latest' -sourceCodeUri "file://$(pwd)" -strict artifacts/opennms-grafana-plugin-*.zip
+          command: npx -y '@grafana/plugin-validator@latest' -sourceCodeUri "file://$(pwd)" -strict -config .circleci/grafana-plugin-validator-config.yaml artifacts/opennms-grafana-plugin-*.zip
       - run:
           name: Validate Docker image
           command: |
