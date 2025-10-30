@@ -41,7 +41,7 @@
 
 /*! https://mths.be/punycode v1.4.0 by @mathias */
 
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */
 
 /**
    * Compares two software version numbers (e.g. "1.7.1" or "1.2b").
