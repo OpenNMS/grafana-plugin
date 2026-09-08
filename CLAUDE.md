@@ -159,7 +159,12 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
   first (it needs `debhelper` anyway); the orb passes `-o APT::Get::List-Cleanup=0`, so
   those lists survive into its own call. Do not drop that step
 - `build-docs` runs on `node-executor` and takes Antora from this repo's own `@antora`
-  devDependencies. There is deliberately no `docs-executor`: every `opennms/antora` tag,
+  devDependencies, so it **must install them itself**: the job requires only `pre-build`,
+  which checks out and never runs `npm ci`. That did not matter while the antora image
+  carried Antora globally, and it is why the first attempt failed in CI with
+  `spawnSync .../node_modules/.bin/antora ENOENT` while passing locally against a tree
+  that already had `node_modules`. Verify docs changes against a clean clone, not the
+  working tree. There is deliberately no `docs-executor`: every `opennms/antora` tag,
   newest included, is Alpine 3.18 on **Node 16**, and Antora 3.2 requires Node >= 20, so
   that image cannot run current Antora at all. Do **not** reintroduce it. The symptom it
   produced was `diagChan.tracingChannel is not a function` out of `pino` — the CLI

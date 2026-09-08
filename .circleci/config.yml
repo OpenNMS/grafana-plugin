@@ -186,6 +186,12 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      # Antora is a devDependency now, and this job requires only pre-build, which
+      # checks out but never installs. The old opennms/antora image carried Antora
+      # globally so the workspace contents did not matter; using this repo's own copy
+      # means they do. Installing here rather than adding `requires: build` keeps the
+      # docs building in parallel with the plugin instead of queueing behind it.
+      - install-node-dependencies
       - run:
           name: Validate Xrefs in docs
           command: |
