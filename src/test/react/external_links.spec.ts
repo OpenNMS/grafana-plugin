@@ -1,4 +1,5 @@
 import {
+  isAbsoluteHttpUrl,
   normalizeBaseUrl,
   resolveOpenNMSLink,
   toOpenNMSRelativeUrl
@@ -9,6 +10,9 @@ import { ClientDelegate } from '../../lib/client_delegate'
 // builds Alarm.detailsPage by appending to it. See OnmsServer.resolveURL.
 const PROXY_URL = '/api/datasources/proxy/uid/af2mze8mmd9moa'
 const DETAILS_PAGE = `${PROXY_URL}/alarm/detail.htm?id=9849`
+
+// In direct (browser) access mode Grafana leaves the datasource url as configured
+const DIRECT_URL = 'http://onms.example.com/opennms'
 
 describe('ExternalLinks :: normalizeBaseUrl', () => {
   it('should return an empty string when no base url is given', () => {
@@ -24,6 +28,29 @@ describe('ExternalLinks :: normalizeBaseUrl', () => {
   it('should strip trailing slashes so a relative path does not produce a double slash', () => {
     expect(normalizeBaseUrl('http://localhost:8980/opennms/')).toEqual('http://localhost:8980/opennms')
     expect(normalizeBaseUrl('http://localhost:8980/opennms///')).toEqual('http://localhost:8980/opennms')
+  })
+})
+
+describe('ExternalLinks :: isAbsoluteHttpUrl', () => {
+  it('should accept http and https urls', () => {
+    expect(isAbsoluteHttpUrl('http://localhost:8980/opennms')).toBe(true)
+    expect(isAbsoluteHttpUrl('https://onms.example.com/opennms')).toBe(true)
+    expect(isAbsoluteHttpUrl('  HTTP://localhost:8980/opennms  ')).toBe(true)
+  })
+
+  it('should reject a value with no scheme, which the browser cannot resolve to OpenNMS', () => {
+    // 'localhost:8980/...' parses as the unknown scheme 'localhost:', and
+    // 'onms.example.com/...' as a path relative to the Grafana page
+    expect(isAbsoluteHttpUrl('localhost:8980/opennms')).toBe(false)
+    expect(isAbsoluteHttpUrl('onms.example.com/opennms')).toBe(false)
+    expect(isAbsoluteHttpUrl('/opennms')).toBe(false)
+  })
+
+  it('should reject other schemes', () => {
+    expect(isAbsoluteHttpUrl('ftp://onms.example.com/opennms')).toBe(false)
+    expect(isAbsoluteHttpUrl('javascript:alert(1)')).toBe(false)
+    expect(isAbsoluteHttpUrl(undefined)).toBe(false)
+    expect(isAbsoluteHttpUrl('')).toBe(false)
   })
 })
 
@@ -48,6 +75,16 @@ describe('ExternalLinks :: toOpenNMSRelativeUrl', () => {
 
   it('should keep the url when there is no datasource url to strip', () => {
     expect(toOpenNMSRelativeUrl('/alarm/detail.htm?id=7', undefined)).toEqual('/alarm/detail.htm?id=7')
+  })
+
+  it('should leave an absolute url untouched when it does not match the datasource url', () => {
+    // Reachable while the panel's datasource is switched: useOpenNMSClient resolves the new
+    // client asynchronously while useAlarm still holds the alarm fetched from the old one.
+    // Prepending '/' here would yield '/http://other.example.com/...'.
+    const url = 'http://other.example.com/opennms/alarm/detail.htm?id=1'
+
+    expect(toOpenNMSRelativeUrl(url, PROXY_URL)).toEqual(url)
+    expect(toOpenNMSRelativeUrl(url, undefined)).toEqual(url)
   })
 })
 
@@ -104,6 +141,53 @@ describe('ExternalLinks :: resolveOpenNMSLink', () => {
     const link = resolveOpenNMSLink('alarm/detail.htm?id=7', {})
 
     expect(link).toEqual({ href: '/alarm/detail.htm?id=7', isAbsolute: false })
+  })
+
+  it('should keep a direct-access datasource link absolute when no base url is configured', () => {
+    // In direct (browser) access mode the datasource url is one the browser reaches itself, so
+    // opennms-js already produced a working link. Reducing it to a path would break it.
+    const link = resolveOpenNMSLink(`${DIRECT_URL}/alarm/detail.htm?id=9849`, { datasourceUrl: DIRECT_URL })
+
+    expect(link).toEqual({ href: `${DIRECT_URL}/alarm/detail.htm?id=9849`, isAbsolute: true })
+  })
+
+  it('should keep a direct-access datasource link absolute when the setting is explicitly off', () => {
+    const link = resolveOpenNMSLink(`${DIRECT_URL}/alarm/detail.htm?id=9849`, {
+      datasourceUrl: DIRECT_URL,
+      baseUrl: 'http://elsewhere.example.com/opennms',
+      enabled: false
+    })
+
+    expect(link).toEqual({ href: `${DIRECT_URL}/alarm/detail.htm?id=9849`, isAbsolute: true })
+  })
+
+  it('should let a configured base url re-root a direct-access link', () => {
+    const link = resolveOpenNMSLink(`${DIRECT_URL}/alarm/detail.htm?id=9849`, {
+      datasourceUrl: DIRECT_URL,
+      baseUrl: 'http://elsewhere.example.com/opennms',
+      enabled: true
+    })
+
+    expect(link).toEqual({ href: 'http://elsewhere.example.com/opennms/alarm/detail.htm?id=9849', isAbsolute: true })
+  })
+
+  it('should ignore a base url with no scheme rather than build a link that leads nowhere', () => {
+    for (const baseUrl of ['localhost:8980/opennms', 'onms.example.com/opennms', 'ftp://onms.example.com/opennms']) {
+      const link = resolveOpenNMSLink(DETAILS_PAGE, { datasourceUrl: PROXY_URL, baseUrl, enabled: true })
+
+      expect(link).toEqual({ href: '/alarm/detail.htm?id=9849', isAbsolute: false })
+    }
+  })
+
+  it('should never concatenate the base url onto an absolute url from another datasource', () => {
+    const url = 'http://other.example.com/opennms/alarm/detail.htm?id=1'
+    const link = resolveOpenNMSLink(url, {
+      datasourceUrl: PROXY_URL,
+      baseUrl: 'http://localhost:8980/opennms',
+      enabled: true
+    })
+
+    expect(link).toEqual({ href: url, isAbsolute: true })
   })
 })
 

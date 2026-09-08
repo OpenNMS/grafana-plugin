@@ -1,6 +1,7 @@
 import React from 'react'
 import { DataSourceSettings } from '@grafana/data'
 import { InlineField, InlineSwitch, Input } from '@grafana/ui'
+import { isAbsoluteHttpUrl } from '../../lib/externalLinks'
 import { EntityDataSourceOptions } from './types'
 
 interface Props {
@@ -18,9 +19,15 @@ export const OpenNMSBaseUrlConfig: React.FC<Props> = ({ onOptionsChange, options
   const enabled = options.jsonData.useOpenNMSBaseUrl ?? false
   const baseUrl = options.jsonData.opennmsBaseUrl ?? ''
 
-  // Turning the switch on without entering a url leaves links incomplete, and the placeholder
-  // alone reads like a saved value, so say so here rather than only in the panel.
-  const missingUrl = enabled && !baseUrl.trim()
+  // Turning the switch on without a usable url leaves links incomplete, so say so here rather
+  // than only in the panel. A blank field reads like a saved value because of the placeholder,
+  // and a scheme-less value such as 'localhost:8980/opennms' cannot resolve to OpenNMS at all.
+  const blankUrl = enabled && !baseUrl.trim()
+  const unresolvableUrl = enabled && !blankUrl && !isAbsoluteHttpUrl(baseUrl)
+
+  const error = blankUrl
+    ? 'Enter the base URL of your OpenNMS instance, or turn this setting off.'
+    : 'The base URL must start with http:// or https://, for example http://localhost:8980/opennms.'
 
   const onChange = (jsonData: Partial<EntityDataSourceOptions>) => {
     onOptionsChange({
@@ -67,8 +74,8 @@ export const OpenNMSBaseUrlConfig: React.FC<Props> = ({ onOptionsChange, options
         label='OpenNMS Base URL:'
         tooltip={tooltipText}
         disabled={!enabled}
-        invalid={missingUrl}
-        error='Enter the base URL of your OpenNMS instance, or turn this setting off.'
+        invalid={blankUrl || unresolvableUrl}
+        error={error}
       >
         <Input
           width={40}

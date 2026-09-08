@@ -1,18 +1,24 @@
 /**
  * Helpers for building links out to a running OpenNMS instance.
  *
- * The URL configured in a datasource's HTTP settings is not usable as a link target: in proxy
- * access mode Grafana rewrites it to '/api/datasources/proxy/uid/<uid>' on the frontend, and in
- * direct mode it may be an address only the Grafana server can reach (a Docker
- * 'host.docker.internal' address, for example). opennms-js builds Alarm.detailsPage from that url,
- * so it has to be re-rooted onto a base URL the user's browser can reach, which the user supplies
- * separately via the "OpenNMS Base URL" datasource setting.
+ * opennms-js builds urls such as Alarm.detailsPage from the datasource url, and whether that is
+ * usable as a link target depends on the datasource's access mode:
+ *
+ * - Proxy access: the frontend url is Grafana's own '/api/datasources/proxy/uid/<uid>', and the
+ *   configured url is one only the Grafana server need reach - typically a Docker
+ *   'host.docker.internal' address. Neither reaches OpenNMS from the browser, so such links have
+ *   to be re-rooted onto the base URL the user supplies via the "OpenNMS Base URL" setting.
+ * - Direct (browser) access: the browser makes the API calls itself, so the datasource url is
+ *   already browser-reachable and opennms-js produced a working link. It is left alone.
  */
 
 export interface OpenNMSLink {
   href: string
 
-  /** True when href points at a configured OpenNMS instance, false when it is only a relative path. */
+  /**
+   * True when href resolves to an OpenNMS instance on its own and can be presented as a link.
+   * False when it is only an OpenNMS-relative path, which callers must not make clickable.
+   */
   isAbsolute: boolean
 }
 
@@ -33,15 +39,38 @@ export const normalizeBaseUrl = (baseUrl: string | undefined): string => {
 }
 
 /**
+ * Whether a url is one the browser can resolve on its own.
+ *
+ * A scheme is required: the browser reads 'localhost:8980/opennms' as the unknown scheme
+ * 'localhost:', and 'onms.example.com/opennms' as a path relative to the Grafana page, so
+ * neither reaches OpenNMS. sanitizeUrl passes both through unchanged.
+ */
+export const isAbsoluteHttpUrl = (url: string | undefined): boolean => {
+  return /^https?:\/\//i.test((url ?? '').trim())
+}
+
+/**
  * Reduce a url built against the datasource url to a path relative to an OpenNMS instance,
  * e.g. '/alarm/detail.htm?id=9849'. The OpenNMS-relative portion comes from opennms-js, so the
  * page path never needs to be hardcoded here.
  */
 export const toOpenNMSRelativeUrl = (url: string, datasourceUrl: string | undefined): string => {
   const prefix = normalizeBaseUrl(datasourceUrl)
-  const relative = prefix && url.startsWith(prefix) ? url.slice(prefix.length) : url
 
-  return relative.startsWith('/') ? relative : `/${relative}`
+  if (prefix && url.startsWith(prefix)) {
+    const relative = url.slice(prefix.length)
+
+    return relative.startsWith('/') ? relative : `/${relative}`
+  }
+
+  // The url did not come from this datasource, so there is no prefix of ours to remove. If it
+  // already carries a scheme it stands on its own and must be left alone; prepending '/' would
+  // turn it into '/http://host/...'.
+  if (isAbsoluteHttpUrl(url)) {
+    return url.trim()
+  }
+
+  return url.startsWith('/') ? url : `/${url}`
 }
 
 /**
@@ -52,15 +81,33 @@ export const toOpenNMSRelativeUrl = (url: string, datasourceUrl: string | undefi
  * Returns undefined when there is no url to resolve.
  */
 export const resolveOpenNMSLink = (url: string | undefined, options: OpenNMSLinkOptions): OpenNMSLink | undefined => {
-  if (!url?.trim()) {
+  const trimmed = url?.trim()
+
+  if (!trimmed) {
     return undefined
   }
 
-  const relative = toOpenNMSRelativeUrl(url.trim(), options.datasourceUrl)
+  const relative = toOpenNMSRelativeUrl(trimmed, options.datasourceUrl)
+
+  // A url that could not be reduced to a path did not come from this datasource; it already
+  // resolves on its own, so it is returned as it stands rather than appended to the base url.
+  if (isAbsoluteHttpUrl(relative)) {
+    return { href: relative, isAbsolute: true }
+  }
+
   const baseUrl = normalizeBaseUrl(options.baseUrl)
 
-  if (options.enabled && baseUrl) {
+  // A base url without a scheme cannot resolve, so it is ignored rather than used to build a
+  // link that leads nowhere. The config editor reports it, but a datasource can also be
+  // provisioned from YAML without ever passing through that editor.
+  if (options.enabled && isAbsoluteHttpUrl(baseUrl)) {
     return { href: `${baseUrl}${relative}`, isAbsolute: true }
+  }
+
+  // Direct (browser) access mode: the datasource url is browser-reachable, so opennms-js
+  // already built a working link and there is nothing to re-root.
+  if (isAbsoluteHttpUrl(trimmed)) {
+    return { href: trimmed, isAbsolute: true }
   }
 
   return { href: relative, isAbsolute: false }

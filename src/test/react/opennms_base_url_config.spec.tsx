@@ -99,6 +99,46 @@ describe('OpenNMSBaseUrlConfig', () => {
     expect(screen.getByText(/Enter the base URL of your OpenNMS instance/)).toBeInTheDocument()
   })
 
+  it('should reject a url with no scheme, which the browser cannot resolve to OpenNMS', () => {
+    for (const opennmsBaseUrl of ['localhost:8980/opennms', 'onms.example.com/opennms', 'ftp://onms.example.com']) {
+      const { unmount } = render(
+        <OpenNMSBaseUrlConfig
+          options={settingsWith({ useOpenNMSBaseUrl: true, opennmsBaseUrl })}
+          onOptionsChange={jest.fn()}
+        />
+      )
+
+      expect(screen.getByText(/must start with http:\/\/ or https:\/\//)).toBeInTheDocument()
+      unmount()
+    }
+  })
+
+  it('should accept a full http or https url without complaint', () => {
+    for (const opennmsBaseUrl of ['http://localhost:8980/opennms', 'https://onms.example.com/opennms']) {
+      const { unmount } = render(
+        <OpenNMSBaseUrlConfig
+          options={settingsWith({ useOpenNMSBaseUrl: true, opennmsBaseUrl })}
+          onOptionsChange={jest.fn()}
+        />
+      )
+
+      expect(screen.queryByText(/Enter the base URL of your OpenNMS instance/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/must start with http:\/\/ or https:\/\//)).not.toBeInTheDocument()
+      unmount()
+    }
+  })
+
+  it('should not complain about a saved url while the setting is switched off', () => {
+    render(
+      <OpenNMSBaseUrlConfig
+        options={settingsWith({ opennmsBaseUrl: 'localhost:8980/opennms' })}
+        onOptionsChange={jest.fn()}
+      />
+    )
+
+    expect(screen.queryByText(/must start with http:\/\/ or https:\/\//)).not.toBeInTheDocument()
+  })
+
   it('should mark the placeholder as an example so it is not mistaken for a saved value', () => {
     render(<OpenNMSBaseUrlConfig options={settingsWith({ useOpenNMSBaseUrl: true })} onOptionsChange={jest.fn()} />)
 
