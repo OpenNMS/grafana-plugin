@@ -176,10 +176,30 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
     drift from the lockfile's. Omitted, its bare `require`s fall through to
     `./node_modules` and it validates with the same Antora that `npm run docs` generates
     with. Verified via `require.resolve`, not assumed
-  - `--log-failure-level=error`: Antora's default `failure_level` is **`fatal`**, so a
-    broken xref logs at `error` and still exits **0**. Without this the step reports
-    problems and passes anyway. `npm run docs` has the same default and is deliberately
-    left alone, so authoring locally is not blocked; `validate-xrefs` is the gate
+  Xref validation is **strict**, and getting there took two steps because
+  `--log-failure-level` alone cannot express it:
+  - Antora's default `failure_level` is **`fatal`**, so even a `target of xref not
+    found` (logged at `error`) exited **0**. Both `validate-xrefs` and `docs` now pass
+    `--log-failure-level=warn`, which covers warn and above — including missing images
+    and includes, not just xrefs. Note these are options of the **`generate`
+    subcommand**: placed before it, Antora reads them as stray positional arguments and
+    dies with "too many arguments for 'generate'"
+  - Asciidoctor reports a dangling *internal* reference — `<<some-anchor>>` where that
+    anchor is not on the page — at **`info`**, and `failure_level` accepts only
+    warn/error/fatal/none, so that class can never fail on Antora's exit code alone.
+    `scripts/docs/validateXrefs.js` wraps the validator, runs it at
+    `--log-level=info --log-format=json`, and fails on any reference message whatever
+    level it was logged at. `collectProblems` is exported and covered by
+    `src/test/docs/validate_xrefs.spec.ts`. This is the gap that let
+    `getting_started/importing.adoc` link to `#upgrade-dashboards` — an anchor on
+    `installation/upgrading.adoc` — while CI stayed green
+- `<<module:page.adoc#anchor, text>>` **is** valid in Antora and resolves to a proper
+  cross-page link; a static "is this anchor on this page" check flags those as broken and
+  is wrong. What is actually broken is a bare `<<anchor>>` naming an anchor on a
+  *different* page: it renders as `href="#anchor"` and goes nowhere. Prefer
+  `xref:module:page.adoc#anchor[text]` for anything cross-page. Antora validates the
+  page half of an xref target, never the `#anchor` half, so a wrong anchor with a right
+  page is still silent
 - The docs UI bundle comes from `OpenNMS/antora-ui-opennms` (v3.1.1), matching
   `antora-playbook-local.yml` in the main OpenNMS repo. The old
   `opennms-forge/antora-ui-opennms` bundle is a different repo whose newest release is

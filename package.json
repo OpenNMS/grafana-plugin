@@ -18,7 +18,7 @@
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
     "dev": "webpack -c ./webpack.config.ts --env development",
-    "docs": "antora --stacktrace generate local-site.yml",
+    "docs": "antora --stacktrace generate --log-level=info --log-failure-level=warn local-site.yml",
     "e2e": "playwright test",
     "e2e:update": "playwright test --update-screenshots",
     "lint": "eslint --cache --ignore-pattern './.gitignore' --ignore-pattern 'public/**' --ext .js,.jsx,.ts,.tsx .",
@@ -33,7 +33,7 @@
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "test:watch": "jest --watch --onlyChanged",
     "typecheck": "tsc --noEmit",
-    "validate-xrefs": "npm install --no-save --no-audit --no-fund --omit=optional --prefix .antora-tools \"https://gitlab.com/antora/xref-validator/-/archive/9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53/xref-validator-9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53.tar.gz\" && antora --log-failure-level=error --generator ./.antora-tools/node_modules/@antora/xref-validator local-site.yml",
+    "validate-xrefs": "npm install --no-save --no-audit --no-fund --omit=optional --prefix .antora-tools \"https://gitlab.com/antora/xref-validator/-/archive/9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53/xref-validator-9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53.tar.gz\" && node ./scripts/docs/validateXrefs.js local-site.yml",
     "watch": "webpack -w -c ./webpack.config.ts --env development"
   },
   "devDependencies": {
