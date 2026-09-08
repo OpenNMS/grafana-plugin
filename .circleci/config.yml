@@ -197,6 +197,12 @@ jobs:
           name: Generate HTML output for documentation
           command: |
             npm run docs
+      - run:
+          name: Validate anchors in the generated docs
+          command: |
+            # Antora validates the page half of an xref target and never the #anchor
+            # half, so this reads the site npm run docs just built and has to follow it.
+            npm run validate-anchors
       - store_artifacts:
           path: build/site.zip
           destination: site.zip

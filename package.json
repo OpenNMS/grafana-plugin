@@ -33,6 +33,7 @@
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "test:watch": "jest --watch --onlyChanged",
     "typecheck": "tsc --noEmit",
+    "validate-anchors": "node ./scripts/docs/validateAnchors.js public",
     "validate-xrefs": "npm install --no-save --no-audit --no-fund --omit=optional --prefix .antora-tools \"https://gitlab.com/antora/xref-validator/-/archive/9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53/xref-validator-9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53.tar.gz\" && node ./scripts/docs/validateXrefs.js local-site.yml",
     "watch": "webpack -w -c ./webpack.config.ts --env development"
   },

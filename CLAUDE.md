@@ -197,9 +197,19 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
   cross-page link; a static "is this anchor on this page" check flags those as broken and
   is wrong. What is actually broken is a bare `<<anchor>>` naming an anchor on a
   *different* page: it renders as `href="#anchor"` and goes nowhere. Prefer
-  `xref:module:page.adoc#anchor[text]` for anything cross-page. Antora validates the
-  page half of an xref target, never the `#anchor` half, so a wrong anchor with a right
-  page is still silent
+  `xref:module:page.adoc#anchor[text]` for anything cross-page
+- Antora validates the page half of an xref target and **never** the `#anchor` half, so
+  `xref:installation:upgrading.adoc#typo[]` resolves the page, renders a link to nowhere
+  and reports nothing at any log level. `scripts/docs/validateAnchors.js` covers that,
+  and `build-docs` runs it as a third step because it reads the site `npm run docs`
+  builds. It works on the **generated HTML**, not the AsciiDoc source, and deliberately
+  so: anchors come from auto-generated section ids (subject to `idprefix`/`idseparator`),
+  `[[x]]`, `[#x]`, block ids and discrete headings, so deriving them from source means
+  reimplementing Asciidoctor — which reports good links as broken. The rendered `id`
+  attributes are ground truth. It checks whole pages rather than scoping to `<article>`,
+  which would couple it to the UI bundle's markup and silently check nothing if a future
+  bundle renamed that element; every fragment link outside `<article>` in this site is a
+  bare `href="#"` navbar toggle, which is skipped anyway
 - The docs UI bundle comes from `OpenNMS/antora-ui-opennms` (v3.1.1), matching
   `antora-playbook-local.yml` in the main OpenNMS repo. The old
   `opennms-forge/antora-ui-opennms` bundle is a different repo whose newest release is
