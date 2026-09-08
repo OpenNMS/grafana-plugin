@@ -5,6 +5,23 @@
 You can use the Entities datasource to retrieve entity model objects (alarms and nodes) from OpenNMS.
 For an example of the Entities datasource in use, see <<panel_configuration:dynamic-dashboard.adoc#pc-filter-panel, Create a Filter panel>>.
 
+== Datasource configuration
+
+In addition to the standard HTTP settings, the Entities datasource has an *Additional Options* section with an *OpenNMS Base URL* setting.
+
+Some panels can link directly to a page in the OpenNMS web UI, such as the *Full Details* link in the Alarm Table panel's alarm detail dialog.
+Those links cannot be built from the URL in the HTTP settings: Grafana routes datasource requests through its own proxy, and the configured URL is one the Grafana server must be able to reach, which is not necessarily one your browser can reach.
+A Grafana instance running in Docker, for example, is typically configured with a `host.docker.internal` address.
+
+To enable these links, turn on *Enable OpenNMS Base URL* and enter the base URL of your OpenNMS instance as your browser reaches it, including the context path:
+
+[source,]
+----
+http://localhost:8980/opennms
+----
+
+If the setting is turned off, or the URL is left blank, these links are displayed as a path relative to an OpenNMS instance instead of as a working link.
+
 == Datasource queries
 
 This datasource's behavior changes depending on the specified entity.
