@@ -29,6 +29,8 @@ conf/custom.ini
 
 # Antora documentation
 public/
+# xref validator, installed on demand by `npm run validate-xrefs`
+.antora-tools/
 build/
 
 # Not ready yet

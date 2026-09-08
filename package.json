@@ -33,13 +33,13 @@
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "test:watch": "jest --watch --onlyChanged",
     "typecheck": "tsc --noEmit",
-    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
+    "validate-xrefs": "npm install --no-save --no-audit --no-fund --omit=optional --prefix .antora-tools \"https://gitlab.com/antora/xref-validator/-/archive/9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53/xref-validator-9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53.tar.gz\" && antora --log-failure-level=error --generator ./.antora-tools/node_modules/@antora/xref-validator local-site.yml",
     "watch": "webpack -w -c ./webpack.config.ts --env development"
   },
   "devDependencies": {
-    "@antora/cli": "^3.1.14",
-    "@antora/site-generator": "^3.1.14",
-    "@antora/site-generator-default": "^3.1.12",
+    "@antora/cli": "^3.2.0",
+    "@antora/site-generator": "^3.2.0",
+    "@antora/site-generator-default": "^3.2.0",
     "@babel/core": "^7.29.7",
     "@grafana/e2e-selectors": "^12.4.0",
     "@grafana/eslint-config": "^8.2.0",

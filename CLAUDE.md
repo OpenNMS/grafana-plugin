@@ -145,6 +145,50 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
 - `MAKERPM_DEBUG=1` / `MAKEDEB_DEBUG=1` / `MAKEZIP_DEBUG=1` turn on verbose output for
   CircleCI debugging. Each entry point is a thin wrapper; the work lives in a sibling
   `build.js` that takes paths as arguments so it can be tested against a fixture `dist`
+- CI executors: `make-rpm` runs on `rockylinux/rockylinux:9` and `make-deb` on
+  `node:22-trixie`; `make-tarball`/`make-zip` need only node, `tar` and `zip` and run on
+  `node-executor`. `opennms/build-env` is **not** an option any more — its newest
+  RHEL-family tag is CentOS 8 with Node 16 and its newest Debian tag is bullseye with
+  Node 18, both far below this repo's `engines` (`>=22 <25`). Neither image carries a
+  JDK, because nothing in this pipeline uses Java
+- `sign-packages/install-deb-dependencies` pins
+  `-o Dir::Etc::sourcelist=sources.list -o Dir::Etc::sourceparts=-`, and Debian 12+ ships
+  its sources as deb822 in `/etc/apt/sources.list.d/debian.sources` with no
+  `/etc/apt/sources.list` at all. On its own the orb step therefore refreshes nothing and
+  fails with "Unable to locate package debsigs". `make-deb` runs a plain `apt-get update`
+  first (it needs `debhelper` anyway); the orb passes `-o APT::Get::List-Cleanup=0`, so
+  those lists survive into its own call. Do not drop that step
+- `build-docs` runs on `node-executor` and takes Antora from this repo's own `@antora`
+  devDependencies. There is deliberately no `docs-executor`: every `opennms/antora` tag,
+  newest included, is Alpine 3.18 on **Node 16**, and Antora 3.2 requires Node >= 20, so
+  that image cannot run current Antora at all. Do **not** reintroduce it. The symptom it
+  produced was `diagChan.tracingChannel is not a function` out of `pino` — the CLI
+  resolves `@antora/site-generator` from the playbook directory first, so the image's
+  Node 16 loaded the repo's own copy and died in its `pino@10` (Node >= 20) dependency.
+  Both the image bundle and the repo tree must therefore stay on the same Node
+- `@antora/xref-validator` is **not** on npmjs.org — only a GitLab tarball — so it cannot
+  be a devDependency. `npm run validate-xrefs` installs it itself, into `.antora-tools/`
+  (gitignored) and pinned to a commit rather than `main`, which has not moved since 2022.
+  `build-docs` just calls that script, so the pinned commit lives in exactly one place.
+  Two flags in it are load-bearing:
+  - `--omit=optional`: the validator declares `@antora/*` as `optionalDependencies` on a
+    floating `^3.0.0-alpha.1` range, so installing them gives it a second Antora that can
+    drift from the lockfile's. Omitted, its bare `require`s fall through to
+    `./node_modules` and it validates with the same Antora that `npm run docs` generates
+    with. Verified via `require.resolve`, not assumed
+  - `--log-failure-level=error`: Antora's default `failure_level` is **`fatal`**, so a
+    broken xref logs at `error` and still exits **0**. Without this the step reports
+    problems and passes anyway. `npm run docs` has the same default and is deliberately
+    left alone, so authoring locally is not blocked; `validate-xrefs` is the gate
+- The docs UI bundle comes from `OpenNMS/antora-ui-opennms` (v3.1.1), matching
+  `antora-playbook-local.yml` in the main OpenNMS repo. The old
+  `opennms-forge/antora-ui-opennms` bundle is a different repo whose newest release is
+  v3.1.0 from 2022. The bundle is only presentation assets — it has no bearing on the
+  Node/Antora version problem above
+- Rocky 9 ships neither `tar` nor `nodejs` and `rpm-build` does not pull `tar` in, so
+  `make-rpm` installs `nodejs npm rpm-build tar` explicitly — the spec's `%setup` needs
+  `tar`. The orb's `.rpmmacros` forces a bzip2 payload (`w0.bzdio`), which keeps the RPM
+  installable on older rpm than el9's zstd default would
 - The deb builds under the system temp directory, never under `artifacts/`.
   `dpkg-buildpackage` writes a `.dsc`, `.changes`, `.buildinfo` and source tarball beside the
   `.deb`, and only the `.deb` is signed and published; building in `artifacts/` shipped all of
