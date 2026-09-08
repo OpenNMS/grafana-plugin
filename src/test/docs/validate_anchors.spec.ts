@@ -40,6 +40,22 @@ describe('collectIds', () => {
   it('does not treat a substring of another attribute as an id', () => {
     expect(collectIds('<div data-id="nope">x</div>')).toEqual(new Set())
   })
+
+  it('ignores meta name attributes, which are not anchors', () => {
+    // Every Antora page carries these. Harvesting them made #description, #generator
+    // and #viewport resolve on all 26 built pages -- #description being a plausible
+    // typo for a section whose real id is _description.
+    const html =
+      '<meta name="description" content="x">' +
+      '<meta name="generator" content="Antora">' +
+      '<meta name="viewport" content="width=device-width">'
+
+    expect(collectIds(html)).toEqual(new Set())
+  })
+
+  it('still honours a name attribute on an anchor element', () => {
+    expect(collectIds('<a name="legacy"></a>')).toEqual(new Set(['legacy']))
+  })
 })
 
 describe('extractAnchorLinks', () => {
@@ -83,6 +99,14 @@ describe('resolveTarget', () => {
       file: '/site/docs/1.0/b.html',
       fragment: '100%'
     })
+  })
+
+  it('skips a root-relative href, which cannot be mapped without site.url', () => {
+    // Antora writes /grafana-plugin/_/css/site.css for a file at <siteDir>/_/css/site.css,
+    // because site.url contributes the prefix. Resolving against the page escapes the
+    // site dir; resolving against the site dir keeps a prefix that is not a directory.
+    // Either way a correct link gets reported as broken.
+    expect(resolveTarget(page, '/grafana-plugin/installation/upgrading.html#anchor')).toBeNull()
   })
 
   it.each([
@@ -148,6 +172,12 @@ describe('findBrokenAnchors', () => {
     // Antora writes a bare redirect page at the site root; it has no <article>, which
     // is why this checks whole pages instead of scoping to one element.
     writePage('index.html', '<h1>Redirect Notice</h1><a href="docs/1.0/a.html">go</a>')
+
+    expect(findBrokenAnchors(siteDir).problems).toEqual([])
+  })
+
+  it('does not report a root-relative link as broken', () => {
+    writePage('docs/1.0/a.html', '<a href="/site/docs/1.0/b.html#target">to b</a>')
 
     expect(findBrokenAnchors(siteDir).problems).toEqual([])
   })

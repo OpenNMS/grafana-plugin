@@ -175,7 +175,8 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
   be a devDependency. `npm run validate-xrefs` installs it itself, into `.antora-tools/`
   (gitignored) and pinned to a commit rather than `main`, which has not moved since 2022.
   `build-docs` just calls that script, so the pinned commit lives in exactly one place.
-  Two flags in it are load-bearing:
+  Two flags in it are load-bearing — `--omit=optional`, and the
+  `--log-failure-level=warn` covered under strictness below:
   - `--omit=optional`: the validator declares `@antora/*` as `optionalDependencies` on a
     floating `^3.0.0-alpha.1` range, so installing them gives it a second Antora that can
     drift from the lockfile's. Omitted, its bare `require`s fall through to
@@ -220,10 +221,14 @@ A full reinstall also re-resolves every `^` range, so it can surface breakage un
   `opennms-forge/antora-ui-opennms` bundle is a different repo whose newest release is
   v3.1.0 from 2022. The bundle is only presentation assets — it has no bearing on the
   Node/Antora version problem above
-- Rocky 9 ships neither `tar` nor `nodejs` and `rpm-build` does not pull `tar` in, so
-  `make-rpm` installs `nodejs npm rpm-build tar` explicitly — the spec's `%setup` needs
-  `tar`. The orb's `.rpmmacros` forces a bzip2 payload (`w0.bzdio`), which keeps the RPM
-  installable on older rpm than el9's zstd default would
+- Rocky 9 carries no `nodejs`, so `make-rpm` installs `nodejs npm rpm-build` explicitly
+  (`rpm-sign` comes from the signing orb). `tar`, which the spec's `%setup` shells out
+  to, needs no listing: it is in the base image *and* a declared dependency of
+  `rpm-build`. An earlier version of this note claimed the opposite, because the probe
+  used `which` — which Rocky 9 does **not** ship — so `which tar` failed and read as a
+  missing tar. Probe for binaries with `command -v`, never `which`. The orb's
+  `.rpmmacros` forces a bzip2 payload (`w0.bzdio`), which keeps the RPM installable on
+  older rpm than el9's zstd default would
 - The deb builds under the system temp directory, never under `artifacts/`.
   `dpkg-buildpackage` writes a `.dsc`, `.changes`, `.buildinfo` and source tarball beside the
   `.deb`, and only the `.deb` is signed and published; building in `artifacts/` shipped all of

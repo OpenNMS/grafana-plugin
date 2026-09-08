@@ -25,6 +25,12 @@ const PROJECT_DIR = path.resolve(__dirname, '..', '..');
 // Antora already fails on is left to Antora's own exit code.
 const REFERENCE_PROBLEM = /^(possible invalid reference|target of (?:xref|image|include) not found)\b/;
 
+// Antora records an absolute path for the file a message came from, but not on every
+// record. This stands in for the missing ones, and must not be run through
+// path.relative: that resolves it against the cwd and prints `../../..<cwd>/<unknown
+// file>` whenever the script is invoked from outside the project directory.
+const UNKNOWN_FILE = '<unknown file>';
+
 const ANTORA = path.join(PROJECT_DIR, 'node_modules', '.bin', 'antora');
 const GENERATOR = path.join(
   PROJECT_DIR,
@@ -70,8 +76,16 @@ function collectProblems(output) {
     .filter((record) => record && REFERENCE_PROBLEM.test(record.msg || ''))
     .map((record) => ({
       msg: record.msg,
-      file: (record.file || {}).path || '<unknown file>'
+      file: (record.file || {}).path || UNKNOWN_FILE
     }));
+}
+
+function describeLocation(file, projectDir = PROJECT_DIR) {
+  if (file === UNKNOWN_FILE) {
+    return file;
+  }
+
+  return path.relative(projectDir, file);
 }
 
 function main() {
@@ -99,8 +113,8 @@ function main() {
     console.error(
       '\nvalidate-xrefs: ' + problems.length + ' reference problem(s) found:'
     );
-    problems.forEach((p) => {
-      console.error('  ' + path.relative(PROJECT_DIR, p.file) + ': ' + p.msg);
+    problems.forEach((problem) => {
+      console.error('  ' + describeLocation(problem.file) + ': ' + problem.msg);
     });
     process.exit(1);
   }
@@ -117,4 +131,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { collectProblems, REFERENCE_PROBLEM };
+module.exports = { collectProblems, describeLocation, REFERENCE_PROBLEM, UNKNOWN_FILE };

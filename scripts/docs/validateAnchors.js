@@ -36,7 +36,18 @@ const GENERATED_FRAGMENT = /^_footnote(?:def|ref)_\d+$/;
 function collectIds(html) {
   const ids = new Set();
 
-  for (const match of html.matchAll(/\s(?:id|name)="([^"]*)"/g)) {
+  for (const match of html.matchAll(/\sid="([^"]*)"/g)) {
+    if (match[1] !== '') {
+      ids.add(match[1]);
+    }
+  }
+
+  // `name` counts only on <a>. Harvesting it everywhere makes every page's
+  // <meta name="description">, <meta name="generator"> and <meta name="viewport">
+  // into anchors, so `#description` -- a plausible typo for a section whose real id
+  // is `_description` -- resolves silently on all 26 pages. Asciidoctor emits `id`
+  // for anchors; `<a name=>` is only here for hand-written passthrough HTML.
+  for (const match of html.matchAll(/<a\s[^>]*\bname="([^"]*)"/g)) {
     if (match[1] !== '') {
       ids.add(match[1]);
     }
@@ -83,6 +94,18 @@ function resolveTarget(pageFile, href) {
   }
 
   if (GENERATED_FRAGMENT.test(fragment)) {
+    return null;
+  }
+
+  // A root-relative href is resolved against the published site URL, not the output
+  // directory. Antora writes `/grafana-plugin/_/css/site.css` for a file that lives at
+  // <siteDir>/_/css/site.css, because site.url contributes the `/grafana-plugin`
+  // prefix. So resolving one against the page escapes siteDir entirely, and resolving
+  // it against siteDir keeps a prefix that is not a directory -- both report a correct
+  // link as broken. Mapping it properly needs site.url, which this script deliberately
+  // does not read. Antora emits these for UI assets and the 404 page and never with a
+  // fragment, so skip rather than guess.
+  if (relative.startsWith('/')) {
     return null;
   }
 

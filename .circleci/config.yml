@@ -331,10 +331,11 @@ jobs:
       - run:
           name: Install RPM build tooling
           command: |
-            # tar is needed by the spec's %setup and ships in neither the base image
-            # nor rpm-build's dependencies. rpm-sign comes from the orb step below.
+            # Rocky 9 carries no node; rpm-sign comes from the orb step below. tar,
+            # which the spec's %setup shells out to, is in the base image and is a
+            # declared dependency of rpm-build, so it does not need listing here.
             dnf -y module enable nodejs:22
-            dnf -y --setopt=install_weak_deps=False install nodejs npm rpm-build tar
+            dnf -y --setopt=install_weak_deps=False install nodejs npm rpm-build
       - sign-packages/install-rpm-dependencies:
           skip_if_forked_pr: true
       - sign-packages/setup-env:

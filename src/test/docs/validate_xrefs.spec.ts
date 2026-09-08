@@ -3,7 +3,11 @@
 // these tests pin the level-independent behaviour: a reference problem is a problem
 // whatever level Antora logged it at, and nothing else is.
 
-const { collectProblems } = require('../../../scripts/docs/validateXrefs')
+const {
+  collectProblems,
+  describeLocation,
+  UNKNOWN_FILE
+} = require('../../../scripts/docs/validateXrefs')
 
 const record = (level: string, msg: string, file?: string) =>
   JSON.stringify({ level, time: 1, name: 'asciidoctor', msg, ...(file ? { file: { path: file } } : {}) })
@@ -65,5 +69,18 @@ describe('collectProblems', () => {
     const out = record('info', 'checked for possible invalid reference targets', '/repo/docs/a.adoc')
 
     expect(collectProblems(out)).toEqual([])
+  })
+})
+
+describe('describeLocation', () => {
+  it('relativises a real path against the project directory', () => {
+    expect(describeLocation('/repo/docs/a.adoc', '/repo')).toBe('docs/a.adoc')
+  })
+
+  it('leaves the unknown-file sentinel alone', () => {
+    // path.relative would resolve it against the cwd and print something like
+    // ../../../elsewhere/<unknown file> whenever the script runs from outside the repo.
+    expect(describeLocation(UNKNOWN_FILE, '/repo')).toBe(UNKNOWN_FILE)
+    expect(describeLocation(UNKNOWN_FILE, '/some/other/place')).toBe(UNKNOWN_FILE)
   })
 })
