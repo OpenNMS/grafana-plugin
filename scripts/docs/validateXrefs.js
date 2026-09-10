@@ -19,7 +19,7 @@
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const PROJECT_DIR = path.resolve(__dirname, '..', '..');
+const { PROJECT_DIR } = require('../paths');
 
 // Only reference problems, not every info-level message Antora emits. Anything
 // Antora already fails on is left to Antora's own exit code.

@@ -20,7 +20,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const PROJECT_DIR = path.resolve(__dirname, '..', '..');
+const { PROJECT_DIR } = require('../paths');
+
 const DEFAULT_SITE_DIR = path.join(PROJECT_DIR, 'public');
 
 // The UI bundle's assets. No pages, and its ids are not ours to police.
