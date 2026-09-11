@@ -51,8 +51,8 @@ export const AlarmDetailsLink: React.FC<AlarmDetailsLinkProps> = ({ alarm, clien
         <div className={s.wrapper}>
             <div>Full Details: <span className={s.relativeUrl}>{link.href}</span></div>
             <div className={s.note}>
-                Link is relative to an OpenNMS instance. To get a complete link, please go to the
-                Entity Datasource and enter and enable the OpenNMS Base URL field.
+                Link is relative to an OpenNMS instance. To get a complete link, go to the Entity
+                Datasource configuration, enable the OpenNMS Base URL setting and enter a URL.
             </div>
         </div>
     )

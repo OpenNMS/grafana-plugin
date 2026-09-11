@@ -7,6 +7,8 @@ import { AlarmDetailsLink } from '../../panels/alarm-table/modal/AlarmDetailsLin
 const PROXY_URL = '/api/datasources/proxy/uid/af2mze8mmd9moa'
 const RELATIVE_URL = '/alarm/detail.htm?id=9849'
 const NOTE = /Link is relative to an OpenNMS instance/
+const FULL_NOTE = 'Link is relative to an OpenNMS instance. To get a complete link, go to the Entity '
+  + 'Datasource configuration, enable the OpenNMS Base URL setting and enter a URL.'
 
 const clientFor = (jsonData: object) => new ClientDelegate({
   url: PROXY_URL,
@@ -45,6 +47,17 @@ describe('AlarmDetailsLink', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
     expect(screen.getByText(RELATIVE_URL, { exact: false })).toBeInTheDocument()
     expect(screen.getByText(NOTE)).toBeInTheDocument()
+  })
+
+  it('should tell the user which setting to turn on and that it needs a url', () => {
+    render(
+      <AlarmDetailsLink
+        alarm={alarmWith(`${PROXY_URL}/alarm/detail.htm?id=9849`)}
+        client={clientFor({})}
+      />
+    )
+
+    expect(screen.getByText(FULL_NOTE)).toBeInTheDocument()
   })
 
   it('should render the relative url as plain text when the base url is enabled but left blank', () => {

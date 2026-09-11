@@ -25,6 +25,20 @@ describe('ExternalLinks :: normalizeBaseUrl', () => {
     expect(normalizeBaseUrl('  http://localhost:8980/opennms  ')).toEqual('http://localhost:8980/opennms')
   })
 
+  it('should drop a query or fragment, which cannot precede a path', () => {
+    // The OpenNMS UI is hash-routed, so copying the address bar yields a trailing '#/'.
+    // Appending to it gives '.../opennms/#/alarm/detail.htm', which lands on the root.
+    expect(normalizeBaseUrl('http://localhost:8980/opennms/#/')).toEqual('http://localhost:8980/opennms')
+    expect(normalizeBaseUrl('http://localhost:8980/opennms#/alarms')).toEqual('http://localhost:8980/opennms')
+    expect(normalizeBaseUrl('http://localhost:8980/opennms?x=1')).toEqual('http://localhost:8980/opennms')
+    expect(normalizeBaseUrl('http://localhost:8980/opennms/?x=1#/')).toEqual('http://localhost:8980/opennms')
+  })
+
+  it('should leave a relative datasource url alone, since it is used as a prefix to strip', () => {
+    expect(normalizeBaseUrl('/api/datasources/proxy/uid/abc')).toEqual('/api/datasources/proxy/uid/abc')
+    expect(normalizeBaseUrl('/api/datasources/proxy/uid/abc/')).toEqual('/api/datasources/proxy/uid/abc')
+  })
+
   it('should strip trailing slashes so a relative path does not produce a double slash', () => {
     expect(normalizeBaseUrl('http://localhost:8980/opennms/')).toEqual('http://localhost:8980/opennms')
     expect(normalizeBaseUrl('http://localhost:8980/opennms///')).toEqual('http://localhost:8980/opennms')
@@ -75,6 +89,19 @@ describe('ExternalLinks :: toOpenNMSRelativeUrl', () => {
 
   it('should keep the url when there is no datasource url to strip', () => {
     expect(toOpenNMSRelativeUrl('/alarm/detail.htm?id=7', undefined)).toEqual('/alarm/detail.htm?id=7')
+  })
+
+  it('should only strip the datasource url at a path boundary', () => {
+    // A provisioned datasource can set a human-readable uid, so one uid can be a prefix of
+    // another. Matching on the raw string would leave '/-entity/alarm/detail.htm?id=1'.
+    const url = '/api/datasources/proxy/uid/opennms-entity/alarm/detail.htm?id=1'
+
+    expect(toOpenNMSRelativeUrl(url, '/api/datasources/proxy/uid/opennms')).toEqual(url)
+  })
+
+  it('should still strip a datasource url that ends exactly at the path boundary', () => {
+    expect(toOpenNMSRelativeUrl(DETAILS_PAGE, PROXY_URL)).toEqual('/alarm/detail.htm?id=9849')
+    expect(toOpenNMSRelativeUrl(`${PROXY_URL}/alarm/detail.htm`, PROXY_URL)).toEqual('/alarm/detail.htm')
   })
 
   it('should leave an absolute url untouched when it does not match the datasource url', () => {
@@ -171,12 +198,50 @@ describe('ExternalLinks :: resolveOpenNMSLink', () => {
     expect(link).toEqual({ href: 'http://elsewhere.example.com/opennms/alarm/detail.htm?id=9849', isAbsolute: true })
   })
 
+  it('should build a usable link from a base url copied out of the hash-routed OpenNMS UI', () => {
+    const link = resolveOpenNMSLink(DETAILS_PAGE, {
+      datasourceUrl: PROXY_URL,
+      baseUrl: 'http://localhost:8980/opennms/#/',
+      enabled: true
+    })
+
+    expect(link).toEqual({ href: 'http://localhost:8980/opennms/alarm/detail.htm?id=9849', isAbsolute: true })
+  })
+
   it('should ignore a base url with no scheme rather than build a link that leads nowhere', () => {
     for (const baseUrl of ['localhost:8980/opennms', 'onms.example.com/opennms', 'ftp://onms.example.com/opennms']) {
       const link = resolveOpenNMSLink(DETAILS_PAGE, { datasourceUrl: PROXY_URL, baseUrl, enabled: true })
 
       expect(link).toEqual({ href: '/alarm/detail.htm?id=9849', isAbsolute: false })
     }
+  })
+
+  it('should not re-root a stale url still carrying another datasource proxy prefix', () => {
+    // Same datasource-switch window as the absolute case below, but in proxy mode - the mode
+    // this feature exists for - the stale url is relative, so a scheme check alone misses it.
+    const stale = '/api/datasources/proxy/uid/bbbbbbbbbbbbbb/alarm/detail.htm?id=1'
+
+    expect(resolveOpenNMSLink(stale, {
+      datasourceUrl: PROXY_URL,
+      baseUrl: 'http://localhost:8980/opennms',
+      enabled: true
+    })).toBeUndefined()
+  })
+
+  it('should not present a stale proxy url as a relative path when no base url is configured', () => {
+    const stale = '/api/datasources/proxy/uid/bbbbbbbbbbbbbb/alarm/detail.htm?id=1'
+
+    expect(resolveOpenNMSLink(stale, { datasourceUrl: PROXY_URL })).toBeUndefined()
+  })
+
+  it('should still resolve an OpenNMS-relative url that is not a proxy path', () => {
+    const link = resolveOpenNMSLink('/alarm/detail.htm?id=1', {
+      datasourceUrl: PROXY_URL,
+      baseUrl: 'http://localhost:8980/opennms',
+      enabled: true
+    })
+
+    expect(link).toEqual({ href: 'http://localhost:8980/opennms/alarm/detail.htm?id=1', isAbsolute: true })
   })
 
   it('should never concatenate the base url onto an absolute url from another datasource', () => {

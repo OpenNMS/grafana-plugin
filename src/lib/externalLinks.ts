@@ -33,9 +33,25 @@ export interface OpenNMSLinkOptions {
   enabled?: boolean
 }
 
-/** Trim whitespace and any trailing slashes, so a relative path can be appended directly. */
+/**
+ * Reduce a url to the part a path can be appended to: origin and pathname, no trailing slash.
+ *
+ * A query or fragment has to go. The OpenNMS UI is hash-routed, so copying its address out of
+ * the browser yields a trailing '#/', and appending to that gives '/opennms/#/alarm/detail.htm',
+ * which lands on the root with a bogus route. Values that are not parseable as absolute urls -
+ * a relative datasource url used as a prefix to strip, or a base url the user has not finished
+ * typing - keep the plain trailing-slash trim.
+ */
 export const normalizeBaseUrl = (baseUrl: string | undefined): string => {
-  return (baseUrl ?? '').trim().replace(/\/+$/, '')
+  const trimmed = (baseUrl ?? '').trim()
+
+  try {
+    const { origin, pathname } = new URL(trimmed)
+
+    return `${origin}${pathname}`.replace(/\/+$/, '')
+  } catch {
+    return trimmed.replace(/\/+$/, '')
+  }
 }
 
 /**
@@ -49,6 +65,9 @@ export const isAbsoluteHttpUrl = (url: string | undefined): boolean => {
   return /^https?:\/\//i.test((url ?? '').trim())
 }
 
+/** Grafana's own datasource proxy path. No OpenNMS instance serves anything under it. */
+const GRAFANA_PROXY_PATH = /^\/api\/datasources\/proxy\//i
+
 /**
  * Reduce a url built against the datasource url to a path relative to an OpenNMS instance,
  * e.g. '/alarm/detail.htm?id=9849'. The OpenNMS-relative portion comes from opennms-js, so the
@@ -56,11 +75,13 @@ export const isAbsoluteHttpUrl = (url: string | undefined): boolean => {
  */
 export const toOpenNMSRelativeUrl = (url: string, datasourceUrl: string | undefined): string => {
   const prefix = normalizeBaseUrl(datasourceUrl)
+  const relative = prefix && url.startsWith(prefix) ? url.slice(prefix.length) : undefined
 
-  if (prefix && url.startsWith(prefix)) {
-    const relative = url.slice(prefix.length)
-
-    return relative.startsWith('/') ? relative : `/${relative}`
+  // The match has to land on a path boundary. Datasource uids are free text when provisioned,
+  // so one can be a prefix of another: uid 'opennms' against a url from uid 'opennms-entity'
+  // would otherwise leave '-entity/alarm/detail.htm' and build a plausible-looking dead link.
+  if (relative !== undefined && (relative === '' || relative.startsWith('/'))) {
+    return relative === '' ? '/' : relative
   }
 
   // The url did not come from this datasource, so there is no prefix of ours to remove. If it
@@ -93,6 +114,14 @@ export const resolveOpenNMSLink = (url: string | undefined, options: OpenNMSLink
   // resolves on its own, so it is returned as it stands rather than appended to the base url.
   if (isAbsoluteHttpUrl(relative)) {
     return { href: relative, isAbsolute: true }
+  }
+
+  // A leftover proxy path means the url was built against a different datasource than this
+  // client: the panel's datasource was switched while useAlarm still held the cached alarm.
+  // It cannot be mapped onto this instance, and re-rooting it would yield a confident-looking
+  // dead link, so nothing is shown until the next render resolves the new client.
+  if (GRAFANA_PROXY_PATH.test(relative)) {
+    return undefined
   }
 
   const baseUrl = normalizeBaseUrl(options.baseUrl)
