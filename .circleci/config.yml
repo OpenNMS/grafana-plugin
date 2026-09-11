@@ -188,15 +188,25 @@ jobs:
       # `build` owns the cache write; this job only restores, as `build-docs` does.
       - install-node-dependencies
       - run:
-          name: Install the deb build toolchain
+          name: Install the packaging test toolchain
           command: |
-            # src/test/packaging/deb_build.spec.ts runs dpkg-buildpackage end to end.
-            # cimg/node is Ubuntu-based and already carries dpkg-buildpackage, so the
-            # suite does not skip here -- but without these it cannot finish the build.
-            # Same list make-deb installs, so the tests exercise the same toolchain the
-            # real package is built with. apt skips whatever the image already has.
+            # deb_build.spec.ts and rpm_build.spec.ts drive dpkg-buildpackage and
+            # rpmbuild end to end, and skip themselves when the tools are absent.
+            #
+            # build-essential/debhelper/fakeroot: the list make-deb installs. cimg/node
+            # is Ubuntu-based and already carries dpkg-buildpackage, so the deb suite
+            # does not skip here -- but without these it cannot finish the build.
+            #
+            # rpm: provides rpmbuild on Ubuntu, which is otherwise absent. These specs
+            # cover our spec template and build script -- package naming, metadata,
+            # install paths, ownership, Requires, fixture exclusion -- none of which
+            # turn on the rpm version, so testing against Ubuntu's 4.18 rather than
+            # el9's 4.16 is not worth a second job on rpm-build-executor. Revisit if an
+            # assertion ever depends on rpmbuild's own behaviour.
+            #
+            # apt skips whatever the image already has.
             sudo apt-get update
-            sudo apt-get -y --no-install-recommends install build-essential debhelper fakeroot
+            sudo apt-get -y --no-install-recommends install build-essential debhelper fakeroot rpm
       - run:
           name: Run unit tests
           command: npm run test:ci
