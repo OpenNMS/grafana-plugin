@@ -188,6 +188,16 @@ jobs:
       # `build` owns the cache write; this job only restores, as `build-docs` does.
       - install-node-dependencies
       - run:
+          name: Install the deb build toolchain
+          command: |
+            # src/test/packaging/deb_build.spec.ts runs dpkg-buildpackage end to end.
+            # cimg/node is Ubuntu-based and already carries dpkg-buildpackage, so the
+            # suite does not skip here -- but without these it cannot finish the build.
+            # Same list make-deb installs, so the tests exercise the same toolchain the
+            # real package is built with. apt skips whatever the image already has.
+            sudo apt-get update
+            sudo apt-get -y --no-install-recommends install build-essential debhelper fakeroot
+      - run:
           name: Run unit tests
           command: npm run test:ci
       # Stored before the lint step because CircleCI skips the remaining steps once one

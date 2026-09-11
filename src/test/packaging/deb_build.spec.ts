@@ -1,7 +1,7 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { buildDeb, findBuiltDebs, findDpkgBuildpackage, stageDebTree } from '../../../scripts/deb/build'
+import { buildDeb, findBuiltDebs, findMissingDebTools, stageDebTree } from '../../../scripts/deb/build'
 
 const pkgInfo = {
   name: 'opennms-grafana-plugin',
@@ -123,10 +123,44 @@ describe('findBuiltDebs', () => {
   })
 })
 
-const describeDeb = findDpkgBuildpackage() ? describe : describe.skip
+describe('findMissingDebTools', () => {
+  const present = (tool: string) => '/usr/bin/' + tool
 
-if (!findDpkgBuildpackage()) {
-  console.warn('dpkg-buildpackage not found on PATH; skipping the DEB end-to-end tests')
+  it('should report nothing missing when the whole toolchain is present', () => {
+    expect(findMissingDebTools(present)).toEqual([])
+  })
+
+  /**
+   * cimg/node ships dpkg-buildpackage but neither fakeroot nor debhelper, so a guard
+   * that only looked for dpkg-buildpackage let CI into a build it could not finish and
+   * dpkg-buildpackage died with a bare "exited with status 25".
+   */
+  it('should report every missing tool, not just the first', () => {
+    const lookup = (tool: string) => (tool === 'dpkg-buildpackage' ? present(tool) : null)
+
+    expect(findMissingDebTools(lookup)).toEqual(['fakeroot', 'dh'])
+  })
+
+  it('should report dpkg-buildpackage when only it is absent', () => {
+    const lookup = (tool: string) => (tool === 'dpkg-buildpackage' ? null : present(tool))
+
+    expect(findMissingDebTools(lookup)).toEqual(['dpkg-buildpackage'])
+  })
+
+  it('should look for the real toolchain by default', () => {
+    // debian/rules runs `dh $@` and debian/control declares Build-Depends: debhelper,
+    // and dpkg-buildpackage needs fakeroot unless it is run as root.
+    expect(findMissingDebTools(() => null)).toEqual(['dpkg-buildpackage', 'fakeroot', 'dh'])
+  })
+})
+
+const missingDebTools = findMissingDebTools()
+const describeDeb = missingDebTools.length === 0 ? describe : describe.skip
+
+if (missingDebTools.length > 0) {
+  console.warn(
+    'skipping the DEB end-to-end tests; not found on PATH: ' + missingDebTools.join(', ')
+  )
 }
 
 describeDeb('buildDeb', () => {
