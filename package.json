@@ -18,7 +18,7 @@
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
     "dev": "webpack -c ./webpack.config.ts --env development",
-    "docs": "antora --stacktrace generate local-site.yml",
+    "docs": "antora --stacktrace generate --log-level=info --log-failure-level=warn local-site.yml",
     "e2e": "playwright test",
     "e2e:update": "playwright test --update-screenshots",
     "lint": "eslint --cache --ignore-pattern './.gitignore' --ignore-pattern 'public/**' --ext .js,.jsx,.ts,.tsx .",
@@ -33,13 +33,14 @@
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "test:watch": "jest --watch --onlyChanged",
     "typecheck": "tsc --noEmit",
-    "validate-xrefs": "antora --generator @antora/xref-validator local-site.yml",
+    "validate-anchors": "node ./scripts/docs/validateAnchors.js public",
+    "validate-xrefs": "npm install --no-save --no-audit --no-fund --omit=optional --prefix .antora-tools \"https://gitlab.com/antora/xref-validator/-/archive/9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53/xref-validator-9081e3ca3f6c6cbe9d379680ee67cc72db7a1f53.tar.gz\" && node ./scripts/docs/validateXrefs.js local-site.yml",
     "watch": "webpack -w -c ./webpack.config.ts --env development"
   },
   "devDependencies": {
-    "@antora/cli": "^3.1.14",
-    "@antora/site-generator": "^3.1.14",
-    "@antora/site-generator-default": "^3.1.12",
+    "@antora/cli": "^3.2.0",
+    "@antora/site-generator": "^3.2.0",
+    "@antora/site-generator-default": "^3.2.0",
     "@babel/core": "^7.29.7",
     "@grafana/e2e-selectors": "^12.4.0",
     "@grafana/eslint-config": "^8.2.0",
@@ -111,7 +112,7 @@
     "async": "^3.2.3",
     "lodash.clonedeep": "^4.5.0",
     "lodash.escaperegexp": "^4.1.2",
-    "opennms": "^2.6.1",
+    "opennms": "^2.7.0",
     "parenthesis": "^3.1.8",
     "perfect-scrollbar": "^1.5.5",
     "react": "~18.3.1",
@@ -201,8 +202,8 @@
     },
     "ip-address": "^10.3.1",
     "js-cookie": "^3.0.8",
-    "js-yaml@^3.0.0": "^3.15.1",
-    "js-yaml@^4.0.0": "^4.3.1",
+    "js-yaml@^3.0.0": "^3.15.2",
+    "js-yaml@^4.0.0": "^4.3.2",
     "lodash": "^4.18.0",
     "maximatch": {
       "minimatch": "^3.1.4"
@@ -214,7 +215,7 @@
     "opennms": {
       "ajv": "^8.18.0",
       "axios": "^1.18.0",
-      "qs": "^6.15.2",
+      "qs": "^6.16.0",
       "striptags": "^3.2.0"
     },
     "picomatch@^2.0.0": "^2.3.2",
@@ -233,10 +234,10 @@
       "serialize-javascript": "^7.0.5"
     },
     "tiny-lr": {
-      "qs": "^6.15.2"
+      "qs": "^6.16.0"
     },
     "webpack-livereload-plugin": {
-      "qs": "^6.15.2"
+      "qs": "^6.16.0"
     },
     "websocket-driver": "^0.7.5",
     "ws": "^8.21.0",
